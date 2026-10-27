@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/vastu-interior-designer-in-bareilly",
+      "https://www.MTBOSS.in/vastu-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need a Vastu interior designer Bareilly? MTBOSS plans layouts around your Vastu preferences where the structure allows. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/vastu-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/vastu-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-vastu-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-vastu-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Vastu Interior Designer in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need a Vastu interior designer Bareilly? MTBOSS plans layouts around your Vastu preferences where the structure allows. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-vastu-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-vastu-interior-designer-bareilly.jpg",
     ],
   },
 
@@ -67,10 +67,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/vastu-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/vastu-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-vastu-interior-designer-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-vastu-interior-designer-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -115,13 +115,13 @@ export default function Page() {
     name: "Vastu-Aware Interior Design Services in Bareilly",
     description:
       "MTBOSS provides Vastu-aware interior design services in Bareilly. Services include preference discussion, site visit and measurement, layout planning, concept and 3D views, modular kitchen, puja room or mandir, bedrooms and wardrobes, living and dining interiors, colour and finish selection, false ceiling and lighting, bathrooms, electrical, plumbing and waterproofing, renovation and remodelling, material supply and home services.",
-    url: "https://www.mtboss.in/vastu-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/vastu-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -216,19 +216,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Vastu Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/vastu-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/vastu-interior-designer-in-bareilly",
       },
     ],
   };

@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "school construction cost Moradabad, school building cost per sq ft Moradabad, CBSE school construction cost India, playschool construction cost Moradabad, school construction budget Moradabad, MTBOSS Moradabad, school building materials cost Moradabad, MTBOSS budget calculator, school infrastructure cost Moradabad, MTBOSS Kanth Road, school construction quote Moradabad, school building investment Moradabad, MTBOSS school construction, education building cost UP, school civil construction rate",
   alternates: {
-    canonical: "https://www.mtboss.in/school-construction-cost-in-moradabad",
+    canonical: "https://www.MTBOSS.in/school-construction-cost-in-moradabad",
   },
   openGraph: {
     title: "School Construction Cost in Moradabad | MTBOSS",
     description:
       "Planning a school in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBOSS. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/school-construction-cost-in-moradabad",
+    url: "https://www.MTBOSS.in/school-construction-cost-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-school-cost-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-school-cost-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "School Construction Cost in Moradabad - MTBOSS Construction",
@@ -36,7 +36,7 @@ export const metadata = {
     title: "School Construction Cost in Moradabad | MTBOSS",
     description:
       "Planning a school in Moradabad? Understand construction cost factors and get a civil construction estimate from MTBOSS. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-school-cost-moradabad.jpg"],
+    images: ["https://www.MTBOSS.in/og-school-cost-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/school-construction-cost-in-moradabad",
+    url: "https://www.MTBOSS.in/school-construction-cost-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -91,7 +91,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

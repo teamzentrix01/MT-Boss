@@ -207,7 +207,7 @@ export default function ContractorPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/MTBOSS2016@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -873,7 +873,7 @@ export default function ContractorPage() {
               Call Now
             </a>
             <a
-              href="mailto:mtboss2016@gmail.com"
+              href="mailto:MTBOSS2016@gmail.com"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

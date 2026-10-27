@@ -8,17 +8,17 @@ export const metadata = {
   keywords:
     'sell property free, list property online free, sell flat online, sell plot online, no brokerage property listing, list property for sale',
   alternates: {
-    canonical: 'https://www.mtboss.in/property/sell',
+    canonical: 'https://www.MTBOSS.in/property/sell',
   },
   openGraph: {
     title: 'MTBOSS | Sell Your Property Free',
     description:
       'List your property for sale free on MTBOSS — admin-verified listings, reach thousands of serious buyers instantly.',
-    url: 'https://www.mtboss.in/property/sell',
+    url: 'https://www.MTBOSS.in/property/sell',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
         alt: 'Sell Property Free - MTBOSS',
@@ -32,7 +32,7 @@ export const metadata = {
     title: 'MTBOSS | Sell Your Property Free',
     description:
       'List your property for sale free on MTBOSS — admin-verified listings, reach thousands of serious buyers instantly.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,

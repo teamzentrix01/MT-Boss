@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Pest Control Services in Moradabad | MT Boss',
+  title: 'Pest Control Services in Moradabad | MTBOSS',
   description:
-    'Pest control services in Moradabad by MT Boss. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
+    'Pest control services in Moradabad by MTBOSS. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
   keywords:
-    'pest control services Moradabad, pest control Moradabad, cockroach control Moradabad, termite treatment Moradabad, anti termite treatment Moradabad, bed bug treatment Moradabad, mosquito control Moradabad, rodent control Moradabad, ant control Moradabad, pest control for godowns Moradabad, MT Boss pest control Moradabad',
+    'pest control services Moradabad, pest control Moradabad, cockroach control Moradabad, termite treatment Moradabad, anti termite treatment Moradabad, bed bug treatment Moradabad, mosquito control Moradabad, rodent control Moradabad, ant control Moradabad, pest control for godowns Moradabad, MTBOSS pest control Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/pest-control-services-moradabad',
+    canonical: 'https://www.MTBOSS.in/pest-control-services-moradabad',
   },
   openGraph: {
-    title: 'Pest Control Services in Moradabad | MT Boss',
+    title: 'Pest Control Services in Moradabad | MTBOSS',
     description:
-      'Pest control services in Moradabad by MT Boss. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
-    url: 'https://www.mtboss.in/pest-control-services-moradabad',
+      'Pest control services in Moradabad by MTBOSS. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/pest-control-services-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-pest-control-services-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-pest-control-services-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pest Control Services in Moradabad - MT Boss',
+        alt: 'Pest Control Services in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pest Control Services in Moradabad | MT Boss',
+    title: 'Pest Control Services in Moradabad | MTBOSS',
     description:
-      'Pest control services in Moradabad by MT Boss. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
-    images: ['https://www.mtboss.in/og-pest-control-services-moradabad.jpg'],
+      'Pest control services in Moradabad by MTBOSS. Cockroach, termite, ant, bed bug, mosquito and rodent treatment for homes, shops and godowns. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-pest-control-services-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/pest-control-services-moradabad',
+  url: 'https://www.MTBOSS.in/pest-control-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

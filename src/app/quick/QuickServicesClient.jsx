@@ -573,7 +573,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                       : 'border-zinc-900 text-zinc-900 hover:bg-zinc-50'
                   }`}
                 >
-                  {locationLoading ? 'Getting Location...' : form.latitude ? '✓ Location Captured' : '📍 Get Live Location'}
+                  {locationLoading ? 'Getting Location...' : form.latitude ? '✓ Location Captured' : 'Get Live Location'}
                 </button>
               </Field>
 

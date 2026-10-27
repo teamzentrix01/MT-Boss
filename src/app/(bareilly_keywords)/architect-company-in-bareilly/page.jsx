@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Architect Company in Bareilly',
   description:
-    'Hiring an architect company in Bareilly? MT Boss serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
+    'Hiring an architect company in Bareilly? MTBOSS serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
   keywords:
-    'architect company in Bareilly, architecture company Bareilly, design company Bareilly, building design company Bareilly, commercial architect Bareilly, developer architect Bareilly, institutional architect Bareilly, architectural drawings Bareilly, MT Boss Bareilly, design and build Bareilly, architect near me Bareilly, COA registered architect Bareilly',
+    'architect company in Bareilly, architecture company Bareilly, design company Bareilly, building design company Bareilly, commercial architect Bareilly, developer architect Bareilly, institutional architect Bareilly, architectural drawings Bareilly, MTBOSS Bareilly, design and build Bareilly, architect near me Bareilly, COA registered architect Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-company-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-company-in-bareilly',
   },
   openGraph: {
     title: 'Architect Company in Bareilly',
     description:
-      'Hiring an architect company in Bareilly? MT Boss serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
-    url: 'https://www.mtboss.in/architect-company-in-bareilly',
+      'Hiring an architect company in Bareilly? MTBOSS serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
+    url: 'https://www.MTBOSS.in/architect-company-in-bareilly',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-company-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-company-in-bareilly.jpg',
         width: 1200,
         height: 630,
-        alt: 'Architect Company in Bareilly - MT Boss',
+        alt: 'Architect Company in Bareilly - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Architect Company in Bareilly',
     description:
-      'Hiring an architect company in Bareilly? MT Boss serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
-    images: ['https://www.mtboss.in/og-architect-company-in-bareilly.jpg'],
+      'Hiring an architect company in Bareilly? MTBOSS serves developers, businesses and institutions with briefs, approvals, milestone billing and reporting.',
+    images: ['https://www.MTBOSS.in/og-architect-company-in-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-company-in-bareilly',
+    url: 'https://www.MTBOSS.in/architect-company-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

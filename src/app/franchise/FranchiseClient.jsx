@@ -297,7 +297,7 @@ function FranchisePageContent() {
 
       // Send email notification in the background; PayU redirect must not wait on
       // FormSubmit because that external call can be slow/blocked by the browser.
-      void fetch("https://formsubmit.co/ajax/mtboss2016@gmail.com", {
+      void fetch("https://formsubmit.co/ajax/MTBOSS2016@gmail.com", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -1167,7 +1167,7 @@ function FranchisePageContent() {
                     </div>
                     <div className="space-y-4">
                       <div>
-                        <label className={labelClass}>Why do you want to partner with MTBoss? *</label>
+                        <label className={labelClass}>Why do you want to partner with MTBOSS? *</label>
                         <textarea name="message" rows={4} placeholder="Share your motivation, goals, and what you bring to this partnership..." value={form.message} onChange={handleChange} className={`${inputClass} resize-none`} />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1208,13 +1208,13 @@ function FranchisePageContent() {
                       <label className="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
                         <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                          I have read and understood all information available about MTbossConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
+                          I have read and understood all information available about MTBOSSConstruction franchise opportunity, including the investment requirements, terms, and fee structure involved.
                         </span>
                       </label>
                       <label className="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" required className="mt-0.5 accent-[var(--brand-blue)] flex-shrink-0" />
                         <span className={`text-[11px] leading-relaxed ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
-                          I agree that MTbossConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
+                          I agree that MTBOSSConstruction may contact me regarding this franchise inquiry. I understand that submitting this form does not guarantee a franchise agreement.
                         </span>
                       </label>
                     </div>
@@ -1327,7 +1327,7 @@ function FranchisePageContent() {
               Call Now
             </a>
             <a
-              href="mailto:mtboss2016@gmail.com"
+              href="mailto:MTBOSS2016@gmail.com"
               className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white hover:text-zinc-800 transition-all"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

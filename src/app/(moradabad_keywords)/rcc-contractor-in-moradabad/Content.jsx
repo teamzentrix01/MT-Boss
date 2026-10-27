@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: RCC Contractor in Moradabad for Strong Foundations,
+            MTBOSS: RCC Contractor in Moradabad for Strong Foundations,
             Columns, Beams and Slabs
           </h2>
 
@@ -32,7 +32,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 RCC work covers every concrete element that carries load in a
-                building. MT Boss handles:
+                building. MTBOSS handles:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -116,14 +116,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MT Boss Handles RCC Work, Stage by Stage
+                How MTBOSS Handles RCC Work, Stage by Stage
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Stage 1: Drawing Review
               </h4>
               <p className="mb-3">
-                Before any work begins, MT Boss reviews the structural drawings.
+                Before any work begins, MTBOSS reviews the structural drawings.
                 The team checks column positions, beam sizes, slab thickness,
                 reinforcement details and levels against the architectural plan.
                 If something is unclear or impractical on site, it is raised and
@@ -210,7 +210,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Materials MT Boss Uses for RCC
+                Materials MTBOSS Uses for RCC
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -261,7 +261,7 @@ const Content = () => {
                 skipped.
               </p>
               <p className="mt-3">
-                The MT Boss online shop also connects owners with suppliers of
+                The MTBOSS online shop also connects owners with suppliers of
                 cement, steel and bricks for their own projects.
               </p>
             </section>
@@ -287,7 +287,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss follows the grade shown in the approved drawings. Mix
+                MTBOSS follows the grade shown in the approved drawings. Mix
                 proportions, water content and workability are controlled on
                 site, and concrete is cast and compacted properly. For larger
                 projects, owners can discuss cube testing and ready-mix options
@@ -300,7 +300,7 @@ const Content = () => {
                 Quality Checks Carried Out During RCC Work
               </h3>
               <p className="mb-3">
-                MT Boss builds checks into each stage instead of leaving
+                MTBOSS builds checks into each stage instead of leaving
                 everything for the end.
               </p>
 
@@ -365,7 +365,7 @@ const Content = () => {
                 and dry.
               </p>
               <p className="mb-3">
-                MT Boss plans curing as part of the schedule:
+                MTBOSS plans curing as part of the schedule:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -401,7 +401,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Monsoon.</strong> Rain can wash cement from fresh
-                  concrete and fill excavations. MT Boss protects open pours
+                  concrete and fill excavations. MTBOSS protects open pours
                   with covers, plans reinforcement and shuttering carefully, and
                   avoids pouring during heavy rain.
                 </li>
@@ -420,7 +420,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Types of Buildings MT Boss Builds With RCC
+                Types of Buildings MTBOSS Builds With RCC
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -444,16 +444,16 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contract Options for RCC Work With MT Boss
+                Contract Options for RCC Work With MTBOSS
               </h3>
               <p className="mb-3">
-                MT Boss offers civil contractor and building contractor
+                MTBOSS offers civil contractor and building contractor
                 services, so RCC work can be arranged in different ways.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>RCC-only contract.</strong> The owner provides
-                  drawings, and MT Boss builds the structure. Suited to owners
+                  drawings, and MTBOSS builds the structure. Suited to owners
                   who plan to manage finishing separately.
                 </li>
                 <li>
@@ -465,7 +465,7 @@ const Content = () => {
                   structure, finishing and handover as one service.
                 </li>
                 <li>
-                  <strong>Labour and supervision contract.</strong> MT Boss
+                  <strong>Labour and supervision contract.</strong> MTBOSS
                   supplies skilled labour and supervision, while the owner buys
                   materials.
                 </li>
@@ -512,7 +512,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss gives an itemised quotation, so owners can see what is
+                MTBOSS gives an itemised quotation, so owners can see what is
                 included. The online budget calculator also provides an early
                 estimate. A reserve of around 10 percent helps cover changes and
                 unexpected needs.
@@ -560,7 +560,7 @@ const Content = () => {
                 After the Structure: Finishing and Protection
               </h3>
               <p>
-                A finished RCC frame still needs protection. MT Boss also offers
+                A finished RCC frame still needs protection. MTBOSS also offers
                 waterproofing, plastering, painting, UPVC window installation,
                 plumbing and electrical services, so owners can move from
                 structure to finished building within one firm. Waterproofing
@@ -571,10 +571,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Hire MT Boss for RCC Work in Moradabad
+                Hire MTBOSS for RCC Work in Moradabad
               </h3>
               <p className="mb-3">
-                Share your drawings or plot details with MT Boss, and the team
+                Share your drawings or plot details with MTBOSS, and the team
                 will review them, visit the site and prepare a clear, itemised
                 quotation for your RCC work.
               </p>
@@ -589,21 +589,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -619,12 +619,12 @@ const Content = () => {
                     Q1. Who is a reliable RCC contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss provides RCC and civil contracting for homes,
+                  MTBOSS provides RCC and civil contracting for homes,
                   commercial buildings, hotels and industrial structures, with
                   checked materials and supervision.
                 </li>
                 <li>
-                  <strong>Q2. What RCC work does MT Boss handle?</strong>
+                  <strong>Q2. What RCC work does MTBOSS handle?</strong>
                   <br />
                   We handle foundations, plinth beams, columns, beams, slabs,
                   staircases, lintels, water tanks and boundary structures.
@@ -632,7 +632,7 @@ const Content = () => {
                 <li>
                   <strong>Q3. Do you work from my structural drawings?</strong>
                   <br />
-                  Yes. MT Boss reviews your drawings and builds to the approved
+                  Yes. MTBOSS reviews your drawings and builds to the approved
                   details, raising any practical issues before work starts.
                 </li>
                 <li>
@@ -644,7 +644,7 @@ const Content = () => {
                 <li>
                   <strong>Q5. Can I supply my own materials?</strong>
                   <br />
-                  Yes. MT Boss offers labour and supervision contracts for
+                  Yes. MTBOSS offers labour and supervision contracts for
                   owners who prefer to buy materials.
                 </li>
                 <li>
@@ -655,24 +655,24 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q7. Does MT Boss also handle finishing and waterproofing?
+                    Q7. Does MTBOSS also handle finishing and waterproofing?
                   </strong>
                   <br />
                   Yes. We offer plastering, painting, waterproofing, windows,
                   plumbing and electrical work.
                 </li>
                 <li>
-                  <strong>Q8. How can I contact MT Boss?</strong>
+                  <strong>Q8. How can I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  mtboss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

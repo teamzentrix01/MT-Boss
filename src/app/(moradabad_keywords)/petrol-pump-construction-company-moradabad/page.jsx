@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/petrol-pump-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/petrol-pump-construction-company-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for a petrol pump construction company in Moradabad? MTBOSS offers civil work, canopy, forecourt and building. Call +91 94584 10866 for a quote.",
 
-    url: "https://www.mtboss.in/petrol-pump-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/petrol-pump-construction-company-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-petrol-pump-construction-company-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-petrol-pump-construction-company-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Petrol Pump Construction Company in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for a petrol pump construction company in Moradabad? MTBOSS offers civil work, canopy, forecourt and building. Call +91 94584 10866 for a quote.",
 
     images: [
-      "https://www.mtboss.in/og-petrol-pump-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-petrol-pump-construction-company-moradabad.jpg",
     ],
   },
 
@@ -70,14 +70,14 @@ export default function Page() {
     name: "MTBOSS Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/petrol-pump-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/petrol-pump-construction-company-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-petrol-pump-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-petrol-pump-construction-company-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -142,14 +142,14 @@ export default function Page() {
       "MTBOSS is a petrol pump construction company in Moradabad providing site development, RCC civil work, canopy foundations, forecourt paving, dispenser island platforms, drainage, office and shop building construction, boundary wall work, finishing and building material supply.",
 
     url:
-      "https://www.mtboss.in/petrol-pump-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/petrol-pump-construction-company-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -248,19 +248,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Petrol Pump Construction Company in Moradabad",
-        item: "https://www.mtboss.in/petrol-pump-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/petrol-pump-construction-company-in-moradabad",
       },
     ],
   };

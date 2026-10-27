@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Termite Control in Moradabad: MT Boss
+            Termite Control in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,7 +19,7 @@ const Content = () => {
               <p>
                 Termite control in Moradabad is the inspection, treatment and
                 prevention of termite infestations in buildings, wooden fittings
-                and soil around foundations. MT Boss Construction Private Limited,
+                and soil around foundations. MTBOSS Construction Private Limited,
                 based on Kanth Road, offers termite treatment for existing
                 properties and protection planning for new construction across
                 Moradabad and Bareilly.
@@ -39,7 +39,7 @@ const Content = () => {
                 significant harm is done.
               </p>
               <p>
-                MT Boss Construction Private Limited serves homes, flats, shops,
+                MTBOSS Construction Private Limited serves homes, flats, shops,
                 offices, hotels, warehouses and factories across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -75,7 +75,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Your technician identifies the type during inspection, since the
-                treatment differs [confirm which types MT Boss treats].
+                treatment differs [confirm which types MTBOSS treats].
               </p>
             </section>
 
@@ -221,7 +221,7 @@ const Content = () => {
                 Pre-Construction Protection for New Buildings
               </h3>
               <p className="mb-3">
-                MT Boss builds, renovates and repairs properties, so owners
+                MTBOSS builds, renovates and repairs properties, so owners
                 planning a new house, extension or shop can plan termite
                 protection alongside the construction [confirm whether this
                 service is offered and how it is coordinated]. Typical stages
@@ -303,7 +303,7 @@ const Content = () => {
                 Wooden doors, frames, wardrobes, beds and sofas are common
                 targets. Options include surface treatment, injection into
                 infested pieces and, for badly damaged items, repair or
-                replacement [confirm what MT Boss offers]. Our related Carpenter
+                replacement [confirm what MTBOSS offers]. Our related Carpenter
                 and Door &amp; Window Install services can handle replacement or
                 repair of damaged wood, so one team can follow up after treatment.
               </p>
@@ -320,7 +320,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and describe the signs you see
+                  Construction Quote on MTBOSS.in, and describe the signs you see
                 </li>
                 <li>
                   <strong>Inspection:</strong> the technician checks the property
@@ -384,7 +384,7 @@ const Content = () => {
                 re-entry instructions and honest answers about risk. Options such
                 as lower-odour products or bait-based approaches may suit some
                 sites, though they may take longer or suit only some situations
-                [confirm what MT Boss offers]. Tell us about sensitive residents
+                [confirm what MTBOSS offers]. Tell us about sensitive residents
                 beforehand so we can plan accordingly.
               </p>
             </section>
@@ -420,10 +420,10 @@ const Content = () => {
               </h3>
               <p>
                 Termites love moisture. Treatment lasts longer when moisture
-                sources are fixed. MT Boss can help with Waterproofing, Building
+                sources are fixed. MTBOSS can help with Waterproofing, Building
                 Repair and Plumber services, so damp walls, leaking pipes and
                 blocked drains are handled alongside termite treatment through the
-                same mtboss.in services list.
+                same MTBOSS.in services list.
               </p>
             </section>
 
@@ -510,7 +510,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                [State actual MT Boss warranty terms, or remove this section if
+                [State actual MTBOSS warranty terms, or remove this section if
                 none is offered.] Avoid verbal promises such as &quot;termites
                 will never return&quot;.
               </p>
@@ -518,11 +518,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Termite control, alongside
@@ -546,21 +546,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -576,7 +576,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -625,7 +625,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Termite Inspection With MT Boss
+                Book a Termite Inspection With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -642,21 +642,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -670,7 +670,7 @@ const Content = () => {
                 we will arrange an inspection and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for termite control in Moradabad, with the entry
+                Choose MTBOSS for termite control in Moradabad, with the entry
                 points found, the colony treated and your wood and walls
                 protected.
               </p>
@@ -684,7 +684,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who offers termite control in Moradabad?</strong>
                   <br />
-                  MT Boss Construction treats termites in homes, shops and godowns
+                  MTBOSS Construction treats termites in homes, shops and godowns
                   across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -735,7 +735,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book an inspection?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Affordable Architect in Moradabad: Practical Design and Construction with MTBOSS
+            Affordable Architect in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,18 +23,16 @@ const Content = () => {
                 combines architectural design coordination, civil construction
                 and wholesale material supply within a single firm, which is
                 specifically what helps keep costs predictable and reasonable
-                for clients. This page explains how MTBOSS approaches
-                affordability, what services are included, and how to get in
-                touch for a free quote.
+                for clients. 
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Construction Private Limited
+                MTBOSSConstruction Private Limited
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS is a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
+                <li>MTBOSSis a Moradabad-based company offering construction services, doorstep home services, verified property transactions, and wholesale building materials under one company.</li>
                 <li>The office is located at Harthala, Kanth Road, Behind KR Collection, near Domino&apos;s, Moradabad, close to the city&apos;s residential and commercial growth areas.</li>
                 <li>Core project categories include residential, commercial, hotel and hospitality, and industrial and infrastructure construction.</li>
                 <li>A project gallery and blog on the MTBOSS website let prospective clients review completed work before reaching out.</li>
@@ -43,14 +41,14 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Helps Keep Architecture and Construction Costs Affordable
+                How MTBOSS Helps Keep Architecture 
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Design and construction under one roof:</strong> When the same company handles planning, materials and construction, clients avoid paying separate margins to an architect, a contractor and a material trader for the same project.</li>
                 <li><strong>Direct wholesale material supply:</strong> MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints itself, which can reduce the markup typically added when materials pass through multiple middlemen.</li>
                 <li><strong>Free budget estimation before you commit:</strong> The online Budget Calculator lets you understand likely costs before spending money on detailed drawings, helping avoid wasted design fees on a plan you cannot afford to build.</li>
                 <li><strong>Fewer design changes, fewer cost overruns:</strong> A clear design and budget conversation upfront, before construction starts, helps avoid the expensive mid-project changes that push costs up unexpectedly.</li>
-                <li><strong>Transparent quote requests:</strong> The &quot;Get a Construction Quote&quot; option on the MTBOSS website gives clients an easy way to get pricing information without multiple back-and-forth site visits before even knowing a rough figure.</li>
+                {/* <li><strong>Transparent quote requests:</strong> The &quot;Get a Construction Quote&quot; option on the MTBOSS website gives clients an easy way to get pricing information without multiple back-and-forth site visits before even knowing a rough figure.</li> */}
               </ul>
             </section>
 
@@ -65,22 +63,6 @@ const Content = () => {
                 <li><strong>Industrial and infrastructure projects:</strong> Factories, warehouses and infrastructure work planned around practical, cost-effective structural choices.</li>
                 <li><strong>Property services:</strong> Verified property buying, selling and renting, useful for clients trying to balance plot cost against construction budget.</li>
                 <li><strong>Post-construction maintenance:</strong> Doorstep electrician, plumber, AC repair and pest control services, so ongoing maintenance costs also stay predictable.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MTBOSS Approaches a Budget-Focused Project
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Step 1 — Enquiry:</strong> You share your project idea and budget expectations through the MTBOSS website, phone or WhatsApp.</li>
-                <li><strong>Step 2 — Requirement and budget discussion:</strong> The team discusses your plot, project type and, importantly, your maximum budget upfront.</li>
-                <li><strong>Step 3 — Site visit:</strong> MTBOSS engineers assess the plot, access and soil condition to understand any cost factors specific to the site.</li>
-                <li><strong>Step 4 — Budget estimation first:</strong> Rather than jumping straight to a detailed design, the MTBOSS Budget Calculator and current material rates are used early to set realistic expectations.</li>
-                <li><strong>Step 5 — Design within budget:</strong> Floor plans and structural layout are prepared to fit within the agreed cost range, rather than designed first and priced later.</li>
-                <li><strong>Step 6 — Material supply:</strong> Materials are sourced directly through MTBOSS&apos;s own wholesale supply, helping control per-unit costs.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> Civil work proceeds under MTBOSS supervision, with cost and quality tracked together.</li>
-                <li><strong>Step 8 — Handover:</strong> Final finishing, inspection and handover of the completed, budget-aligned project.</li>
               </ul>
             </section>
 
@@ -144,26 +126,6 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Property Services: Useful When Balancing Plot and Construction Costs
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad.</li>
-                <li>For budget-conscious clients, the total cost of a project includes both the plot and the construction, so having one company assist with both can help balance the overall budget more effectively.</li>
-                <li>This also means there is continuity between finding an affordable plot and building on it, without switching to a separate company partway through.</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Doorstep Services: Keeping Long-Term Costs Predictable Too
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Once your project is complete, MTBOSS also offers electrician, plumber, AC repair and pest control services at your doorstep.</li>
-                <li>Having a known, reachable service provider for maintenance can help avoid the inflated charges sometimes associated with unfamiliar or one-off service providers.</li>
-              </ul>
-            </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -190,19 +152,19 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MTBOSS — Affordable Architect and Construction Services in Moradabad
+                Contact MToss — Affordable Architect and Construction Services in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -225,10 +187,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

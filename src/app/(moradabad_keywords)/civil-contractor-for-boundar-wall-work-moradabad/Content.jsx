@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor for Boundary Wall Work in Moradabad: MT Boss
+            Civil Contractor For Boundary Wall Work In Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -28,12 +28,10 @@ const Content = () => {
                 only on a smaller scale. A good civil contractor for boundary wall
                 work in Moradabad handles marking, excavation, foundation,
                 structure, masonry, finishing and cleanup in the right order, with
-                someone accountable at each step. MT Boss Construction Private
+                someone accountable at each step. MTBOSS Construction Private
                 Limited carries out boundary wall work for homes, shops,
                 farmhouses, warehouses and industrial plots across Moradabad and
-                Bareilly. Our approach follows the promise on our website:
-                planning to completion, with quality work, transparent pricing and
-                on-time delivery.
+                Bareilly. 
               </p>
             </section>
 
@@ -60,10 +58,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -76,10 +74,7 @@ const Content = () => {
                 boundary wall gets the same basic discipline as a building:
                 drawings, specifications, supervision and stage-wise checks.
               </p>
-              <p>
-                Credentials: [add registration, GST and other verifiable details
-                you can show].
-              </p>
+             
             </section>
 
             <section>
@@ -134,47 +129,7 @@ const Content = () => {
                 pillars.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 6: Masonry or Panel Installation
-              </h4>
-              <p>
-                Bricks or blocks are laid in proper bond with level, plumb and
-                uniform joints. For readymade walls, panels are fitted into posts
-                with correct alignment [confirm readymade panel types and sizes].
-              </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 7: Tie Beams and Coping
-              </h4>
-              <p>
-                Where designed, tie beams and coping add stiffness and protect the
-                wall top from water entry.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 8: Plaster and Finishing
-              </h4>
-              <p>
-                Plaster is applied with controlled thickness and cured properly.
-                Painting or textured finishes follow after the plaster has dried.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 9: Drainage and Slope
-              </h4>
-              <p>
-                Weep holes and ground slope are checked, so water does not collect
-                along the wall base.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 10: Gate Coordination and Handover
-              </h4>
-              <p>
-                Gate pillars and entry paving are aligned with gate fabrication.
-                The site is cleaned, defects are corrected and the work is handed
-                over.
-              </p>
             </section>
 
             <section>
@@ -265,7 +220,7 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Turnkey:</strong> MT Boss manages materials, labour,
+                  <strong>Turnkey:</strong> MTBOSS manages materials, labour,
                   supervision and finishing for a complete wall
                 </li>
                 <li>
@@ -283,7 +238,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to buy materials can explore the Shop Now
-                section on mtboss.in for cement, steel, bricks and more, and our
+                section on MTBOSS.in for cement, steel, bricks and more, and our
                 engineers can advise on quantity and quality [confirm delivery
                 coverage].
               </p>
@@ -302,7 +257,7 @@ const Content = () => {
                 <li>RCC walls for industrial and high-security sites</li>
                 <li>
                   Readymade boundary walls using precast panels and posts, listed
-                  on mtboss.in under Readymade Boundary for quick installation
+                  on MTBOSS.in under Readymade Boundary for quick installation
                 </li>
                 <li>
                   Retaining walls engineered for level differences and earth
@@ -476,7 +431,7 @@ const Content = () => {
                 Repair and Raising of Existing Walls
               </h3>
               <p>
-                MT Boss also handles older boundary walls, including crack repair,
+                MTBOSS also handles older boundary walls, including crack repair,
                 rebuilding collapsed sections, raising height after foundation
                 inspection, damp treatment, waterproofing and repainting. Before
                 raising a wall, our engineers check the existing foundation, since
@@ -506,14 +461,14 @@ const Content = () => {
               <p className="mt-3">
                 Instead of quoting a rough rate per foot, we prepare an itemised
                 estimate after the site visit. You can also use the Budget
-                Calculator on mtboss.in for an early idea of overall construction
+                Calculator on MTBOSS.in for an early idea of overall construction
                 cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -569,18 +524,18 @@ const Content = () => {
                 Request a Free Site Visit
               </h3>
               <p className="mb-3">
-                Contact MT Boss to plan your boundary wall work:
+                Contact MTBOSS to plan your boundary wall work:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -598,10 +553,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -615,7 +570,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted civil contractor for boundary wall
+                Choose MTBOSS, your trusted civil contractor for boundary wall
                 work in Moradabad, for a wall that is marked correctly, built
                 strong and handed over clean.
               </p>
@@ -629,7 +584,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who handles boundary wall work in Moradabad?</strong>
                   <br />
-                  MT Boss Construction carries out boundary wall work for homes,
+                  MTBOSS Construction carries out boundary wall work for homes,
                   shops, farmhouses and industrial plots across Moradabad and
                   Bareilly.
                 </li>
@@ -677,7 +632,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

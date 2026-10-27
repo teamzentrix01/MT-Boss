@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Consultant in Moradabad: MT Boss
+            Architect Consultant in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,11 +22,9 @@ const Content = () => {
                 That is the value of an architect consultant in Moradabad: an experienced professional who advises you before you commit money, checks your plans and keeps your project on track.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team advises on and designs homes, shops, showrooms, hotels, schools and industrial buildings, and can also build them. Consultancy and construction sit under one roof, so the advice you get is practical, priced realistically and backed by people who build every day.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team advises on and designs homes, shops, showrooms, hotels, schools and industrial buildings, and can also build them. Consultancy and construction sit under one roof, so the advice you get is practical, priced realistically and backed by people who build every day.
               </p>
-              <p className="mt-3">
-                This page explains what an architect consultant does, when to hire one, how MT Boss works and what to check before you decide.
-              </p>
+           
             </section>
 
 
@@ -59,12 +57,7 @@ const Content = () => {
                 <li>
                   <strong>Approvals guidance:</strong> understanding the drawings and documents typically needed.
                 </li>
-                <li>
-                  <strong>Site checks and supervision:</strong> confirming that the building matches the drawings.
-                </li>
-                <li>
-                  <strong>Problem solving:</strong> cracks, leakage, dampness, layout mistakes and structural doubts in existing buildings.
-                </li>
+             
               </ul>
               <p className="mt-3">
                 You can hire a consultant for a single decision, for a full project or for a quick review, depending on what you need.
@@ -113,10 +106,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Architectural Consultancy with Construction Expertise
+                MTBOSS: Architectural Consultancy with Construction Expertise
               </h3>
               <p className="mb-3">
-                Many consultants only advise. Many builders only build. MT Boss does both, which makes our advice more practical.
+                Many consultants only advise. Many builders only build. MTBOSS does both, which makes our advice more practical.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -143,7 +136,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Consultant Services by MT Boss in Moradabad
+                Architect Consultant Services by MTBOSS in Moradabad
               </h3>
 
 
@@ -154,38 +147,13 @@ const Content = () => {
                 Before you buy a plot or finalise a design, we study its size, shape, road access, surroundings and building potential. You get honest advice on what can be built, how many floors are practical and what the budget may look like.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Home Design Consultation
-              </h4>
-              <p className="mb-3">
-                We advise on layouts, room sizes, staircase position, parking, elevation and Vastu preferences for independent houses, duplexes, villas and builder floors. If you want full drawings, we prepare them, including 3D elevation views.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Second Opinion and Plan Review
-              </h4>
-              <p className="mb-3">
-                Already have a plan? We review it for wasted space, poor light and ventilation, awkward staircases, missing services and structural coordination, and then suggest practical improvements.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Commercial and Institutional Consultation
-              </h4>
-              <p className="mb-3">
-                We advise on shops, complexes, showrooms, offices, hotels, schools and clinics, covering area efficiency, circulation, parking, facade and safety planning.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Budget Planning and Cost Estimation
               </h4>
               <p className="mb-3">
-                We prepare clear estimates and help you decide where to spend and where to save. You can also try the MT Boss{" "}
+                We prepare clear estimates and help you decide where to spend and where to save. You can also try the MTBOSS{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -227,27 +195,18 @@ const Content = () => {
                 We visit your site at key stages, such as foundation, columns, slabs and finishing, and check that the work matches the drawings and specifications.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Renovation and Structural Assessment
-              </h4>
-              <p className="mb-3">
-                If your building has cracks, leakage, dampness or needs an extra floor, we assess the situation and advise on practical solutions. Where structural safety is in question, we recommend involving a qualified structural engineer.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MT Boss also offers interior design, your architectural and interior plans can be developed together for a seamless result.
+                Because MTBOSS also offers interior design, your architectural and interior plans can be developed together for a seamless result.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Design and Construction Advice from MT Boss That Saves Money
+                Design and Construction Advice from MTBOSS That Saves Money
               </h3>
               <p className="mb-3">
                 Some of the most useful advice is simple. Owners often save the most by acting on these points:
@@ -265,12 +224,7 @@ const Content = () => {
                 <li>
                   <strong>Save on cosmetics.</strong> Decorative items, fancy fittings and furniture can be upgraded over time.
                 </li>
-                <li>
-                  <strong>Compare quotes on scope, not only total price.</strong> The cheapest quote often leaves out items that appear later as extras.
-                </li>
-                <li>
-                  <strong>Keep standard sizes.</strong> Doors, windows and tiles in standard sizes reduce wastage and cost.
-                </li>
+               
                 <li>
                   <strong>Buy materials smartly.</strong> Buying in planned batches from a reliable supplier improves price and quality control.
                 </li>
@@ -307,22 +261,20 @@ const Content = () => {
                 <li>
                   <strong>When you live far from the site.</strong> Many owners living outside Moradabad need a trusted person watching quality and cost.
                 </li>
-                <li>
-                  <strong>When something looks wrong.</strong> Cracks, leakage, delays or disputes are best handled with expert advice early.
-                </li>
+              
                 <li>
                   <strong>Before renovation or extension.</strong> Assessing the existing structure prevents costly surprises.
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss is happy to help at any of these points, whether you need one meeting or a complete project.
+                MTBOSS is happy to help at any of these points, whether you need one meeting or a complete project.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Consultation Process at MT Boss, Step by Step
+                Consultation Process at MTBOSS, Step by Step
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -334,17 +286,9 @@ const Content = () => {
                 <li>
                   <strong>Step 2: Free site visit.</strong> We visit the plot or building, take measurements and understand your budget and timeline.
                 </li>
+               
                 <li>
-                  <strong>Step 3: Assessment and advice.</strong> We review the site, drawings and quotations, and explain what works, what does not and what can be improved.
-                </li>
-                <li>
-                  <strong>Step 4: Design or revision.</strong> If needed, we prepare fresh layouts, 3D views and working drawings, or revise your existing plan.
-                </li>
-                <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate, so you can decide with confidence.
-                </li>
-                <li>
-                  <strong>Step 6: Construction guidance or execution.</strong> You can hire MT Boss to build, or use our advice and supervision with your own contractor.
+                  <strong>Step 6: Construction guidance or execution.</strong> You can hire MTBOSS to build, or use our advice and supervision with your own contractor.
                 </li>
                 <li>
                   <strong>Step 7: Inspection and handover.</strong> We check quality at key stages and support a clean, complete handover.
@@ -380,30 +324,12 @@ const Content = () => {
                   <strong>Travel and location:</strong> distance from the office can affect visit schedules and cost.
                 </li>
               </ul>
-              <p className="mt-3">
-                A consultant&apos;s fee is usually a small share of the total project cost, and good advice often saves far more than the fee through better planning and fewer mistakes. Be cautious of extremely low fees, since they often mean limited time, missing details or extra charges later.
-              </p>
-              <p className="mt-3">
-                MT Boss explains its scope and charges clearly before you commit, so there are no hidden costs. To discuss your project, request a{" "}
-                <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  free quote
-                </a>
-                .
-              </p>
-            </section>
 
-
-            <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Climate-Smart Advice for Moradabad Buildings
               </h3>
               <p className="mb-3">
-                Good advice responds to local conditions. For projects in Moradabad, MT Boss focuses on:
+                Good advice responds to local conditions. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -439,9 +365,6 @@ const Content = () => {
                 <li>Starting construction from a rough sketch instead of proper drawings.</li>
                 <li>Buying a plot without checking access, size and building potential.</li>
                 <li>Choosing a contractor on the lowest quote alone.</li>
-                <li>Signing without a written scope, schedule and payment terms.</li>
-                <li>Skipping structural design and soil checks.</li>
-                <li>Forgetting parking, staircase position and future expansion.</li>
                 <li>Underplanning electrical, plumbing and drainage layouts.</li>
                 <li>Ignoring waterproofing on terraces, bathrooms and walls.</li>
                 <li>Not checking work at key stages, then discovering problems after plastering.</li>
@@ -468,14 +391,14 @@ const Content = () => {
                 <li>Professional details are shown where they apply.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes every one of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes every one of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -488,18 +411,18 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Architect Consultant FAQs
+                MTBOSS Architect Consultant FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss offer architect consultancy in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS offer architect consultancy in Moradabad?</strong>
                   <br />
                   Yes. We advise on design, plan review, budgets, quotations and site quality.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q3. Can you review a plan I already have?</strong>
@@ -512,7 +435,7 @@ const Content = () => {
                   Yes. We review scope, quantities and rates, and point out missing items.
                 </li>
                 <li>
-                  <strong>Q5. Can MT Boss also build my project?</strong>
+                  <strong>Q5. Can MTBOSS also build my project?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -537,7 +460,7 @@ const Content = () => {
                   We prepare drawings and guide you on typical requirements. Final approvals depend on the relevant authorities.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

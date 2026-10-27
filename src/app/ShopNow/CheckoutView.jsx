@@ -147,7 +147,7 @@ export default function CheckoutView({ productId: initialProductId }) {
     } else {
       // Cart mode
       try {
-        const raw = localStorage.getItem("mtboss-shop-cart") || "[]";
+        const raw = localStorage.getItem("MTBOSS-shop-cart") || "[]";
         const items = JSON.parse(raw);
         setCartItems(Array.isArray(items) ? items : []);
       } catch {}
@@ -196,7 +196,7 @@ export default function CheckoutView({ productId: initialProductId }) {
         } catch {}
       }
       try {
-        const local = JSON.parse(localStorage.getItem("mtboss_saved_addresses") || "[]");
+        const local = JSON.parse(localStorage.getItem("MTBOSS_saved_addresses") || "[]");
         if (Array.isArray(local)) {
           const existing = new Set(list.map((a) => (a.address_line || "").trim().toLowerCase()));
           for (const item of local) {
@@ -432,7 +432,7 @@ export default function CheckoutView({ productId: initialProductId }) {
 
       setSubmittedOrder(d.data);
       if (!product) {
-        localStorage.removeItem("mtboss-shop-cart");
+        localStorage.removeItem("MTBOSS-shop-cart");
         window.dispatchEvent(new Event("storage"));
       }
       setSubmitted(true);

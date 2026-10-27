@@ -8,17 +8,17 @@ export const metadata = {
   keywords:
     'home services near me, electrician near me, plumber near me, AC repair near me, pest control near me, carpenter near me, home repair services, doorstep home services',
   alternates: {
-    canonical: 'https://www.mtboss.in/quick',
+    canonical: 'https://www.MTBOSS.in/quick',
   },
   openGraph: {
     title: 'MTBOSS | Quick Home Services - Book Trusted Professionals Instantly',
     description:
       'Electrician, plumber, AC repair, pest control & 15+ more home services — verified technicians at your doorstep.',
-    url: 'https://www.mtboss.in/quick',
+    url: 'https://www.MTBOSS.in/quick',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
         alt: 'Quick Home Services - MTBOSS',
@@ -32,7 +32,7 @@ export const metadata = {
     title: 'MTBOSS | Quick Home Services - Book Trusted Professionals Instantly',
     description:
       'Electrician, plumber, AC repair, pest control & 15+ more home services — verified technicians at your doorstep.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,

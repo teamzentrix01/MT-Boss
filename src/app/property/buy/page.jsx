@@ -8,17 +8,17 @@ export const metadata = {
   keywords:
     'buy property, flats for sale, plots for sale, residential property, commercial property, verified property listings',
   alternates: {
-    canonical: 'https://www.mtboss.in/property/buy',
+    canonical: 'https://www.MTBOSS.in/property/buy',
   },
   openGraph: {
     title: 'MTBOSS | Buy Verified Properties',
     description:
       'Browse verified flats, plots, and commercial properties for sale — 100% verified, transparent pricing.',
-    url: 'https://www.mtboss.in/property/buy',
+    url: 'https://www.MTBOSS.in/property/buy',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
         alt: 'Buy Property - MTBOSS',
@@ -32,7 +32,7 @@ export const metadata = {
     title: 'MTBOSS | Buy Verified Properties',
     description:
       'Browse verified flats, plots, and commercial properties for sale — 100% verified, transparent pricing.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,

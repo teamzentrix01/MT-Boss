@@ -114,7 +114,7 @@ const Content = () => {
                 Why Choose MTBOSS as Your Civil Contractor in Moradabad
               </h3>
               <p className="mb-3">
-                Among the civil contractors operating in and around Moradabad, MTBOSS Construction Private Limited (www.mtboss.in) stands out for offering an end-to-end construction ecosystem rather than isolated services. Based on their published company profile, here&apos;s what makes them a strong choice:
+                Among the civil contractors operating in and around Moradabad, MTBOSS Construction Private Limited (www.MTBOSS.in) stands out for offering an end-to-end construction ecosystem rather than isolated services. Based on their published company profile, here&apos;s what makes them a strong choice:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of industry experience, having started as a small contracting firm in 2002</li>
@@ -237,8 +237,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

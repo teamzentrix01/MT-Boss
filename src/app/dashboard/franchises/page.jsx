@@ -641,7 +641,7 @@ export default function FranchisesPage() {
                     <Field label="Other Franchise"    value={selected.other_franchise} />
                     <Field label="Training Willing"   value={selected.training_willing} />
                   </div>
-                  <div style={{ marginBottom: '0.2rem', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>Why MTBoss</div>
+                  <div style={{ marginBottom: '0.2rem', fontSize: '0.6875rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)' }}>Why MTBOSS</div>
                   <div className="fr-modal-msg">{selected.message}</div>
                 </>
               )}

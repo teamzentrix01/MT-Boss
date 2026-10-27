@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/apartment-construction-company-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for an apartment construction company in Moradabad? MTBOSS plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/apartment-construction-company-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-apartment-construction-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Apartment Construction Company in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for an apartment construction company in Moradabad? MTBOSS plans, builds and hands over multi-storey homes. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-apartment-construction-moradabad.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/apartment-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-apartment-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-apartment-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -119,13 +119,13 @@ export default function Page() {
     name: "Apartment Construction Services in Moradabad",
     description:
       "MTBOSS provides apartment construction in Moradabad for landowners, developers and investors, including unit planning, structure, masonry, services provisions, waterproofing, flooring, finishing, facade, common areas and final handover.",
-    url: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/apartment-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -220,19 +220,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Apartment Construction Company in Moradabad",
-        item: "https://www.mtboss.in/apartment-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/apartment-construction-company-in-moradabad",
       },
     ],
   };

@@ -253,7 +253,7 @@ export default function FranchiseDashboardPage() {
       const body = new FormData();
       body.append('file', file);
       body.append('upload_preset', preset);
-      body.append('folder', 'mtboss/franchise-projects');
+      body.append('folder', 'MTBOSS/franchise-projects');
 
       const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: 'POST',

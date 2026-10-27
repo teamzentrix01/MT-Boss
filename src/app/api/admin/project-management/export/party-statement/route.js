@@ -7,7 +7,8 @@ import { xlsxResponse, pdfHtmlResponse, inr, ddmmyyyy, tableHtml, escHtml } from
 const MAX_ROWS = 50_000;
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
+  const admin = await requirePmAccess(req);
+  if (!admin) return unauthorized();
   try {
     await ensureProjectManagementPhase4Schema();
     const sp = new URL(req.url).searchParams;
@@ -16,6 +17,22 @@ export async function GET(req) {
     if (!Number.isInteger(partyId) || partyId <= 0)
       return new Response(JSON.stringify({ success: false, error: 'partyId required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
 
+    const isAgent = admin.role === 'agent';
+    const agentId = admin.id;
+
+    if (isAgent) {
+      const allowedCheck = await pool.query(
+        `SELECT 1 FROM pm_projects pr
+         JOIN pm_project_agents pa ON pa.project_id = pr.id
+         WHERE pr.party_id = $1 AND pa.agent_id = $2
+         LIMIT 1`,
+        [partyId, agentId]
+      );
+      if (!allowedCheck.rows.length) {
+        return new Response(JSON.stringify({ success: false, error: 'Unauthorized: You are not assigned to any projects under this party' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
     const [partyRes, projectsRes, paymentsRes] = await Promise.all([
       pool.query(`SELECT * FROM pm_parties WHERE id=$1`, [partyId]),
       // Projects with aggregated financials
@@ -23,15 +40,19 @@ export async function GET(req) {
         WITH rcv AS (SELECT project_id,COALESCE(SUM(amount),0) AS received FROM pm_party_payments WHERE NOT is_deleted GROUP BY project_id)
         SELECT p.*, pa.name AS party_name, COALESCE(r.received,0) AS received,
                p.contract_value-COALESCE(r.received,0) AS pending
-        FROM pm_projects p JOIN pm_parties pa ON pa.id=p.party_id LEFT JOIN rcv r ON r.project_id=p.id
+        FROM pm_projects p
+        JOIN pm_parties pa ON pa.id=p.party_id
+        ${isAgent ? 'JOIN pm_project_agents pa_agent ON pa_agent.project_id = p.id AND pa_agent.agent_id = $3' : ''}
+        LEFT JOIN rcv r ON r.project_id=p.id
         WHERE p.party_id=$1 ORDER BY p.start_date DESC LIMIT $2
-      `, [partyId, MAX_ROWS]),
+      `, isAgent ? [partyId, MAX_ROWS, agentId] : [partyId, MAX_ROWS]),
       // Payment history
       pool.query(`
         SELECT pp.*, p.name AS project_name FROM pm_party_payments pp
         JOIN pm_projects p ON p.id=pp.project_id
+        ${isAgent ? 'JOIN pm_project_agents pa_agent ON pa_agent.project_id = p.id AND pa_agent.agent_id = $3' : ''}
         WHERE p.party_id=$1 AND NOT pp.is_deleted ORDER BY pp.payment_date DESC LIMIT $2
-      `, [partyId, MAX_ROWS]),
+      `, isAgent ? [partyId, MAX_ROWS, agentId] : [partyId, MAX_ROWS]),
     ]);
 
     if (!partyRes.rows[0]) return new Response('Party not found', { status: 404 });

@@ -7,9 +7,6 @@ const Content = () => {
       <div className="flex flex-col lg:flex-row">
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
-          <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Bathroom Waterproofing in Moradabad: MT Boss
-          </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
@@ -28,15 +25,13 @@ const Content = () => {
                 and the wall bases, so the tiles on top only have to look good. MT
                 Boss Construction Private Limited treats bathrooms and toilets in
                 homes, flats, shops, offices, hotels and institutions across
-                Moradabad and Bareilly. Our work follows the promise on our
-                website: planning to completion, with quality work, transparent
-                pricing and on-time delivery.
+                Moradabad and Bareilly. 
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of Bathroom Waterproofing
+              Bathroom Waterproofing
               </h3>
               <p>
                 Bathroom waterproofing is a sealed layer placed beneath the tiles,
@@ -51,10 +46,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -83,15 +78,7 @@ const Content = () => {
                 treatment varies by zone.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Shower and Wet Zone
-              </h4>
-              <p>
-                This area takes direct, continuous water. The floor and the walls
-                around it need full protection, with waterproofing carried higher
-                on the walls than elsewhere [confirm the wall heights MT Boss
-                follows].
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Main Floor
@@ -111,23 +98,7 @@ const Content = () => {
                 reinforcing fabric, so the layer does not crack at the joint.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Drain and Floor Trap
-              </h4>
-              <p>
-                The drain is where the floor layer and plumbing meet. Poor sealing
-                around the trap is one of the most common leak points.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Pipe and Fixture Openings
-              </h4>
-              <p>
-                Water supply lines, flush pipes, geyser connections and soil pipes
-                pass through the floor or walls. Each opening needs careful
-                sealing, because gaps around pipes lead water straight into the
-                slab.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Door Threshold
@@ -199,7 +170,7 @@ const Content = () => {
               <p className="mt-3">
                 If the source is a leaking pipe, the plumber fixes the line first.
                 Waterproofing over an active pipe leak is wasted effort. Our
-                Plumber service on mtboss.in handles this alongside the
+                Plumber service on MTBOSS.in handles this alongside the
                 waterproofing.
               </p>
             </section>
@@ -211,7 +182,7 @@ const Content = () => {
               <p className="mb-3">
                 The right method depends on the bathroom&apos;s condition, whether
                 it is new or existing, and how much breaking you accept [confirm
-                systems and products MT Boss actually uses]. Common approaches
+                systems and products MTBOSS actually uses]. Common approaches
                 include:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -282,7 +253,7 @@ const Content = () => {
                 <li>
                   <strong>Ponding test.</strong> The floor is flooded for a set
                   period while the area below is watched [confirm the test
-                  duration MT Boss follows].
+                  duration MTBOSS follows].
                 </li>
                 <li>
                   <strong>Protective screed.</strong> A thin screed protects the
@@ -380,7 +351,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For ownership or liability questions, please consult a qualified
-                legal professional. MT Boss can prepare a clear inspection note,
+                legal professional. MTBOSS can prepare a clear inspection note,
                 scope and estimate that both parties can review.
               </p>
             </section>
@@ -396,7 +367,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos of the bathroom
+                  MTBOSS.in, or call or WhatsApp us with photos of the bathroom
                   and any damp areas.
                 </li>
                 <li>
@@ -513,7 +484,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -566,19 +537,19 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Bathroom Inspection with MT Boss
+                Book a Bathroom Inspection with MTBOSS
               </h3>
               <p className="mb-3">Ready to stop the seepage for good? Contact us:</p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -596,10 +567,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -613,7 +584,7 @@ const Content = () => {
                 clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for bathroom waterproofing in Moradabad, with every
+                Choose MTBOSS for bathroom waterproofing in Moradabad, with every
                 zone sealed, the layer tested before tiling and the room restored
                 properly.
               </p>
@@ -629,7 +600,7 @@ const Content = () => {
                     Q1. Who provides bathroom waterproofing in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction treats bathroom and toilet leakage across
+                  MTBOSS Construction treats bathroom and toilet leakage across
                   Moradabad and Bareilly.
                 </li>
                 <li>
@@ -680,7 +651,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Building Material Supplier in Moradabad: MT Boss
+            Building Material Supplier in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,11 +25,11 @@ const Content = () => {
                 much as hiring a good contractor.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited helps builders, homeowners,
+                MTBOSS Construction Private Limited helps builders, homeowners,
                 contractors and business owners source essential construction
                 materials through the Shop Now section of our website. Explore
                 cement, steel, bricks and more, and connect with suppliers for
-                your next project. Because MT Boss is also a construction
+                your next project. Because MTBOSS is also a construction
                 company, we understand materials from the site side, not just
                 the sales side.
               </p>
@@ -63,10 +63,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Construction Knowledge Behind Material Supply
+                MTBOSS: Construction Knowledge Behind Material Supply
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving clients across
                 Moradabad and Bareilly. Our team includes architects, civil
                 engineers, site supervisors and skilled tradespeople who work
@@ -85,7 +85,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Materials You Can Source Through MT Boss
+                Materials You Can Source Through MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -168,7 +168,7 @@ const Content = () => {
                 Doors, Windows and Other Fittings
               </h4>
               <p className="mb-3">
-                MT Boss also supports door and window installation, false
+                MTBOSS also supports door and window installation, false
                 ceilings, PVC panels and related fitting work, so your materials
                 and installation can be planned together [confirm product
                 range].
@@ -177,21 +177,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How Buying Through MT Boss Works
+                How Buying Through MTBOSS Works
               </h3>
               <p className="mb-3">The process is designed to be simple.</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>1. Explore.</strong> Open the{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Shop Now
                   </a>{" "}
-                  section on mtboss.in and browse cement, steel, bricks and
+                  section on MTBOSS.in and browse cement, steel, bricks and
                   other materials.
                 </li>
                 <li>
@@ -201,7 +201,7 @@ const Content = () => {
                   estimate it from your plan.
                 </li>
                 <li>
-                  <strong>3. Get connected.</strong> MT Boss connects you with
+                  <strong>3. Get connected.</strong> MTBOSS connects you with
                   suitable suppliers for your requirement [adjust wording to
                   match your actual process].
                 </li>
@@ -288,14 +288,14 @@ const Content = () => {
                 Over-ordering ties up money, while under-ordering stops work.
                 Both are avoidable with planning. The{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Budget Calculator
                 </a>{" "}
-                on mtboss.in helps you form an early idea of your overall
+                on MTBOSS.in helps you form an early idea of your overall
                 construction budget. Once drawings are ready, our engineers can
                 help estimate quantities for cement, steel, bricks and other
                 materials, based on built-up area, number of floors and design.
@@ -321,10 +321,10 @@ const Content = () => {
                 Buying materials separately from construction often leads to
                 blame-shifting when something goes wrong. If the contractor says
                 the material was bad and the supplier says the work was bad, you
-                are stuck in the middle. MT Boss reduces this risk because we
+                are stuck in the middle. MTBOSS reduces this risk because we
                 also offer{" "}
                 <a
-                  href="https://www.mtboss.in/Services/all"
+                  href="https://www.MTBOSS.in/Services/all"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -344,12 +344,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Benefits of Sourcing Materials Through MT Boss
+                Benefits of Sourcing Materials Through MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Single platform:</strong> browse and enquire through
-                  the Shop Now section on mtboss.in
+                  the Shop Now section on MTBOSS.in
                 </li>
                 <li>
                   <strong>Construction expertise:</strong> guidance from
@@ -451,26 +451,26 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Material Enquiry with MT Boss
+                Start Your Material Enquiry with MTBOSS
               </h3>
               <p className="mb-3">
-                Ready to source materials for your project? Contact the MT Boss
+                Ready to source materials for your project? Contact the MTBOSS
                 team:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (open{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -485,10 +485,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -501,7 +501,7 @@ const Content = () => {
                 and we will respond with the next steps.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted building material supplier in
+                Choose MTBOSS, your trusted building material supplier in
                 Moradabad, for the right materials, a stronger start and a
                 building made to last.
               </p>
@@ -518,12 +518,12 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  MT Boss helps you source cement, steel, bricks and more
+                  MTBOSS helps you source cement, steel, bricks and more
                   through its Shop Now section, backed by construction
                   expertise.
                 </li>
                 <li>
-                  <strong>Q2. What materials can I get through MT Boss?</strong>
+                  <strong>Q2. What materials can I get through MTBOSS?</strong>
                   <br />
                   Cement, steel, bricks, sand, aggregate, tiles and other
                   construction materials [confirm final list].
@@ -531,7 +531,7 @@ const Content = () => {
                 <li>
                   <strong>Q3. How do I place a material enquiry?</strong>
                   <br />
-                  Open Shop Now on mtboss.in, or call or WhatsApp +91 94584
+                  Open Shop Now on MTBOSS.in, or call or WhatsApp +91 94584
                   10866 with your material list and quantity.
                 </li>
                 <li>
@@ -547,14 +547,14 @@ const Content = () => {
                   <br />
                   Yes. Use the{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Budget Calculator
                   </a>{" "}
-                  on mtboss.in for an early construction budget idea.
+                  on MTBOSS.in for an early construction budget idea.
                 </li>
                 <li>
                   <strong>
@@ -577,7 +577,7 @@ const Content = () => {
                     Q8. Can I get construction services along with materials?
                   </strong>
                   <br />
-                  Yes. MT Boss offers residential, commercial, industrial and
+                  Yes. MTBOSS offers residential, commercial, industrial and
                   infrastructure construction, plus renovation and
                   waterproofing.
                 </li>

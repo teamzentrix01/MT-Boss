@@ -82,7 +82,7 @@ export default function FranchiseOperationsManager({ permissions }) {
     const body = new FormData();
     body.append('file', file);
     body.append('upload_preset', preset);
-    body.append('folder', `mtboss/franchise-${resource}`);
+    body.append('folder', `MTBOSS/franchise-${resource}`);
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body });
     const data = await res.json();
     if (!data.secure_url) throw new Error('Image upload failed');

@@ -102,8 +102,8 @@ export default function LeadManagementAdmin({ isDarkMode }) {
   const loadLeads = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
     try {
-      // Silent polls skip heavy external sync (TTL-gated server-side) and keep assignees warm.
-      const qs = silent ? '?limit=200&lite=0' : '?limit=200';
+      // Silent polls skip heavy external sync (TTL-gated server-side) and large assignee directory dump.
+      const qs = silent ? '?limit=200&lite=1' : '?limit=200';
       const res = await fetch(`/api/admin/lead-management${qs}`, {
         headers: { Authorization: `Bearer ${token()}` },
       });

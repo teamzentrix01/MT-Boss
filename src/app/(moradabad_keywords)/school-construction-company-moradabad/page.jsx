@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "school construction company Moradabad, school building construction Moradabad, school construction contractor Moradabad, CBSE school building Moradabad, playschool construction Moradabad, coaching institute construction Moradabad, MTBOSS Moradabad, school building cost Moradabad, MTBOSS budget calculator, school construction materials Moradabad, MTBOSS Kanth Road, school infrastructure Moradabad, school construction quote Moradabad, MTBOSS institutional construction, education building contractor UP",
   alternates: {
-    canonical: "https://www.mtboss.in/school-construction-company-in-moradabad",
+    canonical: "https://www.MTBOSS.in/school-construction-company-in-moradabad",
   },
   openGraph: {
     title: "School Construction Company in Moradabad | MTBOSS",
     description:
       "Need a school construction company in Moradabad? MTBOSS offers design coordination, build and material supply together. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/school-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/school-construction-company-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-school-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-school-construction-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "School Construction Company in Moradabad - MTBOSS Construction",
@@ -36,7 +36,7 @@ export const metadata = {
     title: "School Construction Company in Moradabad | MTBOSS",
     description:
       "Need a school construction company in Moradabad? MTBOSS offers design coordination, build and material supply together. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-school-construction-moradabad.jpg"],
+    images: ["https://www.MTBOSS.in/og-school-construction-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/school-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/school-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -92,7 +92,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

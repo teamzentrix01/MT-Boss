@@ -49,13 +49,14 @@ export async function PATCH(req, { params }) {
       const currentStock = Number(stockRes.rows[0]?.current_stock || 0);
       const isOverUsed = (currentStock - q) < 0;
 
+      const unit = b.unit !== undefined ? (b.unit ? String(b.unit).trim() : null) : old.unit;
       const r = await c.query(
         `UPDATE pm_material_used
          SET quantity = $1, used_date = $2, used_for = $3, note = $4,
-             over_used = $5, updated_at = NOW()
-         WHERE id = $6
+             over_used = $5, unit = $6, updated_at = NOW()
+         WHERE id = $7
          RETURNING *`,
-        [q, b.used_date, b.used_for || null, b.note || null, isOverUsed, id]
+        [q, b.used_date, b.used_for || null, b.note || null, isOverUsed, unit, id]
       );
 
       const actor = actorFromAdmin(auth.user);

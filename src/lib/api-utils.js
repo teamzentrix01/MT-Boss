@@ -75,7 +75,7 @@ export async function ensureTableWithTimeout(createTableSQL, timeoutMs = 5000) {
   ]);
 }
 
-const globalGuards = globalThis.__mtboss_schema_guards__ || (globalThis.__mtboss_schema_guards__ = new Map());
+const globalGuards = globalThis.__MTBOSS_schema_guards__ || (globalThis.__MTBOSS_schema_guards__ = new Map());
 
 /**
  * Deduplicate schema/bootstrap work across all routes and warm server processes.

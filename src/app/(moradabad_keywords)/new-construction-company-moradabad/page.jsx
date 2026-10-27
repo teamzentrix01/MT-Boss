@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/new-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/new-construction-company-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for a new construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/new-construction-company-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-new-construction-company-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "New Construction Company in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for a new construction company in Moradabad? MTBOSS offers design, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-new-construction-company-moradabad.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/new-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-new-construction-company-moradabad.jpg",
+      "https://www.MTBOSS.in/og-new-construction-company-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -119,13 +119,13 @@ export default function Page() {
     name: "New Construction Services in Moradabad",
     description:
       "MTBOSS provides new construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including design coordination, structure, facade, services provisions, waterproofing, flooring, finishing, modular kitchen and interiors, outdoor works and final handover.",
-    url: "https://www.mtboss.in/new-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/new-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -212,19 +212,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "New Construction Company in Moradabad",
-        item: "https://www.mtboss.in/new-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/new-construction-company-in-moradabad",
       },
     ],
   };

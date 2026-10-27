@@ -13,19 +13,27 @@ export async function GET(req) {
     const lite = searchParams.get('lite') === '1';
     const { page, pageSize, offset } = pageParams(searchParams);
 
+    const isAgent = admin.role === 'agent';
+    const agentId = admin.id;
+
     // Typeahead / convert-modal: skip payment/project aggregates
     if (lite) {
       const result = await pool.query(
         `SELECT p.id, p.name, p.phone, p.email, p.gst_no, p.address, p.created_at,
                 COUNT(*) OVER()::int AS total_count
            FROM pm_parties p
-          WHERE $1 = ''
+          WHERE ($1 = ''
              OR p.name ILIKE '%' || $1 || '%'
              OR COALESCE(p.phone,'') ILIKE '%' || $1 || '%'
-             OR COALESCE(p.email,'') ILIKE '%' || $1 || '%'
+             OR COALESCE(p.email,'') ILIKE '%' || $1 || '%')
+            ${isAgent ? `AND EXISTS (
+              SELECT 1 FROM pm_projects pr
+              JOIN pm_project_agents pa ON pa.project_id = pr.id
+              WHERE pr.party_id = p.id AND pa.agent_id = $4
+            )` : ''}
           ORDER BY p.created_at DESC
           LIMIT $2 OFFSET $3`,
-        [search, pageSize, offset]
+        isAgent ? [search, pageSize, offset, agentId] : [search, pageSize, offset]
       );
       const total = Number(result.rows[0]?.total_count || 0);
       return NextResponse.json({
@@ -40,10 +48,15 @@ export async function GET(req) {
          SELECT p.id, p.name, p.phone, p.email, p.gst_no, p.address, p.created_at,
                 COUNT(*) OVER()::int AS total_count
            FROM pm_parties p
-          WHERE $1 = ''
+          WHERE ($1 = ''
              OR p.name ILIKE '%' || $1 || '%'
              OR COALESCE(p.phone, '') ILIKE '%' || $1 || '%'
-             OR COALESCE(p.email, '') ILIKE '%' || $1 || '%'
+             OR COALESCE(p.email, '') ILIKE '%' || $1 || '%')
+            ${isAgent ? `AND EXISTS (
+              SELECT 1 FROM pm_projects pr
+              JOIN pm_project_agents pa ON pa.project_id = pr.id
+              WHERE pr.party_id = p.id AND pa.agent_id = $4
+            )` : ''}
           ORDER BY p.created_at DESC
           LIMIT $2 OFFSET $3
        ),
@@ -54,6 +67,7 @@ export async function GET(req) {
                 COALESCE(SUM(pay.received), 0) AS total_received
            FROM pm_projects pr
            JOIN filtered f ON f.id = pr.party_id
+           ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = pr.id AND pa.agent_id = $4' : ''}
            LEFT JOIN LATERAL (
              SELECT COALESCE(SUM(amount), 0) AS received
                FROM pm_party_payments
@@ -70,12 +84,23 @@ export async function GET(req) {
          FROM filtered f
          LEFT JOIN totals t ON t.party_id = f.id
         ORDER BY f.created_at DESC`,
-      [search, pageSize, offset]
+      isAgent ? [search, pageSize, offset, agentId] : [search, pageSize, offset]
     );
+
+    const hasPayments = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('payments');
+    const rows = hasPayments
+      ? result.rows
+      : result.rows.map((r) => ({
+          ...r,
+          total_contract_value: null,
+          total_received: null,
+          total_pending: null,
+        }));
+
     const total = Number(result.rows[0]?.total_count || 0);
     return NextResponse.json({
       success: true,
-      data: result.rows,
+      data: rows,
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) || 1 },
     });
   } catch (error) { return NextResponse.json({ success:false, error:error.message || 'Could not load parties' }, { status:500 }); }
@@ -83,6 +108,9 @@ export async function GET(req) {
 
 export async function POST(req) {
   const admin = await requirePmAccess(req); if (!admin) return unauthorized();
+  if (admin.role === 'agent') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot create parties' }, { status: 403 });
+  }
   try {
     await ensureProjectManagementSchema(); const body = await req.json(); const name = String(body.name || '').trim();
     if (!name) return NextResponse.json({ success:false, error:'Party name is required' }, {status:400});

@@ -75,6 +75,7 @@ export default function PropertyEnquiriesManager({ isDarkMode }) {
       if (!res.ok || !data.success) throw new Error(data.error || 'Unable to load enquiries');
       setItems(data.data || []);
       setPagination(data.pagination || { page: 1, limit: 25, total: 0, pages: 1 });
+      if (data.metrics) setMetrics(data.metrics);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -83,7 +84,6 @@ export default function PropertyEnquiriesManager({ isDarkMode }) {
   }, [page, statusFilter, typeFilter, debouncedQ]);
 
   useEffect(() => { load(); }, [load]);
-  useEffect(() => { loadMetrics(); }, [loadMetrics]);
 
   const updateStatus = useCallback(async (id, status) => {
     setUpdatingId(id);
@@ -346,7 +346,7 @@ const EnquiryCard = memo(function EnquiryCard({ item, cardClass, subCardClass, u
             </Link>
           </h3>
           <p className="text-xs text-zinc-500 flex flex-wrap items-center gap-2">
-            <span>📍 {item.property_location || 'Location not specified'}</span>
+            <span>{item.property_location || 'Location not specified'}</span>
             {item.property_price && (
               <>
                 <span>•</span>

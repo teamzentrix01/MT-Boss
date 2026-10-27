@@ -355,7 +355,7 @@ export default function ServiceDetailPage() {
   const aboutBody     = service.about_body     || service.description;
   const ctaHeading    = service.cta_heading    || `Start Your ${service.title} Project`;
   const phone         = service.contact_phone || COMPANY_CONTACT.phone;
-  const email         = service.contact_email  || "mtboss2016@gmail.com";
+  const email         = service.contact_email  || "MTBOSS2016@gmail.com";
 
   const getTomorrowIso = () => {
     const d = new Date();
@@ -801,12 +801,52 @@ export default function ServiceDetailPage() {
                   </div>
                 </div>
 
-                {/* Section 3: Project scope, budget and drawings (Optional Box matching image) */}
-                <div className="mt-6 rounded-2xl border border-zinc-200 p-4.5 bg-zinc-50/50 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-sm text-zinc-900">Project scope, budget and drawings</h4>
-                    <span className="text-xs text-zinc-400 font-medium">Optional</span>
-                  </div>
+{/* Section 3: Project scope, budget and drawings */}
+<div className="mt-6 rounded-2xl border border-zinc-200 p-4.5 bg-zinc-50/50 space-y-4">
+  <div className="flex items-center justify-between">
+    <h4 className="font-bold text-sm text-zinc-900">
+      Project scope, budget and drawings
+    </h4>
+    <span className="text-xs text-zinc-400 font-medium">
+      Optional
+    </span>
+  </div>
+
+  {/* Live Location */}
+  <div>
+    <label
+      className={`text-xs font-semibold block mb-1.5 ${
+        isDark ? "text-zinc-400" : "text-zinc-600"
+      }`}
+    >
+      Your Location
+    </label>
+
+    <button
+      type="button"
+      onClick={fetchLiveLocation}
+      disabled={fetchingGps}
+      className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+        gpsCoords
+          ? "bg-green-600 text-white border-green-600"
+          : isDark
+            ? "bg-zinc-800 text-zinc-300 border-zinc-600 hover:border-blue-500"
+            : "bg-white text-zinc-700 border-zinc-300 hover:border-blue-500"
+      }`}
+    >
+      {fetchingGps
+        ? "Fetching location..."
+        : gpsCoords
+          ? `✓ Location Fetched (${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)})`
+          : "Use My Live Location"}
+    </button>
+
+    {gpsError && (
+      <p className="mt-1.5 text-xs font-medium text-red-500">
+        {gpsError}
+      </p>
+    )}
+  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>

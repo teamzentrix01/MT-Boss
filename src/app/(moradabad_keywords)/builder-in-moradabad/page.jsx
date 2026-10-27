@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'builder in Moradabad, best builder Moradabad, house builder Moradabad, construction company in Moradabad, building contractor Moradabad, home builder near me, residential builder Moradabad, commercial builder Moradabad, top builders Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/builder-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/builder-in-moradabad',
   },
   openGraph: {
     title: 'Best Builder in Moradabad | MTBOSS Construction Experts',
     description:
       'Searching for a trusted builder in Moradabad? MTBOSS offers home, commercial & industrial construction with transparent pricing. Get a free quote now!',
-    url: 'https://www.mtboss.in/builder-in-moradabad',
+    url: 'https://www.MTBOSS.in/builder-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-builder-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-builder-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Builder in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Best Builder in Moradabad | MTBOSS Construction Experts',
     description:
       'Searching for a trusted builder in Moradabad? MTBOSS offers home, commercial & industrial construction with transparent pricing. Get a free quote now!',
-    images: ['https://www.mtboss.in/og-builder-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-builder-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/builder-in-moradabad',
+  url: 'https://www.MTBOSS.in/builder-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-puja-room-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-puja-room-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for puja room Bareilly? MTBOSS designs peaceful mandirs with marble, wood, lighting and smart storage. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-puja-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-puja-room-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-puja-room-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-puja-room-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Puja Room in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for puja room Bareilly? MTBOSS designs peaceful mandirs with marble, wood, lighting and smart storage. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-puja-room-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-puja-room-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-puja-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-puja-room-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-puja-room-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-puja-room-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Puja Room Interior Design and Mandir Services in Bareilly",
     description:
       "MTBOSS provides puja room interior design and mandir services in Bareilly. Services include puja room planning, dedicated puja room design, puja corner design, wall-mounted mandir, mandir platform or base unit, marble and stone work, wooden mandir and woodwork, backlit panels and jaali work, false ceiling and lighting, flooring and wall finishes, doors and partition options, storage solutions, electrical and ventilation planning, puja room renovation and full home interiors.",
-    url: "https://www.mtboss.in/interior-designer-for-puja-room-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-puja-room-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Puja Room in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-puja-room-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-puja-room-in-bareilly",
       },
     ],
   };

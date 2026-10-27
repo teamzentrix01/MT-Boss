@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "affordable architect in Moradabad, budget architect Moradabad, low cost house construction Moradabad, cheap architect near me Moradabad, affordable construction company Moradabad, MTBOSS Moradabad, house construction cost Moradabad, MTBOSS budget calculator, wholesale building materials Moradabad, affordable home design Moradabad, MTBOSS Kanth Road, budget friendly construction Moradabad, construction quote Moradabad, low cost commercial construction Moradabad, MTBOSS material supply",
   alternates: {
-    canonical: "https://www.mtboss.in/affordable-architect-in-moradabad",
+    canonical: "https://www.MTBOSS.in/affordable-architect-in-moradabad",
   },
   openGraph: {
     title: "Affordable Architect in Moradabad | MTBOSS Construction",
     description:
       "Looking for an affordable architect in Moradabad? MTBOSS offers design, construction and wholesale materials together. Call +91 94584 10866 for a free quote.",
-    url: "https://www.mtboss.in/affordable-architect-in-moradabad",
+    url: "https://www.MTBOSS.in/affordable-architect-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-affordable-architect-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-affordable-architect-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Affordable Architect in Moradabad - MTBOSS Construction",
@@ -37,7 +37,7 @@ export const metadata = {
     description:
       "Looking for an affordable architect in Moradabad? MTBOSS offers design, construction and wholesale materials together. Call +91 94584 10866 for a free quote.",
     images: [
-      "https://www.mtboss.in/og-affordable-architect-moradabad.jpg",
+      "https://www.MTBOSS.in/og-affordable-architect-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,9 +51,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/affordable-architect-in-moradabad",
+    url: "https://www.MTBOSS.in/affordable-architect-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress:
@@ -93,7 +93,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

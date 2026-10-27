@@ -47,6 +47,9 @@ export async function GET(req, { params }) {
         const leadRes = await pool.query(`SELECT * FROM agent_leads WHERE id = $1`, [leadNumericId]);
         const lead = leadRes.rows[0];
         if (!lead) return NextResponse.json({ success: false, error: 'Lead not found' }, { status: 404 });
+        if (pmAccess.role === 'agent' && Number(lead.agent_id) !== Number(pmAccess.id)) {
+          return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this lead' }, { status: 403 });
+        }
         return NextResponse.json({
           success: true,
           project: {
@@ -183,6 +186,13 @@ export async function GET(req, { params }) {
              ORDER BY pa.assigned_at ASC`,
             [id]
           );
+          if (pmAccess.role === 'agent') {
+            const isAssigned = agentsRes.rows.some((a) => Number(a.id) === Number(pmAccess.id))
+              || (pmRes.rows[0].source_lead_id ? Number((await pool.query('SELECT agent_id FROM agent_leads WHERE id = $1', [pmRes.rows[0].source_lead_id])).rows[0]?.agent_id) === Number(pmAccess.id) : false);
+            if (!isAssigned) {
+              return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
+            }
+          }
           return NextResponse.json({
             success: true,
             project: pmRes.rows[0],
@@ -196,6 +206,9 @@ export async function GET(req, { params }) {
       const project = rows[0];
       if (!project) {
         return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
+      }
+      if (pmAccess.role === 'agent' && Number(project.assigned_agent_id) !== Number(pmAccess.id)) {
+        return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
       }
 
       const [ops, agents] = await Promise.all([
@@ -271,6 +284,20 @@ export async function PATCH(req, { params }) {
       );
       if (pmRes.rows[0]) {
         const pmProject = pmRes.rows[0];
+
+        if (pmAccess.role === 'agent') {
+          const checkAssigned = await pool.query(
+            'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+            [id, pmAccess.id]
+          );
+          if (checkAssigned.rows.length === 0) {
+            return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
+          }
+          if (assignmentProvided) {
+            return NextResponse.json({ success: false, error: 'Forbidden: Agents cannot assign or reassign projects' }, { status: 403 });
+          }
+        }
+
         const targetAgentId = assignmentProvided && body.assigned_agent_id ? Number(body.assigned_agent_id) : null;
         let selectedAgent = null;
 
@@ -360,6 +387,15 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
+    if (pmAccess.role === 'agent') {
+      if (Number(current.assigned_agent_id) !== Number(pmAccess.id)) {
+        return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
+      }
+      if (assignmentProvided) {
+        return NextResponse.json({ success: false, error: 'Forbidden: Agents cannot assign or reassign projects' }, { status: 403 });
+      }
+    }
+
     if (assignmentProvided && body.assigned_agent_id) {
       const agent = await pool.query(
         `SELECT id, name, city FROM agents WHERE id = $1 AND status = 'Approved' AND login_enabled = TRUE AND must_change_password = FALSE`,
@@ -445,6 +481,9 @@ export async function POST(req, { params }) {
     const project = exists.rows[0];
     if (!project) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
+    }
+    if (pmAccess.role === 'agent' && Number(project.assigned_agent_id) !== Number(pmAccess.id)) {
+      return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
     }
 
     let result;
@@ -615,11 +654,14 @@ export async function DELETE(req, { params }) {
     }
 
     const project = await pool.query(
-      "SELECT id FROM projects WHERE id = $1 AND project_kind = 'operational'",
+      "SELECT id, assigned_agent_id FROM projects WHERE id = $1 AND project_kind = 'operational'",
       [projectId]
     );
     if (!project.rows[0]) {
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
+    }
+    if (pmAccess.role === 'agent' && Number(project.rows[0].assigned_agent_id) !== Number(pmAccess.id)) {
+      return NextResponse.json({ success: false, error: 'Forbidden: You are not assigned to this project' }, { status: 403 });
     }
 
     const result = await pool.query(

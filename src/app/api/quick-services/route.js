@@ -37,7 +37,9 @@ const ensureQuickServiceSeoColumns = createInitializationGuard(async () => {
         ADD COLUMN IF NOT EXISTS cities TEXT[] NOT NULL DEFAULT '{}',
         ADD COLUMN IF NOT EXISTS main_category VARCHAR(200),
         ADD COLUMN IF NOT EXISTS sub_category VARCHAR(200),
-        ADD COLUMN IF NOT EXISTS visiting_price DECIMAL(10,2)
+        ADD COLUMN IF NOT EXISTS visiting_price DECIMAL(10,2),
+        ADD COLUMN IF NOT EXISTS image_fit VARCHAR(20) DEFAULT 'icon',
+        ADD COLUMN IF NOT EXISTS color VARCHAR(20) DEFAULT 'blue'
     `);
 
     // Backfill icon_url and icon_type for legacy rows
@@ -175,7 +177,13 @@ export async function POST(req) {
       coverage_details,
       how_to_use,
       cities,
+      image_fit,
+      imageFit,
+      color,
     } = await req.json();
+
+    const finalImageFit = image_fit || imageFit || 'icon';
+    const finalColor = color || 'blue';
 
     // Determine iconType, iconName, iconUrl
     let iconType = rawIconType;
@@ -224,9 +232,10 @@ export async function POST(req) {
         icon, icon_type, icon_name, icon_url,
         label, description, base_price, duration, visiting_price,
         main_category, sub_category, sub_category_images,
-        slug, video_url, seo_title, seo_description, coverage_details, how_to_use, cities
+        slug, video_url, seo_title, seo_description, coverage_details, how_to_use, cities,
+        image_fit, color
       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb, $13, $14, $15, $16, $17, $18, $19)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::jsonb, $13, $14, $15, $16, $17, $18, $19, $20, $21)
        RETURNING *`,
       [
         legacyIconValue,
@@ -248,6 +257,8 @@ export async function POST(req) {
         coverage_details || null,
         how_to_use || null,
         normalizedCities,
+        finalImageFit,
+        finalColor,
       ]
     );
 
@@ -288,7 +299,13 @@ export async function PUT(req) {
       coverage_details,
       how_to_use,
       cities,
+      image_fit,
+      imageFit,
+      color,
     } = await req.json();
+
+    const finalImageFit = image_fit || imageFit || 'icon';
+    const finalColor = color || 'blue';
 
     // Determine iconType, iconName, iconUrl
     let iconType = rawIconType;
@@ -339,8 +356,9 @@ export async function PUT(req) {
            main_category=$10, sub_category=$11,
            sub_category_images=COALESCE($12::jsonb, sub_category_images),
            slug=$13, video_url=$14, seo_title=$15, seo_description=$16,
-           coverage_details=$17, how_to_use=$18, cities=$19
-       WHERE id=$20
+           coverage_details=$17, how_to_use=$18, cities=$19,
+           image_fit=$20, color=$21
+       WHERE id=$22
        RETURNING *`,
       [
         legacyIconValue,
@@ -364,6 +382,8 @@ export async function PUT(req) {
         coverage_details || null,
         how_to_use || null,
         normalizedCities,
+        finalImageFit,
+        finalColor,
         id,
       ]
     );

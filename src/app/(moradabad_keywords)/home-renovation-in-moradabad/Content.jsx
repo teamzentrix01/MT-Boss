@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Home Renovation in Moradabad: MT Boss
+            Home Renovation in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,7 +16,7 @@ const Content = () => {
               <p>
                 Home renovation in Moradabad is the repair, upgrade or remodelling
                 of an existing house, from fresh paint and new flooring to
-                bathroom rebuilds, layout changes and added floors. MT Boss
+                bathroom rebuilds, layout changes and added floors. MTBOSS
                 Construction Private Limited, based on Kanth Road, offers building
                 renovation across Moradabad and Bareilly, with civil, plumbing,
                 electrical, carpentry, waterproofing and painting work from one
@@ -37,7 +37,7 @@ const Content = () => {
                 a shopping list.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -103,7 +103,7 @@ const Content = () => {
                 <li>
                   Check the structure before removing walls: a qualified
                   structural engineer should confirm which walls carry load
-                  [confirm MT Boss&apos;s structural design or consultant
+                  [confirm MTBOSS&apos;s structural design or consultant
                   arrangement]
                 </li>
                 <li>Check permissions: see the section below</li>
@@ -280,13 +280,13 @@ const Content = () => {
                   <strong>Contingency reserve:</strong> a margin for hidden
                   problems, commonly in the range of 10 to 15 percent of the
                   budget as general guidance, with older houses sometimes needing
-                  more [confirm MT Boss&apos;s advised contingency]
+                  more [confirm MTBOSS&apos;s advised contingency]
                 </li>
               </ul>
               <p className="mt-3">
                 If money is tight, finish phase one fully and spread the rest over
                 time. Cosmetic upgrades can wait, while leaks and wiring faults
-                cannot. Use the Budget Calculator on mtboss.in for an early idea,
+                cannot. Use the Budget Calculator on MTBOSS.in for an early idea,
                 then request an itemised quotation after inspection.
               </p>
             </section>
@@ -421,11 +421,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Services From MT Boss Under One Roof
+                Services From MTBOSS Under One Roof
               </h3>
               <p>
                 Renovation touches many trades, and coordination decides the
-                result. Through mtboss.in, MT Boss offers Building Renovation,
+                result. Through MTBOSS.in, MTBOSS offers Building Renovation,
                 Building Repair, Architecture &amp; Interior, Water Proofing,
                 Plumber, Electrician, Tile &amp; Marble, False Ceiling, Carpenter,
                 Door &amp; Window Install, Painter, Wallpaper Install, Modular
@@ -434,67 +434,11 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Home renovation, repair and
-                  remodelling, alongside construction and home services
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala, Kanth Road, Moradabad
-                  (behind KR Collection, near Domino&apos;s), Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Coverage:</strong> Moradabad, Bareilly and nearby areas
-                  of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add registration, GST and any
-                  certifications you can show]
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -543,7 +487,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Renovation With MT Boss
+                Start Your Renovation With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -560,21 +504,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -589,7 +533,7 @@ const Content = () => {
                 clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for home renovation in Moradabad, with the house
+                Choose MTBOSS for home renovation in Moradabad, with the house
                 inspected first, the work sequenced properly and every cost
                 written down.
               </p>
@@ -603,7 +547,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who handles home renovation in Moradabad?</strong>
                   <br />
-                  MT Boss Construction handles repair, remodelling and finishing
+                  MTBOSS Construction handles repair, remodelling and finishing
                   across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -639,7 +583,7 @@ const Content = () => {
                 <li>
                   <strong>Q7. Can I estimate my budget first?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on mtboss.in, then request an
+                  Yes. Use the Budget Calculator on MTBOSS.in, then request an
                   itemised quotation.
                 </li>
                 <li>
@@ -651,7 +595,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book an inspection?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

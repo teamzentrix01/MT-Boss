@@ -53,7 +53,7 @@ export default function CartView() {
   // Load cart from localStorage
   const loadCart = useCallback(() => {
     try {
-      const raw = localStorage.getItem('mtboss-shop-cart') || '[]';
+      const raw = localStorage.getItem('MTBOSS-shop-cart') || '[]';
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
         setCart(parsed);
@@ -76,7 +76,7 @@ export default function CartView() {
   const saveCart = (newCart) => {
     setCart(newCart);
     try {
-      localStorage.setItem('mtboss-shop-cart', JSON.stringify(newCart));
+      localStorage.setItem('MTBOSS-shop-cart', JSON.stringify(newCart));
       window.dispatchEvent(new Event('storage'));
     } catch (e) {
       console.error('Failed to save cart:', e);

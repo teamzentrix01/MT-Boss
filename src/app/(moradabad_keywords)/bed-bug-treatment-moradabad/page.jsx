@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Bed Bug Treatment in Moradabad | MT Boss',
+  title: 'Bed Bug Treatment in Moradabad | MTBOSS',
   description:
-    'Bed bug treatment in Moradabad by MT Boss. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
+    'Bed bug treatment in Moradabad by MTBOSS. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
   keywords:
-    'bed bug treatment Moradabad, bed bugs control Moradabad, bed bug pest control Moradabad, bed bug removal Moradabad, bed bug treatment near me Moradabad, bed bug treatment for hotels Moradabad, bed bug treatment for hostels Moradabad, bed bug treatment for PG Moradabad, mattress bed bug treatment Moradabad, MT Boss bed bug treatment Moradabad',
+    'bed bug treatment Moradabad, bed bugs control Moradabad, bed bug pest control Moradabad, bed bug removal Moradabad, bed bug treatment near me Moradabad, bed bug treatment for hotels Moradabad, bed bug treatment for hostels Moradabad, bed bug treatment for PG Moradabad, mattress bed bug treatment Moradabad, MTBOSS bed bug treatment Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/bed-bug-treatment-moradabad',
+    canonical: 'https://www.MTBOSS.in/bed-bug-treatment-moradabad',
   },
   openGraph: {
-    title: 'Bed Bug Treatment in Moradabad | MT Boss',
+    title: 'Bed Bug Treatment in Moradabad | MTBOSS',
     description:
-      'Bed bug treatment in Moradabad by MT Boss. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
-    url: 'https://www.mtboss.in/bed-bug-treatment-moradabad',
+      'Bed bug treatment in Moradabad by MTBOSS. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/bed-bug-treatment-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-bed-bug-treatment-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-bed-bug-treatment-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Bed Bug Treatment in Moradabad - MT Boss',
+        alt: 'Bed Bug Treatment in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bed Bug Treatment in Moradabad | MT Boss',
+    title: 'Bed Bug Treatment in Moradabad | MTBOSS',
     description:
-      'Bed bug treatment in Moradabad by MT Boss. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
-    images: ['https://www.mtboss.in/og-bed-bug-treatment-moradabad.jpg'],
+      'Bed bug treatment in Moradabad by MTBOSS. Inspection, targeted treatment for beds, sofas and rooms, plus follow-up. Call or WhatsApp +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-bed-bug-treatment-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/bed-bug-treatment-moradabad',
+  url: 'https://www.MTBOSS.in/bed-bug-treatment-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

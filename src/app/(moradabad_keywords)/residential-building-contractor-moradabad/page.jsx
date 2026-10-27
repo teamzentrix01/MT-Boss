@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/residential-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/residential-building-contractor-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Hire a residential building contractor in Moradabad. MTBOSS offers clear scope, quality materials and on-time handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/residential-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/residential-building-contractor-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-residential-building-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-residential-building-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Residential Building Contractor in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Hire a residential building contractor in Moradabad. MTBOSS offers clear scope, quality materials and on-time handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-residential-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-residential-building-contractor-moradabad.jpg",
     ],
   },
 
@@ -70,14 +70,14 @@ export default function Page() {
     name: "MTBOSS Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/residential-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/residential-building-contractor-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-residential-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-residential-building-contractor-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -138,14 +138,14 @@ export default function Page() {
       "MTBOSS is a residential building contractor in Moradabad offering labour coordination, material supply, foundation work, RCC structure, masonry, electrical and plumbing coordination, waterproofing, flooring, finishing, renovation and final home handover.",
 
     url:
-      "https://www.mtboss.in/residential-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/residential-building-contractor-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -244,19 +244,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Residential Building Contractor in Moradabad",
-        item: "https://www.mtboss.in/residential-building-contractor-in-moradabad",
+        item: "https://www.MTBOSS.in/residential-building-contractor-in-moradabad",
       },
     ],
   };

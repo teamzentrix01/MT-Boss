@@ -7,7 +7,7 @@ export default function DashboardHelpButton({ phoneHref, whatsappHref }) {
   const [open, setOpen] = useState(false);
 
   const openAssistant = () => {
-    window.dispatchEvent(new Event("mtboss:open-chat"));
+    window.dispatchEvent(new Event("MTBOSS:open-chat"));
     setOpen(false);
   };
 
@@ -17,7 +17,7 @@ export default function DashboardHelpButton({ phoneHref, whatsappHref }) {
         <div className="admin-help-menu" role="menu" aria-label="Help options">
           <button type="button" role="menuitem" onClick={openAssistant}>
             <MessageSquare size={18} strokeWidth={1.7} aria-hidden="true" />
-            Ask MTBoss AI
+            Ask MTBOSS AI
           </button>
           <a role="menuitem" href={phoneHref}>
             <Phone size={18} strokeWidth={1.7} aria-hidden="true" />

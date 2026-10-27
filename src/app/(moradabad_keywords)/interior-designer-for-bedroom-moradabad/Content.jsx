@@ -208,8 +208,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Bedroom in Moradabad: Calm, Comfortable and
-            Beautifully Planned Bedrooms by MT Boss
+            Interior Designer for Bedroom in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -220,18 +219,11 @@ const Content = () => {
                 at home.
               </p>
 
-              <p className="mt-3">
-                A poorly planned bedroom leads to clutter, bad lighting,
-                cramped movement, overflowing wardrobes and restless sleep.
-              </p>
+
+              
 
               <p className="mt-3">
-                A well-designed bedroom balances comfort, storage, lighting,
-                privacy and style without making the room feel crowded.
-              </p>
-
-              <p className="mt-3">
-                MT Boss, also known as MTBOSS Construction Private Limited, is
+                MTBOSS, also known as MTBOSS Construction Private Limited, is
                 a Moradabad-based construction and interiors company. We design
                 bedrooms with an understanding of structure, wiring, ventilation
                 and finishing, not only decoration.
@@ -241,7 +233,7 @@ const Content = () => {
                 Whether you need a master bedroom, kids&apos; room, guest room
                 or a complete bedroom makeover, this guide explains layout,
                 furniture, wardrobes, ceilings, lighting, colours, materials,
-                Vastu and budget planning. You will also see how MT Boss
+                Vastu and budget planning. You will also see how MTBOSS
                 handles a bedroom project from the first discussion to handover.
               </p>
             </section>
@@ -857,7 +849,7 @@ const Content = () => {
               <p className="mt-4">
                 Learn more through our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                  href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -918,7 +910,7 @@ const Content = () => {
               <p className="mt-4">
                 Estimate early with our{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -927,7 +919,7 @@ const Content = () => {
                 </a>{" "}
                 and read our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -940,7 +932,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MT Boss Designs Your Bedroom: Step by Step
+                MTBOSS Designs Your Bedroom: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -1014,63 +1006,15 @@ const Content = () => {
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 7: Preparation Work
-                  </h4>
-                  <p>
-                    Wall repair, electrical changes, ceiling framework and paint
-                    preparation are completed before finishing work begins.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry and Finishing
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Wardrobes, beds, headboards and other furniture are fitted.",
-                      "Painting, lighting and final touches follow.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We check alignment, finish, lighting, hardware and cleanliness.",
-                      "Any snags are corrected before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs, use our{" "}
-                    <a
-                      href="https://www.mtboss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>{" "}
-                    or contact MT Boss directly.
-                  </p>
-                </div>
+               
+                
+                
               </div>
             </section>
 
             <section>
               <SectionTitle>
-                Why Choose MT Boss as Your Bedroom Interior Designer in
+                Why Choose MTBOSS as Your Bedroom Interior Designer in
                 Moradabad
               </SectionTitle>
 
@@ -1117,7 +1061,7 @@ const Content = () => {
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1126,7 +1070,7 @@ const Content = () => {
                 </a>
                 , connect with trained tradespeople through our{" "}
                 <a
-                  href="https://www.mtboss.in/Services/professionals"
+                  href="https://www.MTBOSS.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1135,7 +1079,7 @@ const Content = () => {
                 </a>
                 , and see completed examples in our{" "}
                 <a
-                  href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1248,7 +1192,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Contact MT Boss for Your Bedroom Project</SectionTitle>
+              <SectionTitle>Contact MTBOSS for Your Bedroom Project</SectionTitle>
 
               <p className="mb-3">
                 Share room photos or measurements, your preferred style and
@@ -1272,10 +1216,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1285,7 +1229,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

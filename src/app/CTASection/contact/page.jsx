@@ -66,7 +66,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-widest mb-1">Email Support</p>
-                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>mtboss2016@gmail.com</p>
+                  <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>MTBOSS2016@gmail.com</p>
                   <p className={`font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>WhatsApp: {COMPANY_CONTACT.phone}</p>
                 </div>
               </div>

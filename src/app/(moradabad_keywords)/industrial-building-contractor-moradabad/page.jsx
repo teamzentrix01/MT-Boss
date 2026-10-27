@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/industrial-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/industrial-building-contractor-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Hire an industrial building contractor in Moradabad. MTBOSS builds factories, sheds and warehouses with clear scope. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/industrial-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/industrial-building-contractor-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-industrial-building-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-industrial-building-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Industrial Building Contractor in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Hire an industrial building contractor in Moradabad. MTBOSS builds factories, sheds and warehouses with clear scope. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-industrial-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-industrial-building-contractor-moradabad.jpg",
     ],
   },
 
@@ -70,14 +70,14 @@ export default function Page() {
     name: "MTBOSS Construction Private Limited",
 
     url:
-      "https://www.mtboss.in/industrial-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/industrial-building-contractor-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-industrial-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-industrial-building-contractor-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -140,14 +140,14 @@ export default function Page() {
       "MTBOSS is an industrial building contractor in Moradabad delivering factories, workshops, warehouses, godowns and industrial sheds with site development, foundations, RCC structure, roofing, industrial flooring, drainage, office blocks, material supply and final handover.",
 
     url:
-      "https://www.mtboss.in/industrial-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/industrial-building-contractor-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -246,19 +246,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Industrial Building Contractor in Moradabad",
-        item: "https://www.mtboss.in/industrial-building-contractor-in-moradabad",
+        item: "https://www.MTBOSS.in/industrial-building-contractor-in-moradabad",
       },
     ],
   };

@@ -11,6 +11,9 @@ const ensureUserListSchema = createInitializationGuard(async () => {
   await queryWithConnectionRetry("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'Customer'");
 });
 
+const metaCache = new Map();
+const META_CACHE_TTL = 60_000; // 60s cache to avoid repeated heavy full-table scans
+
 const UNIFIED_USERS_CTE = `
   WITH unified_users AS (
     SELECT
@@ -134,79 +137,98 @@ export async function GET(req) {
     `;
     const baseParams = [search, status, city, from, to, role];
 
-    const [roleCountsRes, citiesRes, kpiRes] = await Promise.all([
-      queryWithConnectionRetry(`
-        ${UNIFIED_USERS_CTE}
-        SELECT
-          COUNT(*)::int AS count_all,
-          COUNT(*) FILTER (WHERE LOWER(role) = 'customer')::int AS count_customer,
-          COUNT(*) FILTER (WHERE LOWER(role) = 'vendor')::int AS count_vendor,
-          COUNT(*) FILTER (WHERE LOWER(role) = 'contractor')::int AS count_contractor,
-          COUNT(*) FILTER (WHERE LOWER(role) = 'agent')::int AS count_agent,
-          COUNT(*) FILTER (WHERE LOWER(role) = 'supplier')::int AS count_supplier
-        FROM unified_users
-      `),
-      queryWithConnectionRetry(`
-        ${UNIFIED_USERS_CTE}
-        SELECT DISTINCT delivery_city
-        FROM unified_users
-        WHERE delivery_city IS NOT NULL AND TRIM(delivery_city) != ''
-        ORDER BY delivery_city ASC
-      `),
-      queryWithConnectionRetry(`
-        ${UNIFIED_USERS_CTE}
-        SELECT
-          COUNT(*)::int AS total_users,
-          COUNT(*) FILTER (WHERE NOT COALESCE(u.is_blocked, false))::int AS active_users,
-          COUNT(*) FILTER (WHERE COALESCE(u.is_blocked, false))::int AS blocked_users,
-          COUNT(DISTINCT CASE WHEN (COALESCE(b.order_count, 0) + COALESCE(m.order_count, 0)) > 0 THEN u.id END)::int AS with_orders_count,
-          COALESCE(SUM(COALESCE(b.total_spent, 0) + COALESCE(m.total_spent, 0)), 0)::numeric AS total_lifetime_spent
-        FROM unified_users u
-        LEFT JOIN (
-          SELECT user_id, COUNT(*)::int AS order_count,
-                 COALESCE(SUM(COALESCE(final_amount, total_amount, 0)), 0)::numeric AS total_spent
-          FROM service_bookings
-          WHERE user_id IS NOT NULL
-          GROUP BY user_id
-        ) b ON b.user_id = u.user_id
-        LEFT JOIN (
-          SELECT user_id AS uid, COUNT(*)::int AS order_count,
-                 COALESCE(SUM(COALESCE(grand_total, amount_received, product_total, 0)), 0)::numeric AS total_spent
-          FROM material_enquiries
-          WHERE user_id IS NOT NULL
-          GROUP BY user_id
-        ) m ON m.uid = u.user_id
-        WHERE ($1 = 'all' OR LOWER(u.role) = LOWER($1))
-      `, [role]),
-    ]);
+    const skipMeta = searchParams.get('skip_meta') === '1' || searchParams.get('meta') === '0';
+    const cacheKey = `meta_${role}`;
+    const now = Date.now();
+    const cached = metaCache.get(cacheKey);
 
-    const countsRow = roleCountsRes.rows[0] || {};
-    const kpiRow = kpiRes.rows[0] || {};
-    const totalUsers = Number(kpiRow.total_users || 0);
-    const activeUsers = Number(kpiRow.active_users || 0);
-    const blockedUsers = Number(kpiRow.blocked_users || 0);
-    const withOrders = Number(kpiRow.with_orders_count || 0);
-    const totalSpent = Number(kpiRow.total_lifetime_spent || 0);
+    let stats = null;
+    let cities = null;
 
-    const stats = {
-      total_users: totalUsers,
-      active_users: activeUsers,
-      blocked_users: blockedUsers,
-      with_orders_count: withOrders,
-      zero_orders_count: Math.max(0, totalUsers - withOrders),
-      total_lifetime_spent: totalSpent,
-      current_role: role,
-      role_counts: {
-        all: Number(countsRow.count_all || 0),
-        customer: Number(countsRow.count_customer || 0),
-        vendor: Number(countsRow.count_vendor || 0),
-        contractor: Number(countsRow.count_contractor || 0),
-        agent: Number(countsRow.count_agent || 0),
-        supplier: Number(countsRow.count_supplier || 0),
-      },
-    };
+    if (!skipMeta) {
+      if (cached && (now - cached.at < META_CACHE_TTL)) {
+        stats = cached.stats;
+        cities = cached.cities;
+      } else {
+        const [roleCountsRes, citiesRes, kpiRes] = await Promise.all([
+          queryWithConnectionRetry(`
+            ${UNIFIED_USERS_CTE}
+            SELECT
+              COUNT(*)::int AS count_all,
+              COUNT(*) FILTER (WHERE LOWER(role) = 'customer')::int AS count_customer,
+              COUNT(*) FILTER (WHERE LOWER(role) = 'vendor')::int AS count_vendor,
+              COUNT(*) FILTER (WHERE LOWER(role) = 'contractor')::int AS count_contractor,
+              COUNT(*) FILTER (WHERE LOWER(role) = 'agent')::int AS count_agent,
+              COUNT(*) FILTER (WHERE LOWER(role) = 'supplier')::int AS count_supplier
+            FROM unified_users
+          `),
+          queryWithConnectionRetry(`
+            ${UNIFIED_USERS_CTE}
+            SELECT DISTINCT delivery_city
+            FROM unified_users
+            WHERE delivery_city IS NOT NULL AND TRIM(delivery_city) != ''
+            ORDER BY delivery_city ASC
+          `),
+          queryWithConnectionRetry(`
+            ${UNIFIED_USERS_CTE}
+            SELECT
+              COUNT(*)::int AS total_users,
+              COUNT(*) FILTER (WHERE NOT COALESCE(u.is_blocked, false))::int AS active_users,
+              COUNT(*) FILTER (WHERE COALESCE(u.is_blocked, false))::int AS blocked_users,
+              COUNT(DISTINCT CASE WHEN (COALESCE(b.order_count, 0) + COALESCE(m.order_count, 0)) > 0 THEN u.id END)::int AS with_orders_count,
+              COALESCE(SUM(COALESCE(b.total_spent, 0) + COALESCE(m.total_spent, 0)), 0)::numeric AS total_lifetime_spent
+            FROM unified_users u
+            LEFT JOIN (
+              SELECT user_id, COUNT(*)::int AS order_count,
+                     COALESCE(SUM(COALESCE(final_amount, total_amount, 0)), 0)::numeric AS total_spent
+              FROM service_bookings
+              WHERE user_id IS NOT NULL
+              GROUP BY user_id
+            ) b ON b.user_id = u.user_id
+            LEFT JOIN (
+              SELECT user_id AS uid, COUNT(*)::int AS order_count,
+                     COALESCE(SUM(COALESCE(grand_total, amount_received, product_total, 0)), 0)::numeric AS total_spent
+              FROM material_enquiries
+              WHERE user_id IS NOT NULL
+              GROUP BY user_id
+            ) m ON m.uid = u.user_id
+            WHERE ($1 = 'all' OR LOWER(u.role) = LOWER($1))
+          `, [role]),
+        ]);
 
-    const cities = citiesRes.rows.map((r) => r.delivery_city).filter(Boolean);
+        const countsRow = roleCountsRes.rows[0] || {};
+        const kpiRow = kpiRes.rows[0] || {};
+        const totalUsers = Number(kpiRow.total_users || 0);
+        const activeUsers = Number(kpiRow.active_users || 0);
+        const blockedUsers = Number(kpiRow.blocked_users || 0);
+        const withOrders = Number(kpiRow.with_orders_count || 0);
+        const totalSpent = Number(kpiRow.total_lifetime_spent || 0);
+
+        stats = {
+          total_users: totalUsers,
+          active_users: activeUsers,
+          blocked_users: blockedUsers,
+          with_orders_count: withOrders,
+          zero_orders_count: Math.max(0, totalUsers - withOrders),
+          total_lifetime_spent: totalSpent,
+          current_role: role,
+          role_counts: {
+            all: Number(countsRow.count_all || 0),
+            customer: Number(countsRow.count_customer || 0),
+            vendor: Number(countsRow.count_vendor || 0),
+            contractor: Number(countsRow.count_contractor || 0),
+            agent: Number(countsRow.count_agent || 0),
+            supplier: Number(countsRow.count_supplier || 0),
+          },
+        };
+
+        cities = citiesRes.rows.map((r) => r.delivery_city).filter(Boolean);
+        metaCache.set(cacheKey, { stats, cities, at: now });
+      }
+    } else if (cached) {
+      stats = cached.stats;
+      cities = cached.cities;
+    }
 
     let result;
     let total = 0;

@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-design-services-in-bareilly",
+      "https://www.MTBOSS.in/interior-design-services-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Explore interior design services Bareilly by MTBOSS: kitchens, wardrobes, ceilings, bathrooms and full homes. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-design-services-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-services-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-design-services-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-design-services-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Design Services in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Explore interior design services Bareilly by MTBOSS: kitchens, wardrobes, ceilings, bathrooms and full homes. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-design-services-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-design-services-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-design-services-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-services-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-design-services-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-design-services-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Interior Design Services in Bareilly",
     description:
       "MTBOSS provides interior design services in Bareilly. Services include design and space planning, modular kitchen, wardrobes and storage, living room and dining area, bedrooms and kids' rooms, puja room and mandir, false ceiling and lighting, painting, wallpaper and wall panels, flooring and tiling, bathrooms, electrical, plumbing and waterproofing, renovation and remodelling, building materials, doorstep home services, and construction and property services.",
-    url: "https://www.mtboss.in/interior-design-services-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-design-services-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -209,19 +209,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Design Services in Bareilly",
-        item: "https://www.mtboss.in/interior-design-services-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-design-services-in-bareilly",
       },
     ],
   };

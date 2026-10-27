@@ -7,14 +7,15 @@ import { xlsxResponse, pdfHtmlResponse, inr, ddmmyyyy, tableHtml, escHtml } from
 const MAX = 50_000;
 
 export async function GET(req) {
-  if (!await requirePmAccess(req)) return unauthorized();
+  const sp = new URL(req.url).searchParams;
+  const projectId = Number(sp.get('projectId'));
+  const format = sp.get('format') || 'xlsx';
+  if (!Number.isInteger(projectId) || projectId <= 0)
+    return new Response('projectId required', { status: 400 });
+
+  if (!await requirePmAccess(req, projectId)) return unauthorized();
   try {
     await ensureProjectManagementPhase4Schema();
-    const sp = new URL(req.url).searchParams;
-    const projectId = Number(sp.get('projectId'));
-    const format = sp.get('format') || 'xlsx';
-    if (!Number.isInteger(projectId) || projectId <= 0)
-      return new Response('projectId required', { status: 400 });
 
     const [projRes, ppRes, vendorRes, stockRes, expRes] = await Promise.all([
       // Project overview (aggregated)

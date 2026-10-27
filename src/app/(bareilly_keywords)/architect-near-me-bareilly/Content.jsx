@@ -8,17 +8,15 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Near Me in Bareilly: MT Boss
+            Architect Near Me in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quick Answer for Bareilly Searchers
-              </h3>
+            
               <p>
                 An architect near you in Bareilly is one who can visit your plot,
-                meet you when needed and stay reachable during construction. MT Boss
+                meet you when needed and stay reachable during construction. MTBOSS
                 Construction Private Limited is based in Moradabad and serves
                 Bareilly clients through site visits, video reviews and shared
                 drawings, with construction support from the same team [confirm
@@ -44,7 +42,7 @@ const Content = () => {
                 judge it against any local alternative.
               </p>
               <p>
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -54,7 +52,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Where MT Boss Sits on the Map
+                Where MTBOSS Sits on the Map
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -87,7 +85,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Our approach to Bareilly projects follows five habits [adjust to
-                what MT Boss actually offers].
+                what MTBOSS actually offers].
               </p>
               <ol className="list-decimal list-inside space-y-1 ml-4">
                 <li>
@@ -149,32 +147,6 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Remote Start Kit: Documents and Photos to Send
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  Location pin of the plot, plus the colony name
-                </li>
-                <li>
-                  Plot papers or a clear copy of the sale deed or map, showing
-                  dimensions
-                </li>
-                <li>
-                  Photos of the plot from all four sides, the road and the
-                  neighbouring buildings
-                </li>
-                <li>
-                  Photos of existing structures, for renovation or extension
-                </li>
-                <li>
-                  Your brief: family size, rooms needed, floors, parking, storage
-                  and any special needs
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Video Call and WhatsApp Protocol
               </h3>
               <p className="mb-3">
@@ -209,47 +181,6 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Bareilly Plot Types and the Design Questions They Raise
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Narrow city plots.</strong> Light, ventilation and stairs
-                  need care, and skylights or courtyards may help.
-                </li>
-                <li>
-                  <strong>Corner plots.</strong> Two frontages need a design that
-                  handles both roads and setbacks.
-                </li>
-                <li>
-                  <strong>Colony plots.</strong> Neighbouring walls, shared drains
-                  and building lines shape the plan.
-                </li>
-                <li>
-                  <strong>Plots on busy roads.</strong> Frontage, noise, dust and
-                  parking need early thought.
-                </li>
-                <li>
-                  <strong>Outskirts and larger plots.</strong> Room for gardens,
-                  boundary walls and future extension, with access and utilities to
-                  check.
-                </li>
-                <li>
-                  <strong>Rental-income plots.</strong> Separate entrances and
-                  utilities for each unit.
-                </li>
-                <li>
-                  <strong>Commercial plots.</strong> Frontage, signage, parking and
-                  loading, plus rules for non-residential use.
-                </li>
-              </ul>
-              <p className="mt-3">
-                Share your plot type at the start, and the first meeting can focus
-                on the right problems.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Local Approvals and Who Handles Them
               </h3>
               <p className="mb-3">
@@ -273,7 +204,7 @@ const Content = () => {
                 <li>What happens if comments or objections arrive</li>
               </ul>
               <p className="mt-3">
-                [State plainly what MT Boss does and does not handle in approvals,
+                [State plainly what MTBOSS does and does not handle in approvals,
                 and any extra fee.] For legal or ownership questions, please consult
                 a qualified professional.
               </p>
@@ -309,8 +240,8 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 [State how supervision is arranged, who the site representative is
-                and whether MT Boss&apos;s own engineers can act as the supervisor
-                if MT Boss builds the project.]
+                and whether MTBOSS&apos;s own engineers can act as the supervisor
+                if MTBOSS builds the project.]
               </p>
             </section>
 
@@ -322,7 +253,7 @@ const Content = () => {
                 Good design uses what the region can build well. Our designers
                 consider local material availability, typical construction practice
                 in Bareilly, nearby suppliers and labour skill, and avoid details
-                that are costly or hard to execute locally. If MT Boss builds the
+                that are costly or hard to execute locally. If MTBOSS builds the
                 project, our team arranges materials and labour. If you choose
                 another builder, we give drawings and specifications that local
                 builders can follow [confirm].
@@ -364,67 +295,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes these checks. [Add your Google rating and review
+                MTBOSS welcomes these checks. [Add your Google rating and review
                 count only if real, current and visible on your Google Business
                 Profile.]
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Red Flags in Near-Me Promises
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  A &quot;Bareilly office&quot; with no address, or an address that
-                  turns out to be a shared mailbox
-                </li>
-                <li>
-                  Different phone numbers or business names on different documents
-                </li>
-                <li>
-                  A final design or price promised without seeing the plot
-                </li>
-                <li>A title of architect with no COA number</li>
-                <li>&quot;Free design&quot; with no stated conditions</li>
-                <li>Pressure to pay a large advance quickly</li>
-                <li>Reviews that look copied or posted in a burst</li>
-                <li>No written scope, deliverables or fee</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meeting Options Compared
-              </h3>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>First meeting at your plot:</strong> the best start for
-                  most projects, since the architect sees light, road, neighbours
-                  and slope firsthand
-                </li>
-                <li>
-                  <strong>Meeting at the Moradabad office:</strong> useful for
-                  reviewing drawings, samples and finished-work photos in one
-                  sitting [confirm availability]
-                </li>
-                <li>
-                  <strong>Video call:</strong> efficient for reviews, comments and
-                  quick decisions once the site is understood
-                </li>
-                <li>
-                  <strong>WhatsApp or email:</strong> best for sending photos,
-                  drawings and written confirmations
-                </li>
-                <li>
-                  <strong>Site visit by the architect during construction:</strong>{" "}
-                  valuable at the stages above, and cheaper than correcting mistakes
-                  afterwards
-                </li>
-              </ul>
-              <p className="mt-3">
-                Choose the mix that suits your schedule, and agree it in the
-                proposal.
               </p>
             </section>
 
@@ -451,7 +324,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 A clear statement upfront prevents surprises later. You can use the
-                Budget Calculator on mtboss.in for an early idea of construction
+                Budget Calculator on MTBOSS.in for an early idea of construction
                 cost, and ask for the design fee and travel terms in the written
                 proposal.
               </p>
@@ -462,7 +335,7 @@ const Content = () => {
                 Design and Build Under One Roof
               </h3>
               <p>
-                If MT Boss both designs and builds your project, the people drawing
+                If MTBOSS both designs and builds your project, the people drawing
                 the plan and the people building it work as one team, which reduces
                 gaps and misunderstanding. You can also choose design only and use
                 another builder, with drawings that others can follow [confirm].
@@ -472,10 +345,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MT Boss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Through mtboss.in, MT Boss also offers Architecture &amp; Interior,
+                Through MTBOSS.in, MTBOSS also offers Architecture &amp; Interior,
                 Building Elevation, Building Contractor, Building Renovation,
                 Modular Kitchen, False Ceiling, Water Proofing, Painter, Electrician
                 and Plumber, so design, construction and finishing can be
@@ -485,65 +358,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Architecture, interior and building
-                  design, alongside construction and home services
-                </li>
-                <li>
-                  <strong>Registered office:</strong> Harthala, Kanth Road,
-                  Moradabad (behind KR Collection, near Domino&apos;s), Uttar
-                  Pradesh
-                </li>
-                <li>
-                  <strong>Service area:</strong> Bareilly, Moradabad and nearby
-                  areas of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Bareilly presence:</strong> [state truthfully]
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong> +91 94584 10866
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>
-                </li>
-                <li>
-                  <strong>Design lead:</strong> [name, qualification and COA
-                  registration number, if applicable]
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add company registration and GST
-                  details you can show]
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Bareilly Clients Work With MT Boss
+                Reasons Bareilly Clients Work With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -610,21 +425,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -638,7 +453,7 @@ const Content = () => {
                 budget range, and we will arrange a visit and a clear proposal.
               </p>
               <p className="mt-3">
-                Consider MT Boss for an architect near you in Bareilly, with the
+                Consider MTBOSS for an architect near you in Bareilly, with the
                 location stated plainly, the visits planned and the work shared
                 openly.
               </p>
@@ -652,11 +467,11 @@ const Content = () => {
                 <li>
                   <strong>Q1. Is there an architect near me in Bareilly?</strong>
                   <br />
-                  MT Boss serves Bareilly from its Moradabad office [add Bareilly
+                  MTBOSS serves Bareilly from its Moradabad office [add Bareilly
                   presence only if real].
                 </li>
                 <li>
-                  <strong>Q2. Where is the MT Boss office?</strong>
+                  <strong>Q2. Where is the MTBOSS office?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
@@ -697,7 +512,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a first visit?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

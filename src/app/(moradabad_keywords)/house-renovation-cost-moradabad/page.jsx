@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'house renovation cost Moradabad, home renovation cost Moradabad, renovation cost Moradabad, house renovation budget Moradabad, renovation price Moradabad, home renovation estimate Moradabad, renovation quotation Moradabad, home makeover cost Moradabad, renovation contractor Moradabad, MTBOSS renovation Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/house-renovation-cost-moradabad',
+    canonical: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
   },
   openGraph: {
     title: 'House Renovation Cost Moradabad',
     description:
       'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBOSS.',
-    url: 'https://www.mtboss.in/house-renovation-cost-moradabad',
+    url: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-house-renovation-cost-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-house-renovation-cost-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'House Renovation Cost in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'House Renovation Cost Moradabad',
     description:
       'Understand house renovation cost in Moradabad: what affects pricing, hidden costs and how to plan your budget. Get an inspection-based quote from MTBOSS.',
-    images: ['https://www.mtboss.in/og-house-renovation-cost-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-house-renovation-cost-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/house-renovation-cost-moradabad',
+  url: 'https://www.MTBOSS.in/house-renovation-cost-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

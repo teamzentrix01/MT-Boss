@@ -30,6 +30,9 @@ export async function GET(req) {
     const format = s.get('format') || 'json';
 
     if (admin.role === 'agent') {
+      if (!projectId) {
+        return NextResponse.json({ success: false, error: 'ProjectId is required for agent reports' }, { status: 400 });
+      }
       const reportCatMap = {
         material_consumption: 'construction',
         stock_running: 'construction',

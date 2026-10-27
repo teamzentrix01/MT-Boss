@@ -6,23 +6,23 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'PWD Approved Contractor in Moradabad | MT Boss Construction',
+  title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
   description:
-    'Looking for a PWD approved contractor in Moradabad? MT Boss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
   keywords:
-    'PWD approved contractor Moradabad, PWD registered contractor Moradabad, government contractor Moradabad, Public Works Department contractor Moradabad, civil contractor Moradabad, road contractor Moradabad, drainage contractor Moradabad, government building contractor Moradabad, construction company Moradabad, MT Boss Moradabad',
+    'PWD approved contractor Moradabad, PWD registered contractor Moradabad, government contractor Moradabad, Public Works Department contractor Moradabad, civil contractor Moradabad, road contractor Moradabad, drainage contractor Moradabad, government building contractor Moradabad, construction company Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/pwd-approved-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
   },
   openGraph: {
-    title: 'PWD Approved Contractor in Moradabad | MT Boss Construction',
+    title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a PWD approved contractor in Moradabad? MT Boss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
-    url: 'https://www.mtboss.in/pwd-approved-contractor-moradabad',
+      'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    url: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-pwd-approved-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-pwd-approved-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'PWD Approved Contractor in Moradabad - MTBOSS',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PWD Approved Contractor in Moradabad | MT Boss Construction',
+    title: 'PWD Approved Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a PWD approved contractor in Moradabad? MT Boss delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
-    images: ['https://www.mtboss.in/og-pwd-approved-contractor-moradabad.jpg'],
+      'Looking for a PWD approved contractor in Moradabad? MTBOSS delivers government, commercial and residential construction with quality, transparency and on-time delivery.',
+    images: ['https://www.MTBOSS.in/og-pwd-approved-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/pwd-approved-contractor-moradabad',
+    url: 'https://www.MTBOSS.in/pwd-approved-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

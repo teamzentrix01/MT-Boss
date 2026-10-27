@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Home Pest Control in Moradabad: Room-by-Room Protection for Your
-            Family by MTBOSS
+            Home Pest Control in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,9 +18,7 @@ const Content = () => {
                 break that comfort, whether it is cockroaches in the kitchen,
                 termites in a wooden door, bed bugs in a mattress or rats behind
                 the wardrobe. Home pest control in Moradabad from MTBOSS gives
-                families a structured, safe and local solution: inspect the house,
-                treat the problem areas, fix the causes and guide you on
-                prevention.
+                families a structured, safe and local solution.
               </p>
               <p className="mt-3">
                 MTBOSS is a construction and home-services company serving
@@ -479,7 +476,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/pest-control"
+                  href="https://www.MTBOSS.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -488,7 +485,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -497,10 +494,10 @@ const Content = () => {
                 </a>
                 , or email{" "}
                 <a
-                  href="mailto:mtboss2016@gmail.com"
+                  href="mailto:MTBOSS2016@gmail.com"
                   className="text-blue-600 underline"
                 >
-                  mtboss2016@gmail.com
+                  MTBOSS2016@gmail.com
                 </a>
                 .
               </p>
@@ -583,7 +580,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

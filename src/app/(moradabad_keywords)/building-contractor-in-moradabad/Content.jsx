@@ -238,8 +238,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

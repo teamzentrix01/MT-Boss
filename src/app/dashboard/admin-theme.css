@@ -18,8 +18,8 @@
   --status-warning-bg: #FFF3E0;
   --status-info: #1D4ED8;
   --status-info-bg: #E8EFFF;
-  --status-danger: #B91C1C;
-  --status-danger-bg: #FEE2E2;
+  --status-danger: #dc2626;
+  --status-danger-bg: #ffffff;
   --status-accent: #6D28D9;
   --status-accent-bg: #EFE9FD;
 
@@ -61,7 +61,7 @@
   --radius-pill: 999px;
   --shadow-card: 0 1px 2px rgba(16, 33, 58, .06);
   --shadow-overlay: 0 12px 32px rgba(16, 33, 58, .14);
-  --admin-sidebar-width: 264px;
+  --admin-sidebar-width: 276px;
   --admin-topbar-height: 72px;
   --type-page-line: 36px;
   --type-section-line: 26px;
@@ -254,8 +254,8 @@
           max-width: 1280px; margin: 0 auto;
           padding: 0 1.5rem 4px;
           display: flex; overflow-x: auto;
-          scrollbar-width: thin;
-          scrollbar-color: var(--border) transparent;
+          scrollbar-width: thin; /* Firefox & Chrome 121+ */
+          scrollbar-color: var(--border) transparent; /* Firefox & Chrome 121+ */
         }
         .dash-tabs-inner::-webkit-scrollbar { height: 4px; }
         .dash-tabs-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -479,8 +479,6 @@
             display: block;
             max-width: 100%;
             overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
           }
           .modal-backdrop {
             align-items: flex-end;
@@ -796,7 +794,7 @@
 }
 
 @media (max-width: 1100px) {
-  .admin-sidebar { width: 240px; }
+  .admin-sidebar { width: 276px; }
 }
 
 @media (max-width: 720px) {
@@ -834,6 +832,7 @@
   color: var(--ink-700);
 }
 .admin-notifications__trigger:hover { border-color: var(--brand-600); color: var(--brand-600); }
+.admin-dashboard-root .admin-notifications__count,
 .admin-notifications__count {
   position: absolute;
   top: -5px;
@@ -843,13 +842,14 @@
   height: 18px;
   place-items: center;
   padding-inline: 4px;
-  border: 2px solid var(--bg-surface);
+  border: 2px solid #ffffff;
   border-radius: var(--radius-pill);
-  background: var(--status-danger);
-  color: var(--bg-surface);
+  background: #ffffff !important;
+  color: #dc2626 !important;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 .admin-notifications__panel {
   position: absolute;
@@ -866,10 +866,12 @@
 .admin-notifications__header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4); border-bottom: 1px solid var(--line); }
 .admin-notifications__header h2 { margin: 0; color: var(--ink-900); font: 700 16px/24px var(--font-admin-heading); }
 .admin-notifications__header p { margin: var(--space-1) 0 0; color: var(--ink-500); font-size: var(--type-caption); }
-.admin-notifications__header button { display: grid; width: 36px; height: 36px; place-items: center; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--brand-600); }
+.admin-notifications__header button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 30px; padding: 0 8px; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--brand-600); cursor: pointer; font-size: 12px; font-weight: 600; }
 .admin-notifications__header button:hover { background: var(--brand-100); }
+.admin-notifications__header button.danger-btn { color: var(--status-danger, #ef4444); }
+.admin-notifications__header button.danger-btn:hover { background: var(--status-danger-bg, #fee2e2); }
 .admin-notifications__list { max-height: min(440px, 70vh); overflow-y: auto; }
-.admin-notifications__item { display: flex; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--line); color: var(--ink-700); text-decoration: none; }
+.admin-notifications__item { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--line); color: var(--ink-700); text-decoration: none; }
 .admin-notifications__item:hover { background: var(--bg-app); }
 .admin-notifications__dot { width: 8px; height: 8px; flex: 0 0 8px; margin-top: 6px; border-radius: 50%; background: var(--brand-600); }
 .admin-notifications__item.is-read .admin-notifications__dot { background: var(--line); }

@@ -8,16 +8,14 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Carpenter Contact Number in Moradabad: MT Boss
+            Carpenter Contact Number in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The Short Answer
-              </h3>
+              
               <p>
-                To contact a carpenter in Moradabad through MT Boss, call or
+                To contact a carpenter in Moradabad through MTBOSS, call or
                 WhatsApp{" "}
                 <a
                   href="https://wa.me/9458410866"
@@ -29,12 +27,12 @@ const Content = () => {
                 </a>
                 , email{" "}
                 <a
-                  href="mailto:mtboss2016@gmail.com"
+                  href="mailto:MTBOSS2016@gmail.com"
                   className="text-blue-600 underline"
                 >
-                  mtboss2016@gmail.com
+                  MTBOSS2016@gmail.com
                 </a>
-                , or click &quot;Get a Construction Quote&quot; on mtboss.in.
+                , or click &quot;Get a Construction Quote&quot; on MTBOSS.in.
                 Share photos, measurements and your location, and the team will
                 arrange a visit and an itemised quotation [confirm response
                 time]. The office is on Harthala, Kanth Road, Moradabad.
@@ -60,21 +58,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -109,7 +107,7 @@ const Content = () => {
                 visits late or vanishes after taking an advance.
               </p>
               <p>
-                MT Boss Construction Private Limited is a registered construction
+                MTBOSS Construction Private Limited is a registered construction
                 and home-services company based on Kanth Road. Carpentry sits
                 among our quick services alongside painter, plumber, electrician,
                 door and window installation, false ceiling, tile and marble and
@@ -121,7 +119,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Four Ways to Reach the MT Boss Carpenter Team
+                Four Ways to Reach the MTBOSS Carpenter Team
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -145,10 +143,10 @@ const Content = () => {
                 <li>
                   <strong>Email.</strong> Write to{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with drawings, a list of items and documents. Best for larger
                   jobs, society or office requests and anything that needs a
@@ -156,7 +154,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>Website enquiry.</strong> Click &quot;Get a
-                  Construction Quote&quot; on mtboss.in and submit your
+                  Construction Quote&quot; on MTBOSS.in and submit your
                   requirement. Best when you are browsing services and want to
                   enquire without switching apps.
                 </li>
@@ -319,7 +317,7 @@ const Content = () => {
                 Urgent Carpentry Problems and Quick Replies
               </h3>
               <p className="mb-3">
-                Some problems cannot wait for a routine slot [confirm how MT Boss
+                Some problems cannot wait for a routine slot [confirm how MTBOSS
                 handles urgent calls].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -439,7 +437,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes these checks. [Add registration and GST details
+                MTBOSS welcomes these checks. [Add registration and GST details
                 only if you can show them. Add your Google rating and review
                 count only if real, current and visible on your Google Business
                 Profile.]
@@ -548,10 +546,10 @@ const Content = () => {
                 Related Services From the Same Number
               </h3>
               <p>
-                One call can start several trades. MT Boss also offers Painter,
+                One call can start several trades. MTBOSS also offers Painter,
                 Plumber, Electrician, Door &amp; Window Install, False Ceiling,
                 Tile &amp; Marble, Wallpaper Install, Modular Kitchen, Water
-                Proofing, Building Repair and Pest Control through mtboss.in, so
+                Proofing, Building Repair and Pest Control through MTBOSS.in, so
                 a carpentry job that needs painting, wiring or damp treatment can
                 be coordinated in one go.
               </p>
@@ -559,11 +557,11 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Carpenter services, alongside
@@ -587,21 +585,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -609,7 +607,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Call MT Boss in Moradabad
+                Reasons Clients Call MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -663,21 +661,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -723,15 +721,15 @@ const Content = () => {
                   <br />
                   Write to{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with drawings and details.
                 </li>
                 <li>
-                  <strong>Q4. Where is the MT Boss office?</strong>
+                  <strong>Q4. Where is the MTBOSS office?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
@@ -762,7 +760,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a written quotation?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

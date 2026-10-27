@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Interior Designer for Showroom Moradabad | MT Boss',
+  title: 'Interior Designer for Showroom Moradabad | MTBOSS',
   description:
-    'Looking for an interior designer for a showroom in Moradabad? MT Boss designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
+    'Looking for an interior designer for a showroom in Moradabad? MTBOSS designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
   keywords:
-    'interior designer for showroom Moradabad, showroom interior designer Moradabad, showroom design Moradabad, commercial interior designer Moradabad, retail showroom designer Moradabad, jewellery showroom interior Moradabad, furniture showroom design Moradabad, automobile showroom interior Moradabad, showroom renovation Moradabad, MT Boss showroom interior Moradabad',
+    'interior designer for showroom Moradabad, showroom interior designer Moradabad, showroom design Moradabad, commercial interior designer Moradabad, retail showroom designer Moradabad, jewellery showroom interior Moradabad, furniture showroom design Moradabad, automobile showroom interior Moradabad, showroom renovation Moradabad, MTBOSS showroom interior Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/interior-designer-for-showroom-moradabad',
+    canonical: 'https://www.MTBOSS.in/interior-designer-for-showroom-moradabad',
   },
   openGraph: {
-    title: 'Interior Designer for Showroom Moradabad | MT Boss',
+    title: 'Interior Designer for Showroom Moradabad | MTBOSS',
     description:
-      'Looking for an interior designer for a showroom in Moradabad? MT Boss designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
-    url: 'https://www.mtboss.in/interior-designer-for-showroom-moradabad',
+      'Looking for an interior designer for a showroom in Moradabad? MTBOSS designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
+    url: 'https://www.MTBOSS.in/interior-designer-for-showroom-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-interior-designer-for-showroom-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-interior-designer-for-showroom-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Interior Designer for Showroom in Moradabad - MT Boss',
+        alt: 'Interior Designer for Showroom in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Interior Designer for Showroom Moradabad | MT Boss',
+    title: 'Interior Designer for Showroom Moradabad | MTBOSS',
     description:
-      'Looking for an interior designer for a showroom in Moradabad? MT Boss designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
-    images: ['https://www.mtboss.in/og-interior-designer-for-showroom-moradabad.jpg'],
+      'Looking for an interior designer for a showroom in Moradabad? MTBOSS designs and builds showrooms with 3D designs, clear pricing and on-time delivery. Call now.',
+    images: ['https://www.MTBOSS.in/og-interior-designer-for-showroom-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/interior-designer-for-showroom-moradabad',
+  url: 'https://www.MTBOSS.in/interior-designer-for-showroom-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

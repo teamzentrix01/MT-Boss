@@ -39,7 +39,7 @@ export default function FranchiseCTA() {
             Franchise Opportunity
           </p>
           <h2 className={`text-2xl sm:text-4xl font-black uppercase tracking-tight leading-tight ${dark ? "text-white" : "text-zinc-900"}`}>
-            Build with MTboss construction
+            Build with MTBOSS construction
           </h2>
           <p className={`mt-4 max-w-2xl text-sm leading-7 ${dark ? "text-zinc-400" : "text-zinc-600"}`}>
             Start a franchise conversation with our team. We review your city, business background, operating capacity,

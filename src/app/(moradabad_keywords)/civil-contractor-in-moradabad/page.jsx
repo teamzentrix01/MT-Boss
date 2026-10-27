@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'civil contractor in Moradabad, best civil contractor Moradabad, construction company in Moradabad, building contractor near me, residential contractor Moradabad, commercial construction Moradabad, civil engineering services Moradabad, house construction contractor Moradabad, construction material supplier Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/civil-contractor-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-contractor-in-moradabad',
   },
   openGraph: {
     title: 'Best Civil Contractor in Moradabad | MTBOSS Construction',
     description:
       'Trusted civil contractor in Moradabad — expert construction, renovation & building material supply with 22+ years of experience.',
-    url: 'https://www.mtboss.in/civil-contractor-in-moradabad',
+    url: 'https://www.MTBOSS.in/civil-contractor-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Civil Contractor in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Best Civil Contractor in Moradabad | MTBOSS Construction',
     description:
       'Trusted civil contractor in Moradabad — expert construction, renovation & building material supply with 22+ years of experience.',
-    images: ['https://www.mtboss.in/og-civil-contractor-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-civil-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-contractor-in-moradabad',
+  url: 'https://www.MTBOSS.in/civil-contractor-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

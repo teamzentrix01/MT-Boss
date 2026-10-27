@@ -12,18 +12,18 @@ export const metadata = {
   keywords:
     'bathroom renovation Moradabad, bathroom remodelling Moradabad, bathroom renovation contractor Moradabad, bathroom waterproofing Moradabad, bathroom leak repair Moradabad, bathroom plumbing Moradabad, bathroom tiles Moradabad, bathroom fittings Moradabad, small bathroom renovation Moradabad, bathroom renovation cost Moradabad, MTBOSS bathroom renovation Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/bathroom-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
   },
   openGraph: {
     title:
       'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBOSS',
     description:
       'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBOSS manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/bathroom-renovation-moradabad',
+    url: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-bathroom-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-bathroom-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Bathroom Renovation in Moradabad - MTBOSS',
@@ -38,7 +38,7 @@ export const metadata = {
       'Bathroom Renovation in Moradabad | Waterproofing & Remodel | MTBOSS',
     description:
       'Bathroom renovation in Moradabad: fix leaks, redo waterproofing, plumbing, tiles and fittings. MTBOSS manages every trade for a safe, lasting bathroom. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-bathroom-renovation-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-bathroom-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/bathroom-renovation-moradabad',
+  url: 'https://www.MTBOSS.in/bathroom-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

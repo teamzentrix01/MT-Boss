@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect in Bareilly: MT Boss
+            Architect in Bareilly: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -16,13 +16,13 @@ const Content = () => {
               <p>
                 An architect in Bareilly plans how a building looks, works and fits
                 its plot, and produces the drawings needed for approval and
-                construction. MT Boss Construction Private Limited offers
+                construction. MTBOSS Construction Private Limited offers
                 architecture and interior design for homes, shops and industrial
                 buildings in Bareilly and Moradabad, with construction support from
                 the same team [confirm architect registration details].
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited builds, renovates and repairs
+                MTBOSS Construction Private Limited builds, renovates and repairs
                 homes, shops and commercial properties across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -32,7 +32,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of an Architect&apos;s Role
+               Architect&apos;s Role
               </h3>
               <p className="mb-3">
                 An architect designs buildings and guides them from first sketch to
@@ -61,7 +61,7 @@ const Content = () => {
                 Council&apos;s records.
               </p>
               <p className="mb-3">
-                MT Boss design team: [state plainly who leads design: a
+                MTBOSS design team: [state plainly who leads design: a
                 COA-registered architect with name and registration number, or
                 designers working under one. Add qualifications and experience you
                 can show.]
@@ -186,7 +186,7 @@ const Content = () => {
                   <strong>Local authority rules.</strong> Setbacks, height,
                   coverage and permissions come from the Bareilly Development
                   Authority or the relevant local body [confirm the correct
-                  authority and how MT Boss assists with approvals].
+                  authority and how MTBOSS assists with approvals].
                 </li>
               </ul>
             </section>
@@ -197,7 +197,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A proper design produces documents, not just verbal ideas [adjust
-                to what MT Boss provides].
+                to what MTBOSS provides].
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -206,12 +206,7 @@ const Content = () => {
                 <li>Floor plans for every level</li>
                 <li>Elevations of all sides</li>
                 <li>Sections showing heights and stairs</li>
-                <li>3D views of the exterior and key rooms</li>
-                <li>Door and window schedule</li>
-                <li>
-                  Electrical and plumbing layout, at least in outline
-                </li>
-                <li>Staircase, roof and drainage details</li>
+                
                 <li>Material and finish list</li>
                 <li>
                   Approval set and working drawing set, where included in scope
@@ -229,7 +224,7 @@ const Content = () => {
               <p className="mb-3">
                 Many projects go wrong in the gap between the architect and the
                 builder. The design looks lovely, then the builder finds it costly
-                or hard to build. Because MT Boss also builds, our designers can
+                or hard to build. Because MTBOSS also builds, our designers can
                 check cost, structure and buildability while drawing, and our
                 engineers can flag problems before they reach the site.
               </p>
@@ -242,7 +237,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Working With MT Boss From Bareilly
+                Working With MTBOSS From Bareilly
               </h3>
               <p className="mb-3">
                 Distance should not slow a project. Our usual arrangements include
@@ -315,7 +310,7 @@ const Content = () => {
               <p className="mb-3">
                 Design choices drive cost. A simple shape, standard sizes and
                 efficient structure cost less than complex forms. Use the Budget
-                Calculator on mtboss.in for an early idea, then ask for an
+                Calculator on MTBOSS.in for an early idea, then ask for an
                 itemised estimate once the design is firm. We can show cost
                 differences between options, so you choose with open eyes.
               </p>
@@ -340,7 +335,7 @@ const Content = () => {
                 <li>Interior design and elevation scope</li>
                 <li>Site visits and supervision</li>
                 <li>
-                  Whether construction is by MT Boss or another builder
+                  Whether construction is by MTBOSS or another builder
                 </li>
               </ul>
               <p className="mt-3">
@@ -391,30 +386,14 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Mistakes to Avoid
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Choosing a designer on 3D images alone</li>
-                <li>Starting construction before drawings are final</li>
-                <li>Skipping soil and site checks</li>
-                <li>Ignoring orientation, ventilation and drainage</li>
-                <li>Changing the design after the structure is built</li>
-                <li>Paying large advances with no written scope</li>
-                <li>
-                  Copying a plan from another plot without adapting it
-                </li>
-                <li>Forgetting parking, storage and future expansion</li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Related Services From MT Boss
+                Related Services From MTBOSS
               </h3>
               <p>
-                Design often leads into other work. Through mtboss.in, MT Boss also
+                Design often leads into other work. Through MTBOSS.in, MTBOSS also
                 offers Architecture &amp; Interior, Building Elevation, Building
                 Contractor, Building Renovation, Water Proofing, Modular Kitchen,
                 False Ceiling, Painter, Electrician, Plumber and more, so design,
@@ -424,67 +403,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
-              </h3>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
-                </li>
-                <li>
-                  <strong>Service:</strong> Architecture, interior and building
-                  design, alongside construction and home services
-                </li>
-                <li>
-                  <strong>Registered office:</strong> Harthala, Kanth Road,
-                  Moradabad (behind KR Collection, near Domino&apos;s), Uttar
-                  Pradesh
-                </li>
-                <li>
-                  <strong>Service area:</strong> Bareilly, Moradabad and nearby
-                  areas of western Uttar Pradesh
-                </li>
-                <li>
-                  <strong>Bareilly presence:</strong> [state truthfully: service
-                  visits, a site office or a branch, with address if one exists]
-                </li>
-                <li>
-                  <strong>Phone / WhatsApp:</strong> +91 94584 10866
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    www.mtboss.in
-                  </a>{" "}
-                  (click &quot;Get a Construction Quote&quot;)
-                </li>
-                <li>
-                  <strong>Design lead:</strong> [name, qualification and COA
-                  registration number, if applicable]
-                </li>
-                <li>
-                  <strong>Credentials:</strong> [add company registration and GST
-                  details you can show]
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss
+                Reasons Clients Choose MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -534,7 +453,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Design With MT Boss
+                Start Your Design With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -551,21 +470,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -580,7 +499,7 @@ const Content = () => {
                 visit.
               </p>
               <p className="mt-3">
-                Choose MT Boss for an architect in Bareilly, with the plot studied,
+                Choose MTBOSS for an architect in Bareilly, with the plot studied,
                 the plan drawn around your needs and a team ready to build it.
               </p>
             </section>
@@ -595,7 +514,7 @@ const Content = () => {
                     Q1. Who offers architect services in Bareilly?
                   </strong>
                   <br />
-                  MT Boss Construction offers architecture and building design for
+                  MTBOSS Construction offers architecture and building design for
                   clients in Bareilly and Moradabad.
                 </li>
                 <li>
@@ -640,7 +559,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book a consultation?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

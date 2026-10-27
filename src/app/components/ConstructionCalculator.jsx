@@ -453,7 +453,7 @@ function buildReportHtml(snapshot) {
   <html>
     <head>
       <meta charset="utf-8" />
-      <title>MTBoss Construction Budget Estimate</title>
+      <title>MTBOSS Construction Budget Estimate</title>
       <style>
         * { box-sizing: border-box; }
         body { margin: 0; background: #f4f5f2; color: #111; font-family: Arial, sans-serif; }
@@ -493,9 +493,9 @@ function buildReportHtml(snapshot) {
       <div class="page">
         <div class="top">
           <div class="brand">
-            <img src="/logo.png" alt="MTBoss" />
+            <img src="/logo.png" alt="MTBOSS" />
             <div>
-              <h1>MTBoss Construction</h1>
+              <h1>MTBOSS Construction</h1>
               <p>Construction, materials, site execution and property services</p>
               <p>{COMPANY_CONTACT.email} | {COMPANY_CONTACT.phone}</p>
             </div>
@@ -552,23 +552,23 @@ function buildReportHtml(snapshot) {
         </div>
 
         <div class="ad">
-          <strong>Next Step:</strong> MTBoss can arrange a site visit, detailed BOQ, material procurement support, vendor coordination, labour planning and end-to-end construction execution. Share this estimate with our team to convert it into a detailed project proposal.
+          <strong>Next Step:</strong> MTBOSS can arrange a site visit, detailed BOQ, material procurement support, vendor coordination, labour planning and end-to-end construction execution. Share this estimate with our team to convert it into a detailed project proposal.
         </div>
 
         <div class="disclaimer">
-          <strong>Important Disclaimer:</strong> This budget is an approximate estimate generated from calculator assumptions, selected materials and city-level rates. Actual project value may vary after site visit, soil condition review, architectural/structural drawings, local material rates, labour availability, finishing choices, transport distance, statutory requirements and real site measurements. Final pricing should be confirmed only after an MTBoss site inspection and detailed technical assessment.
+          <strong>Important Disclaimer:</strong> This budget is an approximate estimate generated from calculator assumptions, selected materials and city-level rates. Actual project value may vary after site visit, soil condition review, architectural/structural drawings, local material rates, labour availability, finishing choices, transport distance, statutory requirements and real site measurements. Final pricing should be confirmed only after an MTBOSS site inspection and detailed technical assessment.
         </div>
 
         <div class="footer">
           <div>
-            <strong>MTBoss Office</strong>
+            <strong>MTBOSS Office</strong>
             Harthala Kanth Road Behind Kr Collection, near Domino's,<br />
             Uttar Pradesh, India
           </div>
           <div>
             <strong>Contact Us</strong>
             Phone: <a href={COMPANY_CONTACT.telHref}>{COMPANY_CONTACT.phone}</a><br />
-            Email: <a href="mailto:mtboss2016@gmail.com">mtboss2016@gmail.com</a><br />
+            Email: <a href="mailto:MTBOSS2016@gmail.com">MTBOSS2016@gmail.com</a><br />
             Web: <a href="/contact">Contact Us</a>
           </div>
         </div>
@@ -972,7 +972,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
             lineHeight: '1.6',
             marginBottom: '32px'
           }}>
-            Please log in to unlock the MTBoss Budget Calculator. Get live cost updates, customized material specifications, and download professional engineering reports.
+            Please log in to unlock the MTBOSS Budget Calculator. Get live cost updates, customized material specifications, and download professional engineering reports.
           </p>
           <a
             href="/login?redirect=/calculator"
@@ -1565,7 +1565,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
             {quoteStep === 'details' && (
               <form className="boq-quote-form" onSubmit={requestQuoteOtp}>
                 <div className="boq-report-note">
-                  Fill your contact details to receive an OTP. After verification, you can download a professional MTBoss budget estimate report with logo, BOQ, summary and disclaimer.
+                  Fill your contact details to receive an OTP. After verification, you can download a professional MTBOSS budget estimate report with logo, BOQ, summary and disclaimer.
                 </div>
                 <div className="boq-quote-grid">
                   <div className="boq-quote-field">
@@ -1664,7 +1664,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
             {quoteStep === 'verified' && (
               <div className="boq-quote-form">
                 <div className="boq-report-note">
-                  Verification complete. Your report includes a detailed BOQ, total estimate, selected brands, MTBoss contact details and an approximation disclaimer for site-visit validation.
+                  Verification complete. Your report includes a detailed BOQ, total estimate, selected brands, MTBOSS contact details and an approximation disclaimer for site-visit validation.
                 </div>
                 {quoteMsg && <div className="boq-quote-msg">{quoteMsg}</div>}
                 <button className="boq-action primary" type="button" onClick={downloadVerifiedReport}>

@@ -16,6 +16,24 @@ export async function GET(req, { params }) {
     const { searchParams } = new URL(req.url);
     const { page, pageSize, offset } = pageParams(searchParams);
 
+    const isAgent = admin.role === 'agent';
+    const agentId = admin.id;
+
+    if (isAgent) {
+      const allowedCheck = await pool.query(
+        `SELECT 1 FROM pm_projects pr
+         JOIN pm_project_agents pa ON pa.project_id = pr.id
+         WHERE pr.party_id = $1 AND pa.agent_id = $2
+         LIMIT 1`,
+        [id, agentId]
+      );
+      if (!allowedCheck.rows.length) {
+        return NextResponse.json({ success: false, error: 'Unauthorized: You are not assigned to any projects under this party' }, { status: 403 });
+      }
+    }
+
+    const queryParams = isAgent ? [id, pageSize, offset, agentId] : [id, pageSize, offset];
+
     const result = await pool.query(
       `WITH party AS (
          SELECT * FROM pm_parties WHERE id = $1
@@ -23,6 +41,7 @@ export async function GET(req, { params }) {
        paged_projects AS (
          SELECT p.*, COUNT(*) OVER()::int total_count
          FROM pm_projects p
+         ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''}
          WHERE p.party_id = $1
          ORDER BY p.created_at DESC
          LIMIT $2 OFFSET $3
@@ -79,14 +98,16 @@ export async function GET(req, { params }) {
          GROUP BY l.project_id
        ),
        party_projects_total AS (
-         SELECT COALESCE(SUM(contract_value), 0) AS contract_value
-         FROM pm_projects
-         WHERE party_id = $1
+         SELECT COALESCE(SUM(p.contract_value), 0) AS contract_value
+         FROM pm_projects p
+         ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''}
+         WHERE p.party_id = $1
        ),
        party_payments_total AS (
          SELECT COALESCE(SUM(pay.amount), 0) AS received
          FROM pm_party_payments pay
          JOIN pm_projects p ON p.id = pay.project_id
+         ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''}
          WHERE p.party_id = $1 AND NOT pay.is_deleted
        ),
        party_totals AS (
@@ -96,12 +117,12 @@ export async function GET(req, { params }) {
        ),
        party_expenses AS (
          SELECT
-           COALESCE((SELECT SUM(a.wage_amount) FROM pm_attendance a JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND pv.pay_type = 'daily_wage'), 0) +
-           COALESCE((SELECT SUM(pv.contract_amount) FROM pm_project_vendors pv JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND pv.pay_type = 'contract'), 0) +
-           COALESCE((SELECT SUM(la.wage_amount) FROM pm_labor_attendance la JOIN pm_labor l ON l.id = la.labor_id JOIN pm_projects p ON p.id = l.project_id WHERE p.party_id = $1), 0) +
-           COALESCE((SELECT SUM(m.amount) FROM pm_vendor_material_supply m JOIN pm_project_vendors pv ON pv.id = m.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id WHERE p.party_id = $1 AND NOT m.is_deleted), 0) +
-           COALESCE((SELECT SUM(mr.amount) FROM pm_material_received mr JOIN pm_projects p ON p.id = mr.project_id WHERE p.party_id = $1 AND NOT mr.is_deleted AND mr.vendor_supply_id IS NULL AND NOT mr.transfer_in), 0) +
-           COALESCE((SELECT SUM(oe.amount) FROM pm_other_expenses oe JOIN pm_projects p ON p.id = oe.project_id WHERE p.party_id = $1 AND NOT oe.is_deleted), 0) AS total_party_expense
+           COALESCE((SELECT SUM(a.wage_amount) FROM pm_attendance a JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1 AND pv.pay_type = 'daily_wage'), 0) +
+           COALESCE((SELECT SUM(pv.contract_amount) FROM pm_project_vendors pv JOIN pm_projects p ON p.id = pv.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1 AND pv.pay_type = 'contract'), 0) +
+           COALESCE((SELECT SUM(la.wage_amount) FROM pm_labor_attendance la JOIN pm_labor l ON l.id = la.labor_id JOIN pm_projects p ON p.id = l.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1), 0) +
+           COALESCE((SELECT SUM(m.amount) FROM pm_vendor_material_supply m JOIN pm_project_vendors pv ON pv.id = m.project_vendor_id JOIN pm_projects p ON p.id = pv.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1 AND NOT m.is_deleted), 0) +
+           COALESCE((SELECT SUM(mr.amount) FROM pm_material_received mr JOIN pm_projects p ON p.id = mr.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1 AND NOT mr.is_deleted AND mr.vendor_supply_id IS NULL AND NOT mr.transfer_in), 0) +
+           COALESCE((SELECT SUM(oe.amount) FROM pm_other_expenses oe JOIN pm_projects p ON p.id = oe.project_id ${isAgent ? 'JOIN pm_project_agents pa ON pa.project_id = p.id AND pa.agent_id = $4' : ''} WHERE p.party_id = $1 AND NOT oe.is_deleted), 0) AS total_party_expense
        )
        SELECT
          party.id party_id, party.name party_name, party.phone party_phone,
@@ -131,12 +152,14 @@ export async function GET(req, { params }) {
        LEFT JOIN other_exp oe ON oe.project_id = pp.id
        LEFT JOIN ind_labour il ON il.project_id = pp.id
        ORDER BY pp.created_at DESC`,
-      [id, pageSize, offset]
+      queryParams
     );
 
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Party not found' }, { status: 404 });
     const party = result.rows[0];
     const total = Number(party.total_count || 0);
+
+    const hasPayments = admin.role === 'admin' || admin.role === 'site_supervisor' || (admin.specializations || []).includes('payments');
 
     return NextResponse.json({
       success: true,
@@ -149,11 +172,11 @@ export async function GET(req, { params }) {
           gst_no: party.party_gst_no,
           address: party.party_address,
           created_at: party.party_created_at,
-          total_contract_value: party.total_contract_value,
-          total_received: party.total_received,
-          total_pending: party.total_pending,
-          total_expense: Number(party.total_party_expense || 0),
-          total_profit: Number(party.total_party_profit || 0),
+          total_contract_value: hasPayments ? party.total_contract_value : null,
+          total_received: hasPayments ? party.total_received : null,
+          total_pending: hasPayments ? party.total_pending : null,
+          total_expense: hasPayments ? Number(party.total_party_expense || 0) : null,
+          total_profit: hasPayments ? Number(party.total_party_profit || 0) : null,
         },
         projects: result.rows
           .filter((r) => r.project_id)
@@ -164,15 +187,15 @@ export async function GET(req, { params }) {
             site_address: r.site_address,
             start_date: r.start_date,
             expected_end_date: r.expected_end_date,
-            contract_value: r.contract_value,
+            contract_value: hasPayments ? r.contract_value : null,
             built_up_area: r.built_up_area,
             status: r.status,
             created_at: r.project_created_at,
-            received: r.received,
-            pending: r.pending,
-            total_vendor_cost: Number(r.total_vendor_cost || 0),
-            total_expense: Number(r.total_expense || 0),
-            profit_or_loss: Number(r.profit_or_loss || 0),
+            received: hasPayments ? r.received : null,
+            pending: hasPayments ? r.pending : null,
+            total_vendor_cost: hasPayments ? Number(r.total_vendor_cost || 0) : null,
+            total_expense: hasPayments ? Number(r.total_expense || 0) : null,
+            profit_or_loss: hasPayments ? Number(r.profit_or_loss || 0) : null,
           })),
       },
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
@@ -185,6 +208,9 @@ export async function GET(req, { params }) {
 export async function PATCH(req, { params }) {
   const admin = await requirePmAccess(req);
   if (!admin) return unauthorized();
+  if (admin.role === 'agent') {
+    return NextResponse.json({ success: false, error: 'Unauthorized: Agents cannot edit parties' }, { status: 403 });
+  }
   try {
     await ensureProjectManagementSchema();
     const id = idOf(await params);

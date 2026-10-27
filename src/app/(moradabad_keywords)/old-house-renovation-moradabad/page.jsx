@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'old house renovation Moradabad, old home renovation Moradabad, house renovation Moradabad, old house repair Moradabad, seepage repair Moradabad, damp wall repair Moradabad, old wiring replacement Moradabad, old pipe replacement Moradabad, house renovation contractor Moradabad, home renovation Moradabad, MTBOSS old house renovation Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/old-house-renovation-moradabad',
+    canonical: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
   },
   openGraph: {
     title: 'Old House Renovation in Moradabad',
     description:
       'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBOSS inspects first and manages every trade. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/old-house-renovation-moradabad',
+    url: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-old-house-renovation-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-old-house-renovation-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Old House Renovation in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Old House Renovation in Moradabad',
     description:
       'Old house renovation in Moradabad: fix seepage, cracks, old wiring and pipes, then upgrade interiors. MTBOSS inspects first and manages every trade. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-old-house-renovation-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-old-house-renovation-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/old-house-renovation-moradabad',
+  url: 'https://www.MTBOSS.in/old-house-renovation-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

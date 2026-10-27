@@ -50,7 +50,7 @@ const ORDER_SELECT = `
            WHEN 'supplier' THEN (SELECT COALESCE(shop_name, business_name, email) FROM suppliers WHERE id = me.assigned_entity_id)
            WHEN 'vendor' THEN (SELECT COALESCE(shop_name, business_name, email) FROM vendors WHERE id = me.assigned_entity_id)
            WHEN 'franchise' THEN (SELECT COALESCE(name, email) FROM franchises WHERE id = me.assigned_entity_id)
-           WHEN 'admin' THEN 'MTBoss Admin'
+           WHEN 'admin' THEN 'MTBOSS Admin'
            ELSE NULL
          END AS assigned_name,
          COALESCE((

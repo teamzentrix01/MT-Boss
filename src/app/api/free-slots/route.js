@@ -163,7 +163,7 @@ export async function POST(req) {
     let uploadedImage = null;
     if (imageFile) {
       try {
-        uploadedImage = await uploadBannerImage(imageFile, 'mtboss/free-slots');
+        uploadedImage = await uploadBannerImage(imageFile, 'MTBOSS/free-slots');
       } catch (error) {
         const status = /choose a JPG|smaller than 5 MB|contents do not match/i.test(error.message) ? 400 : 502;
         return NextResponse.json({ error: error.message || 'Image upload failed.' }, { status });

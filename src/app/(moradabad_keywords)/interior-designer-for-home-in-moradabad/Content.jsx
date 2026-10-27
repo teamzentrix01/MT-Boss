@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Home in Moradabad: Design That Fits Your
-            Family, Not a Catalogue
+            Interior Designer for Home in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,7 +24,7 @@ const Content = () => {
                 Moradabad is a practical decision as much as a creative one.
               </p>
               <p className="mt-3">
-                MT Boss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company working in Moradabad and Bareilly. We design homes from
                 the inside out. We begin with how you use each room, then choose
                 layouts, materials and finishes that support those habits.
@@ -41,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What a Home Interior Designer Actually Does
+                 Home Interior Designer 
               </h3>
               <p className="mb-3">
                 Many people think a designer only picks colours and furniture. In
@@ -310,7 +309,7 @@ const Content = () => {
               <p className="mt-3">
                 Our website also offers a{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -375,7 +374,7 @@ const Content = () => {
                 follow.
               </p>
               <p className="mb-3">
-                MT Boss handles planning, construction and interiors together.
+                MTBOSS handles planning, construction and interiors together.
                 That gives homeowners:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -489,10 +488,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -502,17 +501,17 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
-                Your home should feel like it belongs to you. Let MT Boss help
+                Your home should feel like it belongs to you. Let MTBOSS help
                 you create it.
               </p>
             </section>
@@ -533,7 +532,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q2. Does MT Boss design full homes and single rooms?
+                    Q2. Does MTBOSS design full homes and single rooms?
                   </strong>
                   <br />
                   Yes. You can choose a complete home package or just one room,

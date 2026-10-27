@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "architect for college Moradabad, college building construction Moradabad, educational institute architect Moradabad, college campus design Moradabad, school and college construction Moradabad, institutional building contractor Moradabad, MTBOSS Moradabad, college building cost Moradabad, MTBOSS budget calculator, college construction materials Moradabad, MTBOSS Kanth Road, coaching institute construction Moradabad, educational building architect UP, college construction quote Moradabad, MTBOSS institutional projects",
   alternates: {
-    canonical: "https://www.mtboss.in/architect-for-college-moradabad",
+    canonical: "https://www.MTBOSS.in/architect-for-college-moradabad",
   },
   openGraph: {
     title: "Architect for College Moradabad | MTBOSS",
     description:
       "Need an architect for college building construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866.",
-    url: "https://www.mtboss.in/architect-for-college-moradabad",
+    url: "https://www.MTBOSS.in/architect-for-college-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-college-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-college-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Architect for College in Moradabad - MTBOSS Construction",
@@ -36,7 +36,7 @@ export const metadata = {
     title: "Architect for College Moradabad | MTBOSS",
     description:
       "Need an architect for college building construction in Moradabad? MTBOSS offers design, build and material supply together. Call +91 94584 10866.",
-    images: ["https://www.mtboss.in/og-college-moradabad.jpg"],
+    images: ["https://www.MTBOSS.in/og-college-moradabad.jpg"],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/architect-for-college-moradabad",
+    url: "https://www.MTBOSS.in/architect-for-college-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -90,7 +90,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

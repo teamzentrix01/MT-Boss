@@ -4,7 +4,7 @@ const companyName = process.env.COMPANY_NAME || 'MTBOSS Construction';
 const companyPhone = process.env.COMPANY_PHONE || process.env.NEXT_PUBLIC_COMPANY_PHONE || '+91 9458410866';
 const appUrl = String(process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
 const isLocal = !appUrl || appUrl.includes('localhost') || appUrl.includes('127.0.0.1');
-const logoUrl = process.env.COMPANY_LOGO_URL || (!isLocal ? `${appUrl}/logo.png` : 'https://mtboss.in/logo.png');
+const logoUrl = process.env.COMPANY_LOGO_URL || (!isLocal ? `${appUrl}/logo.png` : 'https://MTBOSS.in/logo.png');
 
 
 function escapeHtml(value) {
@@ -219,7 +219,7 @@ export async function deliverReviewConfirmation({ email, name, rating, service }
   return Promise.allSettled([
     sendMail({
       to: email,
-      subject: `Thank you for reviewing MTBoss! ⭐`,
+      subject: `Thank you for reviewing MTBOSS! ⭐`,
       html,
       text: `Hello ${name},\n\nThank you for reviewing ${service} on ${companyName}. Your rating: ${rating}/5.\n\nWarm regards,\n${companyName}`,
     }),
@@ -230,7 +230,7 @@ export async function deliverReviewConfirmation({ email, name, rating, service }
 
 export async function notifyAdminSubmission({ type, name, phone, email, reference, details = {} }) {
   const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER;
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || 'mtboss2016@gmail.com';
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || 'MTBOSS2016@gmail.com';
   const detailLines = Object.entries(details).filter(([, value]) => value !== undefined && value !== null && value !== '').slice(0, 12).map(([key, value]) => `${key}: ${value}`);
   const plainText = `New ${type} - ${companyName}\n\nName: ${name || '-'}\nPhone: ${phone || '-'}\nEmail: ${email || '-'}\nReference: ${reference || '-'}${detailLines.length ? `\n${detailLines.join('\n')}` : ''}\n\nReceived: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
   const jobs = [];
@@ -258,7 +258,7 @@ export async function deliverPropertyEnquiryNotification({ enquiry, property, ow
   if (owner?.email) {
     const ownerSubject = `New Customer Inquiry for your ${listingLabel} Property: ${property.title} - ${companyName}`;
     const cleanEnquirerPhone = String(enquiry.phone || '').replace(/\D/g, '');
-    const waLink = cleanEnquirerPhone ? `https://wa.me/91${cleanEnquirerPhone.slice(-10)}?text=${encodeURIComponent(`Hello ${enquiry.name || ''}, regarding your inquiry for ${property.title} on MTBoss...`)}` : '';
+    const waLink = cleanEnquirerPhone ? `https://wa.me/91${cleanEnquirerPhone.slice(-10)}?text=${encodeURIComponent(`Hello ${enquiry.name || ''}, regarding your inquiry for ${property.title} on MTBOSS...`)}` : '';
     const telLink = cleanEnquirerPhone ? `tel:+91${cleanEnquirerPhone.slice(-10)}` : '';
 
     const ownerHtml = `<!doctype html><html><body style="margin:0;background:#f3f4f6;padding:24px;font-family:Arial,sans-serif;color:#111827">
@@ -279,7 +279,7 @@ export async function deliverPropertyEnquiryNotification({ enquiry, property, ow
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
             <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
             <p style="margin:0;font-size:13px;color:#64748b">
-              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''}
+              ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''}
             </p>
           </div>
 
@@ -341,7 +341,7 @@ export async function deliverPropertyEnquiryNotification({ enquiry, property, ow
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #2196f3;padding:16px;border-radius:8px;margin:18px 0">
             <h3 style="margin:0 0 6px;font-size:16px;color:#0f172a">${escapeHtml(property.title)}</h3>
             <p style="margin:0;font-size:13px;color:#64748b">
-              📍 ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''} &nbsp;•&nbsp; ${escapeHtml(listingLabel)}
+              ${escapeHtml(property.location || '-')}${property.price ? ` &nbsp;•&nbsp; 💰 <strong>₹${escapeHtml(property.price)}</strong>` : ''} &nbsp;•&nbsp; ${escapeHtml(listingLabel)}
             </p>
           </div>
 

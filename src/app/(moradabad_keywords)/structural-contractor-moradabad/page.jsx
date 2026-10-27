@@ -8,21 +8,21 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'Structural Contractor in Moradabad',
   description:
-    'MT Boss is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
+    'MTBOSS is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
   keywords:
-    'structural contractor Moradabad, structural engineer contractor Moradabad, building structure contractor Moradabad, additional floor contractor Moradabad, structural repair Moradabad, structural strengthening Moradabad, industrial structure contractor Moradabad, RCC structural work Moradabad, civil contractor Moradabad, MT Boss Moradabad',
+    'structural contractor Moradabad, structural engineer contractor Moradabad, building structure contractor Moradabad, additional floor contractor Moradabad, structural repair Moradabad, structural strengthening Moradabad, industrial structure contractor Moradabad, RCC structural work Moradabad, civil contractor Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/structural-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/structural-contractor-moradabad',
   },
   openGraph: {
     title: 'Structural Contractor in Moradabad',
     description:
-      'MT Boss is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
-    url: 'https://www.mtboss.in/structural-contractor-moradabad',
+      'MTBOSS is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
+    url: 'https://www.MTBOSS.in/structural-contractor-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-structural-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-structural-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Structural Contractor in Moradabad - MTBOSS',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Structural Contractor in Moradabad',
     description:
-      'MT Boss is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
-    images: ['https://www.mtboss.in/og-structural-contractor-moradabad.jpg'],
+      'MTBOSS is a structural contractor in Moradabad for building frames, additional floors, structural repair and industrial structures, with engineer supervision and clear pricing.',
+    images: ['https://www.MTBOSS.in/og-structural-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/structural-contractor-moradabad',
+    url: 'https://www.MTBOSS.in/structural-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/factory-construction-company-in-moradabad",
+      "https://www.MTBOSS.in/factory-construction-company-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Build your factory with MTBOSS, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/factory-construction-company-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-factory-construction-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Factory Construction Company in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Build your factory with MTBOSS, a factory construction company in Moradabad. Plan, build and hand over. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-factory-construction-moradabad.jpg",
     ],
   },
 
@@ -67,10 +67,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/factory-construction-company-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-factory-construction-moradabad.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-factory-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -118,13 +118,13 @@ export default function Page() {
     name: "Factory Construction Services in Moradabad",
     description:
       "MTBOSS provides factory construction in Moradabad for manufacturing units and industrial plants, including plot review, layout planning, site development, foundations, structural framing, roofing, industrial flooring, drainage, offices, amenities, external works, material supply and final handover.",
-    url: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/factory-construction-company-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -219,19 +219,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Factory Construction Company in Moradabad",
-        item: "https://www.mtboss.in/factory-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/factory-construction-company-in-moradabad",
       },
     ],
   };

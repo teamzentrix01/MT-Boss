@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Restaurant in Moradabad: Spaces That Fill
-            Tables and Keep Guests Returning
+            Interior Designer for Restaurant in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,9 +16,7 @@ const Content = () => {
               <p>
                 A diner decides within seconds whether a restaurant feels right.
                 The entrance, lighting, seating and noise level all shape that
-                first impression, long before anyone reads the menu. Once guests
-                sit down, the layout decides how smoothly service runs, how
-                comfortable people feel and how long they stay.
+                first impression, long before anyone reads the menu.
               </p>
               <p className="mt-3">
                 That is why hiring an interior designer for a restaurant in
@@ -27,15 +24,12 @@ const Content = () => {
                 owner can make.
               </p>
               <p className="mt-3">
-                MT Boss is an architecture, interior design and construction
+                MTBOSS is an architecture, interior design and construction
                 company serving Moradabad and Bareilly. We plan restaurant
                 interiors as working systems, where kitchen, service floor,
                 seating and branding support each other.
               </p>
-              <p className="mt-3">
-                This page explains what goes into a successful restaurant design,
-                how to plan your budget and what to look for in a design partner.
-              </p>
+           
             </section>
 
             <section>
@@ -65,13 +59,7 @@ const Content = () => {
                   quick bites or premium.
                 </li>
               </ul>
-              <p className="mt-3">
-                A poorly planned space can lose money even with excellent food.
-                Narrow walkways slow staff, cramped tables put guests off, and a
-                badly placed kitchen creates noise and smell in the dining area.
-                Good design prevents these problems before the first brick is
-                laid.
-              </p>
+        
             </section>
 
             <section>
@@ -235,7 +223,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                Because MT Boss also handles construction, plumbing, electrical
+                Because MTBOSS also handles construction, plumbing, electrical
                 and waterproofing coordination, kitchen requirements such as
                 drainage slopes, gas lines and power loads are planned early
                 rather than fixed later.
@@ -413,7 +401,7 @@ const Content = () => {
                 clashes and blame games can delay opening.
               </p>
               <p className="mb-3">
-                MT Boss handles planning, construction and interiors under one
+                MTBOSS handles planning, construction and interiors under one
                 roof. Restaurant owners benefit from:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -498,10 +486,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -511,17 +499,17 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
               <p className="mt-3">
-                Let MT Boss help you create a restaurant that guests enjoy and
+                Let MTBOSS help you create a restaurant that guests enjoy and
                 remember.
               </p>
             </section>
@@ -539,7 +527,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q2. Does MT Boss design cafes and small food outlets too?
+                    Q2. Does MTBOSS design cafes and small food outlets too?
                   </strong>
                   <br />
                   Yes. We design restaurants, cafes, sweet shops, bakeries, fast
@@ -585,12 +573,12 @@ const Content = () => {
                   </a>
                   , or use the contact page on{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

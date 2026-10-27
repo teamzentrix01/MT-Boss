@@ -330,14 +330,14 @@ function SupplierDashboardContent() {
 
         {/* Address (truncated unless expanded) */}
         {e.delivery_address && !isExpanded && (
-          <div className="sd-order-meta">📍 {e.delivery_address.slice(0, 70)}{e.delivery_address.length > 70 ? '…' : ''}</div>
+          <div className="sd-order-meta">{e.delivery_address.slice(0, 70)}{e.delivery_address.length > 70 ? '…' : ''}</div>
         )}
 
         {/* Expanded details */}
         {isExpanded && (
           <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: `1px solid ${border}`, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {e.user_email && <div className="sd-order-meta">✉️ {e.user_email}</div>}
-            {e.delivery_address && <div className="sd-order-meta">📍 {e.delivery_address}</div>}
+            {e.delivery_address && <div className="sd-order-meta">{e.delivery_address}</div>}
             {mapsUrl && (
               <div>
                 <a href={mapsUrl} target="_blank" rel="noopener noreferrer"
@@ -521,7 +521,7 @@ function SupplierDashboardContent() {
                     Customer: <strong style={{ color: text }}>{fulfillModal.user_name}</strong> · {fulfillModal.user_phone}
                   </div>
                   {fulfillModal.delivery_address && (
-                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>📍 {fulfillModal.delivery_address}</div>
+                    <div style={{ color: muted, fontSize: '0.75rem', marginTop: '0.2rem' }}>{fulfillModal.delivery_address}</div>
                   )}
                 </div>
 
@@ -654,7 +654,7 @@ function SupplierDashboardContent() {
                       { label: "Today's Net",       value: fmt(earnings.today_net),       color: '#22c55e', sub: 'After 15% commission'    },
                       { label: 'Total Revenue',     value: fmt(earnings.total_earned),    color: '#3b82f6', sub: 'All-time gross'          },
                       { label: 'Total Net Earning', value: fmt(earnings.total_net),       color: '#10b981', sub: 'After all commissions'   },
-                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MTBoss'         },
+                      { label: 'Commission Paid',   value: fmt(earnings.total_commission),color: '#f97316', sub: '15% to MTBOSS'         },
                       { label: 'Orders Fulfilled',  value: earnings.total_fulfilled,      color: text,      sub: 'Total completed'        },
                       { label: 'Active Orders',     value: earnings.active_orders,        color: '#3b82f6', sub: 'In progress'            },
                     ].map(c => (
@@ -666,7 +666,7 @@ function SupplierDashboardContent() {
                     ))}
                   </div>
                   <div style={{ background: surface, border: `1px solid ${border}`, borderRadius: 12, padding: '1.25rem', fontSize: '0.85rem', color: muted, lineHeight: 1.7 }}>
-                    <strong style={{ color: text }}>Commission:</strong> MTbossdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
+                    <strong style={{ color: text }}>Commission:</strong> MTBOSSdeducts <strong style={{ color: 'var(--brand-blue-dark)' }}>15%</strong> of the amount received on every fulfilled order.
                   </div>
                 </>
               ) : <div className="sd-empty">Could not load earnings.</div>}
@@ -866,7 +866,7 @@ function SupplierDashboardContent() {
                   </div>
                 ) : null)}
                 <div style={{ marginTop: '1rem', padding: '0.75rem', background: dark ? '#1a1a1a' : '#f9f9f9', borderRadius: 8, fontSize: '0.78rem', color: muted, lineHeight: 1.6 }}>
-                  🔒 To update contact details or Aadhaar, contact <strong>mtboss2016@gmail.com</strong>
+                  🔒 To update contact details or Aadhaar, contact <strong>MTBOSS2016@gmail.com</strong>
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import pool from '../src/lib/db.js';
 const JWT_SECRET = process.env.JWT_SECRET || 'development-only-change-me';
 
 const ADMIN_TOKEN = jwt.sign(
-  { id: 999, email: 'admin@mtboss.com', role: 'admin', name: 'Super Admin' },
+  { id: 999, email: 'admin@MTBOSS.com', role: 'admin', name: 'Super Admin' },
   JWT_SECRET,
   { expiresIn: '1h' }
 );

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Fees in Moradabad: Complete Pricing Guide by MT Boss
+            Architect Fees in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -20,7 +20,7 @@ const Content = () => {
                 Many homeowners assume architect fees are a luxury. In reality, a good architect often saves you more money than they charge, through better space planning, fewer construction errors and smarter material choices. The key is knowing how fees work, what they include and what to watch out for.
               </p>
               <p className="mt-3">
-                At MT Boss, we design and build homes, villas and commercial spaces across Moradabad and Bareilly. This guide explains the fee structures used in the industry, the factors that change the price, and how to get the best value from your architect.
+                At MTBOSS, we design and build homes, villas and commercial spaces across Moradabad and Bareilly. This guide explains the fee structures used in the industry, the factors that change the price, and how to get the best value from your architect.
               </p>
             </section>
 
@@ -173,27 +173,6 @@ const Content = () => {
                 The architect coordinates with engineers and consultants so all systems work together without conflicts.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 6: Estimates and Tender Support
-              </h4>
-              <p>
-                Cost estimates, quantities and contractor comparisons help you control spending.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 7: Site Supervision
-              </h4>
-              <p>
-                Regular site visits check that construction follows the drawings and meets quality standards. This stage is sometimes charged separately.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Stage 8: Interior Design
-              </h4>
-              <p>
-                Furniture layouts, lighting, modular kitchens, wardrobes, false ceilings and finishes can be added to complete the home.
-              </p>
-
               <p className="mt-3">
                 Always confirm which stages are part of your quote and which are extra.
               </p>
@@ -201,7 +180,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architect Fees vs Construction Cost: Understanding the Difference
+                Architect Fees vs Construction Cost: 
               </h3>
               <p className="mb-3">
                 Many people confuse the architect&apos;s fee with the cost of building. They are two separate items.
@@ -215,12 +194,12 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                At MT Boss, we also provide construction, which means design and building can be managed by one team. This often reduces coordination gaps, prevents blame-shifting between designer and builder, and can improve overall cost efficiency.
+                At MTBOSS, we also provide construction, which means design and building can be managed by one team. This often reduces coordination gaps, prevents blame-shifting between designer and builder, and can improve overall cost efficiency.
               </p>
               <p className="mt-3">
                 You can also use the{" "}
                 <a href="/calculator" className="text-blue-600 underline">
-                  MT Boss online construction calculator
+                  MTBOSS online construction calculator
                 </a>{" "}
                 to estimate your building budget before you decide on your design scope.
               </p>
@@ -327,7 +306,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose a Local Architect in Moradabad?
+                Choose a Architect in Moradabad
               </h3>
               <p className="mb-3">
                 Working with a firm that knows the city brings real advantages.
@@ -353,10 +332,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MT Boss Keeps Architect Fees Transparent
+                How MTBOSS Keeps Architect Fees Transparent
               </h3>
               <p className="mb-3">
-                Pricing should never feel confusing. At MT Boss, we follow a clear approach to fees so you always know where you stand.
+                Pricing should never feel confusing. At MTBOSS, we follow a clear approach to fees so you always know where you stand.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -379,7 +358,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                If you are comparing architect fees in Moradabad and want a clear, honest quote, MT Boss is ready to help.
+                If you are comparing architect fees in Moradabad and want a clear, honest quote, MTBOSS is ready to help.
               </p>
             </section>
 
@@ -424,7 +403,7 @@ const Content = () => {
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
+                Contact MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -441,21 +420,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -494,7 +473,7 @@ const Content = () => {
                 <li>
                   <strong>Q4. Are 3D elevations included in the fee?</strong>
                   <br />
-                  It depends on the package. At MT Boss, 3D elevation is part of the design scope, which we confirm in writing.
+                  It depends on the package. At MTBOSS, 3D elevation is part of the design scope, which we confirm in writing.
                 </li>
                 <li>
                   <strong>Q5. Is site supervision included?</strong>
@@ -512,9 +491,9 @@ const Content = () => {
                   Yes. The fee covers design services, while construction cost covers materials, labour and finishing.
                 </li>
                 <li>
-                  <strong>Q8. Does MT Boss offer both design and construction?</strong>
+                  <strong>Q8. Does MTBOSS offer both design and construction?</strong>
                   <br />
-                  Yes. MT Boss handles architecture, interiors, construction, modular kitchens and waterproofing.
+                  Yes. MTBOSS handles architecture, interiors, construction, modular kitchens and waterproofing.
                 </li>
                 <li>
                   <strong>Q9. Is hiring an architect worth the money?</strong>
@@ -522,7 +501,7 @@ const Content = () => {
                   Yes. Good design saves space, reduces errors, controls costs and increases property value.
                 </li>
                 <li>
-                  <strong>Q10. How can I get an exact fee quote from MT Boss?</strong>
+                  <strong>Q10. How can I get an exact fee quote from MTBOSS?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -535,19 +514,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

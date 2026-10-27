@@ -39,7 +39,7 @@ export async function GET(req) {
     params.push(pageSize, offset);
 
     const r = await pool.query(
-      `SELECT u.*, m.name AS material_name, m.unit AS material_unit, COUNT(*) OVER()::int AS total_count
+      `SELECT u.*, m.name AS material_name, COALESCE(u.unit, m.unit, 'units') AS material_unit, COUNT(*) OVER()::int AS total_count
        FROM pm_material_used u
        JOIN pm_materials m ON m.id = u.material_id
        WHERE ${where}
@@ -66,6 +66,7 @@ export async function POST(req) {
     const p = Number(b.project_id);
     const m = Number(b.material_id);
     const q = Number(b.quantity);
+    const selectedUnit = b.unit ? String(b.unit).trim() : null;
 
     if (
       !Number.isInteger(p) ||
@@ -85,6 +86,10 @@ export async function POST(req) {
       await c.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
 
+      if (selectedUnit) {
+        await c.query('UPDATE pm_materials SET unit = $1 WHERE id = $2 AND (unit IS NULL OR unit = \'\' OR unit <> $1)', [selectedUnit, m]);
+      }
+
       // Check current stock
       const stockRes = await c.query(
         `SELECT
@@ -98,10 +103,10 @@ export async function POST(req) {
 
       const r = await c.query(
         `INSERT INTO pm_material_used(
-           project_id, material_id, quantity, used_date, used_for, note, created_by, over_used
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+           project_id, material_id, quantity, used_date, used_for, note, created_by, over_used, unit
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
          RETURNING *`,
-        [p, m, q, b.used_date, b.used_for || null, b.note || null, actor, isOverUsed]
+        [p, m, q, b.used_date, b.used_for || null, b.note || null, actor, isOverUsed, selectedUnit]
       );
 
       await writePmPhase2Audit(c, 'pm_material_used', r.rows[0].id, 'created', actor, null, r.rows[0]);

@@ -251,8 +251,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Living Room in Moradabad: Stylish,
-            Comfortable and Practical Spaces by MT Boss
+            Interior Designer for Living Room in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -263,10 +262,7 @@ const Content = () => {
                 and daily life comes together.
               </p>
 
-              <p className="mt-3">
-                It is also the first room visitors see, so it shapes the
-                impression of your entire home.
-              </p>
+             
 
               <p className="mt-3">
                 A poorly planned living room feels crowded, dark or
@@ -276,12 +272,6 @@ const Content = () => {
                 gatherings.
               </p>
 
-              <p className="mt-3">
-                MT Boss, also known as MTBOSS Construction Private Limited, is
-                a Moradabad-based construction and interiors company. We design
-                living rooms with an understanding of structure, wiring,
-                ventilation and finishing, not just decoration.
-              </p>
 
               <p className="mt-3">
                 This guide covers layout, seating, TV units, ceilings, lighting,
@@ -754,7 +744,7 @@ const Content = () => {
               <p className="mt-4">
                 Learn more through our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                  href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -815,7 +805,7 @@ const Content = () => {
               <p className="mt-4">
                 Estimate early with our{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -824,7 +814,7 @@ const Content = () => {
                 </a>{" "}
                 and read our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -837,7 +827,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MT Boss Designs Your Living Room: Step by Step
+                How MTBOSS Designs Your Living Room: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -909,61 +899,16 @@ const Content = () => {
                   />
                 </div>
 
+            
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 7: Preparation Work
-                  </h4>
-                  <p>
-                    Wall repairs, electrical changes, ceiling framework and
-                    paint preparation come first.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry, Ceiling and Finishing
-                  </h4>
-                  <p>
-                    TV units, storage, paneling, ceilings, painting and lighting
-                    are installed in the correct order.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We check alignment, finish, lighting, hardware and cleanliness.",
-                      "Any snags are corrected before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs, you can use our{" "}
-                    <a
-                      href="https://www.mtboss.in/quick"
-                      className="text-blue-600 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Quick Home Services
-                    </a>{" "}
-                    or contact MT Boss directly.
-                  </p>
+               
                 </div>
               </div>
             </section>
 
             <section>
               <SectionTitle>
-                Why Choose MT Boss as Your Living Room Interior Designer in
+              Choose MTBOSS as Your Living Room Interior Designer in
                 Moradabad
               </SectionTitle>
 
@@ -1010,7 +955,7 @@ const Content = () => {
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1019,7 +964,7 @@ const Content = () => {
                 </a>
                 , connect with trained tradespeople through our{" "}
                 <a
-                  href="https://www.mtboss.in/Services/professionals"
+                  href="https://www.MTBOSS.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1028,7 +973,7 @@ const Content = () => {
                 </a>
                 , and see completed examples in our{" "}
                 <a
-                  href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1146,7 +1091,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Contact MT Boss for Your Living Room Project
+                Contact MTBOSS for Your Living Room Project
               </SectionTitle>
 
               <p className="mb-3">
@@ -1171,10 +1116,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1184,7 +1129,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Showroom in Moradabad: MT Boss
+            Interior Designer for Showroom in Moradabad: MTBOSS
           </h2>
 
 
@@ -22,7 +22,7 @@ const Content = () => {
                 That is the job of an interior designer for a showroom in Moradabad: to turn your space into a quiet but effective salesperson.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team plans, designs and builds showrooms and commercial interiors with clear pricing and honest advice. Because we also handle construction, building materials and site services, you deal with one accountable team from the first sketch to opening day.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team plans, designs and builds showrooms and commercial interiors with clear pricing and honest advice. Because we also handle construction, building materials and site services, you deal with one accountable team from the first sketch to opening day.
               </p>
               <p className="mt-3">
                 This page covers our showroom design services, the process we follow, cost factors and practical tips for anyone planning a showroom in Moradabad.
@@ -65,10 +65,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: Showroom Interior Design and Construction Under One Roof
+                MTBOSS: Showroom Interior Design and Construction Under One Roof
               </h3>
               <p className="mb-3">
-                Many designers create attractive drawings that are difficult or costly to build. MT Boss is a construction company first, so our showroom designs come with practical knowledge of structure, wiring, ceilings, flooring and finishing.
+                Many designers create attractive drawings that are difficult or costly to build. MTBOSS is a construction company first, so our showroom designs come with practical knowledge of structure, wiring, ceilings, flooring and finishing.
               </p>
               <p className="mb-3">
                 What you get when you work with us:
@@ -87,9 +87,9 @@ const Content = () => {
                   <strong>Itemised quotations.</strong> You see exactly where your money goes.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -101,7 +101,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -128,12 +128,7 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Clothing, Boutique and Jewellery Showrooms
-              </h4>
-              <p className="mb-3">
-                These spaces need warm lighting, secure display units, trial rooms, mirrors and a premium feel. We design display walls, counters and lighting that make fabrics, jewellery and accessories look their best.
-              </p>
+             
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -152,12 +147,7 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Export and Trade Showrooms
-              </h4>
-              <p className="mb-3">
-                Moradabad&apos;s export businesses often host overseas and domestic buyers. We design sample display areas, meeting zones and storage that present your range clearly and professionally.
-              </p>
+             
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -176,35 +166,12 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                False Ceiling, Flooring and Wall Finishes
-              </h4>
-              <p className="mb-3">
-                We select ceilings, flooring and wall treatments that suit heavy footfall, are easy to clean and support your brand look.
-              </p>
-
-
+             
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Billing Counter, Reception and Storage
               </h4>
               <p className="mb-3">
                 Well-planned counters, cash areas, back-office space and concealed storage keep the showroom neat and efficient.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Showroom Renovation and Makeover
-              </h4>
-              <p className="mb-3">
-                If your existing showroom looks dated, we refresh layouts, displays, lighting and finishes, often with limited downtime so your business keeps running.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Turnkey Showroom Execution
-              </h4>
-              <p className="mb-3">
-                Prefer to hand over everything? Our turnkey service covers design, civil changes, carpentry, ceilings, electrical points, flooring, painting, signage coordination and final cleaning.
               </p>
             </section>
 
@@ -232,12 +199,7 @@ const Content = () => {
                 <li>
                   <strong>Lighting plan:</strong> layered lighting with spotlights on key products.
                 </li>
-                <li>
-                  <strong>Brand elements:</strong> logo walls, colour palette, materials and signage.
-                </li>
-                <li>
-                  <strong>Seating and consultation area:</strong> comfortable space for serious buyers to discuss orders.
-                </li>
+              
                 <li>
                   <strong>Billing and packing zone:</strong> placed for smooth checkout without blocking movement.
                 </li>
@@ -262,7 +224,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Showroom Design Process at MT Boss
+                Showroom Design Process at MTBOSS
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what happens next.
@@ -281,9 +243,9 @@ const Content = () => {
                   <strong>Step 4: Detailed drawings and material selection.</strong> We finalise ceilings, flooring, electrical layouts, furniture and finishes.
                 </li>
                 <li>
-                  <strong>Step 5: Itemised quotation.</strong> You receive a written breakup of materials, labour and finishes. For a quick early estimate, try the MT Boss{" "}
+                  <strong>Step 5: Itemised quotation.</strong> You receive a written breakup of materials, labour and finishes. For a quick early estimate, try the MTBOSS{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -346,9 +308,9 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
+                MTBOSS provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
                 <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
+                  href="https://www.MTBOSS.in/CTASection/get-quote"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -398,12 +360,7 @@ const Content = () => {
                 <li>
                   <strong>Avoid clutter.</strong> Fewer items with more space around them look more valuable.
                 </li>
-                <li>
-                  <strong>Use colour with purpose.</strong> A neutral base with one or two brand colours keeps the space clean and memorable.
-                </li>
-                <li>
-                  <strong>Plan for changing stock.</strong> Modular shelves and flexible units make seasonal updates easy.
-                </li>
+                
                 <li>
                   <strong>Keep walkways wide.</strong> Cramped aisles make customers leave sooner.
                 </li>
@@ -453,14 +410,14 @@ const Content = () => {
                 <li>Their address and contact details match their official website and Google listing.</li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes each of these checks and answers them openly during your free consultation.
+                MTBOSS welcomes each of these checks and answers them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with showroom and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby commercial areas.
@@ -473,18 +430,18 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Showroom Interior Design FAQs
+                MTBOSS Showroom Interior Design FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss design and build showrooms?</strong>
+                  <strong>Q1. Does MTBOSS design and build showrooms?</strong>
                   <br />
                   Yes. We handle design, construction, interiors and finishing under one team.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
                   <strong>Q3. Can I see the design before work starts?</strong>
@@ -492,7 +449,7 @@ const Content = () => {
                   Yes. You receive 3D designs so you can approve the look in advance.
                 </li>
                 <li>
-                  <strong>Q4. Does MT Boss work on every type of showroom?</strong>
+                  <strong>Q4. Does MTBOSS work on every type of showroom?</strong>
                   <br />
                   Yes. We design showrooms for retail, furniture, fashion, jewellery, electronics, vehicles and export products.
                 </li>
@@ -522,7 +479,7 @@ const Content = () => {
                   It depends on size and scope. We share a clear schedule once the design is approved.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>

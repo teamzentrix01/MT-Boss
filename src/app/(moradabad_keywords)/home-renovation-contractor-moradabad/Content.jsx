@@ -599,10 +599,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -613,7 +613,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -622,7 +622,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -715,7 +715,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

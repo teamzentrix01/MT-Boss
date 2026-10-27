@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Best Building Contractor in Moradabad — How to Choose the Right One
+            Best Building Contractor in Moradabad
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -18,26 +18,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Makes a Building Contractor the &quot;Best&quot; in a City Like Moradabad?
-              </h3>
-              <p className="mb-3">
-                Genuine top-tier contractors consistently share certain traits:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>A long-standing, verifiable track record with numerous completed projects</li>
-                <li>Transparent, itemized cost estimates instead of vague lump-sum quotes</li>
-                <li>Well-coordinated teams of engineers, masons, and technicians</li>
-                <li>Ability to handle residential, commercial, and industrial projects alike</li>
-                <li>Access to verified, quality-checked building materials</li>
-                <li>Strong after-project support and structural warranty coverage</li>
-                <li>Positive client reviews and a visible, verifiable project portfolio</li>
-                <li>Fast, reliable communication via call, email, or WhatsApp</li>
-                <li>Use of modern technology like BIM (Building Information Modeling) for planning</li>
-                <li>Proper licensing and compliance with municipal construction regulations</li>
-              </ul>
-            </section>
+          
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -61,7 +42,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Residents Need the Best Contractor — Not Just Any Contractor
+                Why Moradabad Residents Need the Best Contractor 
               </h3>
               <p className="mb-3">
                 Choosing an inexperienced or unverified building contractor in a fast-growing city like Moradabad carries real risks:
@@ -199,9 +180,7 @@ const Content = () => {
                 <li>Prevailing market rates for materials and skilled labour</li>
                 <li>Design complexity — custom architecture versus standard layouts</li>
               </ul>
-              <p className="mt-3">
-                For reference, sample budget-calculator estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft., though actual costs vary by contractor and material choices.
-              </p>
+             
             </section>
 
             <section>
@@ -259,8 +238,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

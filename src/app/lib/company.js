@@ -1,4 +1,4 @@
-export const COMPANY_NAME = "Mtboss construction private limited";
+export const COMPANY_NAME = "MTBOSS construction private limited";
 
 const phoneDigits = (
   process.env.NEXT_PUBLIC_ADMIN_WHATSAPP_NUMBER
@@ -14,7 +14,7 @@ function formatIndianPhone(value) {
 
 export const COMPANY_CONTACT = {
   address: "Harthala Kanth Road Behind Kr Collection, near Domino's, Uttar Pradesh, India",
-  email: "mtboss2016@gmail.com",
+  email: "MTBOSS2016@gmail.com",
   phone: formatIndianPhone(phoneDigits),
   phoneDigits,
   telHref: phoneDigits ? `tel:+${phoneDigits}` : "",

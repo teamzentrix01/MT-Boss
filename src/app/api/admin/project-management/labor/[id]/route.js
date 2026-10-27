@@ -69,7 +69,9 @@ export async function PATCH(req, { params }) {
     const phone = b.phone !== undefined ? (b.phone ? String(b.phone).trim() : null) : undefined;
     const trade = b.trade !== undefined ? (b.trade ? String(b.trade).trim() : null) : undefined;
     const vendorId = b.vendor_id !== undefined ? (b.vendor_id ? Number(b.vendor_id) : null) : undefined;
-    const projectVendorId = b.project_vendor_id !== undefined ? (b.project_vendor_id ? Number(b.project_vendor_id) : null) : undefined;
+    let rawPv = b.project_vendor_id !== undefined ? b.project_vendor_id : (b.contractor_id !== undefined ? b.contractor_id : undefined);
+    if (rawPv === 'independent' || rawPv === 'none' || rawPv === 'null' || rawPv === '') rawPv = null;
+    const projectVendorId = rawPv !== undefined ? (rawPv ? Number(rawPv) : null) : undefined;
     const dailyRate = b.daily_rate !== undefined ? Number(b.daily_rate) : undefined;
     const isActive = b.is_active !== undefined ? Boolean(b.is_active) : undefined;
 
@@ -112,6 +114,7 @@ export async function PATCH(req, { params }) {
              trade = CASE WHEN $4::text IS NOT NULL OR $5 = true THEN $4 ELSE trade END,
              vendor_id = CASE WHEN $6::bigint IS NOT NULL OR $7 = true THEN $6::bigint ELSE vendor_id END,
              project_vendor_id = CASE WHEN $8::bigint IS NOT NULL OR $9 = true THEN $8::bigint ELSE project_vendor_id END,
+             contractor_id = CASE WHEN $8::bigint IS NOT NULL OR $9 = true THEN $8::bigint ELSE contractor_id END,
              daily_rate = COALESCE($10, daily_rate),
              is_active = COALESCE($11, is_active)
          WHERE id = $12

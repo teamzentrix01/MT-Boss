@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Factory in Moradabad: Design, Construction and Materials by MTBOSS
+            Architect for Factory in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,9 +23,7 @@ const Content = () => {
                 positions its industrial and infrastructure construction work
                 around engineering excellence and timely delivery, making it a
                 practical option for businesses planning a new factory, workshop
-                or manufacturing unit in the city. This page explains what
-                MTBOSS offers for factory projects, how the process works, and
-                how to get in touch.
+                or manufacturing unit in the city. 
               </p>
             </section>
 
@@ -66,8 +64,7 @@ const Content = () => {
                 <li><strong>Step 4 — Design and layout planning:</strong> Layouts are prepared based on your factory&apos;s functional needs, including production floor, storage and utility areas.</li>
                 <li><strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget Calculator, along with current material rates, is used to give a realistic cost outline.</li>
                 <li><strong>Step 6 — Material supply:</strong> Materials are sourced directly through MTBOSS&apos;s own wholesale supply of cement, steel, bricks, tiles and paints.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> Civil work proceeds under MTBOSS supervision, with quality and timeline checks along the way.</li>
-                <li><strong>Step 8 — Handover:</strong> Final finishing, inspection and handover of the completed factory building.</li>
+              
               </ul>
             </section>
 
@@ -86,10 +83,7 @@ const Content = () => {
                 <li><strong>Production floor space:</strong> Large, often column-minimal areas planned around machinery layout and workflow.</li>
                 <li><strong>Raw material and finished goods storage:</strong> Dedicated storage zones, separated from the active production area for safety and organization.</li>
                 <li><strong>Loading and unloading bays:</strong> Truck access, docking space and turning radius planned for smooth material movement in and out of the site.</li>
-                <li><strong>Utility and machine rooms:</strong> Space for electrical panels, compressors, generators or other supporting equipment.</li>
-                <li><strong>Worker facilities:</strong> Washrooms, changing areas and rest spaces for factory staff.</li>
-                <li><strong>Office and administrative area:</strong> A smaller attached office space for supervisory staff, records and visitor meetings.</li>
-                <li><strong>Ventilation and natural light:</strong> Roof and wall openings planned to reduce reliance on artificial lighting and improve working conditions.</li>
+                
                 <li><strong>Fire safety and emergency exits:</strong> Clearly planned exit routes, extinguisher points and emergency access, particularly important for industrial occupancy.</li>
                 <li><strong>Electrical load planning:</strong> Sufficient power capacity for machinery, lighting and any future equipment additions.</li>
                 <li><strong>Boundary wall and security:</strong> Site perimeter planning for safety, security and controlled access.</li>
@@ -220,12 +214,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -248,10 +242,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'building contractor near me Moradabad, contractor near me, local building contractor Moradabad, nearby construction company Moradabad, house construction near me, building work near my area, local contractor Moradabad, MTBOSS Moradabad, construction company near me, building contractor contact near me',
   alternates: {
-    canonical: 'https://www.mtboss.in/building-contractor-near-me-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/building-contractor-near-me-in-moradabad',
   },
   openGraph: {
     title: 'Building Contractor Near Me in Moradabad | MTBOSS',
     description:
       'Searching for a "building contractor near me" in Moradabad? MTBOSS offers local construction, materials & home services with fast response. Get a free quote!',
-    url: 'https://www.mtboss.in/building-contractor-near-me-in-moradabad',
+    url: 'https://www.MTBOSS.in/building-contractor-near-me-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-building-contractor-near-me-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-building-contractor-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Building Contractor Near Me in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Building Contractor Near Me in Moradabad | MTBOSS',
     description:
       'Searching for a "building contractor near me" in Moradabad? MTBOSS offers local construction, materials & home services with fast response. Get a free quote!',
-    images: ['https://www.mtboss.in/og-building-contractor-near-me-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-building-contractor-near-me-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/building-contractor-near-me-in-moradabad',
+  url: 'https://www.MTBOSS.in/building-contractor-near-me-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

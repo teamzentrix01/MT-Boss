@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "best architect firm Moradabad, top architect firm Moradabad, architect and construction firm Moradabad, best construction company Moradabad, MTBOSS Moradabad, architect firm near me Moradabad, design and build firm Moradabad, MTBOSS budget calculator, MTBOSS Kanth Road, commercial construction firm Moradabad, residential construction firm Moradabad, trusted construction company Moradabad, architect firm reviews Moradabad, construction quote Moradabad, MTBOSS project gallery",
   alternates: {
-    canonical: "https://www.mtboss.in/best-architect-firm-in-moradabad",
+    canonical: "https://www.MTBOSS.in/best-architect-firm-in-moradabad",
   },
   openGraph: {
     title: "Best Architect Firm in Moradabad | MTBOSS Construction",
     description:
       "Searching for the best architect firm in Moradabad? MTBOSS offers design, construction and material supply together. Call +91 94584 10866 for a quote.",
-    url: "https://www.mtboss.in/best-architect-firm-in-moradabad",
+    url: "https://www.MTBOSS.in/best-architect-firm-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-best-architect-firm-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-best-architect-firm-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Best Architect Firm in Moradabad - MTBOSS Construction",
@@ -37,7 +37,7 @@ export const metadata = {
     description:
       "Searching for the best architect firm in Moradabad? MTBOSS offers design, construction and material supply together. Call +91 94584 10866 for a quote.",
     images: [
-      "https://www.mtboss.in/og-best-architect-firm-moradabad.jpg",
+      "https://www.MTBOSS.in/og-best-architect-firm-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,9 +51,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/best-architect-firm-in-moradabad",
+    url: "https://www.MTBOSS.in/best-architect-firm-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress:
@@ -94,7 +94,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

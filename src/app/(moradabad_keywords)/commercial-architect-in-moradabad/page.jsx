@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'commercial architect Moradabad, office design architect Moradabad, retail architect near me, showroom design Moradabad, commercial building design company, business space architect Moradabad, commercial design and build Moradabad, MTBOSS Moradabad, office interior architect near me, commercial construction design Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/commercial-architect-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/commercial-architect-in-moradabad',
   },
   openGraph: {
     title: 'Commercial Architect in Moradabad | Design & Build',
     description:
       'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBOSS supports design-to-build.',
-    url: 'https://www.mtboss.in/commercial-architect-in-moradabad',
+    url: 'https://www.MTBOSS.in/commercial-architect-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-commercial-architect-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-commercial-architect-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Commercial Architect in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Commercial Architect in Moradabad | Design & Build',
     description:
       'Looking for a commercial architect in Moradabad? Learn what office, retail & business space design involves, costs, and how MTBOSS supports design-to-build.',
-    images: ['https://www.mtboss.in/og-commercial-architect-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-commercial-architect-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/commercial-architect-in-moradabad',
+    url: 'https://www.MTBOSS.in/commercial-architect-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

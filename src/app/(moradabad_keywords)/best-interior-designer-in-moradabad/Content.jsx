@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: Best Interior Designer in Moradabad for Homes, Offices and Shops
+            MTBOSS: Best Interior Designer in Moradabad for Homes, Offices and Shops
           </h2>
 
 
@@ -19,69 +19,69 @@ const Content = () => {
                 Your interiors are where you live, work and welcome people. A well-designed space feels comfortable the moment you step in. A badly planned one creates small frustrations every single day.
               </p>
               <p className="mt-3">
-                The best interior designer in Moradabad offers more than good-looking pictures. You get accurate planning, strong materials, neat finishing, honest pricing and a team that delivers on time. MT Boss brings all of this together. As a construction company with in-house design and execution, MT Boss manages your interior project from the first idea to the final handover.
+                The best interior designer in Moradabad offers more than good-looking pictures. You get accurate planning, strong materials, neat finishing, honest pricing and a team that delivers on time. MTBOSS brings all of this together. As a construction company with in-house design and execution, MTBOSS manages your interior project from the first idea to the final handover.
               </p>
               <p className="mt-3">
-                This guide explains what makes an interior designer truly the best, how MT Boss works, and how to get the most value from your project.
+                This guide explains what makes an interior designer truly the best, how MTBOSS works, and how to get the most value from your project.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MT Boss Is the Best Interior Designer in Moradabad
+                Why MTBOSS Is the Best Interior Designer in Moradabad
               </h3>
               <p className="mb-3">
-                &quot;Best&quot; should be something you can check, not just a claim. These are the qualities that matter, and how MT Boss delivers each one.
+                &quot;Best&quot; should be something you can check, not just a claim. These are the qualities that matter, and how MTBOSS delivers each one.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Design and Execution Under One Roof
               </h4>
               <p className="mb-3">
-                Most interior problems start when the designer and the contractor are different people. The design looks perfect on paper, but the site team changes details, costs rise and nobody takes responsibility. MT Boss handles both, so the plan you approve is the one that gets built.
+                Most interior problems start when the designer and the contractor are different people. The design looks perfect on paper, but the site team changes details, costs rise and nobody takes responsibility. MTBOSS handles both, so the plan you approve is the one that gets built.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Construction Expertise Behind Every Design
               </h4>
               <p className="mb-3">
-                Interiors sit on top of walls, slabs, wiring and plumbing. Because MT Boss is a construction company, our team understands what is behind the finish. We know where a ceiling can be lowered, which wall can carry a heavy unit, and where moisture will cause damage. This prevents costly surprises.
+                Interiors sit on top of walls, slabs, wiring and plumbing. Because MTBOSS is a construction company, our team understands what is behind the finish. We know where a ceiling can be lowered, which wall can carry a heavy unit, and where moisture will cause damage. This prevents costly surprises.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Clear, Itemised Pricing
               </h4>
               <p className="mb-3">
-                You receive a written quotation that explains materials, labour and finishing. There are no vague lump sums and no hidden extras. For an early estimate, you can also use the budget calculator on the MT Boss website.
+                You receive a written quotation that explains materials, labour and finishing. There are no vague lump sums and no hidden extras. For an early estimate, you can also use the budget calculator on the MTBOSS website.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Quality Materials and Clean Finishing
               </h4>
               <p className="mb-3">
-                Good design fails with weak materials. MT Boss recommends suitable plywood, laminates, hardware, paints and fittings for each area, and supervises work so joints, edges and surfaces finish cleanly.
+                Good design fails with weak materials. MTBOSS recommends suitable plywood, laminates, hardware, paints and fittings for each area, and supervises work so joints, edges and surfaces finish cleanly.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 On-Time Delivery With Regular Updates
               </h4>
               <p className="mb-3">
-                Delays disturb your life and your business. MT Boss prepares a realistic schedule, tracks progress and keeps you informed at every stage.
+                Delays disturb your life and your business. MTBOSS prepares a realistic schedule, tracks progress and keeps you informed at every stage.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Support After Handover
               </h4>
               <p>
-                Interiors sometimes need small adjustments after use. MT Boss stays available after completion, so you are never left alone with minor issues.
+                Interiors sometimes need small adjustments after use. MTBOSS stays available after completion, so you are never left alone with minor issues.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Services by MT Boss in Moradabad
+                Interior Design Services by MTBOSS in Moradabad
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -130,17 +130,17 @@ const Content = () => {
                 Renovation and Makeover
               </h4>
               <p>
-                An older home or office can be refreshed without rebuilding. MT Boss updates layouts, kitchens, ceilings, flooring, lighting and paint, often at a much lower cost than a complete rebuild.
+                An older home or office can be refreshed without rebuilding. MTBOSS updates layouts, kitchens, ceilings, flooring, lighting and paint, often at a much lower cost than a complete rebuild.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                The MT Boss Process: Simple, Clear and Transparent
+                The MTBOSS Process: Simple, Clear and Transparent
               </h3>
               <p className="mb-3">
-                Knowing what happens next removes stress. This is how an MT Boss project runs.
+                Knowing what happens next removes stress. This is how an MTBOSS project runs.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -196,14 +196,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss builds these basics into every design, which is why our interiors stay comfortable long after handover.
+                MTBOSS builds these basics into every design, which is why our interiors stay comfortable long after handover.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Styles MT Boss Can Create
+                Interior Styles MTBOSS Can Create
               </h3>
               <p className="mb-3">
                 You do not need to know your style in advance. We help you discover it. Popular choices include:
@@ -253,14 +253,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                <strong>How MT Boss helps you control cost:</strong> We help you prioritise. Spend more where it matters most, such as the kitchen, wardrobes and flooring, and keep decor items flexible so you can add them over time. We recommend keeping a contingency of around 10% for unexpected changes.
+                <strong>How MTBOSS helps you control cost:</strong> We help you prioritise. Spend more where it matters most, such as the kitchen, wardrobes and flooring, and keep decor items flexible so you can add them over time. We recommend keeping a contingency of around 10% for unexpected changes.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Interior Mistakes MT Boss Helps You Avoid
+                Common Interior Mistakes MTBOSS Helps You Avoid
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -290,7 +290,7 @@ const Content = () => {
                 Checklist for Choosing the Best Interior Designer
               </h3>
               <p className="mb-3">
-                Before you sign with any designer, including MT Boss, confirm these points:
+                Before you sign with any designer, including MTBOSS, confirm these points:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Ask to see completed projects, not just concept images.</li>
@@ -302,17 +302,17 @@ const Content = () => {
                 <li>Confirm that support is available after handover.</li>
               </ul>
               <p className="mt-3">
-                A reliable designer provides clear, written answers on all of these. MT Boss is happy to share them before you commit.
+                A reliable designer provides clear, written answers on all of these. MTBOSS is happy to share them before you commit.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Complete Property Solutions From MT Boss
+                Complete Property Solutions From MTBOSS
               </h3>
               <p className="mb-3">
-                MT Boss supports your entire property journey. Along with interior design, you can access:
+                MTBOSS supports your entire property journey. Along with interior design, you can access:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Architecture and construction for residential and commercial buildings</li>
@@ -329,10 +329,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book Your Interior Design Consultation With MT Boss
+                Book Your Interior Design Consultation With MTBOSS
               </h3>
               <p className="mb-3">
-                Your space should reflect who you are and work for the way you live. Share your ideas, your property and your budget, and the MT Boss team will help you turn them into a beautiful, practical interior.
+                Your space should reflect who you are and work for the way you live. Share your ideas, your property and your budget, and the MTBOSS team will help you turn them into a beautiful, practical interior.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -344,21 +344,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -373,32 +373,32 @@ const Content = () => {
                 <li>
                   <strong>1. Who is the best interior designer in Moradabad?</strong>
                   <br />
-                  MT Boss is a trusted choice, offering complete interior design, quality execution and construction expertise for homes and businesses.
+                  MTBOSS is a trusted choice, offering complete interior design, quality execution and construction expertise for homes and businesses.
                 </li>
                 <li>
-                  <strong>2. What services does MT Boss offer?</strong>
+                  <strong>2. What services does MTBOSS offer?</strong>
                   <br />
                   We offer home interiors, modular kitchens, wardrobes, false ceilings, office and shop interiors, renovation and waterproofing.
                 </li>
                 <li>
-                  <strong>3. Does MT Boss handle both design and execution?</strong>
+                  <strong>3. Does MTBOSS handle both design and execution?</strong>
                   <br />
                   Yes. One team manages design, drawings, site work and final handover.
                 </li>
                 <li>
                   <strong>4. How much do interiors cost in Moradabad?</strong>
                   <br />
-                  Cost depends on size, materials and customisation. MT Boss provides a clear, itemised quote after a site visit.
+                  Cost depends on size, materials and customisation. MTBOSS provides a clear, itemised quote after a site visit.
                 </li>
                 <li>
-                  <strong>5. Can MT Boss work within a small budget?</strong>
+                  <strong>5. Can MTBOSS work within a small budget?</strong>
                   <br />
                   Yes. We prioritise key areas and suggest cost-effective, durable materials.
                 </li>
                 <li>
                   <strong>6. How long does an interior project take?</strong>
                   <br />
-                  Timelines depend on the project&apos;s size. MT Boss shares a realistic schedule before work begins.
+                  Timelines depend on the project&apos;s size. MTBOSS shares a realistic schedule before work begins.
                 </li>
                 <li>
                   <strong>7. Do you design commercial spaces?</strong>
@@ -406,23 +406,23 @@ const Content = () => {
                   Yes. We design offices, showrooms, clinics, cafés, restaurants and hotels.
                 </li>
                 <li>
-                  <strong>8. How can I book a consultation with MT Boss?</strong>
+                  <strong>8. How can I book a consultation with MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

@@ -11,6 +11,7 @@ import {
   PackageCheck,
   ActionIconButton,
   IndianRupee,
+  ArrowLeft,
 } from '@/app/components/ui/icons';
 
 export default function ProductApprovalsAdmin({ isDarkMode }) {
@@ -112,7 +113,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
 
       // Trigger cross-component sync event
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+        window.dispatchEvent(new Event('MTBOSSShopProductsUpdated'));
       }
     } catch (err) {
       setError(err.message);
@@ -153,7 +154,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
       await fetchProducts();
 
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('mtbossShopProductsUpdated'));
+        window.dispatchEvent(new Event('MTBOSSShopProductsUpdated'));
       }
     } catch (err) {
       setError(err.message);
@@ -784,9 +785,40 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           background: ${isDarkMode ? '#3f3f46' : '#cbd5e1'};
         }
 
-        button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+        .clickable-product-row {
+          cursor: pointer;
+          transition: background-color 0.15s ease;
+        }
+
+        .clickable-product-row:hover {
+          background-color: ${isDarkMode ? '#1e293b' : '#f1f5f9'} !important;
+        }
+
+        .detail-page-container {
+          background: ${isDarkMode ? '#18181b' : '#ffffff'};
+          border: 1px solid ${isDarkMode ? '#27272a' : '#e2e8f0'};
+          border-radius: 16px;
+          padding: 1.75rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .back-nav-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          background: ${isDarkMode ? '#27272a' : '#f8fafc'};
+          color: ${isDarkMode ? '#f8fafc' : '#0f172a'};
+          border: 1px solid ${isDarkMode ? '#3f3f46' : '#cbd5e1'};
+          border-radius: 8px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .back-nav-btn:hover {
+          background: ${isDarkMode ? '#3f3f46' : '#e2e8f0'};
         }
       `}</style>
 
@@ -818,401 +850,428 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
         </div>
       )}
 
-      {/* Stat Cards */}
-      <div className="stats-grid">
-        {statCards.map((sc) => (
-          <div
-            key={sc.label}
-            className={`stat-card ${sc.color} ${filter === sc.filterKey ? 'active-filter' : ''}`}
-            onClick={() => setFilter(sc.filterKey)}
-          >
-            <div className="stat-label">{sc.label}</div>
-            <div className="stat-value">{sc.value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Controls */}
-      <div className="controls">
-        <div className="filter-tabs">
-          {[
-            { key: 'all', label: 'All Products' },
-            { key: 'pending', label: `Pending (${stats.pending})` },
-            { key: 'approved', label: `Approved (${stats.approved})` },
-            { key: 'rejected', label: `Rejected (${stats.rejected})` },
-          ].map((tab) => (
+      {/* VIEW 1: PRODUCT DETAIL PAGE (WHEN A ROW IS CLICKED) */}
+      {selectedProduct ? (
+        <div className="product-detail-page-view">
+          {/* Top Back Navigation Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
             <button
-              key={tab.key}
-              onClick={() => setFilter(tab.key)}
-              className={`filter-btn ${filter === tab.key ? 'active' : ''}`}
+              type="button"
+              className="back-nav-btn"
+              onClick={() => {
+                setSelectedProduct(null);
+                setRejecting(false);
+                setRejectionReason('');
+              }}
             >
-              {tab.label}
+              <ArrowLeft size={18} /> Back to Vendor Product Approvals
             </button>
-          ))}
-        </div>
 
-        <input
-          type="text"
-          placeholder="Search by product, category, vendor..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* Table */}
-      <div className="table-wrap">
-        {loading ? (
-          <div className="loading-state">Loading vendor products...</div>
-        ) : products.length === 0 ? (
-          <div className="empty-state">
-            No products found matching filter &quot;{filter}&quot;{searchTerm ? ` and search "${searchTerm}"` : ''}.
-          </div>
-        ) : (
-          <table className="approvals-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Category</th>
-                <th>Price / Quote</th>
-                <th>Vendor</th>
-                <th>Status</th>
-                <th>Submitted</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((p) => {
-                const price = Number(p.price || 0);
-                const comparePrice = p.compare_at_price ? Number(p.compare_at_price) : null;
-                const images = Array.isArray(p.images) && p.images.length ? p.images : (p.image_url ? [p.image_url] : []);
-                const coverImg = images[0] || '';
-                const isVerified = p.vendor_is_approved === true || p.vendor_verification_status === 'verified';
-                const status = p.approval_status || 'approved';
-
-                return (
-                  <tr key={p.id}>
-                    <td>
-                      <div className="product-cell">
-                        {coverImg ? (
-                          <img src={coverImg} alt={p.name} className="product-thumb" />
-                        ) : (
-                          <div className="product-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            📦
-                          </div>
-                        )}
-                        <div className="product-info">
-                          <strong>{p.name}</strong>
-                          {p.quality_tier && (
-                            <span className="tier-tag">{p.quality_tier.toUpperCase()} TIER</span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="product-info">
-                        <strong>{p.category || 'Unassigned'}</strong>
-                        {p.subcategory && <small>{p.subcategory}</small>}
-                      </div>
-                    </td>
-                    <td>
-                      <div>
-                        <span className="price-text">₹{price.toLocaleString('en-IN')}</span>
-                        {p.unit && <small className="price-meta"> / {p.unit}</small>}
-                      </div>
-                      {p.quote_price_range && (
-                        <div className="price-meta">Quote: ₹{p.quote_price_range}</div>
-                      )}
-                    </td>
-                    <td>
-                      <div className="vendor-cell">
-                        <strong>{p.shop_name || p.vendor_name || `Vendor #${p.vendor_id}`}</strong>
-                        <small>{p.vendor_city || 'City not specified'}</small>
-                        <span className={`badge ${isVerified ? 'badge-verified' : 'badge-unverified'}`} style={{ marginTop: 3 }}>
-                          {isVerified ? '✓ Verified' : '⚠️ Unverified'}
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      {status === 'pending' && (
-                        <span className="badge badge-pending">⏳ Pending</span>
-                      )}
-                      {status === 'approved' && (
-                        <span className="badge badge-approved">✓ Approved</span>
-                      )}
-                      {status === 'rejected' && (
-                        <span className="badge badge-rejected" title={p.rejection_reason || 'Rejected'}>
-                          ✕ Rejected
-                        </span>
-                      )}
-                    </td>
-                    <td>
-                      <small className="price-meta">
-                        {p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—'}
-                      </small>
-                    </td>
-                    <td>
-                      <ActionIconButton
-                        icon={Eye}
-                        label="Review product details and approval"
-                        onClick={() => openProduct(p)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Review Modal */}
-      {selectedProduct && (
-        <div className="modal-backdrop" onClick={() => setSelectedProduct(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Review Vendor Product #{selectedProduct.id}</h2>
-              <button className="modal-close-btn" onClick={() => setSelectedProduct(null)}>
-                <X size={20} />
-              </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="badge" style={{ fontSize: '0.8125rem' }}>
+                Product #{selectedProduct.id}
+              </span>
+              {selectedProduct.approval_status === 'pending' && <span className="badge badge-pending">⏳ Pending Review</span>}
+              {selectedProduct.approval_status === 'approved' && <span className="badge badge-approved">✓ Approved</span>}
+              {selectedProduct.approval_status === 'rejected' && <span className="badge badge-rejected">✕ Rejected</span>}
             </div>
+          </div>
 
-            <div className="modal-body">
-              {/* Vendor Unverified Warning */}
-              {!(selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified') && (
-                <div className="warning-box">
-                  <AlertCircle size={22} style={{ flexShrink: 0, marginTop: 1 }} />
-                  <div>
-                    <strong>Caution: Unverified Vendor</strong>
-                    This product is submitted by <strong>{selectedProduct.shop_name || selectedProduct.vendor_name || 'an unverified vendor'}</strong> who has not yet completed admin verification. Proceed with caution.
-                  </div>
-                </div>
-              )}
-
-              {/* Existing Rejection Notice */}
-              {selectedProduct.approval_status === 'rejected' && selectedProduct.rejection_reason && (
-                <div className="rejection-box">
-                  <strong>Rejection Reason on Record:</strong>
-                  &quot;{selectedProduct.rejection_reason}&quot;
-                  {selectedProduct.rejected_by && (
-                    <small style={{ display: 'block', marginTop: 4, opacity: 0.85 }}>
-                      Rejected by {selectedProduct.rejected_by} on {selectedProduct.rejected_at ? new Date(selectedProduct.rejected_at).toLocaleString() : ''}
-                    </small>
-                  )}
-                </div>
-              )}
-
-              {/* Gallery Preview */}
-              {(() => {
-                const images = Array.isArray(selectedProduct.images) && selectedProduct.images.length
-                  ? selectedProduct.images
-                  : (selectedProduct.image_url ? [selectedProduct.image_url] : []);
-                if (!images.length) return null;
-                const activeImg = images[activeImageIdx] || images[0];
-
-                return (
-                  <div className="gallery-wrap">
-                    <img src={activeImg} alt={selectedProduct.name} className="main-preview" />
-                    {images.length > 1 && (
-                      <div className="thumbs-row">
-                        {images.map((img, idx) => (
-                          <button
-                            key={idx}
-                            type="button"
-                            className={`thumb-btn ${activeImageIdx === idx ? 'active' : ''}`}
-                            onClick={() => setActiveImageIdx(idx)}
-                          >
-                            <img src={img} alt={`Thumb ${idx + 1}`} />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
-
-              {/* Product Specifications & Details Grid */}
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <div className="detail-label">Product Name</div>
-                  <div className="detail-val">{selectedProduct.name}</div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Category / Subcategory</div>
-                  <div className="detail-val">
-                    {selectedProduct.category || 'Unassigned'}
-                    {selectedProduct.subcategory ? ` · ${selectedProduct.subcategory}` : ''}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Quality Tier</div>
-                  <div className="detail-val">
-                    {selectedProduct.quality_tier ? selectedProduct.quality_tier.toUpperCase() : 'None'}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Brand</div>
-                  <div className="detail-val">{selectedProduct.brand || 'Unbranded / Generic'}</div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Buy Now Selling Price</div>
-                  <div className="detail-val" style={{ color: '#0284c7', fontSize: '1.05rem' }}>
-                    ₹{Number(selectedProduct.price || 0).toLocaleString('en-IN')} / {selectedProduct.unit || 'unit'}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Original / Compare Price</div>
-                  <div className="detail-val">
-                    {selectedProduct.compare_at_price ? `₹${Number(selectedProduct.compare_at_price).toLocaleString('en-IN')}` : 'None'}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Get Quote Price Range</div>
-                  <div className="detail-val">
-                    {selectedProduct.quote_price_range ? `₹${selectedProduct.quote_price_range}` : 'None'}
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-label">Available Stock / Quantity</div>
-                  <div className="detail-val">
-                    {selectedProduct.quantity ?? 0} {selectedProduct.unit || 'units'}
-                  </div>
+          {/* Detail Card Container */}
+          <div className="detail-page-container">
+            {/* Vendor Unverified Warning */}
+            {!(selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified') && (
+              <div className="warning-box">
+                <AlertCircle size={22} style={{ flexShrink: 0, marginTop: 1 }} />
+                <div>
+                  <strong>Caution: Unverified Vendor</strong>
+                  This product is submitted by <strong>{selectedProduct.shop_name || selectedProduct.vendor_name || 'an unverified vendor'}</strong> who has not yet completed admin verification. Proceed with caution.
                 </div>
               </div>
+            )}
 
-              {/* Description */}
-              {selectedProduct.description && (
-                <div style={{ marginBottom: '1.25rem' }}>
-                  <div className="detail-label">Description</div>
-                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8125rem', lineHeight: 1.5 }}>
-                    {selectedProduct.description}
-                  </p>
-                </div>
-              )}
+            {/* Existing Rejection Notice */}
+            {selectedProduct.approval_status === 'rejected' && selectedProduct.rejection_reason && (
+              <div className="rejection-box">
+                <strong>Rejection Reason on Record:</strong>
+                &quot;{selectedProduct.rejection_reason}&quot;
+                {selectedProduct.rejected_by && (
+                  <small style={{ display: 'block', marginTop: 4, opacity: 0.85 }}>
+                    Rejected by {selectedProduct.rejected_by} on {selectedProduct.rejected_at ? new Date(selectedProduct.rejected_at).toLocaleString() : ''}
+                  </small>
+                )}
+              </div>
+            )}
 
-              {/* Specifications List */}
-              {selectedProduct.specifications && (() => {
-                const specs = { ...selectedProduct.specifications };
-                delete specs.__approval__;
-                const entries = Object.entries(specs);
-                if (!entries.length) return null;
-                return (
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div className="detail-label">Product Specifications ({entries.length})</div>
-                    <div className="specs-chips">
-                      {entries.map(([k, v]) => (
-                        <span key={k} className="spec-chip">
-                          <strong>{k}:</strong> {String(v)}
-                        </span>
+            {/* Gallery Preview */}
+            {(() => {
+              const images = Array.isArray(selectedProduct.images) && selectedProduct.images.length
+                ? selectedProduct.images
+                : (selectedProduct.image_url ? [selectedProduct.image_url] : []);
+              if (!images.length) return null;
+              const activeImg = images[activeImageIdx] || images[0];
+
+              return (
+                <div className="gallery-wrap">
+                  <img src={activeImg} alt={selectedProduct.name} className="main-preview" />
+                  {images.length > 1 && (
+                    <div className="thumbs-row">
+                      {images.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          className={`thumb-btn ${activeImageIdx === idx ? 'active' : ''}`}
+                          onClick={() => setActiveImageIdx(idx)}
+                        >
+                          <img src={img} alt={`Thumb ${idx + 1}`} />
+                        </button>
                       ))}
                     </div>
-                  </div>
-                );
-              })()}
-
-              {/* Vendor Information Box */}
-              <div className="vendor-box">
-                <div className="vendor-box-head">
-                  <strong>Vendor Information</strong>
-                  <span className={`badge ${selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified' ? 'badge-verified' : 'badge-unverified'}`}>
-                    {selectedProduct.vendor_is_approved === true ? 'Verified' : 'Unverified'}
-                  </span>
+                  )}
                 </div>
-                <div className="detail-grid" style={{ marginBottom: 0 }}>
-                  <div className="detail-item">
-                    <div className="detail-label">Shop / Business</div>
-                    <div className="detail-val">{selectedProduct.shop_name || 'Not provided'}</div>
-                  </div>
-                  <div className="detail-item">
-                    <div className="detail-label">Vendor Name</div>
-                    <div className="detail-val">{selectedProduct.vendor_name || 'Not provided'}</div>
-                  </div>
-                  <div className="detail-item">
-                    <div className="detail-label">Email</div>
-                    <div className="detail-val">{selectedProduct.vendor_email || 'Not provided'}</div>
-                  </div>
-                  <div className="detail-item">
-                    <div className="detail-label">Phone / Location</div>
-                    <div className="detail-val">
-                      {selectedProduct.vendor_phone || ''} · {selectedProduct.vendor_city || ''}, {selectedProduct.vendor_state || ''}
-                    </div>
-                  </div>
+              );
+            })()}
+
+            {/* Product Specifications & Details Grid */}
+            <div className="detail-grid">
+              <div className="detail-item">
+                <div className="detail-label">Product Name</div>
+                <div className="detail-val">{selectedProduct.name}</div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Category / Subcategory</div>
+                <div className="detail-val">
+                  {selectedProduct.category || 'Unassigned'}
+                  {selectedProduct.subcategory ? ` · ${selectedProduct.subcategory}` : ''}
                 </div>
               </div>
 
-              {/* Rejection Prompt Form */}
-              {rejecting && (
-                <div className="reject-input-area">
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#ef4444' }}>
-                    Specify Rejection Reason (Required)
-                  </div>
-                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: isDarkMode ? '#94a3b8' : '#64748b' }}>
-                    This reason will be visible to the vendor so they understand what corrections are needed before resubmitting.
-                  </p>
-                  <textarea
-                    rows={3}
-                    placeholder="e.g. Price is too high compared to market, image quality is insufficient, or category is inaccurate..."
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                  />
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-                    <button
-                      type="button"
-                      className="btn-reject"
-                      onClick={() => handleReject(selectedProduct)}
-                      disabled={actionLoading}
-                    >
-                      {actionLoading ? 'Rejecting...' : 'Confirm Rejection'}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-cancel"
-                      onClick={() => {
-                        setRejecting(false);
-                        setRejectionReason('');
-                      }}
-                      disabled={actionLoading}
-                    >
-                      Cancel
-                    </button>
+              <div className="detail-item">
+                <div className="detail-label">Quality Tier</div>
+                <div className="detail-val">
+                  {selectedProduct.quality_tier ? selectedProduct.quality_tier.toUpperCase() : 'None'}
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Brand</div>
+                <div className="detail-val">{selectedProduct.brand || 'Unbranded / Generic'}</div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Buy Now Selling Price</div>
+                <div className="detail-val" style={{ color: '#0284c7', fontSize: '1.05rem' }}>
+                  ₹{Number(selectedProduct.price || 0).toLocaleString('en-IN')} / {selectedProduct.unit || 'unit'}
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Original / Compare Price</div>
+                <div className="detail-val">
+                  {selectedProduct.compare_at_price ? `₹${Number(selectedProduct.compare_at_price).toLocaleString('en-IN')}` : 'None'}
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Get Quote Price Range</div>
+                <div className="detail-val">
+                  {selectedProduct.quote_price_range ? `₹${selectedProduct.quote_price_range}` : 'None'}
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <div className="detail-label">Available Stock / Quantity</div>
+                <div className="detail-val">
+                  {selectedProduct.quantity ?? 0} {selectedProduct.unit || 'units'}
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            {selectedProduct.description && (
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div className="detail-label">Description</div>
+                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8125rem', lineHeight: 1.5 }}>
+                  {selectedProduct.description}
+                </p>
+              </div>
+            )}
+
+            {/* Specifications List */}
+            {selectedProduct.specifications && (() => {
+              const specs = { ...selectedProduct.specifications };
+              delete specs.__approval__;
+              const entries = Object.entries(specs);
+              if (!entries.length) return null;
+              return (
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div className="detail-label">Product Specifications ({entries.length})</div>
+                  <div className="specs-chips">
+                    {entries.map(([k, v]) => (
+                      <span key={k} className="spec-chip">
+                        <strong>{k}:</strong> {String(v)}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              )}
+              );
+            })()}
 
-              {/* Action Buttons */}
-              {!rejecting && (
-                <div className="modal-actions">
-                  <button
-                    type="button"
-                    className="btn-approve"
-                    onClick={() => handleApprove(selectedProduct)}
-                    disabled={actionLoading}
-                  >
-                    <CheckCircle2 size={18} />
-                    {actionLoading ? 'Processing...' : 'Approve & Publish to Shop Now'}
-                  </button>
+            {/* Vendor Information Box */}
+            <div className="vendor-box">
+              <div className="vendor-box-head">
+                <strong>Vendor Information</strong>
+                <span className={`badge ${selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified' ? 'badge-verified' : 'badge-unverified'}`}>
+                  {selectedProduct.vendor_is_approved === true ? 'Verified' : 'Unverified'}
+                </span>
+              </div>
+              <div className="detail-grid" style={{ marginBottom: 0 }}>
+                <div className="detail-item">
+                  <div className="detail-label">Shop / Business</div>
+                  <div className="detail-val">{selectedProduct.shop_name || 'Not provided'}</div>
+                </div>
+                <div className="detail-item">
+                  <div className="detail-label">Vendor Name</div>
+                  <div className="detail-val">{selectedProduct.vendor_name || 'Not provided'}</div>
+                </div>
+                <div className="detail-item">
+                  <div className="detail-label">Email</div>
+                  <div className="detail-val">{selectedProduct.vendor_email || 'Not provided'}</div>
+                </div>
+                <div className="detail-item">
+                  <div className="detail-label">Phone / Location</div>
+                  <div className="detail-val">
+                    {selectedProduct.vendor_phone || ''} · {selectedProduct.vendor_city || ''}, {selectedProduct.vendor_state || ''}
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            {/* Rejection Prompt Form */}
+            {rejecting && (
+              <div className="reject-input-area">
+                <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#ef4444' }}>
+                  Specify Rejection Reason (Required)
+                </div>
+                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: isDarkMode ? '#94a3b8' : '#64748b' }}>
+                  This reason will be visible to the vendor so they understand what corrections are needed before resubmitting.
+                </p>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Price is too high compared to market, image quality is insufficient, or category is inaccurate..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                />
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
                   <button
                     type="button"
                     className="btn-reject"
-                    onClick={() => setRejecting(true)}
+                    onClick={() => handleReject(selectedProduct)}
                     disabled={actionLoading}
                   >
-                    <XCircle size={18} />
-                    Reject Product
+                    {actionLoading ? 'Rejecting...' : 'Confirm Rejection'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => {
+                      setRejecting(false);
+                      setRejectionReason('');
+                    }}
+                    disabled={actionLoading}
+                  >
+                    Cancel
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            {!rejecting && (
+              <div className="modal-actions" style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: `1px solid ${isDarkMode ? '#27272a' : '#e2e8f0'}` }}>
+                <button
+                  type="button"
+                  className="btn-approve"
+                  onClick={() => handleApprove(selectedProduct)}
+                  disabled={actionLoading}
+                >
+                  <CheckCircle2 size={18} />
+                  {actionLoading ? 'Processing...' : 'Approve & Publish to Shop Now'}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-reject"
+                  onClick={() => setRejecting(true)}
+                  disabled={actionLoading}
+                >
+                  <XCircle size={18} />
+                  Reject Product
+                </button>
+              </div>
+            )}
           </div>
         </div>
+      ) : (
+        /* VIEW 2: STATS, CONTROLS & TABLE */
+        <>
+          {/* Stat Cards */}
+          <div className="stats-grid">
+            {statCards.map((sc) => (
+              <div
+                key={sc.label}
+                className={`stat-card ${sc.color} ${filter === sc.filterKey ? 'active-filter' : ''}`}
+                onClick={() => setFilter(sc.filterKey)}
+              >
+                <div className="stat-label">{sc.label}</div>
+                <div className="stat-value">{sc.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Controls */}
+          <div className="controls">
+            <div className="filter-tabs">
+              {[
+                { key: 'all', label: 'All Products' },
+                { key: 'pending', label: `Pending (${stats.pending})` },
+                { key: 'approved', label: `Approved (${stats.approved})` },
+                { key: 'rejected', label: `Rejected (${stats.rejected})` },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key)}
+                  className={`filter-btn ${filter === tab.key ? 'active' : ''}`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <input
+              type="text"
+              placeholder="Search by product, category, vendor..."
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Table */}
+          <div className="table-wrap">
+            {loading ? (
+              <div className="loading-state">Loading vendor products...</div>
+            ) : products.length === 0 ? (
+              <div className="empty-state">
+                No products found matching filter &quot;{filter}&quot;{searchTerm ? ` and search "${searchTerm}"` : ''}.
+              </div>
+            ) : (
+              <table className="approvals-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price / Quote</th>
+                    <th>Vendor</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((p) => {
+                    const price = Number(p.price || 0);
+                    const comparePrice = p.compare_at_price ? Number(p.compare_at_price) : null;
+                    const images = Array.isArray(p.images) && p.images.length ? p.images : (p.image_url ? [p.image_url] : []);
+                    const coverImg = images[0] || '';
+                    const isVerified = p.vendor_is_approved === true || p.vendor_verification_status === 'verified';
+                    const status = p.approval_status || 'approved';
+
+                    return (
+                      <tr
+                        key={p.id}
+                        onClick={() => openProduct(p)}
+                        className="clickable-product-row"
+                        title="Click to view full product details"
+                      >
+                        <td>
+                          <div className="product-cell">
+                            {coverImg ? (
+                              <img src={coverImg} alt={p.name} className="product-thumb" />
+                            ) : (
+                              <div className="product-thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                📦
+                              </div>
+                            )}
+                            <div className="product-info">
+                              <strong>{p.name}</strong>
+                              {p.quality_tier && (
+                                <span className="tier-tag">{p.quality_tier.toUpperCase()} TIER</span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="product-info">
+                            <strong>{p.category || 'Unassigned'}</strong>
+                            {p.subcategory && <small>{p.subcategory}</small>}
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            <span className="price-text">₹{price.toLocaleString('en-IN')}</span>
+                            {p.unit && <small className="price-meta"> / {p.unit}</small>}
+                          </div>
+                          {p.quote_price_range && (
+                            <div className="price-meta">Quote: ₹{p.quote_price_range}</div>
+                          )}
+                        </td>
+                        <td>
+                          <div className="vendor-cell">
+                            <strong>{p.shop_name || p.vendor_name || `Vendor #${p.vendor_id}`}</strong>
+                            <small>{p.vendor_city || 'City not specified'}</small>
+                            <span className={`badge ${isVerified ? 'badge-verified' : 'badge-unverified'}`} style={{ marginTop: 3 }}>
+                              {isVerified ? '✓ Verified' : '⚠️ Unverified'}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          {status === 'pending' && (
+                            <span className="badge badge-pending">⏳ Pending</span>
+                          )}
+                          {status === 'approved' && (
+                            <span className="badge badge-approved">✓ Approved</span>
+                          )}
+                          {status === 'rejected' && (
+                            <span className="badge badge-rejected" title={p.rejection_reason || 'Rejected'}>
+                              ✕ Rejected
+                            </span>
+                          )}
+                        </td>
+                        <td>
+                          <small className="price-meta">
+                            {p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—'}
+                          </small>
+                        </td>
+                        <td>
+                          <ActionIconButton
+                            icon={Eye}
+                            label="Review product details and approval"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openProduct(p);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

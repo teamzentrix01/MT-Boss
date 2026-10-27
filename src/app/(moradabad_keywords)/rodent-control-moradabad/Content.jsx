@@ -485,7 +485,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/pest-control"
+                  href="https://www.MTBOSS.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -494,7 +494,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -582,7 +582,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

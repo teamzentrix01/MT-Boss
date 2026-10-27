@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Contractor for House Construction in Moradabad: MT Boss Construction
+            Contractor for House Construction in Moradabad: MTBOSS Construction
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +23,7 @@ const Content = () => {
                 that many owners fear.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited is a full-service house
+                MTBOSS Construction Private Limited is a full-service house
                 construction company serving Moradabad, Bareilly and nearby
                 districts of Uttar Pradesh. We build independent houses,
                 duplexes, villas, builder floors and farmhouses. Each home is
@@ -120,10 +120,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a construction and home-solutions company known for
+                MTBOSS is a construction and home-solutions company known for
                 architecture, interior design, modular kitchens, waterproofing,
                 building renovation and complete house construction. We build
                 residential, commercial and industrial projects across western
@@ -276,7 +276,7 @@ const Content = () => {
                 Our House Construction Process
               </h3>
               <p className="mb-3">
-                MT Boss follows a clear, transparent working process so you stay
+                MTBOSS follows a clear, transparent working process so you stay
                 informed from start to finish.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -296,7 +296,7 @@ const Content = () => {
                   <strong>Itemised estimate and agreement.</strong> You get a
                   detailed quotation and a written agreement covering scope,
                   material standards, timeline and payment milestones. You can
-                  also try the Construction Budget Calculator on mtboss.in for
+                  also try the Construction Budget Calculator on MTBOSS.in for
                   an early cost idea.
                 </li>
                 <li>
@@ -327,7 +327,7 @@ const Content = () => {
                 Contract Options for House Construction
               </h3>
               <p className="mb-3">
-                Every owner has different needs, so MT Boss offers flexible
+                Every owner has different needs, so MTBOSS offers flexible
                 working models.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -363,7 +363,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The materials used in your house decide how long it lasts and
-                how little maintenance it needs. MT Boss follows firm standards.
+                how little maintenance it needs. MTBOSS follows firm standards.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -464,7 +464,7 @@ const Content = () => {
                 <li>Construction timeline</li>
               </ul>
               <p className="mt-3">
-                MT Boss gives a project-specific estimate after studying your
+                MTBOSS gives a project-specific estimate after studying your
                 plan, so your budget stays realistic from the start.
               </p>
             </section>
@@ -496,17 +496,17 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss welcomes these checks and shares information openly.
+                MTBOSS welcomes these checks and shares information openly.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons to Choose MT Boss in Moradabad
+                Reasons to Choose MTBOSS in Moradabad
               </h3>
               <p>
                 Many contractors can build walls and slabs. A dependable house
-                contractor goes further. MT Boss combines skilled teams, design
+                contractor goes further. MTBOSS combines skilled teams, design
                 capability, transparent pricing and respect for deadlines. We
                 keep sites neat, explain each step in plain language and treat
                 your house as if it were our own. Our goal is simple: you should
@@ -532,17 +532,17 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Book a Free Site Visit for Your Home
               </h3>
-              <p className="mb-3">Contact MT Boss today to discuss your house plan:</p>
+              <p className="mb-3">Contact MTBOSS today to discuss your house plan:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -552,10 +552,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -568,7 +568,7 @@ const Content = () => {
                 team will arrange a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted contractor for house construction
+                Choose MTBOSS, your trusted contractor for house construction
                 in Moradabad, and build a home that is strong, comfortable and
                 made for generations.
               </p>
@@ -585,12 +585,12 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction is a trusted house contractor in
+                  MTBOSS Construction is a trusted house contractor in
                   Moradabad, known for quality work, transparent pricing and
                   on-time delivery.
                 </li>
                 <li>
-                  <strong>Q2. What types of houses does MT Boss build?</strong>
+                  <strong>Q2. What types of houses does MTBOSS build?</strong>
                   <br />
                   We build independent houses, duplexes, villas, builder floors,
                   multi-storey homes and farmhouses.
@@ -606,7 +606,7 @@ const Content = () => {
                 <li>
                   <strong>Q4. How can I get a house construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp +91 94584 10866 for a free site visit.
                 </li>
                 <li>

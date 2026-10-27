@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'home renovation contractor Moradabad, renovation contractor Moradabad, home renovation Moradabad, house renovation contractor Moradabad, turnkey renovation Moradabad, home remodelling Moradabad, renovation company Moradabad, home repair contractor Moradabad, interior renovation Moradabad, civil renovation contractor Moradabad, MTBOSS renovation Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/home-renovation-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
   },
   openGraph: {
     title: 'Home Renovation Contractor Moradabad',
     description:
       'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBOSS manages every trade for you. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/home-renovation-contractor-moradabad',
+    url: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-home-renovation-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-home-renovation-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Home Renovation Contractor in Moradabad - MTBOSS',
@@ -37,7 +37,7 @@ export const metadata = {
     description:
       'Hire a home renovation contractor in Moradabad for turnkey repair, civil work, interiors and finishing. MTBOSS manages every trade for you. Call or WhatsApp.',
     images: [
-      'https://www.mtboss.in/og-home-renovation-contractor-moradabad.jpg',
+      'https://www.MTBOSS.in/og-home-renovation-contractor-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/home-renovation-contractor-moradabad',
+  url: 'https://www.MTBOSS.in/home-renovation-contractor-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

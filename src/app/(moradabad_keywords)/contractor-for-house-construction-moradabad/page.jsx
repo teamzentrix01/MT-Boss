@@ -6,24 +6,24 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Contractor for House Construction in Moradabad | MT Boss',
+  title: 'Contractor for House Construction in Moradabad | MTBOSS',
   description:
-    'Hire MT Boss, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
+    'Hire MTBOSS, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
   keywords:
-    'house construction contractor Moradabad, house contractor Moradabad, home construction Moradabad, house building contractor Moradabad, independent house construction Moradabad, duplex construction Moradabad, villa construction Moradabad, builder floor construction Moradabad, farmhouse construction Moradabad, MT Boss Moradabad',
+    'house construction contractor Moradabad, house contractor Moradabad, home construction Moradabad, house building contractor Moradabad, independent house construction Moradabad, duplex construction Moradabad, villa construction Moradabad, builder floor construction Moradabad, farmhouse construction Moradabad, MTBOSS Moradabad',
   alternates: {
     canonical:
-      'https://www.mtboss.in/contractor-for-house-construction-moradabad',
+      'https://www.MTBOSS.in/contractor-for-house-construction-moradabad',
   },
   openGraph: {
-    title: 'Contractor for House Construction in Moradabad | MT Boss',
+    title: 'Contractor for House Construction in Moradabad | MTBOSS',
     description:
-      'Hire MT Boss, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
-    url: 'https://www.mtboss.in/contractor-for-house-construction-moradabad',
+      'Hire MTBOSS, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
+    url: 'https://www.MTBOSS.in/contractor-for-house-construction-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-contractor-for-house-construction-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-contractor-for-house-construction-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Contractor for House Construction in Moradabad - MTBOSS',
@@ -34,11 +34,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Contractor for House Construction in Moradabad | MT Boss',
+    title: 'Contractor for House Construction in Moradabad | MTBOSS',
     description:
-      'Hire MT Boss, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
+      'Hire MTBOSS, a trusted contractor for house construction in Moradabad. Custom home design, quality materials, transparent pricing and on-time handover.',
     images: [
-      'https://www.mtboss.in/og-contractor-for-house-construction-moradabad.jpg',
+      'https://www.MTBOSS.in/og-contractor-for-house-construction-moradabad.jpg',
     ],
   },
   robots: {
@@ -52,9 +52,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/contractor-for-house-construction-moradabad',
+    url: 'https://www.MTBOSS.in/contractor-for-house-construction-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

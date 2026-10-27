@@ -189,7 +189,7 @@ export default function ProfessionalProfilePage() {
             <p style={{ color: 'rgba(255,255,255,0.55)', margin: '0 0 20px', fontSize: '15px', fontWeight: 500 }}>{pro.title}</p>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <span style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', padding: '5px 14px', fontSize: '11px', fontWeight: 600 }}>
-                📍 {pro.city}
+                {pro.city}
               </span>
               <span style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', padding: '5px 14px', fontSize: '11px', fontWeight: 600 }}>
                 ⏱ {pro.experience} yr{pro.experience !== 1 ? 's' : ''} experience
@@ -236,7 +236,7 @@ export default function ProfessionalProfilePage() {
           {/* ──────────────────── SIDEBAR ──────────────────────────────────── */}
           <aside className="pro-aside" style={{ width: '292px', flexShrink: 0, position: 'sticky', top: '24px' }}>
 
-            {/* Contact via MTboss— no direct contact info shown */}
+            {/* Contact via MTBOSS— no direct contact info shown */}
             <div style={{ background: t.card, border: `1px solid ${t.border}`, marginBottom: '16px', overflow: 'hidden' }}>
               <div style={{ background: isDark ? '#0d0d0d' : '#f9fafb', padding: '14px 20px', borderBottom: `1px solid ${t.border}` }}>
                 <p style={{ margin: 0, fontSize: '9px', fontWeight: 800, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Contact</p>

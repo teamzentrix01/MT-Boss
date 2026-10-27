@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Villa in Moradabad: Custom Design and Construction by MT Boss
+            Architect for Villa in Moradabad:MTBOSS
           </h2>
 
 
@@ -19,7 +19,7 @@ const Content = () => {
                 A villa is more than a large house. It is a long-term investment, a statement of taste and the place where your family will spend decades. That is why choosing the right architect for villa Moradabad is the most important decision you will make before the first brick is laid.
               </p>
               <p className="mt-3">
-                A skilled architect turns your plot, budget and lifestyle into a home that looks striking, feels comfortable and lasts for generations. At MT Boss, we plan and build villas across Moradabad and Bareilly. Our approach covers everything from the first sketch to the final handover: architecture, interior design, construction, modular kitchens and waterproofing.
+                A skilled architect turns your plot, budget and lifestyle into a home that looks striking, feels comfortable and lasts for generations. At MTBOSS, we plan and build villas across Moradabad and Bareilly. Our approach covers everything from the first sketch to the final handover: architecture, interior design, construction, modular kitchens and waterproofing.
               </p>
               <p className="mt-3">
                 This guide explains what a villa architect does, how the process works, what affects cost, and how to choose the right professional for your project.
@@ -29,7 +29,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose a Professional Architect for Villa in Moradabad?
+                Choose a Professional Architect for Villa in Moradabad
               </h3>
               <p className="mb-3">
                 Many plot owners start with a rough idea and hand it to a local contractor. It seems cheaper at first, but it often leads to wasted space, poor ventilation, structural compromises and expensive changes midway through construction.
@@ -68,7 +68,7 @@ const Content = () => {
                 Villa Architecture Services We Offer
               </h3>
               <p className="mb-3">
-                MT Boss provides end-to-end services for people who want a villa designed and built in Moradabad. You can hire us for a single stage or the complete journey.
+                MTBOSS provides end-to-end services for people who want a villa designed and built in Moradabad. You can hire us for a single stage or the complete journey.
               </p>
 
 
@@ -103,21 +103,6 @@ const Content = () => {
                 A villa deserves interiors that match its architecture. We design living rooms, bedrooms, wardrobes, false ceilings, lighting, wall finishes, flooring and furniture layouts. We also design modular kitchens that combine storage, workflow and style.
               </p>
 
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                5. Construction and Project Management
-              </h4>
-              <p>
-                Design is only half the story. MT Boss also constructs residential projects, from affordable homes to luxury villas. Because design and construction sit under one roof, there is no gap between what is drawn and what is built, and no confusion over who is responsible.
-              </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                6. Waterproofing and Finishing
-              </h4>
-              <p>
-                Water seepage is one of the most common problems in Indian homes, especially in bathrooms, terraces and basements. Our waterproofing specialists protect your villa at the construction stage, so you avoid dampness and costly repairs later.
-              </p>
             </section>
 
 
@@ -144,7 +129,7 @@ const Content = () => {
                 <li>
                   <strong>Step 5: Budget estimation.</strong> Using the final drawings, we prepare a transparent estimate covering materials, labour and finishing. You can also use the{" "}
                   <a href="/calculator" className="text-blue-600 underline">
-                    MT Boss construction cost calculator
+                    MTBOSS construction cost calculator
                   </a>{" "}
                   on our website for an initial idea.
                 </li>
@@ -331,10 +316,10 @@ const Content = () => {
                 Beyond Design: Construction, Interiors and Waterproofing
               </h3>
               <p className="mb-3">
-                One reason people prefer MT Boss is that we do not stop at drawings. Many villa projects fail not because of the design but because the design and construction teams do not work together.
+                One reason people prefer MTBOSS is that we do not stop at drawings. Many villa projects fail not because of the design but because the design and construction teams do not work together.
               </p>
               <p className="mb-3">
-                With MT Boss, your architect, engineer, interior designer and site team collaborate from day one. That means:
+                With MTBOSS, your architect, engineer, interior designer and site team collaborate from day one. That means:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Fewer misunderstandings between drawings and execution</li>
@@ -358,10 +343,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Makes MT Boss a Trusted Villa Architect?
+                What Makes MTBOSS a Trusted Villa Architect?
               </h3>
               <p className="mb-3">
-                MT Boss is a construction company serving Moradabad and Bareilly with residential, commercial and industrial projects. Our focus for villa clients rests on five commitments.
+                MTBOSS is a construction company serving Moradabad and Bareilly with residential, commercial and industrial projects. Our focus for villa clients rests on five commitments.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -381,7 +366,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                If you are searching for an architect for villa Moradabad who can guide you from idea to keys in hand, MT Boss offers the design expertise and the construction capability to deliver it.
+                If you are searching for an architect for villa Moradabad who can guide you from idea to keys in hand, MTBOSS offers the design expertise and the construction capability to deliver it.
               </p>
             </section>
 
@@ -396,7 +381,7 @@ const Content = () => {
 
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
+                Contact MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -413,21 +398,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -460,9 +445,9 @@ const Content = () => {
                   Yes. An architect ensures better space use, structural safety, cost control and a higher final property value.
                 </li>
                 <li>
-                  <strong>Q3. Does MT Boss provide both design and construction?</strong>
+                  <strong>Q3. Does MTBOSS provide both design and construction?</strong>
                   <br />
-                  Yes. MT Boss handles architecture, interiors, construction, modular kitchens and waterproofing under one team.
+                  Yes. MTBOSS handles architecture, interiors, construction, modular kitchens and waterproofing under one team.
                 </li>
                 <li>
                   <strong>Q4. How long does villa design take?</strong>
@@ -495,7 +480,7 @@ const Content = () => {
                   Yes. We offer complete interior design, including modular kitchens, wardrobes, ceilings and lighting.
                 </li>
                 <li>
-                  <strong>Q10. How can I contact MT Boss for a villa project?</strong>
+                  <strong>Q10. How can I contact MTBOSS for a villa project?</strong>
                   <br />
                   Call or WhatsApp{" "}
                   <a
@@ -508,19 +493,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

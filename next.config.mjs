@@ -14,6 +14,8 @@ const nextConfig = {
   // setting the tracing root prevents Next from selecting the parent project.
   outputFileTracingRoot: projectRoot,
   /* config options here */
+  allowedDevOrigins: ["10.221.79.102"],
+  
   experimental: {
     // Compile in the main process and use threads for type checking. This avoids
     // child-process spawn failures on restricted Windows environments.

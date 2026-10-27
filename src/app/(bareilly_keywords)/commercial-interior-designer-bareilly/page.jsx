@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/commercial-interior-designer-in-bareilly",
+      "https://www.MTBOSS.in/commercial-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need a commercial interior designer Bareilly? MTBOSS plans offices, shops, clinics and showrooms with clear costs. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/commercial-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/commercial-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-commercial-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-commercial-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Commercial Interior Designer in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need a commercial interior designer Bareilly? MTBOSS plans offices, shops, clinics and showrooms with clear costs. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-commercial-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-commercial-interior-designer-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/commercial-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/commercial-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-commercial-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-commercial-interior-designer-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Commercial Interior Design Services in Bareilly",
     description:
       "MTBOSS provides commercial interior design services in Bareilly. Services include requirement study, site visit and measurement, space planning, concept and 3D views, reception and waiting areas, work areas and cabins, display and shop fittings, false ceiling and lighting, flooring and wall finishes, furniture and woodwork, washrooms and pantry, electrical, data and plumbing, AC and ventilation planning, painting, panels and signage provisions, renovation and refurbishment, project supervision and handover.",
-    url: "https://www.mtboss.in/commercial-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/commercial-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Commercial Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/commercial-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/commercial-interior-designer-in-bareilly",
       },
     ],
   };

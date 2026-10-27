@@ -360,7 +360,7 @@ function ProfileModal({ pro, isDark, onEnquire, onClose }) {
               <h2 style={{ color:'#fff',margin:'0 0 4px',fontSize:'22px',fontWeight:800 }}>{pro.name}</h2>
               <p style={{ color:'rgba(255,255,255,0.6)',margin:'0 0 12px',fontSize:'14px' }}>{pro.title}</p>
               <div style={{ display:'flex',gap:'8px',flexWrap:'wrap' }}>
-                <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>📍 {pro.city}</span>
+                <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>{pro.city}</span>
                 <span style={{ background:'rgba(255,255,255,0.08)',color:'rgba(255,255,255,0.75)',padding:'3px 10px',border:'1px solid rgba(255,255,255,0.12)',fontSize:'11px',fontWeight:600 }}>⏱ {pro.experience} yrs exp</span>
               </div>
             </div>
@@ -450,7 +450,7 @@ function ProCard({ pro, isDark, onClick }) {
         <p style={{ color:t.accent,margin:'0 0 10px',fontSize:'12px',fontWeight:700,textTransform:'uppercase',letterSpacing:'0.04em' }}>{pro.title}</p>
         <div style={{ display:'flex',gap:'12px',fontSize:'11px',color:t.sub,fontWeight:600 }}>
           <span>⏱ {pro.experience} yr{pro.experience!==1?'s':''}</span>
-          <span>📍 {pro.city}</span>
+          <span>{pro.city}</span>
         </div>
       </div>
     </div>
@@ -496,7 +496,7 @@ export default function ProfessionalsPage() {
       {/* Hero */}
       <div style={{ background:t.heroBg,padding:'22px 24px 24px',textAlign:'center',position:'relative',overflow:'hidden',borderBottom:`2px solid ${t.accent}` }}>
         <div style={{ position:'absolute',inset:0,backgroundImage:`linear-gradient(${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px),linear-gradient(90deg,${isDark?'color-mix(in srgb, var(--brand-blue) 3%, transparent)':'rgba(255,255,255,0.03)'} 1px,transparent 1px)`,backgroundSize:'40px 40px',pointerEvents:'none' }} />
-        <p style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#eaf7ff',background:'rgba(41,157,244,0.14)',border:'1px solid rgba(41,157,244,0.45)',borderRadius:'2px',padding:'5px 12px',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 8px' }}>MTbossProfessional Services</p>
+        <p style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',color:'#eaf7ff',background:'rgba(41,157,244,0.14)',border:'1px solid rgba(41,157,244,0.45)',borderRadius:'2px',padding:'5px 12px',fontSize:'10px',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.15em',margin:'0 0 8px' }}>MTBOSSProfessional Services</p>
         <h1 style={{ color:'#fff',fontSize:'clamp(24px,3.4vw,36px)',fontWeight:800,margin:'0 0 8px',lineHeight:1.05,textTransform:'uppercase',letterSpacing:'-0.02em' }}>Meet Our Professional Team</h1>
         <p style={{ color:'rgba(255,255,255,0.55)',fontSize:'13px',maxWidth:'480px',margin:'0 auto 14px',lineHeight:1.45 }}>
           Verified interior designers, architects and home experts — handpicked for quality and excellence.

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Contractor Contact Number in Moradabad — How to Reach a Reliable Builder Fast
+            Civil Contractor Contact Number In Moradabad 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -76,10 +76,7 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Services You Can Discuss When You Contact a Civil Contractor
               </h3>
-              <p className="mb-3">
-                A full-service contractor should be able to help with more than just new construction. Common services to ask about include:
-              </p>
-
+            
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">1. Residential Construction</h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Independent houses, duplexes, and villas</li>
@@ -130,9 +127,7 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Why MTBOSS Is Easy to Contact and Reliable in Moradabad
               </h3>
-              <p className="mb-3">
-                Based on their published company profile, MTBOSS Construction Private Limited makes it simple to get in touch through multiple channels, backed by a strong service track record:
-              </p>
+              
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>22+ years of experience, having started as a small contracting firm in 2002</li>
                 <li>450+ completed projects across residential, commercial, and industrial categories</li>
@@ -143,24 +138,16 @@ const Content = () => {
                 <li>Multiple contact channels — phone, email, and WhatsApp — for fast response</li>
                 <li>Doorstep home services including electricians, plumbers, AC repair, and pest control</li>
                 <li>Verified property marketplace for buying, selling, and renting with zero rental brokerage</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Franchise opportunities for entrepreneurs entering the construction business</li>
-                <li>Agent commission program with payouts for referrals</li>
-                <li>Technology-integrated construction, using AI and BIM since 2018</li>
-                <li>Recognized achievement — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
+                
               </ul>
-              <p className="mt-3">
-                Having a direct phone number, email address, and WhatsApp chat option — rather than only a contact form — makes it significantly easier to get quick answers before committing to a project.
-              </p>
+             
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 How to Evaluate a Contractor&apos;s Response When You Call
               </h3>
-              <p className="mb-3">
-                Once you have a contact number, use the actual conversation to judge reliability:
-              </p>
+              
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Note how quickly your call or WhatsApp message is answered</li>
                 <li>Ask direct questions about pricing and see how transparently they respond</li>
@@ -176,9 +163,7 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 Construction Cost Factors to Discuss on Your First Call
               </h3>
-              <p className="mb-3">
-                When you speak with a contractor, these are the details that typically affect your final cost:
-              </p>
+             
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Plot location and site accessibility for material transport</li>
                 <li>Number of floors planned (Ground, G+1, G+2, etc.)</li>
@@ -189,9 +174,7 @@ const Content = () => {
                 <li>Finishing choices such as flooring, painting, and fixtures</li>
                 <li>Current market rates for cement, steel, and skilled labour</li>
               </ul>
-              <p className="mt-3">
-                For reference, sample estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft., though your contractor will confirm exact figures based on your specific requirements.
-              </p>
+             
             </section>
 
             <section>
@@ -246,8 +229,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

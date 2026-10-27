@@ -8,17 +8,17 @@ export const metadata = {
   keywords:
     'construction cost calculator, building cost estimator, house construction budget calculator, BOQ calculator, construction cost per sqft calculator india',
   alternates: {
-    canonical: 'https://www.mtboss.in/calculator',
+    canonical: 'https://www.MTBOSS.in/calculator',
   },
   openGraph: {
     title: 'MTBOSS | Free Construction Cost Calculator',
     description:
       'Get an instant BOQ estimate for your home or project. Select city, size, floors and finish — live cost breakdown in seconds.',
-    url: 'https://www.mtboss.in/calculator',
+    url: 'https://www.MTBOSS.in/calculator',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
         alt: 'Free Construction Cost Calculator - MTBOSS',
@@ -32,7 +32,7 @@ export const metadata = {
     title: 'MTBOSS | Free Construction Cost Calculator',
     description:
       'Get an instant BOQ estimate for your home or project. Select city, size, floors and finish — live cost breakdown in seconds.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,
@@ -44,7 +44,7 @@ const calculatorSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'MTBOSS Construction Cost Calculator',
-  url: 'https://www.mtboss.in/calculator',
+  url: 'https://www.MTBOSS.in/calculator',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   offers: {

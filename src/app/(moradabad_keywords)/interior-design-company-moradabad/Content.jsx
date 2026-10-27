@@ -9,8 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Design Company in Moradabad: Design, Build and Deliver
-            with MT Boss
+            Interior Design Company in Moradabad:with MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -23,7 +22,7 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MT Boss, also known as MTBOSS Construction Private Limited, is
+                MTBOSS, also known as MTBOSS Construction Private Limited, is
                 a construction-focused company based in Moradabad, Uttar
                 Pradesh. We support customers from the first enquiry to project
                 handover.
@@ -34,34 +33,17 @@ const Content = () => {
                 projects, we look at interiors from both the design side and
                 the building side. This helps avoid mistakes in wiring,
                 plumbing, load, and finishing.
-              </p>
-
-              <p className="mt-3">
-                As an interior design company in Moradabad, we serve apartment
-                owners, villa builders, shop owners, showroom operators,
-                clinics, offices, and hospitality spaces.
-              </p>
-
-              <p className="mt-3">
-                Our approach follows a simple principle: clear scope,
-                responsible coordination, quality-conscious execution, and
-                timely support.
-              </p>
-
-              <p className="mt-3">
-                This page explains who we are, what we offer, how we work, and
-                why customers in Moradabad trust MT Boss for interiors.
-              </p>
+              </p>  
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss: Your Local Interior and Construction Partner
+                 Your Local Interior and Construction Partner:MTBOSS
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Registered company:</strong> MT Boss operates as
+                  <strong>Registered company:</strong> MTBOSS operates as
                   MTBOSS Construction Private Limited, with its office on
                   Harthala Kanth Road, behind KR Collection, near
                   Domino&apos;s, Moradabad.
@@ -85,7 +67,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>One-platform advantage:</strong> Besides interiors,
-                  MT Boss offers doorstep home services, building materials
+                  MTBOSS offers doorstep home services, building materials
                   through Shop Now, property buy, sell, and rent support, and a
                   construction budget calculator.
                 </li>
@@ -112,11 +94,7 @@ const Content = () => {
                   Apartments and flats with space-efficient designs for 1BHK,
                   2BHK, and 3BHK homes, smart storage, and clear layouts.
                 </li>
-                <li>
-                  Independent houses and kothis with full-home planning that
-                  connects every floor, staircase, balcony, and terrace into
-                  one design story.
-                </li>
+                
                 <li>
                   Villas with premium finishes, larger custom furniture, and
                   detailed ceiling and lighting plans.
@@ -125,10 +103,7 @@ const Content = () => {
                   Builder floors with practical, budget-friendly designs that
                   provide a complete finish before moving in.
                 </li>
-                <li>
-                  Room-wise design for living rooms, bedrooms, kids&apos; rooms,
-                  pooja rooms, study corners, balconies, and entrance foyers.
-                </li>
+                
                 <li>
                   Renovation of old homes while respecting the existing
                   structure and the available budget.
@@ -148,14 +123,7 @@ const Content = () => {
                   Waterproof plywood, HDHMR boards, laminate, acrylic, and PU
                   finishes for different budgets.
                 </li>
-                <li>
-                  Smart storage such as tall units, corner carousels, pull-out
-                  baskets, cutlery trays, and soft-close drawers.
-                </li>
-                <li>
-                  Work triangle planning for convenient movement between the
-                  sink, hob, and refrigerator.
-                </li>
+                
                 <li>
                   Advance planning for chimney, hob, oven, dishwasher, and
                   water purifier integration.
@@ -175,10 +143,7 @@ const Content = () => {
                   Living-room TV units, display shelves, crockery cabinets, and
                   console tables.
                 </li>
-                <li>
-                  Bedroom furniture including hydraulic-storage beds,
-                  headboards, dressing tables, and side tables.
-                </li>
+                
                 <li>
                   Compact work-from-home desks, bookshelves, and cable-managed
                   study setups.
@@ -221,10 +186,7 @@ const Content = () => {
                   Fluted panels, WPC, veneer, louvers, and 3D wall features for
                   TV walls and bedrooms.
                 </li>
-                <li>
-                  Wallpaper and murals for feature walls, kids&apos; rooms,
-                  cafes, and creative spaces.
-                </li>
+                
                 <li>
                   Damp-proofing, waterproofing, and crack treatment before
                   finishes are applied.
@@ -245,18 +207,7 @@ const Content = () => {
                   Retail shop interiors with counters, shelving, storage,
                   signage areas, and smooth customer movement.
                 </li>
-                <li>
-                  Offices with workstations, cabins, conference rooms,
-                  reception areas, pantries, and cable management.
-                </li>
-                <li>
-                  Clinics and salons with clean, calming, hygienic, and
-                  easy-to-maintain designs.
-                </li>
-                <li>
-                  Restaurants and cafes with seating plans, ambience lighting,
-                  service flow, and durable finishes.
-                </li>
+           
                 <li>
                   Hotel and hospitality interiors, including guest rooms,
                   lobbies, and dining spaces.
@@ -266,7 +217,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Our Interior Design Process: From Idea to Handover
+                Our Interior Design Process: 
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -318,7 +269,7 @@ const Content = () => {
                   Vastu preferences can be included on request. You can also
                   read our{" "}
                   <a
-                    href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                    href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -361,7 +312,7 @@ const Content = () => {
                 <li>
                   Use our{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -370,7 +321,7 @@ const Content = () => {
                   </a>{" "}
                   for a first estimate, and read our{" "}
                   <a
-                    href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                    href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -419,7 +370,7 @@ const Content = () => {
                   Small repairs, adjustments, and maintenance can be handled
                   through our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -507,7 +458,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MT Boss as Your Interior Design Company in Moradabad
+                Why Choose MTBOSS as Your Interior Design Company in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -529,7 +480,7 @@ const Content = () => {
                 <li>
                   <strong>Access to materials:</strong> Through{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -542,7 +493,7 @@ const Content = () => {
                 <li>
                   <strong>Verified professionals:</strong> Our network of{" "}
                   <a
-                    href="https://www.mtboss.in/Services/professionals"
+                    href="https://www.MTBOSS.in/Services/professionals"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -571,7 +522,7 @@ const Content = () => {
                 <li>
                   <strong>Portfolio to review:</strong> Browse our{" "}
                   <a
-                    href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                    href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -674,7 +625,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Trends in Moradabad for 2026
+                Interior Design Trends in Moradabad
               </h3>
 
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -715,7 +666,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Interior Project with MT Boss
+                Start Your Interior Project with MTBOSS
               </h3>
 
               <p className="mb-3">
@@ -730,10 +681,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -743,7 +694,7 @@ const Content = () => {
                 <li>
                   <strong>Online:</strong> Visit our{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -767,14 +718,14 @@ const Content = () => {
                   </strong>
                   <br />
                   The right company should have a strong portfolio, transparent
-                  pricing, and dependable delivery. MT Boss combines
+                  pricing, and dependable delivery. MTBOSS combines
                   construction knowledge with interior design coordination and
                   clear communication.
                 </li>
 
                 <li>
                   <strong>
-                    Q2. What services does MT Boss offer for interiors?
+                    Q2. What services does MTBOSS offer for interiors?
                   </strong>
                   <br />
                   We handle home interiors, modular kitchens, wardrobes, false
@@ -843,11 +794,11 @@ const Content = () => {
 
                 <li>
                   <strong>
-                    Q10. Can I use MT Boss for material supply only?
+                    Q10. Can I use MTBOSS for material supply only?
                   </strong>
                   <br />
                   Yes. You can explore construction and building materials
-                  through the Shop Now section of the MT Boss website.
+                  through the Shop Now section of the MTBOSS website.
                 </li>
               </ul>
             </section>

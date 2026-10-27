@@ -16,7 +16,7 @@ export const metadata = {
     "hotel construction cost Moradabad, hotel building cost Moradabad, cost of building a hotel Moradabad, hotel construction budget Moradabad, hotel construction cost per room, hotel construction cost per sq ft Moradabad, budget hotel construction cost, guest house construction cost Moradabad, banquet hall construction cost Moradabad, hotel construction estimate Moradabad, hotel construction company Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    canonical: "https://www.MTBOSS.in/hotel-construction-cost-in-moradabad",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-cost-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hotel-construction-cost-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Hotel Construction Cost in Moradabad - MTBOSS Construction",
@@ -51,7 +51,7 @@ export const metadata = {
       "Wondering about hotel construction cost in Moradabad? Learn what affects the budget and get a free quote from MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-construction-cost-moradabad.jpg",
     ],
   },
 
@@ -68,14 +68,14 @@ export default function Page() {
 
     name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-cost-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-hotel-construction-cost-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-construction-cost-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -135,14 +135,14 @@ export default function Page() {
     description:
       "MTBOSS provides hotel construction cost estimation in Moradabad, including budget planning for hotel buildings, guest houses, resorts, banquet halls and hospitality projects based on built-up area, room count, floors, facilities, finishing level and material requirements.",
 
-    url: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-cost-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -241,19 +241,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hotel Construction Cost in Moradabad",
-        item: "https://www.mtboss.in/hotel-construction-cost-in-moradabad",
+        item: "https://www.MTBOSS.in/hotel-construction-cost-in-moradabad",
       },
     ],
   };

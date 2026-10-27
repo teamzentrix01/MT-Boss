@@ -73,7 +73,7 @@ export async function PATCH(req, { params }) {
     if (removeImage) imageUrl = null;
     if (imageFile) {
       try {
-        const uploaded = await uploadBannerImage(imageFile, 'mtboss/free-slots');
+        const uploaded = await uploadBannerImage(imageFile, 'MTBOSS/free-slots');
         imageUrl = uploaded.url;
       } catch (error) {
         const status = /choose a JPG|smaller than 5 MB|contents do not match/i.test(error.message) ? 400 : 502;

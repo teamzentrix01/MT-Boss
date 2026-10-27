@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mtboss.in';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://MTBOSS.in';
   const url = `${appUrl}/blog/${blog.slug}`;
   const title = blog.meta_title || blog.title;
   const description = blog.meta_description || blog.excerpt;
@@ -136,7 +136,7 @@ export default async function BlogDetailPage({ params }) {
   }
 
   const related = await getRelatedBlogs(slug, blog.category);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://mtboss.in';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://MTBOSS.in';
   const postUrl = `${appUrl}/blog/${blog.slug}`;
 
   // JSON-LD for Google Rich Results

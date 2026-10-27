@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'best carpenter Moradabad, best carpenter near me Moradabad, carpenter services Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for doors Moradabad, carpenter for repairs Moradabad, custom carpenter Moradabad, woodwork contractor Moradabad, MTBOSS carpenter Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/best-carpenter-moradabad',
+    canonical: 'https://www.MTBOSS.in/best-carpenter-moradabad',
   },
   openGraph: {
     title: 'Best Carpenter in Moradabad',
     description:
       'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBOSS offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/best-carpenter-moradabad',
+    url: 'https://www.MTBOSS.in/best-carpenter-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-best-carpenter-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-best-carpenter-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Best Carpenter in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Best Carpenter in Moradabad',
     description:
       'Find the best carpenter in Moradabad for furniture, doors, wardrobes and repairs. MTBOSS offers skilled, well-planned woodwork with clear quotes. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-best-carpenter-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-best-carpenter-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/best-carpenter-moradabad',
+  url: 'https://www.MTBOSS.in/best-carpenter-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

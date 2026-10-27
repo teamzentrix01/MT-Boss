@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for College in Moradabad: Design, Construction and Materials by MTBOSS
+            Architect for College in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,15 +19,10 @@ const Content = () => {
                 offers design coordination, civil construction and material
                 supply together, so your educational project does not depend on
                 managing separate architects, contractors and suppliers.
-                Moradabad has a growing number of colleges, coaching institutes
-                and professional training centres, and building a campus that
-                supports both academics and daily student life requires careful
-                planning from the start. MTBOSS positions its construction work
+                MTBOSS positions its construction work
                 around engineering excellence and timely delivery, making it a
                 practical option for trusts, societies and private institutions
-                planning a new college building in the city. This page explains
-                what MTBOSS offers for college construction projects, how the
-                process works, and how to get in touch.
+                planning a new college building in the city.
               </p>
             </section>
 
@@ -67,9 +62,6 @@ const Content = () => {
                 <li><strong>Step 3 — Site visit:</strong> MTBOSS engineers assess the plot, road access, soil condition and surrounding structures, including space for future expansion, which matters for growing institutions.</li>
                 <li><strong>Step 4 — Design and layout planning:</strong> Layouts are prepared based on classroom count, labs, common facilities and floor count needed for your college.</li>
                 <li><strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget Calculator, along with current material rates, is used to give a realistic cost outline.</li>
-                <li><strong>Step 6 — Material supply:</strong> Materials are sourced directly through MTBOSS&apos;s own wholesale supply of cement, steel, bricks, tiles and paints.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> Civil work proceeds under MTBOSS supervision, with quality and timeline checks along the way.</li>
-                <li><strong>Step 8 — Handover:</strong> Final finishing, inspection and handover of the completed college building.</li>
               </ul>
             </section>
 
@@ -92,10 +84,7 @@ const Content = () => {
                 <li><strong>Auditorium or multipurpose hall:</strong> A larger gathering space for events, seminars and functions, where included in the plan.</li>
                 <li><strong>Canteen or cafeteria:</strong> A functional dining space for students and staff during breaks.</li>
                 <li><strong>Playground and open areas:</strong> Outdoor space for sports and general recreation, where the plot size allows.</li>
-                <li><strong>Parking:</strong> Separate provision for staff, student and visitor vehicles, planned around the site&apos;s access points.</li>
-                <li><strong>Washrooms and drinking water points:</strong> Adequate, well-distributed facilities across the campus for large daily footfall.</li>
-                <li><strong>Fire safety and emergency exits:</strong> Clearly planned staircases, wide corridors, exit routes and extinguisher points, essential for any building with high occupancy.</li>
-                <li><strong>Accessibility:</strong> Ramps and accessible pathways to support students and staff with mobility needs.</li>
+               
               </ul>
             </section>
 
@@ -113,7 +102,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS&apos;s Material Supply Matters for College Construction
+                 Material Supply Matters for College Construction
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
@@ -157,7 +146,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Property Services: Useful If You Don&apos;t Have a College Plot Yet
+                MTBOSS Property Services: 
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad.</li>
@@ -201,7 +190,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS as Your Architect for College Construction in Moradabad
+                Choose MTBOSS as Your Architect for College Construction in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>One team, one point of contact:</strong> Design coordination, material supply, construction and property services are all handled within the same company.</li>
@@ -222,12 +211,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -250,10 +239,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

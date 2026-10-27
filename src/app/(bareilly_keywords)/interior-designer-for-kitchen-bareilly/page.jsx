@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-kitchen-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-kitchen-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for kitchen Bareilly? MTBOSS plans modular kitchens with smart storage, durable materials and clean finishing. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-kitchen-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-kitchen-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-kitchen-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-kitchen-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Kitchen in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for kitchen Bareilly? MTBOSS plans modular kitchens with smart storage, durable materials and clean finishing. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-kitchen-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-kitchen-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-kitchen-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-kitchen-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-kitchen-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-kitchen-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Kitchen Interior Design and Modular Kitchen Services in Bareilly",
     description:
       "MTBOSS provides kitchen interior design and modular kitchen services in Bareilly. Services include modular kitchen design, cabinets and shutters, countertop and backsplash, storage solutions, chimney and hob provisions, appliance integration, kitchen lighting, flooring and wall tiles, plumbing and drainage, electrical work, waterproofing, false ceiling and painting, wash area and utility space, kitchen renovation and full home interiors.",
-    url: "https://www.mtboss.in/interior-designer-for-kitchen-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-kitchen-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Kitchen in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-kitchen-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-kitchen-in-bareilly",
       },
     ],
   };

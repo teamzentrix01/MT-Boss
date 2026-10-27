@@ -42,7 +42,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
 
     try {
       const response = await fetch(
-        "https://formsubmit.co/ajax/seo.mtboss@gmail.com",
+        "https://formsubmit.co/ajax/seo.MTBOSS@gmail.com",
         {
           method: "POST",
           headers: {

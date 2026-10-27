@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'furniture carpenter Moradabad, furniture carpenter near me Moradabad, custom furniture Moradabad, furniture maker Moradabad, wooden furniture Moradabad, furniture repair Moradabad, furniture polish Moradabad, bed carpenter Moradabad, wardrobe carpenter Moradabad, sofa carpenter Moradabad, table carpenter Moradabad, MTBOSS furniture carpenter Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/furniture-carpenter-moradabad',
+    canonical: 'https://www.MTBOSS.in/furniture-carpenter-moradabad',
   },
   openGraph: {
     title: 'Furniture Carpenter in Moradabad | Custom Furniture Making | MTBOSS',
     description:
       'Hire a furniture carpenter in Moradabad for custom beds, wardrobes, sofas, tables and repairs. MTBOSS plans, builds and finishes furniture for homes and shops.',
-    url: 'https://www.mtboss.in/furniture-carpenter-moradabad',
+    url: 'https://www.MTBOSS.in/furniture-carpenter-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-furniture-carpenter-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-furniture-carpenter-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Furniture Carpenter in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Furniture Carpenter in Moradabad | Custom Furniture Making | MTBOSS',
     description:
       'Hire a furniture carpenter in Moradabad for custom beds, wardrobes, sofas, tables and repairs. MTBOSS plans, builds and finishes furniture for homes and shops.',
-    images: ['https://www.mtboss.in/og-furniture-carpenter-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-furniture-carpenter-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/furniture-carpenter-moradabad',
+  url: 'https://www.MTBOSS.in/furniture-carpenter-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

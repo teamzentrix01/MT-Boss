@@ -8,14 +8,13 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Pest Control Near Me in Moradabad: Reliable Home and Commercial
-            Service by MTBOSS
+            Pest Control Near Me in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
               <p>
-                Pests rarely announce themselves. A few cockroaches in the
+               A few cockroaches in the
                 kitchen, a trail of ants near the sink or a hollow sound in a
                 wooden door can point to a much larger problem. When you search
                 for pest control near me in Moradabad, you want a local team that
@@ -23,7 +22,7 @@ const Content = () => {
                 problem at its source.
               </p>
               <p className="mt-3">
-                MTBOSS is a construction and home-services company serving
+                MTBOSSis a construction and home-services company serving
                 Moradabad and Bareilly. Pest control is one of our quick home
                 services, backed by the same focus on quality work, transparent
                 pricing and on-time delivery that defines everything we do. Our
@@ -499,7 +498,7 @@ const Content = () => {
               <p className="mt-3">
                 Visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/pest-control"
+                  href="https://www.MTBOSS.in/quick/pest-control"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -508,7 +507,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -597,7 +596,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

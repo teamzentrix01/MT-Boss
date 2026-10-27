@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, Trash2, X } from "lucide-react";
 
-const STORAGE_KEY = "mtboss-admin-notifications-v1";
+const STORAGE_KEY = "MTBOSS-admin-notifications-v1";
 const POLL_INTERVAL = 60_000;
 
 function eventSignature(item) {
@@ -135,11 +135,34 @@ export default function DashboardNotifications() {
   }, []);
 
   const unreadCount = notifications.filter((item) => !item.read).length;
-  const markAllRead = () => {
-    const updated = notifications.map((item) => ({ ...item, read: true }));
-    setNotifications(updated);
+
+  const removeNotification = (key) => {
+    setNotifications((prev) => {
+      const updated = prev.filter((item) => item.key !== key);
+      const stored = readStored();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, notifications: updated }));
+      return updated;
+    });
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
     const stored = readStored();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, notifications: updated }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, notifications: [] }));
+  };
+
+  const markAllRead = () => {
+    setNotifications((prev) => {
+      const updated = prev.map((item) => ({ ...item, read: true }));
+      const stored = readStored();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, notifications: updated }));
+      return updated;
+    });
+  };
+
+  const handleItemClick = (key) => {
+    removeNotification(key);
+    setOpen(false);
   };
 
   return (
@@ -152,7 +175,14 @@ export default function DashboardNotifications() {
         onClick={() => setOpen((value) => !value)}
       >
         <Bell size={20} strokeWidth={1.8} aria-hidden="true" />
-        {unreadCount > 0 && <span className="admin-notifications__count">{unreadCount > 99 ? "99+" : unreadCount}</span>}
+        {unreadCount > 0 && (
+          <span
+            className="admin-notifications__count text-red-600"
+            style={{ color: '#dc2626', backgroundColor: '#ffffff' }}
+          >
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
       </button>
 
       {open && (
@@ -160,27 +190,74 @@ export default function DashboardNotifications() {
           <header className="admin-notifications__header">
             <div>
               <h2>Notifications</h2>
-              <p>{unreadCount ? `${unreadCount} unread updates` : "You’re all caught up"}</p>
+              <p>{unreadCount ? `${unreadCount} unread update${unreadCount > 1 ? "s" : ""}` : "No unread updates"}</p>
             </div>
-            {unreadCount > 0 && <button type="button" onClick={markAllRead} aria-label="Mark all as read"><CheckCheck size={18} /></button>}
+            <div className="flex items-center gap-1.5">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={markAllRead}
+                  aria-label="Mark all as read"
+                  title="Mark all as read"
+                  className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-md transition-colors"
+                >
+                  <CheckCheck size={16} />
+                  <span className="hidden sm:inline">Mark read</span>
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  type="button"
+                  onClick={clearAllNotifications}
+                  aria-label="Clear all notifications"
+                  title="Clear all notifications"
+                  className="danger-btn flex items-center gap-1 px-2 py-1 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md transition-colors"
+                >
+                  <Trash2 size={15} />
+                  <span className="hidden sm:inline">Clear all</span>
+                </button>
+              )}
+            </div>
           </header>
           <div className="admin-notifications__list">
             {notifications.length ? notifications.map((item) => (
-              <Link
-                href={item.href}
+              <div
                 key={item.key}
-                className={`admin-notifications__item${item.read ? " is-read" : ""}`}
-                onClick={() => setOpen(false)}
+                className={`admin-notifications__item flex items-start justify-between gap-2.5 p-3.5 border-b border-gray-100 dark:border-zinc-800 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/50 group ${item.read ? " opacity-75" : ""}`}
               >
-                <span className="admin-notifications__dot" />
-                <span className="admin-notifications__copy">
-                  <strong>{item.title}</strong>
-                  <span>{item.message}</span>
-                  <time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</time>
-                </span>
-              </Link>
+                <Link
+                  href={item.href}
+                  className="flex-1 flex items-start gap-2.5 min-w-0 text-inherit no-underline"
+                  onClick={() => handleItemClick(item.key)}
+                  title="View information and dismiss notification"
+                >
+                  <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${item.read ? "bg-gray-300 dark:bg-zinc-600" : "bg-[#1258d4]"}`} />
+                  <span className="flex-1 min-w-0">
+                    <strong className="block text-xs font-bold text-gray-900 dark:text-gray-100 truncate mb-0.5">{item.title}</strong>
+                    <span className="block text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">{item.message}</span>
+                    <time dateTime={item.createdAt} className="block text-[11px] text-gray-400 mt-1 font-medium">
+                      {new Date(item.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                    </time>
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeNotification(item.key);
+                  }}
+                  className="shrink-0 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded transition-colors"
+                  title="Remove notification"
+                  aria-label="Remove notification"
+                >
+                  <X size={15} strokeWidth={2} />
+                </button>
+              </div>
             )) : (
-              <p className="admin-notifications__empty">{loading ? "Checking for updates…" : "New enquiries and lead updates will appear here."}</p>
+              <p className="admin-notifications__empty text-xs text-gray-500 text-center py-8">
+                {loading ? "Checking for updates…" : "No notifications right now."}
+              </p>
             )}
           </div>
         </section>

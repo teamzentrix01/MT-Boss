@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Civil Construction in Moradabad — A Complete Guide for Homeowners and Businesses
+            Civil Construction in Moradabad :
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -48,9 +48,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Expansion of residential colonies on the city&apos;s outskirts</li>
                 <li>Rising commercial activity requiring new retail and office spaces</li>
-                <li>Growth of small and medium industrial units near the city</li>
-                <li>Increasing preference for professionally engineered structures over informal construction</li>
-                <li>Greater awareness of building safety standards among property owners</li>
+
                 <li>More property buyers seeking verified, quality-built homes</li>
                 <li>Businesses needing construction partners who can meet strict deadlines</li>
               </ul>
@@ -68,8 +66,6 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Independent houses, duplexes, and villas</li>
                 <li>Multi-storey residential buildings (G+1, G+2, etc.)</li>
-                <li>Additional floor construction on existing homes</li>
-                <li>Complete renovation and structural remodeling</li>
                 <li>Boundary walls, gates, and terrace waterproofing</li>
               </ul>
 
@@ -105,14 +101,7 @@ const Content = () => {
                 <li>Water tank cleaning</li>
               </ul>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">6. Material Supply for Civil Projects</h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Cement and TMT steel bars</li>
-                <li>Bricks, sand, and aggregates</li>
-                <li>Tiles, marble, and flooring materials</li>
-                <li>Paints and finishing products</li>
-                <li>Bathroom and kitchen fittings</li>
-              </ul>
+              
             </section>
 
             <section>
@@ -130,17 +119,10 @@ const Content = () => {
                 <li>Free Construction Budget Calculator offering instant, location-based BOQ estimates</li>
                 <li>Four quality packages — Basic, Standard, Premium, and Luxury — for varied budgets</li>
                 <li>Doorstep home services including electricians, plumbers, AC repair, and pest control</li>
-                <li>Verified property marketplace for buying, selling, and renting with zero rental brokerage</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Franchise opportunities for entrepreneurs entering the construction business</li>
-                <li>Agent commission program with earnings on property and construction referrals</li>
-                <li>Technology-integrated construction process, using AI and BIM since 2018</li>
-                <li>Industry recognition — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick queries and quotes</li>
+                
+                
               </ul>
-              <p className="mt-3">
-                This combination of residential, commercial, and industrial civil construction capability — alongside materials and home services — positions MTBOSS as a full-service option for civil construction needs in Moradabad.
-              </p>
+             
             </section>
 
             <section>
@@ -151,10 +133,7 @@ const Content = () => {
                 Before hiring a civil construction partner, evaluate them against this checklist:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>Confirm total years of experience and number of completed projects</li>
-                <li>Ask for a portfolio showing residential, commercial, or industrial work</li>
-                <li>Request a detailed, written cost estimate (BOQ) before starting</li>
-                <li>Verify the quality certification of materials used</li>
+              
                 <li>Check if multiple budget/quality packages are available</li>
                 <li>Ask about structural warranty and after-service support</li>
                 <li>Read genuine client reviews and request references</li>
@@ -183,9 +162,7 @@ const Content = () => {
                 <li>Current market rates for cement, steel, and skilled labour</li>
                 <li>Complexity of architectural design</li>
               </ul>
-              <p className="mt-3">
-                For reference, sample estimates for a 1,000 sq. ft. G+1 standard-quality home typically fall around ₹700–₹800 per sq. ft., though actual costs vary by contractor and material specifications.
-              </p>
+             
             </section>
 
             <section>
@@ -193,10 +170,7 @@ const Content = () => {
                 Step-by-Step Civil Construction Process
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
-                <li><strong>Consultation &amp; Site Survey</strong> — Understanding requirements and inspecting the plot</li>
-                <li><strong>Budget Estimation</strong> — Preparing a detailed BOQ and cost breakdown</li>
-                <li><strong>Design &amp; Municipal Approval</strong> — Finalizing architectural plans and securing clearances</li>
-                <li><strong>Foundation Work</strong> — Excavation, footing, and plinth beam construction</li>
+               
                 <li><strong>Structural Framing</strong> — Column, beam, and slab casting</li>
                 <li><strong>Masonry &amp; Brickwork</strong> — Wall construction and internal partitioning</li>
                 <li><strong>MEP Installation</strong> — Electrical wiring, plumbing lines, and ducting</li>
@@ -243,8 +217,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer Near Me in Moradabad: Spaces Planned Around Your
-            Life
+            Interior Designer Near Me in Moradabad:
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,14 +24,7 @@ const Content = () => {
                 Moradabad, you probably want a professional who knows the city,
                 visits your site easily and delivers what was promised.
               </p>
-              <p className="mt-3">
-                MT Boss is an architecture, interior design and construction
-                company serving Moradabad and Bareilly. Our team plans interiors
-                that look good on day one and still work well years later. We
-                handle apartments, independent houses, villas, shops, showrooms
-                and offices, and we keep pricing and timelines clear from the
-                first meeting.
-              </p>
+             
               <p className="mt-3">
                 This guide explains what a local interior designer does, which
                 services are worth investing in, how budgets work and how to pick
@@ -74,7 +66,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                At MT Boss, our office sits on Harthala Kanth Road, so clients can
+                At MTBOSS, our office sits on Harthala Kanth Road, so clients can
                 visit, see material samples and talk directly with the people who
                 will manage their project.
               </p>
@@ -219,7 +211,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 A clear process saves time, money and frustration. Here is how
-                projects typically move at MT Boss.
+                projects typically move at MTBOSS.
               </p>
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
@@ -298,7 +290,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also use the{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -326,7 +318,7 @@ const Content = () => {
                 someone else.
               </p>
               <p className="mb-3">
-                A design-and-build company removes that gap. At MT Boss, planning,
+                A design-and-build company removes that gap. At MTBOSS, planning,
                 construction and interior execution sit under one roof. That gives
                 you:
               </p>
@@ -445,7 +437,7 @@ const Content = () => {
               </p>
               <p className="mb-3">
                 If you have been looking for a dependable interior designer near
-                you in Moradabad, MT Boss is ready to help you turn your ideas into
+                you in Moradabad, MTBOSS is ready to help you turn your ideas into
                 a home or workplace you enjoy every day.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -461,10 +453,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -474,12 +466,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -496,7 +488,7 @@ const Content = () => {
                     Moradabad?
                   </strong>
                   <br />
-                  Yes. MT Boss serves Moradabad and Bareilly with on-site visits,
+                  Yes. MTBOSS serves Moradabad and Bareilly with on-site visits,
                   design planning and complete project execution.
                 </li>
                 <li>

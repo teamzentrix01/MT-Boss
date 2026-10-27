@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Complete Home Makeover in Moradabad: Transform Your Whole Home,
-            Inside and Out, with MTBOSS
+            Complete Home Makeover in Moradabad:  with MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -60,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What a Complete Makeover Means
+                Complete Makeover
               </h3>
               <p className="mb-3">
                 A makeover is more than a coat of paint. It is a planned upgrade
@@ -619,10 +618,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -633,7 +632,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -642,7 +641,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -740,7 +739,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>
-                  , or use the contact form on mtboss.in.
+                  , or use the contact form on MTBOSS.in.
                 </li>
               </ul>
             </section>

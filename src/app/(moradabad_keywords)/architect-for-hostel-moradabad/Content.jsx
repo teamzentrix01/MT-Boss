@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Hostel in Moradabad: Design, Construction and Materials by MTBOSS
+            Architect for Hostel in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -18,15 +18,11 @@ const Content = () => {
                 Moradabad, MTBOSS Construction Private Limited offers design
                 coordination, civil construction and material supply together,
                 so your hostel project does not depend on managing separate
-                architects, contractors and suppliers. With Moradabad home to a
-                growing number of students, working professionals and coaching
-                institutes, demand for well-planned student and PG hostels has
-                been rising steadily. MTBOSS positions its commercial
+                architects, contractors and suppliers. MTBOSS positions its commercial
                 construction work around engineering excellence and timely
                 delivery, making it a practical option for anyone planning a new
                 hostel, PG or working women&apos;s accommodation in the city.
-                This page explains what MTBOSS offers for hostel projects, how
-                the process works, and how to get in touch.
+                
               </p>
             </section>
 
@@ -44,7 +40,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What MTBOSS Offers for Hostel Construction Projects in Moradabad
+                 MTBOSS Offers for Hostel Construction Projects in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Design coordination for multi-occupancy buildings:</strong> MTBOSS&apos;s commercial and hospitality-related construction experience covers the kind of repetitive room planning and shared-facility layout that hostel buildings require.</li>
@@ -67,8 +63,7 @@ const Content = () => {
                 <li><strong>Step 4 — Design and layout planning:</strong> Layouts are prepared based on room count, shared facilities and floor count needed for your hostel.</li>
                 <li><strong>Step 5 — Budget estimation:</strong> The MTBOSS Budget Calculator, along with current material rates, is used to give a realistic cost outline.</li>
                 <li><strong>Step 6 — Material supply:</strong> Materials are sourced directly through MTBOSS&apos;s own wholesale supply of cement, steel, bricks, tiles and paints.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> Civil work proceeds under MTBOSS supervision, with quality and timeline checks along the way.</li>
-                <li><strong>Step 8 — Handover:</strong> Final finishing, inspection and handover of the completed hostel building.</li>
+                
               </ul>
             </section>
 
@@ -87,11 +82,7 @@ const Content = () => {
                 <li><strong>Room layout and bed count:</strong> Efficient planning of single, double or multi-sharing rooms, balancing occupant comfort with space utilization.</li>
                 <li><strong>Common washrooms and bathing areas:</strong> Adequate plumbing and drainage planning for shared or attached washrooms, depending on the hostel category.</li>
                 <li><strong>Mess and dining area:</strong> A functional kitchen and dining space sized for the expected number of residents.</li>
-                <li><strong>Common room and study area:</strong> Shared spaces for relaxation, group study or television, often expected in student hostels.</li>
-                <li><strong>Warden or manager&apos;s office:</strong> A dedicated space near the entrance for supervision and administration.</li>
-                <li><strong>Laundry and drying area:</strong> Space allocated for washing machines or a common drying yard.</li>
-                <li><strong>Security and entrance control:</strong> A single, monitored entry point, particularly important for women&apos;s hostels and PG accommodations.</li>
-                <li><strong>Fire safety and emergency exits:</strong> Clearly planned staircases, exit routes and extinguisher points, essential for any multi-occupancy building.</li>
+
                 <li><strong>Ventilation and natural light:</strong> Window placement planned to keep rooms comfortable, especially important given Moradabad&apos;s hot summers.</li>
                 <li><strong>Water storage and supply:</strong> Adequate overhead or underground water tank capacity for the expected number of residents.</li>
                 <li><strong>Parking and two-wheeler stands:</strong> Space planning for residents&apos; vehicles, particularly relevant for working professional hostels.</li>
@@ -112,7 +103,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS&apos;s Material Supply Matters for Hostel Construction
+                 Material Supply Matters for Hostel Construction
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBOSS supplies cement, TMT steel bars, bricks, tiles and paints directly, on a wholesale basis.</li>
@@ -137,7 +128,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What to Share with MTBOSS Before Your First Hostel Project Consultation
+              MTBOSS Before Your First Hostel Project Consultation
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Plot details:</strong> Size, location and any existing structure on the site.</li>
@@ -156,7 +147,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MTBOSS Property Services: Useful If You Don&apos;t Have a Hostel Plot Yet
+                MTBOSS Property Services:
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>MTBOSS offers verified property buying, selling and renting services in and around Moradabad.</li>
@@ -200,12 +191,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS as Your Architect for Hostel Construction in Moradabad
+              Choose MTBOSS as Your Architect for Hostel Construction in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>One team, one point of contact:</strong> Design coordination, material supply, construction and property services are all handled within the same company.</li>
-                <li><strong>Engineering-led positioning:</strong> MTBOSS frames its commercial construction work around engineering excellence and timely delivery.</li>
-                <li><strong>Direct control over materials:</strong> Wholesale supply of cement, steel, bricks, tiles and paints supports consistent quality across a hostel&apos;s repetitive room construction.</li>
                 <li><strong>Transparent estimation tools:</strong> The free Budget Calculator gives hostel owners an early, practical sense of construction costs.</li>
                 <li><strong>Local presence:</strong> Being based on Kanth Road in Moradabad keeps the team close to the residential and commercial projects it works on.</li>
                 <li><strong>Visible track record:</strong> A project gallery and blog on the MTBOSS website let prospective clients see completed work before reaching out.</li>
@@ -221,12 +210,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -249,10 +238,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

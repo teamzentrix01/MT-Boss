@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-cafe-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-cafe-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for your cafe in Bareilly? Plan theme, coffee counter, seating and lighting with MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-cafe-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-cafe-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-cafe-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-cafe-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Cafe in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for your cafe in Bareilly? Plan theme, coffee counter, seating and lighting with MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-cafe-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-cafe-bareilly.jpg",
     ],
   },
 
@@ -67,10 +67,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-cafe-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-cafe-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-interior-designer-cafe-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-interior-designer-cafe-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Cafe Interior Design Services in Bareilly",
     description:
       "MTBOSS provides cafe interior design services in Bareilly for coffee shops, espresso bars, casual dining cafes, bakery cafes, rooftop cafes, garden cafes, co-working cafes, themed cafes and takeaway kiosks. Services include concept and space planning, facade and entrance design, counter and coffee bar design, compact kitchen and pantry planning, seating and furniture, ceiling and lighting, wall and decor design, flooring and finishes, washrooms, outdoor and rooftop seating, services provisions, branding, construction coordination, material supply, renovation and cafe conversion.",
-    url: "https://www.mtboss.in/interior-designer-for-cafe-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-cafe-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -209,19 +209,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Cafe in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-cafe-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-cafe-in-bareilly",
       },
     ],
   };

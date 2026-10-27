@@ -16,7 +16,7 @@ export const metadata = {
     "hotel construction company Moradabad, hotel builder Moradabad, hotel construction contractor Moradabad, hotel building construction Moradabad, resort construction Moradabad, guest house construction Moradabad, boutique hotel construction, budget hotel construction Moradabad, banquet hall construction Moradabad, hotel interior design Moradabad, hospitality construction Moradabad, commercial construction company Moradabad, hotel construction cost Moradabad, MTBOSS Moradabad, MTBOSS Kanth Road, MTBOSS budget calculator, construction quote Moradabad",
 
   alternates: {
-    canonical: "https://www.mtboss.in/hotel-construction-company-in-moradabad",
+    canonical: "https://www.MTBOSS.in/hotel-construction-company-in-moradabad",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Looking for a hotel construction company in Moradabad? MTBOSS offers design, construction, interiors and handover. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/hotel-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-company-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-hotel-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hotel-construction-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Hotel Construction Company in Moradabad - MTBOSS Construction",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Looking for a hotel construction company in Moradabad? MTBOSS offers design, construction, interiors and handover. Call +91 94584 10866 for a free quote.",
 
-    images: ["https://www.mtboss.in/og-hotel-construction-moradabad.jpg"],
+    images: ["https://www.MTBOSS.in/og-hotel-construction-moradabad.jpg"],
   },
 
   robots: {
@@ -66,13 +66,13 @@ export default function Page() {
 
     name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.mtboss.in/hotel-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-company-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
-    image: "https://www.mtboss.in/og-hotel-construction-moradabad.jpg",
+    image: "https://www.MTBOSS.in/og-hotel-construction-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -135,14 +135,14 @@ export default function Page() {
     description:
       "MTBOSS provides hotel construction services in Moradabad, including hotel planning, room layouts, elevation design, RCC civil construction, guest-room construction, lobby and reception work, restaurant and kitchen areas, banquet halls, interiors, waterproofing, finishing and final handover.",
 
-    url: "https://www.mtboss.in/hotel-construction-company-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-construction-company-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -241,19 +241,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hotel Construction Company in Moradabad",
-        item: "https://www.mtboss.in/hotel-construction-company-in-moradabad",
+        item: "https://www.MTBOSS.in/hotel-construction-company-in-moradabad",
       },
     ],
   };

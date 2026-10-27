@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Cockroach Control in Moradabad: MT Boss
+            Cockroach Control in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -19,7 +19,7 @@ const Content = () => {
               <p>
                 Cockroach control in Moradabad is the inspection and treatment of
                 kitchens, drains, bathrooms and storage areas to remove cockroach
-                colonies and cut off their food, water and shelter. MT Boss
+                colonies and cut off their food, water and shelter. MTBOSS
                 Construction Private Limited, based on Kanth Road, offers
                 cockroach treatment for homes, restaurants, shops and godowns
                 across Moradabad and Bareilly [confirm methods used].
@@ -44,7 +44,7 @@ const Content = () => {
                 single sighting can damage trust.
               </p>
               <p>
-                MT Boss Construction Private Limited serves homes, flats, shops,
+                MTBOSS Construction Private Limited serves homes, flats, shops,
                 offices, hotels, warehouses and factories across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
                 completion, with quality work, transparent pricing and on-time
@@ -58,7 +58,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Different species live in different places, so identification
-                helps choose the treatment [confirm which species MT Boss&apos;s
+                helps choose the treatment [confirm which species MTBOSS&apos;s
                 technicians treat].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -232,7 +232,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Each method suits particular situations [confirm the methods and
-                products MT Boss actually uses].
+                products MTBOSS actually uses].
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -356,7 +356,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry:</strong> call, WhatsApp or click Get a
-                  Construction Quote on mtboss.in, and describe where you see
+                  Construction Quote on MTBOSS.in, and describe where you see
                   cockroaches
                 </li>
                 <li>
@@ -536,18 +536,18 @@ const Content = () => {
                 <li>One-time service or scheduled contract</li>
               </ul>
               <p className="mt-3">
-                You can use the Budget Calculator on mtboss.in for an early idea
+                You can use the Budget Calculator on MTBOSS.in for an early idea
                 of overall construction or renovation cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Facts at a Glance
+                MTBOSS Facts at a Glance
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Business:</strong> MT Boss Construction Private Limited
+                  <strong>Business:</strong> MTBOSS Construction Private Limited
                 </li>
                 <li>
                   <strong>Service:</strong> Cockroach control, alongside pest
@@ -571,21 +571,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -601,7 +601,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -650,7 +650,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Cockroach Inspection With MT Boss
+                Book a Cockroach Inspection With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -667,21 +667,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -696,7 +696,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for cockroach control in Moradabad, with the
+                Choose MTBOSS for cockroach control in Moradabad, with the
                 hiding places found, the right treatment applied and a clear
                 routine for keeping them out.
               </p>
@@ -710,7 +710,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who offers cockroach control in Moradabad?</strong>
                   <br />
-                  MT Boss Construction treats cockroaches in homes, restaurants,
+                  MTBOSS Construction treats cockroaches in homes, restaurants,
                   shops and godowns across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -758,7 +758,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I book an inspection?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

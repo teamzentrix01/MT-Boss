@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     "architect for showroom Moradabad, showroom construction Moradabad, showroom architect near me, showroom design company Moradabad, commercial showroom architect India, showroom interior design Moradabad, showroom facade design, car showroom architect Moradabad, furniture showroom construction, MTBOSS construction Moradabad, showroom construction cost Moradabad, best architect Moradabad, commercial building contractor Moradabad, retail showroom builder UP",
   alternates: {
-    canonical: "https://www.mtboss.in/architect-for-showroom-in-moradabad",
+    canonical: "https://www.MTBOSS.in/architect-for-showroom-in-moradabad",
   },
   openGraph: {
     title: "Architect for Showroom in Moradabad | MTBOSS Construction",
     description:
       "Looking for an experienced architect for showroom construction in Moradabad? MTBOSS offers complete design, facade planning, interior layout and material supply.",
-    url: "https://www.mtboss.in/architect-for-showroom-in-moradabad",
+    url: "https://www.MTBOSS.in/architect-for-showroom-in-moradabad",
     siteName: "MTBOSS Construction Private Limited",
     images: [
       {
-        url: "https://www.mtboss.in/og-architect-showroom-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-architect-showroom-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Architect for Showroom Construction in Moradabad - MTBOSS",
@@ -37,7 +37,7 @@ export const metadata = {
     description:
       "Looking for an experienced architect for showroom construction in Moradabad? MTBOSS offers complete design, facade planning, interior layout and material supply.",
     images: [
-      "https://www.mtboss.in/og-architect-showroom-moradabad.jpg",
+      "https://www.MTBOSS.in/og-architect-showroom-moradabad.jpg",
     ],
   },
   robots: {
@@ -51,9 +51,9 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/architect-for-showroom-in-moradabad",
+    url: "https://www.MTBOSS.in/architect-for-showroom-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Harthala Kanth Road, Behind KR Collection, near Domino's",
@@ -92,7 +92,7 @@ export default function Page() {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      url: "https://www.mtboss.in",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: {
       "@type": "City",

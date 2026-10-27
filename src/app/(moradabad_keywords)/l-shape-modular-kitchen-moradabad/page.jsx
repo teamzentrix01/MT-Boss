@@ -8,24 +8,24 @@ import Services from '../../components/Services';
 export const metadata = {
   title: 'L Shape Modular Kitchen in Moradabad',
   description:
-    'L shape modular kitchen in Moradabad by MT Boss. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
+    'L shape modular kitchen in Moradabad by MTBOSS. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
   keywords:
-    'L shape modular kitchen Moradabad, L shaped kitchen Moradabad, L shape kitchen design Moradabad, L shaped modular kitchen price Moradabad, L shape kitchen corner unit Moradabad, L shape kitchen with breakfast counter Moradabad, L shaped kitchen designer Moradabad, L shape modular kitchen installation Moradabad, L shape kitchen near me Moradabad, MT Boss L shape modular kitchen Moradabad',
+    'L shape modular kitchen Moradabad, L shaped kitchen Moradabad, L shape kitchen design Moradabad, L shaped modular kitchen price Moradabad, L shape kitchen corner unit Moradabad, L shape kitchen with breakfast counter Moradabad, L shaped kitchen designer Moradabad, L shape modular kitchen installation Moradabad, L shape kitchen near me Moradabad, MTBOSS L shape modular kitchen Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/l-shape-modular-kitchen-moradabad',
+    canonical: 'https://www.MTBOSS.in/l-shape-modular-kitchen-moradabad',
   },
   openGraph: {
     title: 'L Shape Modular Kitchen in Moradabad',
     description:
-      'L shape modular kitchen in Moradabad by MT Boss. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
-    url: 'https://www.mtboss.in/l-shape-modular-kitchen-moradabad',
+      'L shape modular kitchen in Moradabad by MTBOSS. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
+    url: 'https://www.MTBOSS.in/l-shape-modular-kitchen-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-l-shape-modular-kitchen-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-l-shape-modular-kitchen-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'L Shape Modular Kitchen in Moradabad - MT Boss',
+        alt: 'L Shape Modular Kitchen in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -35,8 +35,8 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'L Shape Modular Kitchen in Moradabad',
     description:
-      'L shape modular kitchen in Moradabad by MT Boss. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
-    images: ['https://www.mtboss.in/og-l-shape-modular-kitchen-moradabad.jpg'],
+      'L shape modular kitchen in Moradabad by MTBOSS. Corner solutions, sink, hob and fridge placement, and breakfast counters, planned from a site measurement.',
+    images: ['https://www.MTBOSS.in/og-l-shape-modular-kitchen-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/l-shape-modular-kitchen-moradabad',
+  url: 'https://www.MTBOSS.in/l-shape-modular-kitchen-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

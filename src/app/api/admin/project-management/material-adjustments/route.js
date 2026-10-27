@@ -2,7 +2,15 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
-const VALID_ADJUSTMENT_TYPES = ['wastage', 'damage', 'return_to_supplier', 'transfer_out'];
+const VALID_ADJUSTMENT_TYPES = [
+  'wastage',
+  'damage',
+  'return_to_supplier',
+  'return_material',
+  'scrap_material',
+  'scrap',
+  'transfer_out'
+];
 
 export async function GET(req) {
   try {
@@ -21,6 +29,7 @@ export async function GET(req) {
     const materialId = s.get('materialId') ? Number(s.get('materialId')) : null;
     const startDate = s.get('startDate') || null;
     const endDate = s.get('endDate') || null;
+    const adjTypeQuery = s.get('type') || null;
 
     let where = 'a.project_id = $1 AND NOT a.is_deleted';
     const params = [projectId];
@@ -37,11 +46,23 @@ export async function GET(req) {
       params.push(endDate);
       where += ` AND a.adjustment_date <= $${params.length}`;
     }
+    if (adjTypeQuery) {
+      if (adjTypeQuery === 'wastage') {
+        where += ` AND a.adjustment_type IN ('wastage', 'damage', 'transfer_out')`;
+      } else if (adjTypeQuery === 'return' || adjTypeQuery === 'return_material') {
+        where += ` AND a.adjustment_type IN ('return_to_supplier', 'return_material')`;
+      } else if (adjTypeQuery === 'scrap' || adjTypeQuery === 'scrap_material') {
+        where += ` AND a.adjustment_type IN ('scrap_material', 'scrap')`;
+      } else {
+        params.push(adjTypeQuery);
+        where += ` AND a.adjustment_type = $${params.length}`;
+      }
+    }
 
     params.push(pageSize, offset);
 
     const r = await pool.query(
-      `SELECT a.*, m.name AS material_name, m.unit AS material_unit,
+      `SELECT a.*, m.name AS material_name, COALESCE(a.unit, m.unit, 'units') AS material_unit,
               tp.name AS to_project_name, COUNT(*) OVER()::int AS total_count
        FROM pm_material_adjustments a
        JOIN pm_materials m ON m.id = a.material_id
@@ -72,6 +93,10 @@ export async function POST(req) {
     const q = Number(b.quantity);
     const adjType = String(b.adjustment_type || '').trim();
     const toProjId = b.to_project_id ? Number(b.to_project_id) : null;
+    let supplierId = b.supplier_id ? Number(b.supplier_id) : null;
+    const supplierName = b.supplier_name ? String(b.supplier_name).trim() : null;
+    let amount = b.amount !== undefined && b.amount !== null && b.amount !== '' ? Number(b.amount) : null;
+    const selectedUnit = b.unit ? String(b.unit).trim() : null;
 
     if (
       !Number.isInteger(p) ||
@@ -88,10 +113,50 @@ export async function POST(req) {
     const auth = await assertAgentAccess(req, p, 'construction');
     if (!auth.allowed) return auth.response;
 
+    try {
+      await pool.query(`
+        ALTER TABLE pm_material_adjustments 
+        ADD COLUMN IF NOT EXISTS bill_url text,
+        ADD COLUMN IF NOT EXISTS bill_filename text,
+        ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2),
+        ADD COLUMN IF NOT EXISTS supplier_name text,
+        ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL,
+        ADD COLUMN IF NOT EXISTS unit VARCHAR(50)
+      `);
+    } catch {}
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
+
+      if (selectedUnit) {
+        await c.query('UPDATE pm_materials SET unit = $1 WHERE id = $2 AND (unit IS NULL OR unit = \'\' OR unit <> $1)', [selectedUnit, m]);
+      }
+
+      if (!supplierId && supplierName) {
+        const supMatch = await c.query(
+          `SELECT id FROM suppliers WHERE LOWER(TRIM(COALESCE(shop_name, business_name, ''))) = LOWER(TRIM($1)) LIMIT 1`,
+          [supplierName]
+        );
+        if (supMatch.rows.length > 0) {
+          supplierId = Number(supMatch.rows[0].id);
+        }
+      }
+
+      if ((amount === null || amount <= 0) && (adjType === 'return_material' || adjType === 'return_to_supplier')) {
+        const rateRes = await c.query(
+          `SELECT rate FROM pm_material_received 
+           WHERE project_id = $1 AND material_id = $2 AND NOT is_deleted 
+             AND ($3::bigint IS NULL OR supplier_id = $3 OR LOWER(TRIM(COALESCE(supplier_name, ''))) = LOWER(TRIM($4)))
+           ORDER BY received_date DESC, id DESC LIMIT 1`,
+          [p, m, supplierId, supplierName || '']
+        );
+        const foundRate = Number(rateRes.rows[0]?.rate || 0);
+        if (foundRate > 0) {
+          amount = Number((q * foundRate).toFixed(2));
+        }
+      }
 
       // Check current stock in source project
       const stockRes = await c.query(
@@ -108,10 +173,11 @@ export async function POST(req) {
       const adjRes = await c.query(
         `INSERT INTO pm_material_adjustments(
            project_id, material_id, adjustment_type, quantity,
-           adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+           adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used,
+           amount, supplier_name, supplier_id, unit
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          RETURNING *`,
-        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed]
+        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed, amount, supplierName, supplierId, selectedUnit]
       );
       const adjRow = adjRes.rows[0];
 

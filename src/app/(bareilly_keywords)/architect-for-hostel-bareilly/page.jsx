@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'architect for hostel in Bareilly, hostel architect Bareilly, hostel design Bareilly, hostel planning Bareilly, student hostel architect Bareilly, PG design Bareilly, hostel room layout Bareilly, hostel washroom design Bareilly, hostel mess design Bareilly, hostel security design Bareilly, hostel construction Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-for-hostel-in-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-hostel-in-bareilly',
   },
   openGraph: {
     title: 'Architect for Hostel in Bareilly',
     description:
       'Architect for hostel in Bareilly: room layouts, washrooms, mess, security and safe circulation for student hostels and PGs. MTBOSS designs and builds. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/architect-for-hostel-in-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-hostel-in-bareilly',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-for-hostel-in-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-hostel-in-bareilly.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect for Hostel in Bareilly - MTBOSS',
@@ -37,7 +37,7 @@ export const metadata = {
     description:
       'Architect for hostel in Bareilly: room layouts, washrooms, mess, security and safe circulation for student hostels and PGs. MTBOSS designs and builds. Call or WhatsApp.',
     images: [
-      'https://www.mtboss.in/og-architect-for-hostel-in-bareilly.jpg',
+      'https://www.MTBOSS.in/og-architect-for-hostel-in-bareilly.jpg',
     ],
   },
   robots: {
@@ -51,9 +51,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-for-hostel-in-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-hostel-in-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

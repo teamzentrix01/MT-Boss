@@ -27,7 +27,7 @@ function useInView(threshold = 0.1) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
   return [ref, inView];
 }
 
@@ -45,7 +45,7 @@ const DEFAULT_OFFICES = [
   city,
   address: `MTBOSS Office, ${city}, India`,
   phone: COMPANY_CONTACT.phone,
-  email: `${city.toLowerCase()}@mtboss.com`,
+  email: `${city.toLowerCase()}@MTBOSS.com`,
   hours: 'Mon - Sat: 9:00 AM - 6:00 PM',
   mapUrl: city.toLowerCase() === 'bareilly'
     ? 'https://www.google.com/maps?q=28.3975,79.452806&z=17&output=embed'
@@ -226,7 +226,7 @@ export default function ContactPage() {
               📞 Call Us
             </a>
             <a
-              href="mailto:mtboss2016@gmail.com"
+              href="mailto:MTBOSS2016@gmail.com"
               className="flex items-center gap-2 px-5 py-2.5 border-2 border-white text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-white hover:text-black transition-all"
             >
               ✉️ Email Us
@@ -507,13 +507,13 @@ export default function ContactPage() {
                       </div>
                     </a>
 
-                    <a href="mailto:mtboss2016@gmail.com" className="flex items-start gap-3 group">
+                    <a href="mailto:MTBOSS2016@gmail.com" className="flex items-start gap-3 group">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${dark ? 'bg-[var(--brand-blue)]/20 group-hover:bg-[var(--brand-blue-dark)]' : 'bg-sky-100 group-hover:bg-[var(--brand-blue-dark)]'}`}>
                         <span className="text-lg">✉️</span>
                       </div>
                       <div>
                         <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${dark ? 'text-gray-500' : 'text-gray-600'}`}>Email</p>
-                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>mtboss2016@gmail.com</p>
+                        <p className={`font-bold transition-colors ${textPrimaryClass}`}>MTBOSS2016@gmail.com</p>
                       </div>
                     </a>
 
@@ -615,7 +615,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-blue)] text-black text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-[var(--brand-blue-light)] transition-all"
               >
-                📍 Get Directions
+                Get Directions
               </a>
             </div>
 

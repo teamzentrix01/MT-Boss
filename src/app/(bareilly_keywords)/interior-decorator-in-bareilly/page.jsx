@@ -16,7 +16,7 @@ export const metadata = {
     "interior decorator in Bareilly, interior decorator Bareilly, home decorator Bareilly, home decor Bareilly, home styling Bareilly, wall decor Bareilly, paint and wall finishes Bareilly, lighting design Bareilly, home makeover Bareilly, room decoration Bareilly, interior decorator vs interior designer, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, interior quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/interior-decorator-in-bareilly",
+    canonical: "https://www.MTBOSS.in/interior-decorator-in-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Need an interior decorator in Bareilly? MTBOSS helps with paint, lighting, styling and finishing touches. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-decorator-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-decorator-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-decorator-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-decorator-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Decorator in Bareilly - MTBOSS",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Need an interior decorator in Bareilly? MTBOSS helps with paint, lighting, styling and finishing touches. Call +91 94584 10866.",
 
-    images: ["https://www.mtboss.in/og-interior-decorator-bareilly.jpg"],
+    images: ["https://www.MTBOSS.in/og-interior-decorator-bareilly.jpg"],
   },
 
   robots: {
@@ -64,10 +64,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-decorator-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-decorator-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-interior-decorator-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-interior-decorator-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -113,13 +113,13 @@ export default function Page() {
     name: "Interior Decoration Services in Bareilly",
     description:
       "MTBOSS provides interior decoration and finishing support for homes and workspaces in Bareilly, including decor planning and styling advice, paint and wall finishes, lighting plans, ceiling and wall detailing, flooring and tile choices, woodwork and carpentry, painting services, interior design coordination, renovation and remodelling.",
-    url: "https://www.mtboss.in/interior-decorator-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-decorator-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -206,19 +206,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Decorator in Bareilly",
-        item: "https://www.mtboss.in/interior-decorator-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-decorator-in-bareilly",
       },
     ],
   };

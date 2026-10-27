@@ -68,11 +68,11 @@ export async function POST(req, { params }) {
       try {
         await sendMail({
           to: customerEmail,
-          subject: `Start OTP for ${row.booking_reference || 'your MTBoss booking'}`,
-          text: `Your MTBoss start OTP is ${otp}. Share it with the vendor only after they reach your location.`,
+          subject: `Start OTP for ${row.booking_reference || 'your MTBOSS booking'}`,
+          text: `Your MTBOSS start OTP is ${otp}. Share it with the vendor only after they reach your location.`,
           html: `
             <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;color:#111;">
-              <h2 style="margin:0 0 12px;">MTBoss Start OTP</h2>
+              <h2 style="margin:0 0 12px;">MTBOSS Start OTP</h2>
               <p style="margin:0 0 16px;line-height:1.5;">Share this OTP with the vendor only after they reach your location.</p>
               <div style="font-size:34px;font-weight:700;letter-spacing:10px;padding:18px 20px;background:#f4f7fb;border:1px solid #dbe7f5;text-align:center;">${otp}</div>
               <p style="margin:16px 0 0;font-size:13px;color:#555;">This code expires soon. Do not share it before the vendor arrives.</p>

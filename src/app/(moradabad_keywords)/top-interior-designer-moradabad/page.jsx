@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Top Interior Designer in Moradabad | MT Boss Design Studio',
+  title: 'Top Interior Designer in Moradabad | MTBOSS Design Studio',
   description:
-    'Searching for the top interior designer in Moradabad? MT Boss delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
+    'Searching for the top interior designer in Moradabad? MTBOSS delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
   keywords:
-    'top interior designer Moradabad, best interior designer Moradabad, interior designer in Moradabad, interior design studio Moradabad, home interior designer Moradabad, office interior designer Moradabad, 3D interior design Moradabad, modular interior designer Moradabad, turnkey interiors Moradabad, MT Boss Moradabad',
+    'top interior designer Moradabad, best interior designer Moradabad, interior designer in Moradabad, interior design studio Moradabad, home interior designer Moradabad, office interior designer Moradabad, 3D interior design Moradabad, modular interior designer Moradabad, turnkey interiors Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/top-interior-designer-moradabad',
+    canonical: 'https://www.MTBOSS.in/top-interior-designer-moradabad',
   },
   openGraph: {
-    title: 'Top Interior Designer in Moradabad | MT Boss Design Studio',
+    title: 'Top Interior Designer in Moradabad | MTBOSS Design Studio',
     description:
-      'Searching for the top interior designer in Moradabad? MT Boss delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
-    url: 'https://www.mtboss.in/top-interior-designer-moradabad',
+      'Searching for the top interior designer in Moradabad? MTBOSS delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
+    url: 'https://www.MTBOSS.in/top-interior-designer-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-top-interior-designer-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-top-interior-designer-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Top Interior Designer in Moradabad - MT Boss',
+        alt: 'Top Interior Designer in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Top Interior Designer in Moradabad | MT Boss Design Studio',
+    title: 'Top Interior Designer in Moradabad | MTBOSS Design Studio',
     description:
-      'Searching for the top interior designer in Moradabad? MT Boss delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
-    images: ['https://www.mtboss.in/og-top-interior-designer-moradabad.jpg'],
+      'Searching for the top interior designer in Moradabad? MTBOSS delivers space planning, 3D designs, modular interiors and execution for homes and businesses.',
+    images: ['https://www.MTBOSS.in/og-top-interior-designer-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/top-interior-designer-moradabad',
+  url: 'https://www.MTBOSS.in/top-interior-designer-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

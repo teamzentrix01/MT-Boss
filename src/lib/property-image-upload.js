@@ -61,7 +61,7 @@ async function uploadOnce(file) {
     const body = new FormData();
     body.append('file', file);
     body.append('upload_preset', uploadPreset);
-    body.append('folder', 'mtboss/properties');
+    body.append('folder', 'MTBOSS/properties');
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body,

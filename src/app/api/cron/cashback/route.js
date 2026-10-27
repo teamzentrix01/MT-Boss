@@ -4,7 +4,7 @@ import { processScheduledMaturityAndExpiry } from '@/lib/cashback/service';
 export async function POST(req) {
   try {
     const authHeader = req.headers.get('authorization') || '';
-    const secret = process.env.CRON_SECRET || 'mtboss-cashback-cron-secret';
+    const secret = process.env.CRON_SECRET || 'MTBOSS-cashback-cron-secret';
 
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
     if (token !== secret) {

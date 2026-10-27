@@ -12,18 +12,18 @@ export const metadata = {
   keywords:
     'carpenter services Moradabad, carpenter near me Moradabad, carpenter for furniture Moradabad, carpenter for wardrobe Moradabad, carpenter for door repair Moradabad, carpenter for window repair Moradabad, custom furniture Moradabad, wooden furniture maker Moradabad, carpenter for home repair Moradabad, MTBOSS carpenter services Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/carpenter-services-moradabad',
+    canonical: 'https://www.MTBOSS.in/carpenter-services-moradabad',
   },
   openGraph: {
     title:
       'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBOSS',
     description:
       'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBOSS offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
-    url: 'https://www.mtboss.in/carpenter-services-moradabad',
+    url: 'https://www.MTBOSS.in/carpenter-services-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-carpenter-services-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-carpenter-services-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Carpenter Services in Moradabad - MTBOSS',
@@ -38,7 +38,7 @@ export const metadata = {
       'Carpenter Services in Moradabad | Furniture, Doors & Repair | MTBOSS',
     description:
       'Carpenter services in Moradabad for furniture, wardrobes, doors, windows and repairs. MTBOSS offers skilled woodwork for homes and shops. Call or WhatsApp to book.',
-    images: ['https://www.mtboss.in/og-carpenter-services-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-carpenter-services-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/carpenter-services-moradabad',
+  url: 'https://www.MTBOSS.in/carpenter-services-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

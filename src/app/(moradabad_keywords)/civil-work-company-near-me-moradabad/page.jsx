@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Civil Work Company Near Me in Moradabad | MT Boss',
+  title: 'Civil Work Company Near Me in Moradabad | MTBOSS',
   description:
-    'Looking for a civil work company near you in Moradabad? MT Boss, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
+    'Looking for a civil work company near you in Moradabad? MTBOSS, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
   keywords:
-    'civil work company near me Moradabad, civil work company Moradabad, construction company near me Moradabad, civil contractor near me Moradabad, building repair company Moradabad, waterproofing company Moradabad, civil work contractor Kanth Road Moradabad, construction company Harthala Moradabad, MT Boss civil work Moradabad, civil work company Bareilly',
+    'civil work company near me Moradabad, civil work company Moradabad, construction company near me Moradabad, civil contractor near me Moradabad, building repair company Moradabad, waterproofing company Moradabad, civil work contractor Kanth Road Moradabad, construction company Harthala Moradabad, MTBOSS civil work Moradabad, civil work company Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/civil-work-company-near-me-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-work-company-near-me-moradabad',
   },
   openGraph: {
-    title: 'Civil Work Company Near Me in Moradabad | MT Boss',
+    title: 'Civil Work Company Near Me in Moradabad | MTBOSS',
     description:
-      'Looking for a civil work company near you in Moradabad? MT Boss, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
-    url: 'https://www.mtboss.in/civil-work-company-near-me-moradabad',
+      'Looking for a civil work company near you in Moradabad? MTBOSS, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
+    url: 'https://www.MTBOSS.in/civil-work-company-near-me-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-work-company-near-me-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-work-company-near-me-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Civil Work Company Near Me in Moradabad - MT Boss',
+        alt: 'Civil Work Company Near Me in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,11 +33,11 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Civil Work Company Near Me in Moradabad | MT Boss',
+    title: 'Civil Work Company Near Me in Moradabad | MTBOSS',
     description:
-      'Looking for a civil work company near you in Moradabad? MT Boss, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
+      'Looking for a civil work company near you in Moradabad? MTBOSS, Kanth Road, handles construction, repair and waterproofing. Call +91 94584 10866 for a site visit.',
     images: [
-      'https://www.mtboss.in/og-civil-work-company-near-me-moradabad.jpg',
+      'https://www.MTBOSS.in/og-civil-work-company-near-me-moradabad.jpg',
     ],
   },
   robots: {
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-work-company-near-me-moradabad',
+  url: 'https://www.MTBOSS.in/civil-work-company-near-me-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

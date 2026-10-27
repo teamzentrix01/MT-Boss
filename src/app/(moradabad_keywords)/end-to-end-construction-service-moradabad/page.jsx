@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+      "https://www.MTBOSS.in/end-to-end-construction-service-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need end to end construction service in Moradabad? MTBOSS offers design, materials, building and handover. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+    url: "https://www.MTBOSS.in/end-to-end-construction-service-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-end-to-end-construction-service-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "End to End Construction Service in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need end to end construction service in Moradabad? MTBOSS offers design, materials, building and handover. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+      "https://www.MTBOSS.in/og-end-to-end-construction-service-moradabad.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+    url: "https://www.MTBOSS.in/end-to-end-construction-service-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-end-to-end-construction-service-moradabad.jpg",
+      "https://www.MTBOSS.in/og-end-to-end-construction-service-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,13 +117,13 @@ export default function Page() {
     name: "End to End Construction Service in Moradabad",
     description:
       "MTBOSS provides end to end construction services in Moradabad for houses, bungalows, duplex homes, farmhouses, multi storey buildings, commercial buildings, institutional buildings and specialist buildings, including plot and property guidance, design and planning, estimate and budgeting, specifications and agreement, material supply, structural construction, services and waterproofing, finishing, interiors, outdoor works, inspection and handover, and after-handover support.",
-    url: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+    url: "https://www.MTBOSS.in/end-to-end-construction-service-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -210,19 +210,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "End to End Construction Service in Moradabad",
-        item: "https://www.mtboss.in/end-to-end-construction-service-in-moradabad",
+        item: "https://www.MTBOSS.in/end-to-end-construction-service-in-moradabad",
       },
     ],
   };

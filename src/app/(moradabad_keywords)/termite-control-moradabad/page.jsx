@@ -6,26 +6,26 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Termite Control in Moradabad | MT Boss',
+  title: 'Termite Control in Moradabad | MTBOSS',
   description:
-    'Termite control in Moradabad by MT Boss. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
+    'Termite control in Moradabad by MTBOSS. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
   keywords:
-    'termite control Moradabad, termite treatment Moradabad, anti termite treatment Moradabad, termite pest control Moradabad, termite inspection Moradabad, pre construction termite treatment Moradabad, post construction termite treatment Moradabad, wood treatment Moradabad, termite control near me Moradabad, MT Boss termite control Moradabad',
+    'termite control Moradabad, termite treatment Moradabad, anti termite treatment Moradabad, termite pest control Moradabad, termite inspection Moradabad, pre construction termite treatment Moradabad, post construction termite treatment Moradabad, wood treatment Moradabad, termite control near me Moradabad, MTBOSS termite control Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/termite-control-moradabad',
+    canonical: 'https://www.MTBOSS.in/termite-control-moradabad',
   },
   openGraph: {
-    title: 'Termite Control in Moradabad | MT Boss',
+    title: 'Termite Control in Moradabad | MTBOSS',
     description:
-      'Termite control in Moradabad by MT Boss. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
-    url: 'https://www.mtboss.in/termite-control-moradabad',
+      'Termite control in Moradabad by MTBOSS. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
+    url: 'https://www.MTBOSS.in/termite-control-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-termite-control-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-termite-control-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Termite Control in Moradabad - MT Boss',
+        alt: 'Termite Control in Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Termite Control in Moradabad | MT Boss',
+    title: 'Termite Control in Moradabad | MTBOSS',
     description:
-      'Termite control in Moradabad by MT Boss. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
-    images: ['https://www.mtboss.in/og-termite-control-moradabad.jpg'],
+      'Termite control in Moradabad by MTBOSS. Inspection, treatment for existing homes, protection for new buildings and wood treatment. Call +91 94584 10866.',
+    images: ['https://www.MTBOSS.in/og-termite-control-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/termite-control-moradabad',
+  url: 'https://www.MTBOSS.in/termite-control-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

@@ -16,7 +16,7 @@ export const metadata = {
     "home interior designer Bareilly, interior designer in Bareilly, best home interior designer Bareilly, top interior designer Bareilly, interior designer near me Bareilly, interior design company Bareilly, interior designing firm Bareilly, flat interior design Bareilly, villa interior design Bareilly, modular kitchen Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, home interior quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/home-interior-designer-in-bareilly",
+    canonical: "https://www.MTBOSS.in/home-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Home interior designer in Bareilly: how to choose, what to expect and how MTBOSS plans flats, houses and villas. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/home-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/home-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-home-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-home-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Home Interior Designer in Bareilly - MTBOSS",
@@ -51,7 +51,7 @@ export const metadata = {
       "Home interior designer in Bareilly: how to choose, what to expect and how MTBOSS plans flats, houses and villas. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-home-interior-designer-bareilly.jpg",
+      "https://www.MTBOSS.in/og-home-interior-designer-bareilly.jpg",
     ],
   },
 
@@ -66,10 +66,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/home-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/home-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-home-interior-designer-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-home-interior-designer-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -115,13 +115,13 @@ export default function Page() {
     name: "Home Interior Design Services in Bareilly",
     description:
       "MTBOSS provides home interior design services in Bareilly for flats, houses and villas, including full home interiors, living and dining areas, modular kitchens, bedrooms and wardrobes, puja room design, false ceilings and lighting, flooring and wall finishes, woodwork and custom furniture, bathroom interiors, construction coordination, material supply, renovation and remodelling.",
-    url: "https://www.mtboss.in/home-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/home-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -216,19 +216,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Home Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/home-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/home-interior-designer-in-bareilly",
       },
     ],
   };

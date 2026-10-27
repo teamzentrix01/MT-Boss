@@ -8,17 +8,17 @@ export const metadata = {
   keywords:
     'construction franchise india, construction business opportunity, franchise with training support, low investment franchise, construction franchise cost',
   alternates: {
-    canonical: 'https://www.mtboss.in/franchise',
+    canonical: 'https://www.MTBOSS.in/franchise',
   },
   openGraph: {
     title: 'MTBOSS | Construction Franchise Opportunity',
     description:
       'Start a territory-based construction franchise with MTBOSS — training, lead support, and operating guidance included.',
-    url: 'https://www.mtboss.in/franchise',
+    url: 'https://www.MTBOSS.in/franchise',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/icon.png',
+        url: 'https://www.MTBOSS.in/icon.png',
         width: 1200,
         height: 630,
         alt: 'MTBOSS Construction Franchise',
@@ -32,7 +32,7 @@ export const metadata = {
     title: 'MTBOSS | Construction Franchise Opportunity',
     description:
       'Start a territory-based construction franchise with MTBOSS — training, lead support, and operating guidance included.',
-    images: ['https://www.mtboss.in/icon.png'],
+    images: ['https://www.MTBOSS.in/icon.png'],
   },
   robots: {
     index: true,

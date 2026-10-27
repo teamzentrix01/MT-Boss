@@ -68,7 +68,7 @@ async function uploadToCloudinary(file) {
   fd.append('file', file);
   fd.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
   fd.append('cloud_name',    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
-  fd.append('folder', 'mtboss/calculator');
+  fd.append('folder', 'MTBOSS/calculator');
 
   const res = await fetch(
     `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,

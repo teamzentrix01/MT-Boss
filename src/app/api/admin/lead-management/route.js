@@ -35,6 +35,11 @@ const ensureLeadManagementSchema = createInitializationGuard(async () => {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS state VARCHAR(120)`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS alternate_phone VARCHAR(50)`,
+
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_source_ref ON agent_leads (source_ref_table, source_ref_id)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_created_at ON agent_leads (created_at DESC)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_status ON agent_leads (status)`,
+    `CREATE INDEX IF NOT EXISTS idx_agent_leads_agent_id ON agent_leads (agent_id)`,
   ];
   for (const sql of alters) await pool.query(sql);
 
@@ -473,7 +478,7 @@ export async function GET(req) {
         return new Response(xlsx, {
           headers: {
             'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition': 'attachment; filename="mtboss-leads.xlsx"',
+            'Content-Disposition': 'attachment; filename="MTBOSS-leads.xlsx"',
             'Cache-Control': 'no-store',
           },
         });
@@ -487,7 +492,7 @@ export async function GET(req) {
       return new Response(csv, {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': 'attachment; filename="mtboss-leads.csv"',
+          'Content-Disposition': 'attachment; filename="MTBOSS-leads.csv"',
         },
       });
     }

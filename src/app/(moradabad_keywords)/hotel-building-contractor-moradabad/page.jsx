@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/hotel-building-contractor-in-moradabad",
+      "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Hire a trusted hotel building contractor in Moradabad. MTBOSS manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
 
-    url: "https://www.mtboss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-hotel-building-contractor-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Hotel Building Contractor in Moradabad - MTBOSS Construction",
@@ -52,7 +52,7 @@ export const metadata = {
       "Hire a trusted hotel building contractor in Moradabad. MTBOSS manages structure, finishing, materials and handover. Call +91 94584 10866 for a free quote.",
 
     images: [
-      "https://www.mtboss.in/og-hotel-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
     ],
   },
 
@@ -69,14 +69,14 @@ export default function Page() {
 
     name: "MTBOSS Construction Private Limited",
 
-    url: "https://www.mtboss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
     telephone: "+91-9458410866",
 
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
 
     image:
-      "https://www.mtboss.in/og-hotel-building-contractor-moradabad.jpg",
+      "https://www.MTBOSS.in/og-hotel-building-contractor-moradabad.jpg",
 
     priceRange: "₹₹",
 
@@ -136,14 +136,14 @@ export default function Page() {
     description:
       "MTBOSS is a hotel building contractor in Moradabad providing foundation work, RCC structure, multi-storey hotel construction, masonry, electrical and plumbing coordination, waterproofing, flooring, finishing, banquet hall construction, renovation and final handover.",
 
-    url: "https://www.mtboss.in/hotel-building-contractor-in-moradabad",
+    url: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
 
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
 
     areaServed: [
@@ -242,19 +242,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Hotel Building Contractor in Moradabad",
-        item: "https://www.mtboss.in/hotel-building-contractor-in-moradabad",
+        item: "https://www.MTBOSS.in/hotel-building-contractor-in-moradabad",
       },
     ],
   };

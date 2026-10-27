@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'architect for hospital Moradabad, hospital design and construction Moradabad, hospital building contractor Moradabad, healthcare facility architect near me, clinic construction company Moradabad, hospital building cost Moradabad, medical facility construction Moradabad, MTBOSS Moradabad, hospital infrastructure contractor, nursing home construction Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-for-hospital-construction-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/architect-for-hospital-construction-in-moradabad',
   },
   openGraph: {
     title: 'Architect for Hospital in Moradabad | Design & Build',
     description:
       'Planning a hospital or clinic in Moradabad? Learn what healthcare facility design involves, compliance needs, costs, and how MTBOSS supports construction execution.',
-    url: 'https://www.mtboss.in/architect-for-hospital-construction-in-moradabad',
+    url: 'https://www.MTBOSS.in/architect-for-hospital-construction-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-hospital-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-hospital-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect for Hospital Construction in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Architect for Hospital in Moradabad | Design & Build',
     description:
       'Planning a hospital or clinic in Moradabad? Learn what healthcare facility design involves, compliance needs, costs, and how MTBOSS supports construction execution.',
-    images: ['https://www.mtboss.in/og-architect-hospital-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-architect-hospital-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-for-hospital-construction-in-moradabad',
+    url: 'https://www.MTBOSS.in/architect-for-hospital-construction-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

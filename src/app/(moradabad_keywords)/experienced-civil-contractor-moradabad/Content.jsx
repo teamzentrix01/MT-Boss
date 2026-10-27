@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Experienced Civil Contractor in Moradabad: MT Boss
+            Experienced Civil Contractor in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -25,7 +25,7 @@ const Content = () => {
               <p className="mt-3">
                 Choosing an experienced civil contractor in Moradabad means
                 choosing a team that has already met the problems your project
-                may face. MT Boss Construction Private Limited serves clients
+                may face. MTBOSS Construction Private Limited serves clients
                 across Moradabad and Bareilly with residential, commercial,
                 hospitality, industrial and infrastructure construction. Our
                 approach follows the promise on our website: planning to
@@ -34,7 +34,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 This page explains what real experience looks like, what it
-                prevents, how to verify it and what you can expect from MT Boss.
+                prevents, how to verify it and what you can expect from MTBOSS.
               </p>
             </section>
 
@@ -77,10 +77,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work covers residential, commercial, hotel and
                 hospitality, industrial and warehousing, and infrastructure and
@@ -104,7 +104,7 @@ const Content = () => {
                 Experience Across Project Types
               </h3>
               <p className="mb-3">
-                Different buildings test a contractor in different ways. MT Boss
+                Different buildings test a contractor in different ways. MTBOSS
                 works across the five construction categories listed on our
                 website and adds supporting civil services.
               </p>
@@ -287,7 +287,7 @@ const Content = () => {
                 Supporting Services Under One Roof
               </h3>
               <p className="mb-3">
-                A civil project rarely ends with the structure. MT Boss also
+                A civil project rarely ends with the structure. MTBOSS also
                 offers the quick home services listed on our website, including
                 architecture and interior design, building elevation, building
                 renovation and repair, waterproofing, carpenter, painter,
@@ -311,7 +311,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Use the Get a Construction Quote
-                  button on mtboss.in, or call or WhatsApp us.
+                  button on MTBOSS.in, or call or WhatsApp us.
                 </li>
                 <li>
                   <strong>Site visit.</strong> Engineers inspect the plot, soil,
@@ -325,7 +325,7 @@ const Content = () => {
                 <li>
                   <strong>Itemised estimate.</strong> You receive a clear
                   quotation with quantities, rates and payment stages. You can
-                  also try the Budget Calculator on mtboss.in for an early idea.
+                  also try the Budget Calculator on MTBOSS.in for an early idea.
                 </li>
                 <li>
                   <strong>Written agreement.</strong> Scope, material standards,
@@ -379,7 +379,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 Owners who prefer to source materials can also explore the Shop
-                Now section on mtboss.in for cement, steel, bricks and more.
+                Now section on MTBOSS.in for cement, steel, bricks and more.
               </p>
             </section>
 
@@ -418,7 +418,7 @@ const Content = () => {
                 <li>A clear explanation of how problems are handled.</li>
               </ul>
               <p className="mt-3">
-                MT Boss is happy to share relevant information openly.
+                MTBOSS is happy to share relevant information openly.
               </p>
             </section>
 
@@ -471,7 +471,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -524,7 +524,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Talk to MT Boss About Your Project
+                Talk to MTBOSS About Your Project
               </h3>
               <p className="mb-3">
                 Ready to work with a team that knows the ground? Contact us:
@@ -533,12 +533,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -554,10 +554,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -571,7 +571,7 @@ const Content = () => {
                 proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted experienced civil contractor in
+                Choose MTBOSS, your trusted experienced civil contractor in
                 Moradabad, for construction that is planned well, built
                 correctly and delivered on time.
               </p>
@@ -587,12 +587,12 @@ const Content = () => {
                     Q1. Who is an experienced civil contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction serves Moradabad and Bareilly with
+                  MTBOSS Construction serves Moradabad and Bareilly with
                   engineer-led residential, commercial, industrial and
                   infrastructure work.
                 </li>
                 <li>
-                  <strong>Q2. How much experience does MT Boss have?</strong>
+                  <strong>Q2. How much experience does MTBOSS have?</strong>
                   <br />
                   We are happy to share relevant project information on request.
                 </li>
@@ -622,7 +622,7 @@ const Content = () => {
                 <li>
                   <strong>Q7. Can I estimate my budget before contacting you?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on mtboss.in for an early idea,
+                  Yes. Use the Budget Calculator on MTBOSS.in for an early idea,
                   then we prepare a detailed estimate.
                 </li>
                 <li>
@@ -634,7 +634,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp{" "}
                   <a
                     href="tel:+919458410866"

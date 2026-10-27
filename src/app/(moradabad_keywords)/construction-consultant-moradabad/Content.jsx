@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Construction Consultant in Moradabad: MT Boss
+            Construction Consultant in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -27,7 +27,7 @@ const Content = () => {
                 almost nothing.
               </p>
               <p className="mt-3">
-                MT Boss Construction Private Limited offers construction
+                MTBOSS Construction Private Limited offers construction
                 consultancy backed by real site experience in Moradabad and
                 Bareilly. Our people are not only advisers. They are architects,
                 civil engineers and site supervisors who build every day, so our
@@ -97,10 +97,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work spans architecture and interior design,
                 building elevation, modular kitchens, waterproofing, building
@@ -110,7 +110,7 @@ const Content = () => {
               <p className="mb-3">
                 Our team includes architects, civil engineers, site supervisors,
                 masons, carpenters, electricians, plumbers and finishing
-                specialists. Consultancy at MT Boss draws on all of this
+                specialists. Consultancy at MTBOSS draws on all of this
                 experience, so recommendations are practical, locally relevant
                 and tied to real costs.
               </p>
@@ -124,7 +124,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Construction Consultancy Services at MT Boss
+                Construction Consultancy Services at MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -147,14 +147,14 @@ const Content = () => {
                 prepare cost plans that cover structure, finishing, services,
                 interiors and contingency. You can start with the{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Budget Calculator
                 </a>{" "}
-                on mtboss.in for an early idea, then our engineers refine it
+                on MTBOSS.in for an early idea, then our engineers refine it
                 into an itemised estimate based on your actual plan and material
                 choices.
               </p>
@@ -387,7 +387,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Some owners want advice only. Others want advice plus a team to
-                build. MT Boss supports both. If you decide to build with us,
+                build. MTBOSS supports both. If you decide to build with us,
                 the planning and budgeting you already did flows directly into
                 construction, with no restart. If you prefer another contractor,
                 our consultancy stays independent and focused on your interests.
@@ -401,7 +401,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Clients Choose MT Boss as Their Construction Consultant
+                Why Clients Choose MTBOSS as Their Construction Consultant
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -454,7 +454,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Construction Consultation with MT Boss
+                Book a Construction Consultation with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready to plan your project with confidence? Speak with our team:
@@ -463,12 +463,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -478,10 +478,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -494,7 +494,7 @@ const Content = () => {
                 main concerns, and we will arrange a discussion or site visit.
               </p>
               <p className="mt-3">
-                Choose MT Boss, your trusted construction consultant in
+                Choose MTBOSS, your trusted construction consultant in
                 Moradabad, and make confident decisions before, during and after
                 construction.
               </p>
@@ -516,7 +516,7 @@ const Content = () => {
                     Q2. Who is a reliable construction consultant in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction offers practical consultancy backed by
+                  MTBOSS Construction offers practical consultancy backed by
                   engineers and architects with real site experience.
                 </li>
                 <li>
@@ -529,7 +529,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q4. What services does MT Boss offer as a consultant?
+                    Q4. What services does MTBOSS offer as a consultant?
                   </strong>
                   <br />
                   Feasibility, budgeting, design review, quote comparison, site
@@ -542,14 +542,14 @@ const Content = () => {
                   <br />
                   Yes. Try the{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Budget Calculator
                   </a>{" "}
-                  on mtboss.in, then we prepare an itemised estimate for your
+                  on MTBOSS.in, then we prepare an itemised estimate for your
                   plan.
                 </li>
                 <li>
@@ -566,7 +566,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q8. Can I take advice only, without hiring MT Boss for
+                    Q8. Can I take advice only, without hiring MTBOSS for
                     construction?
                   </strong>
                   <br />
@@ -581,7 +581,7 @@ const Content = () => {
                 <li>
                   <strong>Q10. How do I book a consultation?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp +91 94584 10866.
                 </li>
               </ul>

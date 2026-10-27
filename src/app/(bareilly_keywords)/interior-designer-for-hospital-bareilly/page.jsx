@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-hospital-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-hospital-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for your hospital in Bareilly? Plan wards, OPD, waiting areas and easy-clean finishes with MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-hospital-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-hospital-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-hospital-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-hospital-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Hospital in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for your hospital in Bareilly? Plan wards, OPD, waiting areas and easy-clean finishes with MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-hospital-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-hospital-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-hospital-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-hospital-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-hospital-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-hospital-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -117,13 +117,13 @@ export default function Page() {
     name: "Hospital Interior Design Services in Bareilly",
     description:
       "MTBOSS provides hospital interior design services in Bareilly for hospitals, nursing homes, clinics, polyclinics, maternity centres, speciality hospitals, diagnostic centres and rehabilitation facilities. Services include space planning, reception and waiting areas, OPD and consultation rooms, wards and patient rooms, nursing stations, corridors and wayfinding, washrooms, ceiling and lighting design, flooring and wall finishes, furniture and woodwork, services provisions, construction coordination, material supply, renovation and remodelling.",
-    url: "https://www.mtboss.in/interior-designer-for-hospital-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-hospital-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -218,19 +218,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Hospital in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-hospital-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-hospital-in-bareilly",
       },
     ],
   };

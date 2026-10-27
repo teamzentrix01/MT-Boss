@@ -77,7 +77,7 @@ export default function CalculatorCTA() {
 
             {/* Mock input pills */}
             <div className="flex flex-wrap gap-2 mb-5">
-              {["📍 Noida", "1000 sqft", "G+1", "Standard"].map((tag) => (
+              {["Noida", "1000 sqft", "G+1", "Standard"].map((tag) => (
                 <span key={tag} className="text-[8px] font-black uppercase tracking-wide px-2.5 py-1 bg-white/10 text-white/70 border border-white/10">
                   {tag}
                 </span>

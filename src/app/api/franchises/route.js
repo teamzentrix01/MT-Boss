@@ -109,7 +109,7 @@ function approvalEmail({ name, email, password, city }) {
   const passwordText = password || 'Use the password you created while filling the franchise application form.';
   return `
     <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;color:#111;">
-      <h2 style="margin:0 0 12px;">MTBoss Franchise Approved</h2>
+      <h2 style="margin:0 0 12px;">MTBOSS Franchise Approved</h2>
       <p style="line-height:1.6;">Hello ${name || 'Franchise Partner'},</p>
       <p style="line-height:1.6;">
         Your franchise application for <strong>${city}</strong> has been approved.
@@ -121,9 +121,9 @@ function approvalEmail({ name, email, password, city }) {
         <p style="margin:0;"><strong>Password:</strong> ${passwordText}</p>
       </div>
       <p style="line-height:1.6;">
-        Please keep these credentials private. For security, change this password by contacting the MTBoss admin team if it is ever shared.
+        Please keep these credentials private. For security, change this password by contacting the MTBOSS admin team if it is ever shared.
       </p>
-      <p style="font-size:12px;color:#777;margin-top:24px;">MTBoss Construction</p>
+      <p style="font-size:12px;color:#777;margin-top:24px;">MTBOSS Construction</p>
     </div>
   `;
 }
@@ -132,7 +132,7 @@ function credentialsEmail({ name, email, password, city }) {
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
   return `
     <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:24px;color:#111;">
-      <h2 style="margin:0 0 12px;">Your MTBoss Franchise Login Credentials</h2>
+      <h2 style="margin:0 0 12px;">Your MTBOSS Franchise Login Credentials</h2>
       <p style="line-height:1.6;">Hello ${name || 'Franchise Partner'},</p>
       <p style="line-height:1.6;">
         Fresh login credentials were requested for your approved franchise in <strong>${city || 'your territory'}</strong>.
@@ -144,7 +144,7 @@ function credentialsEmail({ name, email, password, city }) {
         <p style="margin:0;"><strong>Temporary Password:</strong> ${password}</p>
       </div>
       <p style="line-height:1.6;">Sign in using this temporary password and change it from the franchise dashboard.</p>
-      <p style="font-size:12px;color:#777;margin-top:24px;">MTBoss Construction</p>
+      <p style="font-size:12px;color:#777;margin-top:24px;">MTBOSS Construction</p>
     </div>
   `;
 }
@@ -448,7 +448,7 @@ export async function PATCH(req) {
 
         await sendMail({
           to: current.email,
-          subject: 'Your MTBoss franchise login credentials',
+          subject: 'Your MTBOSS franchise login credentials',
           html: credentialsEmail({
             name: current.name,
             email: current.email,
@@ -533,7 +533,7 @@ export async function PATCH(req) {
       try {
         await sendMail({
           to: current.email,
-          subject: 'Your MTBoss franchise has been approved',
+          subject: 'Your MTBOSS franchise has been approved',
           html: approvalEmail({
             name: current.name,
             email: current.email,

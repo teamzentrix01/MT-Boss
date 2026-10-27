@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect Contact Number in Moradabad: Call MT Boss for Design and Construction
+            Architect Contact Number in Moradabad: 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -21,7 +21,7 @@ const Content = () => {
                 built on my plot? How much will it cost? How long will it take?
               </p>
               <p className="mt-3">
-                MT Boss makes that first step easy. We are a construction company serving
+                MTBOSS makes that first step easy. We are a construction company serving
                 Moradabad and Bareilly, and we offer architecture, interior design,
                 construction, modular kitchens, waterproofing and home services under one
                 team. Instead of chasing separate designers, engineers and contractors,
@@ -31,76 +31,6 @@ const Content = () => {
                 This page gives you our contact details, explains what to ask on your
                 first call, lists the services you can enquire about and helps you choose
                 the right architect with confidence.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Contact Details in Moradabad
-              </h3>
-              <p className="mb-3">
-                Here is how you can reach our team directly.
-              </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
-              </h4>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Phone / WhatsApp:</strong>{" "}
-                  <a
-                    href="https://wa.me/9458410866"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    +91 94584 10866
-                  </a>
-                </li>
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <strong>Website:</strong>{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    https://www.mtboss.in/
-                  </a>
-                </li>
-                <li>
-                  <strong>Office:</strong> Harthala Kanth Road, behind KR Collection,
-                  near Domino&apos;s, Moradabad, Uttar Pradesh
-                </li>
-              </ul>
-
-              <p className="mt-3">
-                You can also{" "}
-                <a
-                  href="/CTASection/get-quote"
-                  className="text-blue-600 underline"
-                >
-                  request a construction quote
-                </a>{" "}
-                through our website, or use the{" "}
-                <a href="/calculator" className="text-blue-600 underline">
-                  online budget calculator
-                </a>{" "}
-                to estimate your project cost before you call.
-              </p>
-              <p className="mt-3">
-                We recommend using WhatsApp if you want to share your plot map, photos,
-                reference designs or location pin. It saves time and helps our team give
-                you a more useful answer during the first conversation.
               </p>
             </section>
 
@@ -152,7 +82,7 @@ const Content = () => {
                 Services You Can Enquire About
               </h3>
               <p className="mb-3">
-                When you contact MT Boss, you can ask about any stage of your project or
+                When you contact MTBOSS, you can ask about any stage of your project or
                 the complete journey.
               </p>
 
@@ -163,15 +93,7 @@ const Content = () => {
                 We prepare floor plans that balance space, light, ventilation, privacy and
                 Vastu preferences, based on your plot and family needs.
               </p>
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                3D Elevation and Exterior Design
-              </h4>
-              <p>
-                Realistic 3D views help you see the finished look before construction. You
-                can compare materials, colours and styles and approve the design with
-                confidence.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Working and Structural Drawings
@@ -201,7 +123,7 @@ const Content = () => {
                 Construction and Project Management
               </h4>
               <p>
-                MT Boss builds what we design. Our engineers and site supervisors manage
+                MTBOSS builds what we design. Our engineers and site supervisors manage
                 materials, labour, schedule and quality checks.
               </p>
 
@@ -394,58 +316,7 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Ways to Contact MT Boss
-              </h3>
-              <p className="mb-3">
-                Choose whichever method suits you best.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Call us.</strong> Ring +91 94584 10866 to speak directly with
-                  our team.
-                </li>
-                <li>
-                  <strong>WhatsApp.</strong> Send your plot map, photos and questions at
-                  the same number, and get a quick response.
-                </li>
-                <li>
-                  <strong>Email.</strong> Write to{" "}
-                  <a
-                    href="mailto:mtboss2016@gmail.com"
-                    className="text-blue-600 underline"
-                  >
-                    mtboss2016@gmail.com
-                  </a>{" "}
-                  with your project details, drawings or reference files.
-                </li>
-                <li>
-                  <strong>Website quote form.</strong> Visit{" "}
-                  <a
-                    href="https://www.mtboss.in/"
-                    className="text-blue-600 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    mtboss.in
-                  </a>{" "}
-                  and use the &quot;Get a Construction Quote&quot; button to submit your
-                  requirements.
-                </li>
-                <li>
-                  <strong>Visit our office.</strong> Meet the team in person at Harthala
-                  Kanth Road, behind KR Collection, near Domino&apos;s, Moradabad.
-                </li>
-                <li>
-                  <strong>Budget calculator.</strong> Use the{" "}
-                  <a href="/calculator" className="text-blue-600 underline">
-                    online construction cost calculator
-                  </a>{" "}
-                  to get a quick idea of your building budget before you call.
-                </li>
-              </ul>
-            </section>
+          
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -557,7 +428,7 @@ const Content = () => {
                 Areas We Serve
               </h3>
               <p>
-                MT Boss serves clients in Moradabad and Bareilly, along with nearby areas
+                MTBOSS serves clients in Moradabad and Bareilly, along with nearby areas
                 in Uttar Pradesh. Whether your plot is in the city centre, a developing
                 colony or an industrial zone, our team can visit, assess the site and
                 guide you. If you are unsure whether we cover your location, call or
@@ -567,10 +438,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Homeowners and Businesses Trust MT Boss
+                Why Homeowners and Businesses Trust MTBOSS
               </h3>
               <p className="mb-3">
-                People choose MT Boss because we focus on clarity, quality and complete
+                People choose MTBOSS because we focus on clarity, quality and complete
                 support.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -607,13 +478,13 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you were searching for an architect contact number in Moradabad that
-                leads to a real, helpful conversation, MT Boss is ready to take your call.
+                leads to a real, helpful conversation, MTBOSS is ready to take your call.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Call MT Boss Today for a Free Consultation
+                Call MTBOSS Today for a Free Consultation
               </h3>
               <p>
                 Your project deserves a clear plan from the very first day. Pick up the
@@ -636,21 +507,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -673,30 +544,30 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. What is the MT Boss architect contact number in Moradabad?
+                    Q1. What is the MTBOSS architect contact number in Moradabad?
                   </strong>
                   <br />
-                  You can call or WhatsApp MT Boss at +91 94584 10866.
+                  You can call or WhatsApp MTBOSS at +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Q2. Can I contact MT Boss on WhatsApp?</strong>
+                  <strong>Q2. Can I contact MTBOSS on WhatsApp?</strong>
                   <br />
                   Yes. Send your plot details, photos and questions to +91 94584 10866.
                 </li>
                 <li>
-                  <strong>Q3. What is the MT Boss email address?</strong>
+                  <strong>Q3. What is the MTBOSS email address?</strong>
                   <br />
                   You can email us at{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   .
                 </li>
                 <li>
-                  <strong>Q4. Where is the MT Boss office located?</strong>
+                  <strong>Q4. Where is the MTBOSS office located?</strong>
                   <br />
                   Our office is on Harthala Kanth Road, behind KR Collection, near
                   Domino&apos;s, Moradabad.
@@ -736,7 +607,7 @@ const Content = () => {
                   <strong>Q10. How can I get a construction quote?</strong>
                   <br />
                   Call us, message on WhatsApp or use the &quot;Get a Construction
-                  Quote&quot; option at mtboss.in.
+                  Quote&quot; option at MTBOSS.in.
                 </li>
               </ul>
             </section>

@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'architect for hotel in Bareilly, hotel architect Bareilly, hotel design Bareilly, hotel planning Bareilly, guest house architect Bareilly, boutique hotel architect Bareilly, hotel renovation architect Bareilly, hotel construction Bareilly, hotel interior design Bareilly, banquet hall architect Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-for-hotel-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
   },
   openGraph: {
     title: 'Architect for Hotel in Bareilly',
     description:
       'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBOSS supports practical, guest-ready projects. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/architect-for-hotel-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-for-hotel-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-hotel-bareilly.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect for Hotel in Bareilly - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Architect for Hotel in Bareilly',
     description:
       'Architect for hotel in Bareilly: planning, design and construction guidance for new hotels, guest houses and renovations. MTBOSS supports practical, guest-ready projects. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-architect-for-hotel-bareilly.jpg'],
+    images: ['https://www.MTBOSS.in/og-architect-for-hotel-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-for-hotel-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-hotel-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

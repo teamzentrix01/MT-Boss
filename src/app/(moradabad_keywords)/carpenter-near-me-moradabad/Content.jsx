@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Carpenter Near Me in Moradabad: Local, Skilled and Easy to Book with
-            MTBOSS
+            Carpenter Near Me in Moradabad 
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -92,45 +91,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Situations Where a Local Carpenter Helps Most
-              </h3>
-              <p className="mb-3">
-                Many carpentry problems are small but disruptive. A local carpenter
-                is most useful in situations like these.
-              </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>
-                  <strong>Doors that will not close or lock.</strong> A warped door,
-                  loose hinge or misaligned frame affects security and privacy.
-                </li>
-                <li>
-                  <strong>Windows that stick or rattle.</strong> Swollen wood or
-                  loose fittings let in dust, noise and rain.
-                </li>
-                <li>
-                  <strong>Wardrobes and cupboards that sag.</strong> Weak supports,
-                  damaged hinges or overloading can leave shutters hanging unevenly.
-                </li>
-                <li>
-                  <strong>Drawers that jam.</strong> Broken channels or misaligned
-                  runners make everyday use frustrating.
-                </li>
-                <li>
-                  <strong>Furniture that wobbles.</strong> Loose joints in chairs,
-                  tables and beds need strengthening before they fail.
-                </li>
-                <li>
-                  <strong>Shifting into a new home.</strong> New shelves, curtain
-                  rod supports, TV units and storage often need quick installation.
-                </li>
-                <li>
-                  <strong>Preparing for guests or festivals.</strong> Last-minute
-                  repairs and fittings are easier with a worker who is nearby.
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -488,10 +449,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -502,7 +463,7 @@ const Content = () => {
               <p className="mt-3">
                 You can also visit the{" "}
                 <a
-                  href="https://www.mtboss.in/quick/carpenter"
+                  href="https://www.MTBOSS.in/quick/carpenter"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -511,7 +472,7 @@ const Content = () => {
                 </a>{" "}
                 or the{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"

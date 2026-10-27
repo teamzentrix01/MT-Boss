@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect in Moradabad: Complete Guide to Design, Planning & Construction with MTBOSS
+            Architect in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -20,17 +20,13 @@ const Content = () => {
                 stage. Choosing the right architect in Moradabad means getting a
                 layout that fits your plot, respects your budget, follows local
                 building rules, and can actually be built without costly
-                surprises. This guide explains what an architect does, what to
-                look for, what services to expect, and how MTBOSS Construction
-                Private Limited, a Moradabad-based construction, property and
-                materials company, can support your project from planning to
-                handover.
+                surprises. 
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Hiring an Architect Matters Before You Build
+                Hiring an Architect Matters Before You Build
               </h3>
               <p className="mb-3">
                 Many first-time builders in Moradabad start with a contractor and
@@ -42,23 +38,19 @@ const Content = () => {
                 <li>It ensures natural light and cross-ventilation in every major room, reducing electricity use in Moradabad&apos;s hot summers.</li>
                 <li>It helps you avoid structural mistakes, such as poorly placed columns or beams, that are expensive to fix after construction begins.</li>
                 <li>It gives you accurate quantities, so material orders and budget estimates are realistic rather than guesswork.</li>
-                <li>It keeps your project compliant with local development authority rules on setbacks, height and plot coverage, reducing the risk of notices or penalties later.</li>
-                <li>It increases the resale and rental value of your property, since well-planned buildings are easier to sell and lease.</li>
                 <li>It allows you to plan for the future, such as adding a floor, a shop unit or a parking area, without demolishing existing work.</li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Does an Architect in Moradabad Actually Do?
+                What Does an Architect in Moradabad 
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Understanding your requirements:</strong> Discussing your family size, business needs, lifestyle preferences and budget before any drawing begins.</li>
                 <li><strong>Site study:</strong> Assessing plot size, shape, orientation, road access, soil condition and surrounding buildings.</li>
                 <li><strong>Concept and floor plan design:</strong> Creating room layouts, circulation paths, staircase placement, parking and open areas.</li>
                 <li><strong>Elevation and facade design:</strong> Designing the exterior look of the building, including the front elevation, balconies, windows, materials and colour scheme.</li>
-                <li><strong>Structural and working drawings:</strong> Preparing the detailed technical drawings that contractors and site engineers follow during construction.</li>
-                <li><strong>Electrical, plumbing and drainage planning:</strong> Coordinating utility layouts so pipes, wiring and drains are planned rather than added as an afterthought.</li>
                 <li><strong>Approval support:</strong> Preparing drawings in the format required by the local development authority or municipal body.</li>
                 <li><strong>Site supervision:</strong> Visiting or coordinating on-site work to ensure the building matches the approved design and quality standards.</li>
                 <li><strong>Interior coordination:</strong> Aligning the structural design with interior needs such as false ceilings, modular kitchens, wardrobes and lighting.</li>
@@ -67,14 +59,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Types of Architectural Services Available in Moradabad
+                Architectural Services Available in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Residential architecture:</strong> Independent houses, duplexes, villas, farmhouses and multi-storey family homes.</li>
                 <li><strong>Commercial architecture:</strong> Shops, showrooms, offices, restaurants, clinics, hospitals and commercial complexes.</li>
                 <li><strong>Industrial architecture:</strong> Factories, warehouses, workshops and storage buildings, relevant to Moradabad&apos;s strong manufacturing and export sector.</li>
-                <li><strong>Hospitality architecture:</strong> Hotels, banquet halls, guest houses and resorts.</li>
-                <li><strong>Institutional architecture:</strong> Schools, coaching centres, training institutes and community buildings.</li>
                 <li><strong>Renovation and remodelling:</strong> Redesigning existing buildings to add floors, modernize facades or improve layouts.</li>
                 <li><strong>Interior architecture:</strong> Planning interiors so that the structure and the finishing work together as one design.</li>
                 <li><strong>Vastu-compliant planning:</strong> Layouts developed with traditional Vastu principles in mind, which many Moradabad families ask for.</li>
@@ -89,9 +79,7 @@ const Content = () => {
                 <li><strong>Climate-responsive design:</strong> Moradabad has hot summers and cool winters, so shaded windows, ventilated courtyards, terrace insulation and proper window placement make a real difference to comfort.</li>
                 <li><strong>Efficient room planning:</strong> Bedrooms, kitchen, living areas and bathrooms arranged for privacy and smooth movement, without wasted corridor space.</li>
                 <li><strong>Well-planned staircase and parking:</strong> Placed so they do not eat into usable room space, especially on smaller plots.</li>
-                <li><strong>Adequate natural light and ventilation:</strong> Windows and ventilators positioned to keep interiors bright and fresh throughout the day.</li>
-                <li><strong>Storage planning:</strong> Built-in wardrobes, loft space and utility areas planned into the layout instead of being added later.</li>
-                <li><strong>Future expansion provisions:</strong> Column and foundation design that allows an extra floor to be added when needed.</li>
+                
                 <li><strong>Rainwater drainage and terrace slope:</strong> Correct slopes and drain points to prevent seepage and dampness during the monsoon.</li>
                 <li><strong>Safe electrical and plumbing layout:</strong> Concealed, well-planned services that are easy to maintain and repair.</li>
                 <li><strong>Attractive front elevation:</strong> A balanced facade that suits the neighbourhood while giving your home a distinct identity.</li>
@@ -115,7 +103,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Choose the Right Architect in Moradabad
+                 Choose the Right Architect in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Check their portfolio:</strong> Look at completed homes, shops or industrial buildings, and ask whether they match the kind of project you plan.</li>
@@ -131,7 +119,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MTBOSS for Architecture and Construction in Moradabad
+               Choose MTBOSS for Architecture and Construction in Moradabad
               </h3>
               <p className="mb-3">
                 MTBOSS Construction Private Limited is a Moradabad-based company
@@ -164,8 +152,7 @@ const Content = () => {
                 <li><strong>Step 4 — Budget estimation:</strong> A realistic cost outline, supported by the online budget calculator and current material rates.</li>
                 <li><strong>Step 5 — Approvals support:</strong> Help with preparing documentation needed by the relevant local authorities.</li>
                 <li><strong>Step 6 — Material procurement:</strong> Wholesale supply of cement, steel, bricks, tiles and paints for reliable quality and pricing.</li>
-                <li><strong>Step 7 — Construction and supervision:</strong> On-site execution with regular quality checks and timeline monitoring.</li>
-                <li><strong>Step 8 — Finishing and handover:</strong> Final finishing, inspection and handover of the completed building.</li>
+               
               </ul>
             </section>
 
@@ -214,12 +201,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -242,10 +229,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

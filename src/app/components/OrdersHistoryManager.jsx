@@ -112,7 +112,7 @@ function getStatusIcon(status) {
   }
 }
 
-function getStatusBadge(status, isDark) {
+function getStatusBadge(status, isDark, size = 'sm') {
   const norm = String(status || 'open').toLowerCase();
   const cfg = STATUS_CONFIG[norm] || {
     label: norm.replace(/_/g, ' '),
@@ -122,16 +122,19 @@ function getStatusBadge(status, isDark) {
     darkColor: '#94a3b8',
   };
   const StatusIcon = getStatusIcon(norm);
+  const isHeader = size === 'header' || size === 'lg';
 
   return (
     <span
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: '5px',
-        padding: '3px 10px',
-        borderRadius: '9999px',
-        fontSize: '0.75rem',
+        gap: isHeader ? '6px' : '5px',
+        height: isHeader ? '36px' : 'auto',
+        boxSizing: 'border-box',
+        padding: isHeader ? '0 12px' : '3px 10px',
+        borderRadius: isHeader ? '8px' : '9999px',
+        fontSize: isHeader ? '0.85rem' : '0.75rem',
         fontWeight: '700',
         textTransform: 'capitalize',
         backgroundColor: isDark ? cfg.darkBg : cfg.bg,
@@ -140,10 +143,50 @@ function getStatusBadge(status, isDark) {
         whiteSpace: 'nowrap',
       }}
     >
-      <StatusIcon size={13} strokeWidth={2} aria-hidden="true" style={{ flexShrink: 0 }} />
+      <StatusIcon size={isHeader ? 15 : 13} strokeWidth={2} aria-hidden="true" style={{ flexShrink: 0 }} />
       <span>{cfg.label}</span>
     </span>
   );
+}
+
+// Title Case helper: "moradabad" -> "Moradabad"
+function toTitleCase(str) {
+  if (!str) return '';
+  return str
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+// Case-insensitive dedupe, filter empty/null/"n/a", and sort A-Z
+function normalizeCities(cities) {
+  const map = new Map();
+  for (const raw of cities || []) {
+    if (!raw) continue;
+    const title = toTitleCase(raw);
+    const key = title.toLowerCase();
+    if (!key || key === 'n/a') continue;
+    if (!map.has(key)) {
+      map.set(key, title);
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => a.localeCompare(b));
+}
+
+// Smart routing helper for merged Customer Name / Phone search
+function parseCustomerSearch(query) {
+  const trimmed = (query || '').trim();
+  if (!trimmed) {
+    return { name: '', phone: '', isPhone: false };
+  }
+  // Check if input consists solely of digits, +, spaces, - and contains at least 1 digit
+  const isPhone = /^[0-9+\s-]+$/.test(trimmed) && /\d/.test(trimmed);
+  if (isPhone) {
+    return { name: '', phone: trimmed, isPhone: true };
+  }
+  return { name: trimmed, phone: '', isPhone: false };
 }
 
 export default function OrdersHistoryManager({ isDarkMode = false }) {
@@ -168,16 +211,61 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
 
   // Filters State
   const [search, setSearch] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [customerQuery, setCustomerQuery] = useState('');
+  const [debouncedCustomerQuery, setDebouncedCustomerQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [cityFilter, setCityFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [createdFrom, setCreatedFrom] = useState('');
-  const [createdTo, setCreatedTo] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
   const [deliveryFrom, setDeliveryFrom] = useState('');
   const [deliveryTo, setDeliveryTo] = useState('');
   const [activePage, setActivePage] = useState(1);
+
+  // Distinct cities list from DB & loading state
+  const [citiesList, setCitiesList] = useState([]);
+  const [citiesLoading, setCitiesLoading] = useState(true);
+
+  // 400ms debounce for search (Order / Booking ID)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // 400ms debounce for customerQuery (Customer Name / Phone)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCustomerQuery(customerQuery);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [customerQuery]);
+
+  // Page load: fetch distinct delivery cities from DB once
+  useEffect(() => {
+    let isMounted = true;
+    const loadCities = async () => {
+      try {
+        setCitiesLoading(true);
+        const token = getAuthToken();
+        const res = await fetch('/api/admin/orders/cities', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.cities) && isMounted) {
+          setCitiesList(normalizeCities(data.cities));
+        }
+      } catch (err) {
+        console.error('Failed to load delivery cities:', err);
+      } finally {
+        if (isMounted) setCitiesLoading(false);
+      }
+    };
+    loadCities();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Bill View Modal State
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -195,9 +283,6 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
   const [loadingCustomerOrders, setLoadingCustomerOrders] = useState(false);
   const [customerOrdersError, setCustomerOrdersError] = useState(null);
 
-  // Distinct cities extracted for quick filter
-  const [availableCities, setAvailableCities] = useState([]);
-
   const getAuthToken = () => {
     return localStorage.getItem('token') || localStorage.getItem('admin-token') || '';
   };
@@ -208,19 +293,24 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
     setError(null);
     try {
       const token = getAuthToken();
+      let apiType = typeFilter;
+      if (apiType === 'shop') apiType = 'shop_order';
+      if (apiType === 'service') apiType = 'service_booking';
+
       const params = new URLSearchParams({
         page: String(activePage),
         limit: '25',
-        type: typeFilter,
+        type: apiType,
       });
 
-      if (search.trim()) params.set('order_id', search.trim());
-      if (customerName.trim()) params.set('customer_name', customerName.trim());
-      if (phone.trim()) params.set('phone', phone.trim());
+      if (debouncedSearch.trim()) params.set('order_id', debouncedSearch.trim());
+
+      const { name: parsedName, phone: parsedPhone } = parseCustomerSearch(debouncedCustomerQuery);
+      if (parsedName) params.set('customer_name', parsedName);
+      if (parsedPhone) params.set('phone', parsedPhone);
+
       if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
-      if (cityFilter.trim()) params.set('city', cityFilter.trim());
-      if (createdFrom) params.set('created_from', createdFrom);
-      if (createdTo) params.set('created_to', createdTo);
+      if (cityFilter && cityFilter.trim() && cityFilter !== 'all') params.set('city', cityFilter.trim());
       if (deliveryFrom) params.set('delivery_from', deliveryFrom);
       if (deliveryTo) params.set('delivery_to', deliveryTo);
 
@@ -237,10 +327,10 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
       setSummary(data.summary || {});
       setPagination(data.pagination || { page: 1, limit: 25, totalCount: 0, totalPages: 1 });
 
-      // Gather distinct cities
-      const cities = Array.from(new Set((data.orders || []).map((o) => o.delivery_city).filter(Boolean)));
-      if (cities.length > 0) {
-        setAvailableCities((prev) => Array.from(new Set([...prev, ...cities])));
+      // Merge any additional distinct cities from returned orders
+      const orderCities = (data.orders || []).map((o) => o.delivery_city).filter(Boolean);
+      if (orderCities.length > 0) {
+        setCitiesList((prev) => normalizeCities([...prev, ...orderCities]));
       }
     } catch (err) {
       console.error('fetchOrders error:', err);
@@ -248,7 +338,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
     } finally {
       setLoading(false);
     }
-  }, [activePage, typeFilter, search, customerName, phone, statusFilter, cityFilter, createdFrom, createdTo, deliveryFrom, deliveryTo]);
+  }, [activePage, typeFilter, debouncedSearch, debouncedCustomerQuery, statusFilter, cityFilter, deliveryFrom, deliveryTo]);
 
   useEffect(() => {
     fetchOrders();
@@ -257,32 +347,49 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
   // Reset Filters
   const handleResetFilters = () => {
     setSearch('');
-    setCustomerName('');
-    setPhone('');
+    setDebouncedSearch('');
+    setCustomerQuery('');
+    setDebouncedCustomerQuery('');
     setStatusFilter('all');
-    setCityFilter('');
     setTypeFilter('all');
-    setCreatedFrom('');
-    setCreatedTo('');
+    setCityFilter('');
     setDeliveryFrom('');
     setDeliveryTo('');
+    setActivePage(1);
+  };
+
+  // Instant clear handlers
+  const handleClearSearch = () => {
+    setSearch('');
+    setDebouncedSearch('');
+    setActivePage(1);
+  };
+
+  const handleClearCustomerQuery = () => {
+    setCustomerQuery('');
+    setDebouncedCustomerQuery('');
     setActivePage(1);
   };
 
   // Export CSV
   const handleExportCSV = () => {
     const token = getAuthToken();
+    let apiType = typeFilter;
+    if (apiType === 'shop') apiType = 'shop_order';
+    if (apiType === 'service') apiType = 'service_booking';
+
     const params = new URLSearchParams({
       export: 'csv',
-      type: typeFilter,
+      type: apiType,
     });
     if (search.trim()) params.set('order_id', search.trim());
-    if (customerName.trim()) params.set('customer_name', customerName.trim());
-    if (phone.trim()) params.set('phone', phone.trim());
+
+    const { name: parsedName, phone: parsedPhone } = parseCustomerSearch(customerQuery);
+    if (parsedName) params.set('customer_name', parsedName);
+    if (parsedPhone) params.set('phone', parsedPhone);
+
     if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
-    if (cityFilter.trim()) params.set('city', cityFilter.trim());
-    if (createdFrom) params.set('created_from', createdFrom);
-    if (createdTo) params.set('created_to', createdTo);
+    if (cityFilter && cityFilter.trim() && cityFilter !== 'all') params.set('city', cityFilter.trim());
     if (deliveryFrom) params.set('delivery_from', deliveryFrom);
     if (deliveryTo) params.set('delivery_to', deliveryTo);
 
@@ -428,6 +535,21 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
   const textMuted = isDarkMode ? '#94a3b8' : '#64748b';
   const headerBg = isDarkMode ? '#0f172a' : '#f8fafc';
   const rowHover = isDarkMode ? '#33415540' : '#f1f5f9';
+
+  // Customer search smart routing info
+  const customerParsed = parseCustomerSearch(customerQuery);
+  const isCustomerPhone = customerParsed.isPhone;
+
+  // Active filter count
+  const activeFilterCount = [
+    Boolean(search.trim()),
+    Boolean(customerQuery.trim()),
+    Boolean(statusFilter && statusFilter !== 'all'),
+    Boolean(typeFilter && typeFilter !== 'all'),
+    Boolean(cityFilter && cityFilter.trim() && cityFilter !== 'all'),
+    Boolean(deliveryFrom),
+    Boolean(deliveryTo),
+  ].filter(Boolean).length;
 
   return (
     <div
@@ -707,6 +829,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
           borderRadius: '12px',
           padding: '1.25rem',
           marginBottom: '1.5rem',
+          boxShadow: isDarkMode ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
         }}
       >
         <div
@@ -716,71 +839,46 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             alignItems: 'center',
             marginBottom: '1rem',
             flexWrap: 'wrap',
-            gap: '0.5rem',
-          }}
-        >
-          <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Filter size={16} strokeWidth={2} aria-hidden="true" /> Filters & Search
-          </div>
-
-          {/* Type Toggle */}
-          <div
-            style={{
-              display: 'inline-flex',
-              backgroundColor: isDarkMode ? '#0f172a' : '#f1f5f9',
-              borderRadius: '8px',
-              padding: '3px',
-              gap: '2px',
-            }}
-          >
-            {[
-              { id: 'all', label: 'All Orders', icon: LayoutList },
-              { id: 'shop_order', label: 'Shop Orders', icon: ShoppingCart },
-              { id: 'service_booking', label: 'Service Bookings', icon: Wrench },
-            ].map((t) => {
-              const TabIcon = t.icon;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => {
-                    setTypeFilter(t.id);
-                    setActivePage(1);
-                  }}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '6px 12px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontSize: '0.8rem',
-                    fontWeight: typeFilter === t.id ? 700 : 500,
-                    cursor: 'pointer',
-                    backgroundColor: typeFilter === t.id ? (isDarkMode ? '#334155' : '#0f172a') : 'transparent',
-                    color: typeFilter === t.id ? '#ffffff' : textMuted,
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <TabIcon size={14} strokeWidth={2} aria-hidden="true" />
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
             gap: '0.75rem',
           }}
         >
-          {/* Order ID */}
+          <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Filter size={16} strokeWidth={2.2} aria-hidden="true" style={{ color: '#2563eb' }} />
+            <span>Filters &amp; Search</span>
+            {activeFilterCount > 0 && (
+              <span
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  backgroundColor: isDarkMode ? '#1e3a8a' : '#eff6ff',
+                  color: isDarkMode ? '#93c5fd' : '#1d4ed8',
+                  border: `1px solid ${isDarkMode ? '#3b82f640' : '#bfdbfe'}`,
+                }}
+              >
+                {activeFilterCount} active
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* 5-Column Grid on Desktop, 2 Columns on Tablet, 1 Column on Mobile */}
+        <div className="orders-filters-grid">
+          {/* Row 1, Col 1: Order / Booking ID */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
-              Order / Booking ID
+            <label
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
+              <span>Order / Booking ID</span>
             </label>
             <div style={{ position: 'relative' }}>
               <Search
@@ -792,18 +890,24 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                   left: '10px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: textMuted,
+                  color: search.trim() ? '#2563eb' : textMuted,
                   pointerEvents: 'none',
+                  transition: 'color 0.15s ease',
                 }}
               />
               <input
                 type="text"
                 placeholder="e.g. MO-1790..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setActivePage(1);
+                }}
+                className="orders-filter-input"
                 style={{
                   width: '100%',
-                  padding: '8px 10px 8px 32px',
+                  height: '38px',
+                  padding: search ? '8px 30px 8px 32px' : '8px 10px 8px 32px',
                   borderRadius: '6px',
                   border: `1px solid ${cardBorder}`,
                   backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
@@ -812,36 +916,98 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                   boxSizing: 'border-box',
                 }}
               />
+              {search && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  title="Clear ID search"
+                  aria-label="Clear ID search"
+                  className="orders-clear-btn"
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: textMuted,
+                  }}
+                >
+                  <X size={13} strokeWidth={2.5} aria-hidden="true" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Customer Name */}
+          {/* Row 1, Col 2: Customer Name / Phone */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
-              Customer Name
+            <label
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
+              <span>Customer Name / Phone</span>
+              {customerQuery.trim() && (
+                <span
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    color: isCustomerPhone ? '#2563eb' : '#059669',
+                  }}
+                >
+                  {isCustomerPhone ? 'Routing: Phone' : 'Routing: Name'}
+                </span>
+              )}
             </label>
             <div style={{ position: 'relative' }}>
-              <User
-                size={15}
-                strokeWidth={2}
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: textMuted,
-                  pointerEvents: 'none',
-                }}
-              />
+              {isCustomerPhone ? (
+                <Phone
+                  size={15}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#2563eb',
+                    pointerEvents: 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                />
+              ) : (
+                <User
+                  size={15}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    left: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: customerQuery.trim() ? '#059669' : textMuted,
+                    pointerEvents: 'none',
+                    transition: 'all 0.15s ease',
+                  }}
+                />
+              )}
               <input
                 type="text"
-                placeholder="Filter by name..."
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Name ya phone number se search karein..."
+                value={customerQuery}
+                onChange={(e) => {
+                  setCustomerQuery(e.target.value);
+                  setActivePage(1);
+                }}
+                className="orders-filter-input"
                 style={{
                   width: '100%',
-                  padding: '8px 10px 8px 32px',
+                  height: '38px',
+                  padding: customerQuery ? '8px 30px 8px 32px' : '8px 10px 8px 32px',
                   borderRadius: '6px',
                   border: `1px solid ${cardBorder}`,
                   backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
@@ -850,50 +1016,38 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                   boxSizing: 'border-box',
                 }}
               />
+              {customerQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearCustomerQuery}
+                  title="Clear customer search"
+                  aria-label="Clear customer search"
+                  className="orders-clear-btn"
+                  style={{
+                    position: 'absolute',
+                    right: '8px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: textMuted,
+                  }}
+                >
+                  <X size={13} strokeWidth={2.5} aria-hidden="true" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Phone */}
+          {/* Row 1, Col 3: Status */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
-              Customer Phone
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Phone
-                size={15}
-                strokeWidth={2}
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: textMuted,
-                  pointerEvents: 'none',
-                }}
-              />
-              <input
-                type="text"
-                placeholder="e.g. 987654..."
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 10px 8px 32px',
-                  borderRadius: '6px',
-                  border: `1px solid ${cardBorder}`,
-                  backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
-                  color: textPrimary,
-                  fontSize: '0.85rem',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Status */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
               Status
             </label>
             <select
@@ -902,8 +1056,10 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 setStatusFilter(e.target.value);
                 setActivePage(1);
               }}
+              className="orders-filter-input"
               style={{
                 width: '100%',
+                height: '38px',
                 padding: '8px 10px',
                 borderRadius: '6px',
                 border: `1px solid ${cardBorder}`,
@@ -911,6 +1067,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 color: textPrimary,
                 fontSize: '0.85rem',
                 boxSizing: 'border-box',
+                cursor: 'pointer',
               }}
             >
               <option value="all">All Statuses</option>
@@ -928,99 +1085,113 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             </select>
           </div>
 
-          {/* Delivery City */}
+          {/* Row 1, Col 4: Order Type (Dropdown matching Status) */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
+              Order Type
+            </label>
+            <select
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                setActivePage(1);
+              }}
+              className="orders-filter-input"
+              style={{
+                width: '100%',
+                height: '38px',
+                padding: '8px 10px',
+                borderRadius: '6px',
+                border: `1px solid ${cardBorder}`,
+                backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
+                color: textPrimary,
+                fontSize: '0.85rem',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="all">All Orders</option>
+              <option value="shop_order">Shop Orders</option>
+              <option value="service_booking">Service Bookings</option>
+            </select>
+          </div>
+
+          {/* Row 1, Col 5: Delivery City (Dropdown matching Status) */}
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
               Delivery City
             </label>
-            <div style={{ position: 'relative' }}>
-              <MapPin
-                size={15}
-                strokeWidth={2}
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  left: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: textMuted,
-                  pointerEvents: 'none',
-                }}
-              />
-              <input
-                type="text"
-                placeholder="e.g. Moradabad"
-                value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '8px 10px 8px 32px',
-                  borderRadius: '6px',
-                  border: `1px solid ${cardBorder}`,
-                  backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
-                  color: textPrimary,
-                  fontSize: '0.85rem',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Created Date From */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
-              Created From
-            </label>
-            <input
-              type="date"
-              value={createdFrom}
-              onChange={(e) => setCreatedFrom(e.target.value)}
+            <select
+              value={cityFilter}
+              onChange={(e) => {
+                setCityFilter(e.target.value);
+                setActivePage(1);
+              }}
+              disabled={citiesLoading}
+              className="orders-filter-input"
               style={{
                 width: '100%',
-                padding: '7px 10px',
+                height: '38px',
+                padding: '8px 10px',
                 borderRadius: '6px',
                 border: `1px solid ${cardBorder}`,
                 backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
                 color: textPrimary,
                 fontSize: '0.85rem',
                 boxSizing: 'border-box',
+                cursor: citiesLoading ? 'not-allowed' : 'pointer',
+                opacity: citiesLoading ? 0.7 : 1,
               }}
-            />
+            >
+              <option value="">{citiesLoading ? 'Loading cities...' : 'All Cities'}</option>
+              {citiesList.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Created Date To */}
+          {/* Row 2, Col 1: Delivery Date From */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
-              Created To
-            </label>
-            <input
-              type="date"
-              value={createdTo}
-              onChange={(e) => setCreatedTo(e.target.value)}
+            <label
               style={{
-                width: '100%',
-                padding: '7px 10px',
-                borderRadius: '6px',
-                border: `1px solid ${cardBorder}`,
-                backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
-                color: textPrimary,
-                fontSize: '0.85rem',
-                boxSizing: 'border-box',
+                display: 'block',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
               }}
-            />
-          </div>
-
-          {/* Delivery Date From */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
+            >
               Delivery From
             </label>
             <input
               type="date"
               value={deliveryFrom}
-              onChange={(e) => setDeliveryFrom(e.target.value)}
+              onChange={(e) => {
+                setDeliveryFrom(e.target.value);
+                setActivePage(1);
+              }}
+              className="orders-filter-input"
               style={{
                 width: '100%',
+                height: '38px',
                 padding: '7px 10px',
                 borderRadius: '6px',
                 border: `1px solid ${cardBorder}`,
@@ -1032,17 +1203,30 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             />
           </div>
 
-          {/* Delivery Date To */}
+          {/* Row 2, Col 2: Delivery Date To */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: textMuted, marginBottom: '4px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: textMuted,
+                marginBottom: '5px',
+              }}
+            >
               Delivery To
             </label>
             <input
               type="date"
               value={deliveryTo}
-              onChange={(e) => setDeliveryTo(e.target.value)}
+              onChange={(e) => {
+                setDeliveryTo(e.target.value);
+                setActivePage(1);
+              }}
+              className="orders-filter-input"
               style={{
                 width: '100%',
+                height: '38px',
                 padding: '7px 10px',
                 borderRadius: '6px',
                 border: `1px solid ${cardBorder}`,
@@ -1054,18 +1238,25 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             />
           </div>
 
-          {/* Reset Action */}
+          {/* Row 2, Col 3: Spacer on Desktop (hidden on tablet/mobile) */}
+          <div className="orders-filter-spacer" aria-hidden="true" />
+
+          {/* Row 2, Col 4: Spacer on Desktop (hidden on tablet/mobile) */}
+          <div className="orders-filter-spacer" aria-hidden="true" />
+
+          {/* Row 2, Col 5: Reset Filters */}
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
             <button
               type="button"
               onClick={handleResetFilters}
               style={{
                 width: '100%',
+                height: '38px',
                 padding: '8px 12px',
                 borderRadius: '6px',
-                backgroundColor: isDarkMode ? '#334155' : '#f1f5f9',
-                border: `1px solid ${cardBorder}`,
-                color: textPrimary,
+                backgroundColor: activeFilterCount > 0 ? (isDarkMode ? '#334155' : '#f1f5f9') : (isDarkMode ? '#1e293b' : '#f8fafc'),
+                border: `1px solid ${activeFilterCount > 0 ? (isDarkMode ? '#475569' : '#cbd5e1') : cardBorder}`,
+                color: activeFilterCount > 0 ? textPrimary : textMuted,
                 cursor: 'pointer',
                 fontWeight: 600,
                 fontSize: '0.85rem',
@@ -1073,10 +1264,12 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
+                transition: 'all 0.15s ease',
+                boxSizing: 'border-box',
               }}
             >
               <RotateCcw size={14} strokeWidth={2} aria-hidden="true" />
-              Reset Filters
+              <span>Reset Filters</span>
             </button>
           </div>
         </div>
@@ -1150,12 +1343,16 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 orders.map((o) => (
                   <tr
                     key={`${o.type}-${o.id}`}
+                    onClick={() => handleViewBill(o.order_id || o.id)}
+                    className="orders-table-row"
                     style={{
                       borderBottom: `1px solid ${cardBorder}`,
                       transition: 'background-color 0.15s ease',
+                      cursor: 'pointer',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = rowHover)}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    title="Click row to view full order / booking details"
                   >
                     {/* Order ID */}
                     <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontWeight: 700, minWidth: '220px', whiteSpace: 'nowrap' }}>
@@ -1187,11 +1384,14 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       </span>
                     </td>
 
-                    {/* Customer Name (Clickable) */}
+                    {/* Customer Name (Clickable independently to open customer drawer) */}
                     <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                       <button
                         type="button"
-                        onClick={() => handleOpenCustomer(o)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenCustomer(o);
+                        }}
                         className="orders-customer-name-btn"
                         style={{
                           background: 'none',
@@ -1224,6 +1424,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       {toIndianPhoneTel(o.customer_phone) ? (
                         <a
                           href={toIndianPhoneTel(o.customer_phone)}
+                          onClick={(e) => e.stopPropagation()}
                           style={{
                             color: 'inherit',
                             textDecoration: 'none',
@@ -1290,7 +1491,10 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       <ActionIconButton
                         icon={Receipt}
                         label="View Bill"
-                        onClick={() => handleViewBill(o.order_id || o.id)}
+                        onClick={(e) => {
+                          e?.stopPropagation?.();
+                          handleViewBill(o.order_id || o.id);
+                        }}
                       />
                     </td>
                   </tr>
@@ -1371,6 +1575,31 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
         </div>
       </div>
 
+      {/* ── Bill Loading Indicator Overlay ── */}
+      {loadingBill && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 2000,
+            gap: '12px',
+            color: '#ffffff',
+          }}
+        >
+          <RefreshCw size={36} className="animate-spin" aria-hidden="true" />
+          <span style={{ fontSize: '0.95rem', fontWeight: 700, letterSpacing: '0.3px' }}>Loading order details...</span>
+        </div>
+      )}
+
       {/* ── Bill / Invoice Modal ── */}
       {selectedOrder && (
         <div
@@ -1398,7 +1627,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
               backgroundColor: cardBg,
               color: textPrimary,
               width: '100%',
-              maxWidth: '820px',
+              maxWidth: '880px',
               maxHeight: '92vh',
               overflowY: 'auto',
               borderRadius: '16px',
@@ -1411,7 +1640,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
             {/* Modal Header */}
             <div
               style={{
-                padding: '1.25rem 1.5rem',
+                padding: '1rem 1.5rem',
                 borderBottom: `1px solid ${cardBorder}`,
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -1420,29 +1649,38 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
+                gap: '16px',
               }}
             >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
-                    Invoice / Bill #{selectedOrder.order_id}
-                  </h2>
-                  {getStatusBadge(selectedOrder.status, isDarkMode)}
-                </div>
-                <div style={{ fontSize: '0.8rem', color: textMuted, marginTop: '2px' }}>
-                  Placed on {formatDateTime(selectedOrder.created_at)} · Delivery City: {selectedOrder.delivery_city}
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h2
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 800,
+                    margin: 0,
+                    color: textPrimary,
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  Invoice / Bill <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '1.1rem', opacity: 0.9 }}>#{selectedOrder.order_id}</span>
+                </h2>
+                <div style={{ fontSize: '0.8rem', color: textMuted, marginTop: '3px' }}>
+                  Placed on {formatDateTime(selectedOrder.created_at)} · Delivery City: {selectedOrder.delivery_city || 'N/A'}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+                {getStatusBadge(selectedOrder.status, isDarkMode, 'header')}
+
                 <button
                   type="button"
                   onClick={() => window.print()}
                   style={{
-                    backgroundColor: isDarkMode ? '#334155' : '#e2e8f0',
+                    backgroundColor: isDarkMode ? '#334155' : '#f1f5f9',
                     color: textPrimary,
-                    border: 'none',
-                    padding: '8px 14px',
+                    border: `1px solid ${isDarkMode ? '#475569' : '#cbd5e1'}`,
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: 700,
@@ -1450,9 +1688,19 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
+                    whiteSpace: 'nowrap',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#475569' : '#e2e8f0';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#334155' : '#f1f5f9';
                   }}
                 >
-                  <Printer size={15} strokeWidth={2} aria-hidden="true" /> Print
+                  <Printer size={15} strokeWidth={2} aria-hidden="true" />
+                  <span>Print</span>
                 </button>
 
                 <a
@@ -1461,10 +1709,11 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                   target="_blank"
                   rel="noreferrer"
                   style={{
-                    backgroundColor: isDarkMode ? '#334155' : '#0f172a',
+                    backgroundColor: isDarkMode ? '#2563eb' : '#0f172a',
                     color: '#ffffff',
-                    border: 'none',
-                    padding: '8px 14px',
+                    border: `1px solid ${isDarkMode ? '#3b82f6' : '#1e293b'}`,
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     fontSize: '0.85rem',
                     fontWeight: 700,
@@ -1473,29 +1722,52 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                     alignItems: 'center',
                     gap: '6px',
                     textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#1d4ed8' : '#1e293b';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#2563eb' : '#0f172a';
                   }}
                 >
-                  <Download size={15} strokeWidth={2} aria-hidden="true" /> Download PDF
+                  <Download size={15} strokeWidth={2} aria-hidden="true" />
+                  <span>Download PDF</span>
                 </a>
 
                 <button
                   type="button"
                   onClick={() => setSelectedOrder(null)}
                   style={{
-                    background: 'none',
-                    border: 'none',
+                    backgroundColor: isDarkMode ? '#1e293b' : '#f8fafc',
+                    border: `1px solid ${isDarkMode ? '#334155' : '#e2e8f0'}`,
                     cursor: 'pointer',
                     color: textMuted,
-                    padding: '6px',
-                    borderRadius: '6px',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#334155' : '#fee2e2';
+                    e.currentTarget.style.color = isDarkMode ? '#f87171' : '#dc2626';
+                    e.currentTarget.style.borderColor = isDarkMode ? '#dc2626' : '#fca5a5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isDarkMode ? '#1e293b' : '#f8fafc';
+                    e.currentTarget.style.color = textMuted;
+                    e.currentTarget.style.borderColor = isDarkMode ? '#334155' : '#e2e8f0';
                   }}
                   aria-label="Close invoice modal"
                   title="Close"
                 >
-                  <X size={20} strokeWidth={2} aria-hidden="true" />
+                  <X size={18} strokeWidth={2.2} aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -2289,6 +2561,78 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
           background-image: none !important;
           border: 1px solid #64748b !important;
           color: #ffffff !important;
+        }
+
+        /* Filter input focus and clear button enhancements */
+        .orders-filter-input {
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .orders-filter-input:focus {
+          outline: none !important;
+          border-color: #3b82f6 !important;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+        }
+
+        .orders-clear-btn {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          transform: translateY(-50%) !important;
+          padding: 0 !important;
+          cursor: pointer !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border-radius: 50% !important;
+          width: 22px !important;
+          height: 22px !important;
+          transition: all 0.15s ease !important;
+        }
+
+        .orders-clear-btn:hover {
+          background-color: rgba(148, 163, 184, 0.25) !important;
+          color: #ef4444 !important;
+        }
+
+        /* 5-Column Responsive Grid */
+        .orders-filters-grid {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 0.75rem;
+        }
+
+        @media (max-width: 1024px) {
+          .orders-filters-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+          .orders-filter-spacer {
+            display: none !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .orders-filters-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .orders-filter-spacer {
+            display: none !important;
+          }
+        }
+
+        /* Clickable Table Rows */
+        .orders-table-row {
+          cursor: pointer !important;
+          transition: background-color 0.15s ease !important;
+        }
+
+        .orders-table-row:hover {
+          background-color: #f1f5f9 !important;
+        }
+
+        .orders-history-manager.is-dark .orders-table-row:hover,
+        .is-dark .orders-table-row:hover {
+          background-color: #33415555 !important;
         }
 
         @media print {

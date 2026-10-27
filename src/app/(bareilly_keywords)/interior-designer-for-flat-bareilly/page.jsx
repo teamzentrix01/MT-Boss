@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-flat-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-flat-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Need an interior designer for your flat in Bareilly? Plan 1BHK, 2BHK and 3BHK interiors with MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-flat-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-flat-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-flat-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-flat-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Flat in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Need an interior designer for your flat in Bareilly? Plan 1BHK, 2BHK and 3BHK interiors with MTBOSS. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-flat-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-flat-bareilly.jpg",
     ],
   },
 
@@ -67,10 +67,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-flat-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-flat-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-interior-designer-flat-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-interior-designer-flat-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Flat Interior Design Services in Bareilly",
     description:
       "MTBOSS provides flat interior design services in Bareilly for 1BHK, 2BHK, 3BHK apartments, builder floors and penthouses. Services include space planning, living and dining interiors, modular kitchens, bedrooms and wardrobes, storage solutions, puja units, false ceiling and lighting, flooring and wall finishes, woodwork and custom furniture, bathroom interiors, balcony and utility areas, services provisions, society coordination support, material supply, renovation and remodelling.",
-    url: "https://www.mtboss.in/interior-designer-for-flat-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-flat-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Flat in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-flat-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-flat-in-bareilly",
       },
     ],
   };

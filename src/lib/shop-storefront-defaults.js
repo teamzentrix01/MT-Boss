@@ -1,5 +1,5 @@
 export const defaultShopStorefront = {
-  hero_kicker: 'MT BOSS MATERIAL MARKETPLACE',
+  hero_kicker: 'MTBOSS MATERIAL MARKETPLACE',
   hero_title: 'Everything you need to',
   hero_highlight: 'build better.',
   hero_description: 'Explore construction essentials from verified suppliers. Add to cart, buy now, or request a quote in a few taps.',

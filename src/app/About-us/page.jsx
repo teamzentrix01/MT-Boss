@@ -103,7 +103,7 @@ function CompanyStory({ dark }) {
           <div className="relative overflow-hidden">
             <img
               src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1000&q=80"
-              alt="Construction site managed by Mtboss construction private limited"
+              alt="Construction site managed by MTBOSS construction private limited"
               className="w-full h-72 object-cover"
             />
             <div className={`absolute inset-0 ${dark ? "bg-black/20" : "bg-[var(--brand-blue-deep)]/10"}`} />

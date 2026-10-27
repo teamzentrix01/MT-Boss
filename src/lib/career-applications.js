@@ -54,7 +54,7 @@ export const ensureCareerTrackingSchema = createInitializationGuard(async () => 
     INSERT INTO career_application_events
       (application_id, status, title, note, actor_role, actor_name, created_at)
     SELECT application.id, application.status, 'Application submitted',
-           application.status_note, 'system', 'MTBoss HR', COALESCE(application.created_at, NOW())
+           application.status_note, 'system', 'MTBOSS HR', COALESCE(application.created_at, NOW())
       FROM career_enquiries application
      WHERE NOT EXISTS (
        SELECT 1 FROM career_application_events event

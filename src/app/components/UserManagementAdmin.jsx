@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import QuickServiceIcon from './QuickServiceIcon';
+import ServiceCheckboxCard from './ServiceCheckboxCard';
 import {
   Users, Eye, Ban, ShieldCheck, Trash2, X, RefreshCw, Search,
   Calendar, MapPin, ShoppingCart, CircleDollarSign, CheckCircle2,
@@ -194,6 +195,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
     business_name: '',
     business_type: 'Vendor',
     services: [],
+    is_contractor: false,
     // Supplier
     aadhaar_number: '',
     product_categories: ['Cement', 'Bricks', 'Steel'],
@@ -240,6 +242,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         business_name: '',
         business_type: 'Vendor',
         services: [],
+        is_contractor: false,
         aadhaar_number: '',
         product_categories: ['Cement', 'Bricks', 'Steel'],
       });
@@ -270,6 +273,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         pageSize: String(pageSize),
       });
 
+      if (targetPage > 1) params.set('skip_meta', '1');
       if (search.trim()) params.set('search', search.trim());
       if (statusFilter && statusFilter !== 'all') params.set('status', statusFilter);
       if (roleFilter && roleFilter !== 'all') params.set('role', roleFilter);
@@ -289,7 +293,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
       }
 
       setUsers(data.data || []);
-      setCities(data.cities || []);
+      if (data.cities && data.cities.length) setCities(data.cities);
       if (data.stats) setStats(data.stats);
       if (data.pagination) {
         setPagination(data.pagination);
@@ -665,19 +669,30 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
     }
   };
 
-  const handleContractorChange = async (vendorId, isContractor) => {
+  const handleContractorChange = async (vendorId, isContractor, trade = null) => {
     setContractorSaving(true);
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
+      const finalTrade = isContractor ? (trade || userDetails?.vendor?.contractor_trade || 'CIVIL') : null;
       const res = await fetch('/api/admin/vendors', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ vendor_id: vendorId, action: 'update_contractor', is_contractor: isContractor }),
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          action: 'update_contractor',
+          is_contractor: isContractor,
+          contractor_trade: finalTrade,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'Could not update contractor status');
       setUserDetails((current) => current ? { ...current, vendor: { ...current.vendor, ...data.data } } : current);
-      setNotice({ type: 'success', message: isContractor ? 'Vendor is now a contractor.' : 'Contractor role removed.' });
+      setNotice({
+        type: 'success',
+        message: isContractor
+          ? `Contractor registered successfully (${data.data?.contractor_trade || finalTrade}).`
+          : 'Contractor role removed.',
+      });
       fetchUsers(page);
     } catch (err) {
       setNotice({ type: 'error', message: err.message || 'Could not update contractor status' });
@@ -1278,6 +1293,24 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </div>
               )}
 
+              {/* Register as Contractor checkbox — only shown for Vendor */}
+              {createRole === 'Vendor' && (
+                <div style={{ marginTop: '14px', padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '20px' }}>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={createForm.is_contractor || false}
+                      onChange={(e) => setCreateForm({ ...createForm, is_contractor: e.target.checked })}
+                      style={{ width: '16px', height: '16px', marginTop: '2px', accentColor: '#16a34a', flexShrink: 0 }}
+                    />
+                    <span>
+                      <span style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Register as Contractor</span>
+                      <span style={{ display: 'block', fontSize: '12px', color: '#166534', marginTop: '2px' }}>Show this vendor in Project Management contractor selection.</span>
+                    </span>
+                  </label>
+                </div>
+              )}
+
               {/* Supplier Product Categories */}
               {createRole === 'Supplier' && (
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
@@ -1843,17 +1876,13 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Phone / City</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Role</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Registered</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)' }}>Last Login</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Orders</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'right' }}>Lifetime Spent</th>
-                <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'center' }}>Status</th>
                 <th style={{ padding: '12px 14px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted, #64748b)', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
+                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                       <RefreshCw size={16} className="animate-spin" />
                       Loading customer records...
@@ -1862,7 +1891,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
+                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--muted, #64748b)' }}>
                     No registered customers match the selected filter criteria.
                   </td>
                 </tr>
@@ -1969,63 +1998,6 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                         <div style={{ fontSize: '10px', color: 'var(--muted, #94a3b8)' }}>
                           {new Date(u.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                         </div>
-                      </td>
-
-                      {/* Last Login */}
-                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
-                        {u.last_login_at ? (
-                          <>
-                            <div style={{ fontWeight: 600 }}>{formatDateOnly(u.last_login_at)}</div>
-                            <div style={{ fontSize: '10px', color: 'var(--muted, #94a3b8)' }}>
-                              {new Date(u.last_login_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                            </div>
-                          </>
-                        ) : (
-                          <span style={{ color: 'var(--muted, #94a3b8)', fontStyle: 'italic', fontSize: '11px' }}>
-                            Never logged in
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Orders Count */}
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            padding: '2px 8px',
-                            borderRadius: '999px',
-                            fontWeight: 700,
-                            fontSize: '11px',
-                            background: Number(u.total_orders) > 0 ? '#e0f2fe' : '#f1f5f9',
-                            color: Number(u.total_orders) > 0 ? '#0369a1' : '#64748b',
-                          }}
-                        >
-                          {u.total_orders} {Number(u.total_orders) === 1 ? 'order' : 'orders'}
-                        </span>
-                      </td>
-
-                      {/* Lifetime Spend */}
-                      <td style={{ padding: '12px 14px', textAlign: 'right', fontWeight: 800, fontSize: '13px' }}>
-                        <span style={{ color: Number(u.total_spent) > 0 ? '#059669' : 'var(--muted, #94a3b8)' }}>
-                          {formatCurrency(u.total_spent)}
-                        </span>
-                      </td>
-
-                      {/* Status */}
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
-                        <span
-                          style={{
-                            display: 'inline-block',
-                            padding: '3px 9px',
-                            borderRadius: '999px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            background: u.is_blocked ? '#fee2e2' : '#dcfce7',
-                            color: u.is_blocked ? '#dc2626' : '#15803d',
-                          }}
-                        >
-                          {u.is_blocked ? '● Blocked' : '● Active'}
-                        </span>
                       </td>
 
                       {/* Actions */}
@@ -2706,6 +2678,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#e0e7ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4338ca', fontWeight: 800, fontSize: '16px', overflow: 'hidden' }}>
                         {vendorData?.profile_photo ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img src={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=profile`} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
                           (vendorData?.vendor_name || selectedUser.name || 'V').slice(0, 2).toUpperCase()
@@ -2757,19 +2730,65 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
                       PROJECT MANAGEMENT ROLE
                     </div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', border: '1px solid #86efac', borderRadius: '8px', background: '#f0fdf4', cursor: contractorSaving ? 'wait' : 'pointer', maxWidth: '420px' }}>
-                      <input
-                        type="checkbox"
-                        disabled={contractorSaving}
-                        checked={Boolean(vendorData?.is_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor'))}
-                        onChange={(event) => handleContractorChange(vendorData?.id || selectedUser.real_id, event.target.checked)}
-                        style={{ width: '17px', height: '17px', cursor: contractorSaving ? 'wait' : 'pointer' }}
-                      />
-                      <span>
-                        <strong style={{ display: 'block', fontSize: '13px', color: '#166534' }}>Register as Contractor</strong>
-                        <small style={{ color: '#4b5563' }}>Show this vendor in Project Management contractor selection.</small>
-                      </span>
-                    </label>
+                    <div style={{ border: '1px solid #86efac', borderRadius: '8px', background: '#f0fdf4', padding: '14px', maxWidth: '480px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: contractorSaving ? 'wait' : 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          disabled={contractorSaving}
+                          checked={Boolean(vendorData?.is_contractor || vendorData?.is_project_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor'))}
+                          onChange={(event) => {
+                            const isChecked = event.target.checked;
+                            const currentTrade = vendorData?.contractor_trade || 'CIVIL';
+                            handleContractorChange(vendorData?.id || selectedUser.real_id, isChecked, currentTrade);
+                          }}
+                          style={{ width: '18px', height: '18px', cursor: contractorSaving ? 'wait' : 'pointer' }}
+                        />
+                        <span>
+                          <strong style={{ display: 'block', fontSize: '13px', color: '#166534' }}>Register as Contractor</strong>
+                          <small style={{ color: '#4b5563' }}>Show this vendor in Project Management contractor selection.</small>
+                        </span>
+                      </label>
+
+                      {Boolean(vendorData?.is_contractor || vendorData?.is_project_contractor || String(vendorData?.business_type || '').toLowerCase().includes('contractor')) && (
+                        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed #86efac' }}>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>
+                            Contractor Trade <span style={{ color: '#dc2626' }}>*</span>
+                          </label>
+                          <select
+                            disabled={contractorSaving}
+                            value={vendorData?.contractor_trade || 'CIVIL'}
+                            onChange={(e) => handleContractorChange(vendorData?.id || selectedUser.real_id, true, e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              border: '1px solid #86efac',
+                              background: '#fff',
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              color: '#0f172a',
+                              cursor: contractorSaving ? 'wait' : 'pointer',
+                            }}
+                          >
+                            <option value="CIVIL">CIVIL — Civil Contractor</option>
+                            <option value="GENERAL">GENERAL — General Contractor</option>
+                            <option value="PLUMBING">PLUMBING — Plumber / Plumbing</option>
+                            <option value="ELECTRICIAN">ELECTRICIAN — Electrician</option>
+                            <option value="MASON">MASON — Mason</option>
+                            <option value="CARPENTER">CARPENTER — Carpenter</option>
+                            <option value="PAINTER">PAINTER — Painter</option>
+                            <option value="FABRICATOR">FABRICATOR — Fabricator</option>
+                            <option value="TILE_FLOORING">TILE_FLOORING — Tile / Flooring</option>
+                            <option value="WATERPROOFING">WATERPROOFING — Waterproofing</option>
+                            <option value="HVAC">HVAC — HVAC</option>
+                            <option value="OTHER">OTHER — Other Trade</option>
+                          </select>
+                          <small style={{ display: 'block', marginTop: '4px', color: '#64748b', fontSize: '11px' }}>
+                            Selected trade will be used for filtering in Project Management.
+                          </small>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* ASSIGNED SERVICES */}
@@ -2777,41 +2796,21 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '14px' }}>
                       ASSIGNED SERVICES
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px', paddingRight: '4px', marginBottom: '12px' }}>
+                    <div className="grid grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2.5" style={{ paddingRight: '4px', marginBottom: '12px' }}>
                       {(userDetails?.allServices || []).map((service) => {
                         const sId = Number(service.id);
                         const isChecked = selectedServiceIds.includes(sId);
                         return (
-                          <label
+                          <ServiceCheckboxCard
                             key={service.id}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '10px',
-                              padding: '8px 12px',
-                              borderRadius: '8px',
-                              border: `1px solid ${isChecked ? '#3b82f6' : '#e2e8f0'}`,
-                              background: isChecked ? '#eff6ff' : 'var(--bg, #fff)',
-                              cursor: 'pointer',
-                              fontSize: '12px',
+                            service={service}
+                            checked={isChecked}
+                            onChange={(id, nextChecked) => {
+                              setSelectedServiceIds((prev) =>
+                                nextChecked ? [...prev, id] : prev.filter((x) => x !== id)
+                              );
                             }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => {
-                                const next = e.target.checked
-                                  ? [...selectedServiceIds, sId]
-                                  : selectedServiceIds.filter((id) => id !== sId);
-                                setSelectedServiceIds(next);
-                              }}
-                              style={{ cursor: 'pointer' }}
-                            />
-                            <QuickServiceIcon value={service.icon} label={service.label} size={24} className="flex-shrink-0" />
-                            <span style={{ fontWeight: 600, color: 'var(--text, #111)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                              {service.label}
-                            </span>
-                          </label>
+                          />
                         );
                       })}
                     </div>
@@ -2870,6 +2869,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                     {vendorData?.has_aadhar_image || vendorData?.aadhar_image ? (
                       <div style={{ marginTop: '8px' }}>
                         <a href={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=aadhaar`} target="_blank" rel="noopener noreferrer">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={`/api/vendor/image/${vendorData.id || selectedUser.real_id}?type=aadhaar`}
                             alt="Aadhaar Card"
@@ -3287,7 +3287,13 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </div>
 
                 {/* CONTACT & LIFETIME STATS */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '24px', padding: '16px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', fontSize: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '24px', padding: '16px', borderRadius: '10px', background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', fontSize: '12px' }}>
+                  <div>
+                    <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Status</span>
+                    <strong style={{ fontSize: '13px', color: selectedUser.is_blocked ? '#dc2626' : '#15803d' }}>
+                      {selectedUser.is_blocked ? 'Blocked' : 'Active'}
+                    </strong>
+                  </div>
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Phone</span>
                     <strong style={{ fontSize: '13px' }}>{selectedUser.phone || '—'}</strong>
@@ -3295,6 +3301,10 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Delivery City</span>
                     <strong style={{ fontSize: '13px' }}>{selectedUser.delivery_city || 'Not set'}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Last Login</span>
+                    <strong style={{ fontSize: '13px' }}>{selectedUser.last_login_at ? formatDateTime(selectedUser.last_login_at) : 'Never logged in'}</strong>
                   </div>
                   <div>
                     <span style={{ color: 'var(--muted, #64748b)', display: 'block', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700 }}>Total Orders</span>

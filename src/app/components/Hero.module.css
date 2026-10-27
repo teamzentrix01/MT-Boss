@@ -49,9 +49,22 @@
 .preview .eyebrow { font-size: 9px; margin-bottom: 16px; }
 @keyframes reveal { from { opacity: .3; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1360px) { .bottom { margin: 0 48px; } }
+@media (max-width: 1024px) {
+  .tabs {
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .hero .tab {
+    padding: 20px 14px;
+    font-size: 12.5px !important;
+  }
+}
 @media (max-width: 900px) {
   .content { padding: 56px 28px; } .copy { max-width: 540px; }
-  .bottom { margin: 0 28px; gap: 12px; } .hero .tab { padding: 22px 14px; } .count { display: none; }
+  .bottom { margin: 0 20px; gap: 8px; } .hero .tab { padding: 18px 12px; font-size: 12px !important; } .count { display: none; }
 }
 @media (max-width: 640px) {
   .slide { min-height: 610px; align-items: flex-end; }

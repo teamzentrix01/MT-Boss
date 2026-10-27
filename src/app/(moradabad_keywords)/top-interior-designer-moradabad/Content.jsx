@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: Top Interior Designer in Moradabad for Smart, Stylish and Practical Spaces
+             Top Interior Designer in Moradabad : MTBOSS
           </h2>
 
 
@@ -19,10 +19,10 @@ const Content = () => {
                 Walk into any well-designed room and you notice it immediately. The light falls in the right places. Furniture sits where it should, and nothing feels forced. You can move around easily, find what you need, and feel comfortable. That is not luck. It is the result of skilled design.
               </p>
               <p className="mt-3">
-                If you want that kind of result, you need the top interior designer in Moradabad, someone who combines creativity with technical knowledge and delivers what is promised. MT Boss brings together design, engineering and construction to create interiors that look refined and work properly for years.
+                If you want that kind of result, you need the top interior designer in Moradabad, someone who combines creativity with technical knowledge and delivers what is promised. MTBOSS brings together design, engineering and construction to create interiors that look refined and work properly for years.
               </p>
               <p className="mt-3">
-                This page explains how professional interior design works, what separates a great designer from an average one, and why homeowners and business owners in Moradabad trust MT Boss with their projects.
+                This page explains how professional interior design works, what separates a great designer from an average one, and why homeowners and business owners in Moradabad trust MTBOSS with their projects.
               </p>
             </section>
 
@@ -52,14 +52,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss works to meet all five, because a design that looks great on screen but fails in construction doesn&apos;t help anyone.
+                MTBOSS works to meet all five, because a design that looks great on screen but fails in construction doesn&apos;t help anyone.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Clients Choose MT Boss for Interior Design
+               Moradabad Clients Choose MTBOSS for Interior Design
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -73,7 +73,7 @@ const Content = () => {
                 An Engineering-Backed Approach
               </h4>
               <p className="mb-3">
-                MT Boss is a construction company, so our designers understand structure, services and site conditions. This helps us avoid common mistakes such as placing heavy features on weak walls, blocking drainage lines or planning lights where wiring cannot reach.
+                MTBOSS is a construction company, so our designers understand structure, services and site conditions. This helps us avoid common mistakes such as placing heavy features on weak walls, blocking drainage lines or planning lights where wiring cannot reach.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -87,21 +87,21 @@ const Content = () => {
                 Honest, Itemised Quotations
               </h4>
               <p>
-                Our quotations break down materials, labour and finishing so you can see exactly what you are paying for. If you want a quick early estimate, the budget calculator on the MT Boss website is a useful starting point.
+                Our quotations break down materials, labour and finishing so you can see exactly what you are paying for. If you want a quick early estimate, the budget calculator on the MTBOSS website is a useful starting point.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Interior Design Solutions
+                MTBOSS Interior Design Solutions
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Complete Home Interior Design
               </h4>
               <p className="mb-3">
-                From a 2BHK flat to a large villa, MT Boss plans entire homes as a connected whole. Colours, materials and lighting flow from room to room, so the home feels unified rather than patched together.
+                From a 2BHK flat to a large villa, MTBOSS plans entire homes as a connected whole. Colours, materials and lighting flow from room to room, so the home feels unified rather than patched together.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -111,12 +111,7 @@ const Content = () => {
                 Many apartments in Moradabad have limited space. Our designers specialise in making small areas feel larger, using multi-purpose furniture, built-in storage, light colours and careful circulation planning.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Kitchen and Wardrobe Design
-              </h4>
-              <p className="mb-3">
-                These two areas decide how organised your home feels. We design kitchens around your cooking habits and wardrobes around your actual clothing and storage needs, with proper internal fittings, drawers and accessories.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Living and Dining Area Design
@@ -125,12 +120,7 @@ const Content = () => {
                 We create layouts that support conversation, entertainment and everyday comfort, with feature walls, ceiling designs, lighting layers and furniture placement that suit the room&apos;s proportions.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Bedroom and Kids&apos; Room Design
-              </h4>
-              <p className="mb-3">
-                Bedrooms need calm, and children&apos;s rooms need safety and flexibility. We design sleep-friendly spaces and kids&apos; rooms with study areas, play zones and furniture that adapts as children grow.
-              </p>
+              
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Corporate Office Interiors
@@ -150,21 +140,15 @@ const Content = () => {
                 Hospitality Interiors
               </h4>
               <p className="mb-3">
-                Restaurants, cafés and hotels depend on atmosphere. MT Boss designs seating, lighting, service flow and decor that match your concept and help guests feel comfortable.
+                Restaurants, cafés and hotels depend on atmosphere. MTBOSS designs seating, lighting, service flow and decor that match your concept and help guests feel comfortable.
               </p>
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Turnkey Interior Execution
-              </h4>
-              <p>
-                Design alone is not enough. MT Boss offers full turnkey execution, so the plan you approve on paper is the one you actually get on site.
-              </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How MT Boss Plans an Interior Design Project
+                MTBOSS Plans an Interior Design Project
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -194,7 +178,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Interior Design Trends Worth Considering in 2026
+                Interior Design Trends Worth Considering 
               </h3>
               <p className="mb-3">
                 Good design should feel current without chasing fads. These ideas are well suited to Indian homes today.
@@ -230,7 +214,7 @@ const Content = () => {
                 Vastu and Design: Can They Work Together?
               </h3>
               <p>
-                Many families in Moradabad want their interiors to follow Vastu principles. Good design can respect these preferences when they are practical. MT Boss can discuss Vastu-friendly placement of the kitchen, pooja room, bedrooms and entrance while keeping the layout functional. Where a Vastu suggestion conflicts with structure or usability, we explain the options openly so you can decide with full information.
+                Many families in Moradabad want their interiors to follow Vastu principles. Good design can respect these preferences when they are practical. MTBOSS can discuss Vastu-friendly placement of the kitchen, pooja room, bedrooms and entrance while keeping the layout functional. Where a Vastu suggestion conflicts with structure or usability, we explain the options openly so you can decide with full information.
               </p>
             </section>
 
@@ -276,16 +260,16 @@ const Content = () => {
                 <li>Promises that sound too good to be true</li>
               </ul>
               <p className="mt-3">
-                MT Boss has an established office in Moradabad and works with written scope, clear payments and open communication.
+                MTBOSS has an established office in Moradabad and works with written scope, clear payments and open communication.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Complete Property Support Under the MT Boss Name
+                Complete Property Support Under the MTBOSS Name
               </h3>
-              <p className="mb-3">Your project may not stop at interiors. MT Boss also supports:</p>
+              <p className="mb-3">Your project may not stop at interiors. MTBOSS also supports:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Architecture and construction for homes and commercial buildings</li>
                 <li>Waterproofing and repair work</li>
@@ -301,12 +285,12 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Start Your Interior Design Journey With MT Boss
+                Start Your Interior Design Journey With MTBOSS
               </h3>
               <p className="mb-3">
-                Your space shapes how you live, work and feel every day. It deserves thoughtful design and careful execution. MT Boss is ready to guide you from the first idea to the final handover.
+                Your space shapes how you live, work and feel every day. It deserves thoughtful design and careful execution. MTBOSS is ready to guide you from the first idea to the final handover.
               </p>
-              <p className="mb-3">Contact MT Boss for a design consultation today.</p>
+              <p className="mb-3">Contact MTBOSS for a design consultation today.</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   <strong>Office:</strong> Harthala Kanth Road, behind KR Collection, near Domino&apos;s, Moradabad, Uttar Pradesh
@@ -317,21 +301,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -346,7 +330,7 @@ const Content = () => {
                 <li>
                   <strong>1. Who is the top interior designer in Moradabad?</strong>
                   <br />
-                  MT Boss is a trusted name, offering design, execution and construction expertise for homes and commercial spaces.
+                  MTBOSS is a trusted name, offering design, execution and construction expertise for homes and commercial spaces.
                 </li>
                 <li>
                   <strong>2. What does an interior designer do?</strong>
@@ -354,48 +338,48 @@ const Content = () => {
                   A designer plans layouts, selects materials, creates concepts, prepares technical drawings and supervises execution.
                 </li>
                 <li>
-                  <strong>3. Does MT Boss offer full turnkey interiors?</strong>
+                  <strong>3. Does MTBOSS offer full turnkey interiors?</strong>
                   <br />
-                  Yes. MT Boss handles design, carpentry, electrical, ceilings, painting and finishing as one complete package.
+                  Yes. MTBOSS handles design, carpentry, electrical, ceilings, painting and finishing as one complete package.
                 </li>
                 <li>
                   <strong>4. Can you design small flats and compact homes?</strong>
                   <br />
-                  Yes. MT Boss specialises in smart space planning, storage solutions and multi-purpose furniture for smaller homes.
+                  Yes. MTBOSS specialises in smart space planning, storage solutions and multi-purpose furniture for smaller homes.
                 </li>
                 <li>
                   <strong>5. Do you follow Vastu in your designs?</strong>
                   <br />
-                  Yes, where practical. MT Boss can incorporate Vastu preferences while keeping the layout functional.
+                  Yes, where practical. MTBOSS can incorporate Vastu preferences while keeping the layout functional.
                 </li>
                 <li>
                   <strong>6. What is the cost of interior design in Moradabad?</strong>
                   <br />
-                  Cost varies by size, materials and customisation. MT Boss provides an itemised quote after a site visit.
+                  Cost varies by size, materials and customisation. MTBOSS provides an itemised quote after a site visit.
                 </li>
                 <li>
                   <strong>7. Do you design offices, shops and restaurants?</strong>
                   <br />
-                  Yes. MT Boss designs commercial interiors, including offices, showrooms, clinics, cafés and hotels.
+                  Yes. MTBOSS designs commercial interiors, including offices, showrooms, clinics, cafés and hotels.
                 </li>
                 <li>
-                  <strong>8. How can I contact MT Boss for a consultation?</strong>
+                  <strong>8. How can I contact MTBOSS for a consultation?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

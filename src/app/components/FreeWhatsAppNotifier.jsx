@@ -75,8 +75,8 @@ export default function FreeWhatsAppNotifier() {
   useEffect(() => {
     const adminNumber = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP_NUMBER;
     if (!adminNumber) return undefined;
-    if (typeof window === 'undefined' || window.__mtboss_whatsapp_fetch_patched__) return undefined;
-    window.__mtboss_whatsapp_fetch_patched__ = true;
+    if (typeof window === 'undefined' || window.__MTBOSS_whatsapp_fetch_patched__) return undefined;
+    window.__MTBOSS_whatsapp_fetch_patched__ = true;
 
     const originalFetch = window.fetch.bind(window);
 
@@ -122,7 +122,7 @@ export default function FreeWhatsAppNotifier() {
 
     return () => {
       window.fetch = originalFetch;
-      delete window.__mtboss_whatsapp_fetch_patched__;
+      delete window.__MTBOSS_whatsapp_fetch_patched__;
     };
   }, []);
 

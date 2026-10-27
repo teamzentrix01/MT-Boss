@@ -128,7 +128,7 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
              WHEN 'cancelled' THEN 'Cancelled'
              ELSE 'Order placed'
            END,
-           me.status_note, 'system', 'MTBoss', COALESCE(me.created_at, NOW())
+           me.status_note, 'system', 'MTBOSS', COALESCE(me.created_at, NOW())
       FROM material_enquiries me
      WHERE NOT EXISTS (
        SELECT 1 FROM material_order_events event WHERE event.order_id = me.id

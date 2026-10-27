@@ -16,7 +16,7 @@ export const metadata = {
     "3D interior designer Bareilly, 3D interior design Bareilly, 3D home design Bareilly, 3D kitchen design Bareilly, 3D bedroom design Bareilly, 3D living room design Bareilly, 3D visualisation interior Bareilly, 3D view of home interior Bareilly, 2D layout and 3D design Bareilly, home interior Bareilly, MTBOSS Bareilly, MTBOSS Moradabad, MTBOSS budget calculator, 3D interior quote Bareilly",
 
   alternates: {
-    canonical: "https://www.mtboss.in/3d-interior-designer-in-bareilly",
+    canonical: "https://www.MTBOSS.in/3d-interior-designer-in-bareilly",
   },
 
   openGraph: {
@@ -25,13 +25,13 @@ export const metadata = {
     description:
       "Looking for a 3D interior designer Bareilly? See your home in 3D before work starts with MTBOSS. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/3d-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/3d-interior-designer-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-3d-interior-designer-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-3d-interior-designer-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "3D Interior Designer in Bareilly - MTBOSS",
@@ -50,7 +50,7 @@ export const metadata = {
     description:
       "Looking for a 3D interior designer Bareilly? See your home in 3D before work starts with MTBOSS. Call +91 94584 10866.",
 
-    images: ["https://www.mtboss.in/og-3d-interior-designer-bareilly.jpg"],
+    images: ["https://www.MTBOSS.in/og-3d-interior-designer-bareilly.jpg"],
   },
 
   robots: {
@@ -64,10 +64,10 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/3d-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/3d-interior-designer-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
-    image: "https://www.mtboss.in/og-3d-interior-designer-bareilly.jpg",
+    email: "MTBOSS2016@gmail.com",
+    image: "https://www.MTBOSS.in/og-3d-interior-designer-bareilly.jpg",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",
@@ -112,13 +112,13 @@ export default function Page() {
     name: "3D Interior Design Services in Bareilly",
     description:
       "MTBOSS provides 3D interior design services in Bareilly. Services include site visit and measurement, requirement discussion, 2D space planning, 3D views of key rooms, material and colour visualisation, lighting and ceiling visualisation, modular kitchen and wardrobe design, design revisions, itemised estimate, specifications and agreement, execution and supervision, handover and after-handover support.",
-    url: "https://www.mtboss.in/3d-interior-designer-in-bareilly",
+    url: "https://www.MTBOSS.in/3d-interior-designer-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -213,19 +213,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "3D Interior Designer in Bareilly",
-        item: "https://www.mtboss.in/3d-interior-designer-in-bareilly",
+        item: "https://www.MTBOSS.in/3d-interior-designer-in-bareilly",
       },
     ],
   };

@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Roof Waterproofing in Moradabad: MT Boss
+            Roof Waterproofing in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -26,7 +26,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 Good roof waterproofing in Moradabad protects the slab, the steel
-                inside it and everything beneath. MT Boss Construction Private
+                inside it and everything beneath. MTBOSS Construction Private
                 Limited treats terraces, roofs and parapets for homes, shops,
                 offices, hotels, warehouses and factories across Moradabad and
                 Bareilly. Our work follows the promise on our website: planning to
@@ -72,16 +72,16 @@ const Content = () => {
                 waterproofing coat on a roof with no slope still lets water pond.
                 A good slope with no waterproofing layer still lets water through
                 cracks. Our engineers look at the whole system, not only the top
-                coat [confirm the layer systems MT Boss uses].
+                coat [confirm the layer systems MTBOSS uses].
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home services,
+                MTBOSS is a one-stop destination for construction, home services,
                 materials and property needs, serving Moradabad and Bareilly. Our
                 work covers residential, commercial, hotel and hospitality,
                 industrial and warehousing, and infrastructure and road projects,
@@ -146,7 +146,7 @@ const Content = () => {
                 Industrial sheds in Moradabad commonly use profiled metal sheets.
                 Leaks appear at sheet overlaps, fastener holes, damaged ridge
                 caps, corroded sheets and blocked gutters. These roofs also heat
-                up strongly in summer [confirm whether MT Boss treats sheet roofs
+                up strongly in summer [confirm whether MTBOSS treats sheet roofs
                 and which methods are used].
               </p>
 
@@ -211,7 +211,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 The right method depends on the roof type, its condition and your
-                budget [confirm the systems and products MT Boss actually uses].
+                budget [confirm the systems and products MTBOSS actually uses].
                 Common approaches include:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -322,7 +322,7 @@ const Content = () => {
                 For flat roofs, the standard check is a ponding test. The roof is
                 blocked at the outlets and filled with a shallow depth of water
                 for a set period, commonly 24 to 72 hours, while the ceiling below
-                is watched for damp patches [confirm the test duration MT Boss
+                is watched for damp patches [confirm the test duration MTBOSS
                 follows]. We also check for bubbles, lifted edges, uncoated spots
                 and free drainage toward the outlets.
               </p>
@@ -434,7 +434,7 @@ const Content = () => {
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
                   <strong>Enquiry.</strong> Click Get a Construction Quote on
-                  mtboss.in, or call or WhatsApp us with photos of the roof and
+                  MTBOSS.in, or call or WhatsApp us with photos of the roof and
                   the damp ceiling.
                 </li>
                 <li>
@@ -491,14 +491,14 @@ const Content = () => {
               <p className="mt-3">
                 We measure the roof and prepare an itemised estimate [confirm
                 whether rates are per area or lump sum]. You can also use the
-                Budget Calculator on mtboss.in for an early idea of overall
+                Budget Calculator on MTBOSS.in for an early idea of overall
                 construction cost.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
@@ -535,7 +535,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Book a Roof Inspection with MT Boss
+                Book a Roof Inspection with MTBOSS
               </h3>
               <p className="mb-3">
                 Ready to protect your roof before the next rain? Contact us:
@@ -544,12 +544,12 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;)
                 </li>
@@ -567,10 +567,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -584,7 +584,7 @@ const Content = () => {
                 send a clear proposal.
               </p>
               <p className="mt-3">
-                Choose MT Boss for roof waterproofing in Moradabad, with slope,
+                Choose MTBOSS for roof waterproofing in Moradabad, with slope,
                 layers and junctions treated together and the work tested before
                 handover.
               </p>
@@ -598,7 +598,7 @@ const Content = () => {
                 <li>
                   <strong>Q1. Who provides roof waterproofing in Moradabad?</strong>
                   <br />
-                  MT Boss Construction treats terrace and roof leakage for homes,
+                  MTBOSS Construction treats terrace and roof leakage for homes,
                   shops and factories across Moradabad and Bareilly.
                 </li>
                 <li>
@@ -649,7 +649,7 @@ const Content = () => {
                 <li>
                   <strong>Q9. How can I get a quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or call
                   or WhatsApp{" "}
                   <a
                     href="https://wa.me/9458410866"

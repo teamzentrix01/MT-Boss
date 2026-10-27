@@ -7,26 +7,26 @@ import Services from '../../components/Services';
 
 
 export const metadata = {
-  title: 'Best Construction Company Moradabad | MT Boss Builders & Contractors',
+  title: 'Best Construction Company Moradabad | MTBOSS Builders & Contractors',
   description:
-    'MT Boss is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
+    'MTBOSS is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
   keywords:
-    'best construction company Moradabad, best construction company in Moradabad, construction company Moradabad, builders in Moradabad, building contractor Moradabad, civil contractor Moradabad, home construction Moradabad, commercial construction Moradabad, factory construction Moradabad, MT Boss Moradabad',
+    'best construction company Moradabad, best construction company in Moradabad, construction company Moradabad, builders in Moradabad, building contractor Moradabad, civil contractor Moradabad, home construction Moradabad, commercial construction Moradabad, factory construction Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/best-construction-company-moradabad-mt-boss',
+    canonical: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
   },
   openGraph: {
-    title: 'Best Construction Company Moradabad | MT Boss Builders & Contractors',
+    title: 'Best Construction Company Moradabad | MTBOSS Builders & Contractors',
     description:
-      'MT Boss is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
-    url: 'https://www.mtboss.in/best-construction-company-moradabad-mt-boss',
+      'MTBOSS is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
+    url: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-best-construction-company-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-best-construction-company-moradabad.jpg',
         width: 1200,
         height: 630,
-        alt: 'Best Construction Company Moradabad - MT Boss',
+        alt: 'Best Construction Company Moradabad - MTBOSS',
       },
     ],
     locale: 'en_IN',
@@ -34,10 +34,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Best Construction Company Moradabad | MT Boss Builders & Contractors',
+    title: 'Best Construction Company Moradabad | MTBOSS Builders & Contractors',
     description:
-      'MT Boss is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
-    images: ['https://www.mtboss.in/og-best-construction-company-moradabad.jpg'],
+      'MTBOSS is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
+    images: ['https://www.MTBOSS.in/og-best-construction-company-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -50,9 +50,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/best-construction-company-moradabad-mt-boss',
+  url: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

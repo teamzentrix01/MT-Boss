@@ -115,9 +115,9 @@ export async function POST(req) {
       try {
         await sendMail({
           to: normalizedEmail,
-          subject: 'Your MTBoss password reset code',
+          subject: 'Your MTBOSS password reset code',
           text: [
-            'MTBoss password reset',
+            'MTBOSS password reset',
             '',
             `Your one-time password is: ${otp}`,
             `This code expires in ${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes.`,
@@ -125,21 +125,21 @@ export async function POST(req) {
             'If you did not request a password reset, you can safely ignore this email.',
             'For your security, do not share this code with anyone.',
             '',
-            'MTBoss',
+            'MTBOSS',
           ].join('\n'),
           html: `
             <!doctype html>
             <html lang="en">
               <body style="margin:0;padding:0;background:#f4f4f5;color:#18181b;">
                 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
-                  Use this one-time code to reset your MTBoss password.
+                  Use this one-time code to reset your MTBOSS password.
                 </div>
                 <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;padding:32px 20px;">
                   <div style="background:#ffffff;border:1px solid #e4e4e7;padding:28px;">
-                    <p style="margin:0 0 20px;color:#111827;font-size:20px;font-weight:700;">MTBoss</p>
+                    <p style="margin:0 0 20px;color:#111827;font-size:20px;font-weight:700;">MTBOSS</p>
                     <h1 style="color:#18181b;font-size:24px;line-height:1.3;margin:0 0 12px;">Reset your password</h1>
                     <p style="color:#52525b;font-size:15px;line-height:1.6;margin:0 0 20px;">
-                      Enter this one-time code on the MTBoss password reset screen. It expires in
+                      Enter this one-time code on the MTBOSS password reset screen. It expires in
                       <strong>${PASSWORD_RESET_OTP_EXPIRY_MINUTES} minutes</strong>.
                     </p>
                     <div style="background:#f4f4f5;border:1px solid #e4e4e7;padding:22px;text-align:center;margin:0 0 20px;">
@@ -151,7 +151,7 @@ export async function POST(req) {
                     </p>
                   </div>
                   <p style="color:#71717a;font-size:11px;line-height:1.5;text-align:center;margin:16px 0 0;">
-                    This transactional email was sent because a password reset was requested for your MTBoss account.
+                    This transactional email was sent because a password reset was requested for your MTBOSS account.
                   </p>
                 </div>
               </body>

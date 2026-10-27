@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/industrial-shed-construction-in-moradabad",
+      "https://www.MTBOSS.in/industrial-shed-construction-in-moradabad",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Planning industrial shed construction in Moradabad? MTBOSS offers clear scope, quality materials and on-time delivery. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/industrial-shed-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/industrial-shed-construction-in-moradabad",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-industrial-shed-construction-moradabad.jpg",
+        url: "https://www.MTBOSS.in/og-industrial-shed-construction-moradabad.jpg",
         width: 1200,
         height: 630,
         alt: "Industrial Shed Construction in Moradabad - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Planning industrial shed construction in Moradabad? MTBOSS offers clear scope, quality materials and on-time delivery. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-industrial-shed-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-industrial-shed-construction-moradabad.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "GeneralContractor",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/industrial-shed-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/industrial-shed-construction-in-moradabad",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-industrial-shed-construction-moradabad.jpg",
+      "https://www.MTBOSS.in/og-industrial-shed-construction-moradabad.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -119,13 +119,13 @@ export default function Page() {
     name: "Industrial Shed Construction Services in Moradabad",
     description:
       "MTBOSS provides industrial shed construction in Moradabad for factories, workshops, warehouses and godowns, including site preparation, foundations, structural framing, roofing, flooring, ventilation, drainage, external works, material supply and final handover.",
-    url: "https://www.mtboss.in/industrial-shed-construction-in-moradabad",
+    url: "https://www.MTBOSS.in/industrial-shed-construction-in-moradabad",
     provider: {
       "@type": "GeneralContractor",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -228,19 +228,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Construction Services",
-        item: "https://www.mtboss.in/construction-services",
+        item: "https://www.MTBOSS.in/construction-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Industrial Shed Construction in Moradabad",
-        item: "https://www.mtboss.in/industrial-shed-construction-in-moradabad",
+        item: "https://www.MTBOSS.in/industrial-shed-construction-in-moradabad",
       },
     ],
   };

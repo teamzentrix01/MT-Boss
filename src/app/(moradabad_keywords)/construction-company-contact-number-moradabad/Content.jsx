@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Construction Company Contact Number in Moradabad: MT Boss
+            Construction Company Contact Number in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,7 +17,7 @@ const Content = () => {
                 Contact Details at a Glance
               </h3>
               <p className="mb-3">
-                Here is everything you need to reach MT Boss Construction Private
+                Here is everything you need to reach MTBOSS Construction Private
                 Limited in Moradabad.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -40,26 +40,26 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>{" "}
-                  (chat directly from mtboss.in)
+                  (chat directly from MTBOSS.in)
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
                 <li>
@@ -73,7 +73,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 For a construction quote, click &quot;Get a Construction
-                Quote&quot; on mtboss.in, or call or message us directly.
+                Quote&quot; on MTBOSS.in, or call or message us directly.
               </p>
             </section>
 
@@ -91,7 +91,7 @@ const Content = () => {
               <p className="mt-3">
                 A reliable construction company contact number in Moradabad
                 should connect you to real people who can explain services,
-                discuss budgets and arrange a site visit. MT Boss Construction
+                discuss budgets and arrange a site visit. MTBOSS Construction
                 Private Limited serves clients across Moradabad and Bareilly with
                 residential, commercial, hospitality, industrial and
                 infrastructure construction. Our approach follows the promise on
@@ -106,7 +106,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Ways to Contact MT Boss
+                Ways to Contact MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -138,7 +138,7 @@ const Content = () => {
                 >
                   +91 94584 10866
                 </a>
-                , or use the WhatsApp button on mtboss.in. WhatsApp suits
+                , or use the WhatsApp button on MTBOSS.in. WhatsApp suits
                 clients who want to share photos of the plot, a drawing, a
                 measurement sheet or a location pin, and continue the
                 conversation at their own pace.
@@ -150,10 +150,10 @@ const Content = () => {
               <p className="mb-3">
                 Write to{" "}
                 <a
-                  href="mailto:mtboss2016@gmail.com"
+                  href="mailto:MTBOSS2016@gmail.com"
                   className="text-blue-600 underline"
                 >
-                  mtboss2016@gmail.com
+                  MTBOSS2016@gmail.com
                 </a>{" "}
                 with your requirement, drawings or documents. Email suits
                 detailed enquiries, tender-style requests and clients who prefer
@@ -166,12 +166,12 @@ const Content = () => {
               <p className="mb-3">
                 Click &quot;Get a Construction Quote&quot; on{" "}
                 <a
-                  href="https://www.mtboss.in/"
+                  href="https://www.MTBOSS.in/"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  mtboss.in
+                  MTBOSS.in
                 </a>{" "}
                 and submit your requirement. This is a convenient option when
                 you are browsing our services and want to enquire without
@@ -184,7 +184,7 @@ const Content = () => {
               <p className="mb-3">
                 The{" "}
                 <a
-                  href="https://www.mtboss.in/contact"
+                  href="https://www.MTBOSS.in/contact"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -256,7 +256,7 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                You can also try the Budget Calculator on mtboss.in before
+                You can also try the Budget Calculator on MTBOSS.in before
                 calling, to form an early idea of your construction budget.
               </p>
             </section>
@@ -308,10 +308,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a one-stop destination for construction, home
+                MTBOSS is a one-stop destination for construction, home
                 services, materials and property needs, serving Moradabad and
                 Bareilly. Our work covers residential, commercial, hotel and
                 hospitality, industrial and warehousing, and infrastructure and
@@ -390,10 +390,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Home Services You Can Book Through MT Boss
+                Home Services You Can Book Through MTBOSS
               </h3>
               <p className="mb-3">
-                Beyond construction, mtboss.in lists quick services you can book
+                Beyond construction, MTBOSS.in lists quick services you can book
                 directly:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -421,7 +421,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Builders, contractors and homeowners can explore cement, steel,
-                bricks and more through the Shop Now section of mtboss.in, and
+                bricks and more through the Shop Now section of MTBOSS.in, and
                 connect with suppliers for their projects. For quantity guidance
                 or availability, call or message us with your material list and
                 site location.
@@ -569,7 +569,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Reasons Clients Choose MT Boss in Moradabad
+                Reasons Clients Choose MTBOSS in Moradabad
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -635,7 +635,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Contact MT Boss Today
+                Contact MTBOSS Today
               </h3>
               <p className="mb-3">
                 Ready to discuss your project? Reach us now:
@@ -653,21 +653,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   (click &quot;Get a Construction Quote&quot;).
                 </li>
@@ -681,7 +681,7 @@ const Content = () => {
                 arrange a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Save the number, call MT Boss and take the first step toward
+                Save the number, call MTBOSS and take the first step toward
                 construction that is planned well, built correctly and delivered
                 on time.
               </p>
@@ -694,7 +694,7 @@ const Content = () => {
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
                   <strong>
-                    Q1. What is the contact number of MT Boss in Moradabad?
+                    Q1. What is the contact number of MTBOSS in Moradabad?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -704,10 +704,10 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>{" "}
-                  to reach MT Boss Construction.
+                  to reach MTBOSS Construction.
                 </li>
                 <li>
-                  <strong>Q2. Can I contact MT Boss on WhatsApp?</strong>
+                  <strong>Q2. Can I contact MTBOSS on WhatsApp?</strong>
                   <br />
                   Yes. Message{" "}
                   <a
@@ -718,7 +718,7 @@ const Content = () => {
                   >
                     +91 94584 10866
                   </a>{" "}
-                  or use the WhatsApp button on mtboss.in to share photos and
+                  or use the WhatsApp button on MTBOSS.in to share photos and
                   drawings.
                 </li>
                 <li>
@@ -726,15 +726,15 @@ const Content = () => {
                   <br />
                   Write to{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>{" "}
                   with your requirement and documents.
                 </li>
                 <li>
-                  <strong>Q4. Where is the MT Boss office located?</strong>
+                  <strong>Q4. Where is the MTBOSS office located?</strong>
                   <br />
                   Harthala, Kanth Road, Moradabad, behind KR Collection and near
                   Domino&apos;s.
@@ -742,7 +742,7 @@ const Content = () => {
                 <li>
                   <strong>Q5. How can I get a construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, or
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, or
                   call or WhatsApp us for a site visit.
                 </li>
                 <li>
@@ -765,10 +765,10 @@ const Content = () => {
                 <li>
                   <strong>Q9. Can I estimate my budget before calling?</strong>
                   <br />
-                  Yes. Use the Budget Calculator on mtboss.in for an early idea.
+                  Yes. Use the Budget Calculator on MTBOSS.in for an early idea.
                 </li>
                 <li>
-                  <strong>Q10. Can I visit the MT Boss office?</strong>
+                  <strong>Q10. Can I visit the MTBOSS office?</strong>
                   <br />
                   Yes. Please call or message before visiting so a team member
                   can be available to meet you.

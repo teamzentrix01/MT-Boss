@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            PWD Approved Contractor in Moradabad: MT Boss Construction
+            PWD Approved Contractor in Moradabad: MTBOSS Construction
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -18,7 +18,7 @@ const Content = () => {
                 on time, within budget and to the required quality. If you are
                 searching for a PWD approved contractor in Moradabad, you want a
                 team with verified credentials, technical expertise and a record
-                of honest work. MT Boss Construction Private Limited brings all
+                of honest work. MTBOSS Construction Private Limited brings all
                 three to every project in Moradabad, Bareilly and nearby
                 districts.
               </p>
@@ -31,7 +31,7 @@ const Content = () => {
               </p>
               <p className="mt-3">
                 This guide explains what a PWD approved contractor is, why
-                registration matters, what services MT Boss offers, and how to
+                registration matters, what services MTBOSS offers, and how to
                 hire us.
               </p>
             </section>
@@ -130,10 +130,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                About MT Boss Construction Private Limited
+                About MTBOSS Construction Private Limited
               </h3>
               <p className="mb-3">
-                MT Boss is a full-service construction and home-solutions
+                MTBOSS is a full-service construction and home-solutions
                 company serving Moradabad and Bareilly. We are known for
                 architecture, interior design, modular kitchens, waterproofing,
                 building renovation and complete construction services. Our work
@@ -187,7 +187,7 @@ const Content = () => {
                 Residential Construction
               </h4>
               <p className="mb-3">
-                From affordable homes to luxury villas, MT Boss builds houses
+                From affordable homes to luxury villas, MTBOSS builds houses
                 that balance comfort, safety and budget. Services include:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -234,7 +234,7 @@ const Content = () => {
               </h4>
               <p className="mb-3">
                 Older buildings often need structural repair, crack filling,
-                plaster restoration, repainting and waterproofing. MT Boss
+                plaster restoration, repainting and waterproofing. MTBOSS
                 offers building repair, renovation and professional
                 waterproofing for terraces, bathrooms, basements, water tanks
                 and external walls. These fix leakage and dampness at the
@@ -257,7 +257,7 @@ const Content = () => {
                 Our Construction Process: Simple, Clear, Accountable
               </h3>
               <p className="mb-3">
-                A good outcome comes from a good process. Every MT Boss project
+                A good outcome comes from a good process. Every MTBOSS project
                 follows these steps.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -308,7 +308,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Quality is decided by what goes into the structure and how it is
-                built. At MT Boss we stick to a few firm rules:
+                built. At MTBOSS we stick to a few firm rules:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -345,7 +345,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Choose MT Boss as Your PWD Approved Contractor in Moradabad?
+                Why Choose MTBOSS as Your PWD Approved Contractor in Moradabad?
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -383,7 +383,7 @@ const Content = () => {
                 Areas We Serve
               </h3>
               <p className="mb-3">
-                MT Boss serves clients in Moradabad city and across the district,
+                MTBOSS serves clients in Moradabad city and across the district,
                 including Civil Lines, Kanth Road, Delhi Road, Rampur Road, Lines
                 Par, Majhola, Harthala, Pakbara, Thakurdwara and Bilari. We also
                 work in Bareilly, Rampur, Sambhal, Amroha, Bijnor and Meerut and
@@ -424,19 +424,19 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                How to Hire MT Boss
+                How to Hire MTBOSS
               </h3>
               <p className="mb-3">Getting started is easy:</p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
                   Visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>{" "}
                   and click &quot;Get a Construction Quote&quot;
                 </li>
@@ -444,10 +444,10 @@ const Content = () => {
                 <li>
                   Email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -460,7 +460,7 @@ const Content = () => {
                 team will arrange a site visit and send a clear proposal.
               </p>
               <p className="mt-3">
-                Build with confidence. Build with MT Boss, your trusted PWD
+                Build with confidence. Build with MTBOSS, your trusted PWD
                 approved contractor in Moradabad.
               </p>
             </section>
@@ -475,7 +475,7 @@ const Content = () => {
                     Q1. Who is the best PWD approved contractor in Moradabad?
                   </strong>
                   <br />
-                  MT Boss Construction is a trusted PWD approved contractor in
+                  MTBOSS Construction is a trusted PWD approved contractor in
                   Moradabad, known for transparent pricing, quality work and
                   on-time delivery.
                 </li>
@@ -494,14 +494,14 @@ const Content = () => {
                   tender work.
                 </li>
                 <li>
-                  <strong>Q4. What types of projects does MT Boss handle?</strong>
+                  <strong>Q4. What types of projects does MTBOSS handle?</strong>
                   <br />
                   We handle government buildings, roads, residential homes,
                   commercial complexes, industrial sheds, hotels, renovation and
                   waterproofing work.
                 </li>
                 <li>
-                  <strong>Q5. Does MT Boss work on private projects too?</strong>
+                  <strong>Q5. Does MTBOSS work on private projects too?</strong>
                   <br />
                   Yes. We build houses, villas, shops, offices and warehouses
                   for private clients as well as government and institutional
@@ -510,7 +510,7 @@ const Content = () => {
                 <li>
                   <strong>Q6. How can I get a construction quote?</strong>
                   <br />
-                  Click &quot;Get a Construction Quote&quot; on mtboss.in, call
+                  Click &quot;Get a Construction Quote&quot; on MTBOSS.in, call
                   or WhatsApp +91 94584 10866, or email us. We will arrange a
                   free site visit.
                 </li>

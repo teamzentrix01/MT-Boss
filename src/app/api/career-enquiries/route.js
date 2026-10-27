@@ -13,7 +13,7 @@ import {
 const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'mtboss2016@gmail.com';
+  'MTBOSS2016@gmail.com';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -58,6 +58,9 @@ const ensureTable = createInitializationGuard(async () => {
     ALTER TABLE career_enquiries
     ADD COLUMN IF NOT EXISTS alternative_phone VARCHAR(50)
   `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_created ON career_enquiries (created_at DESC)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_status ON career_enquiries (status)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS idx_career_user_id ON career_enquiries (user_id)`);
   await ensureCareerTrackingSchema();
 });
 
@@ -519,7 +522,7 @@ export async function PUT(req) {
       actorRole: admin ? 'admin' : 'user',
       actorId: admin ? admin.id : user.id,
       actorName: admin
-        ? admin.name || admin.email || 'MTBoss HR'
+        ? admin.name || admin.email || 'MTBOSS HR'
         : payload.name,
     });
     const refreshed = await getApplicationWithHistory(id, client);
@@ -581,7 +584,7 @@ export async function PATCH(req) {
       note,
       actorRole: 'admin',
       actorId: admin.id,
-      actorName: admin.name || admin.email || 'MTBoss HR',
+      actorName: admin.name || admin.email || 'MTBOSS HR',
     });
     await client.query('COMMIT');
 

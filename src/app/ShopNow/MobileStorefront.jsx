@@ -112,11 +112,11 @@ function getLowestBulkPrice(product) {
 function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
   return (
     <div className="mobile-top-nav-bar">
-      {/* Logo (MTboss icon + text) — left side */}
-      <Link href="/" className="mobile-top-logo" aria-label="MTBoss Home">
+      {/* Logo (MTBOSS icon + text) — left side */}
+      <Link href="/" className="mobile-top-logo" aria-label="MTBOSS Home">
         <Image
           src="/logo.png"
-          alt="MTboss"
+          alt="MTBOSS"
           width={100}
           height={30}
           priority
@@ -1456,7 +1456,7 @@ export default function MobileStorefront({
               <div className="w-14 h-14 rounded-full bg-[#12283F] text-white flex items-center justify-center mx-auto mb-3">
                 <Wallet size={28} />
               </div>
-              <h3 className="text-lg font-black text-[#12283F]">MTBoss Cashback Wallet</h3>
+              <h3 className="text-lg font-black text-[#12283F]">MTBOSS Cashback Wallet</h3>
               <p className="text-3xl font-extrabold text-[#2196F3] my-2">₹0.00</p>
               <div className="bg-[#F8FAFC] border border-gray-200 rounded-xl p-3 text-left mt-3 text-xs text-gray-600 space-y-1.5">
                 <p className="flex items-center gap-2">
@@ -1836,7 +1836,7 @@ export default function MobileStorefront({
               >
                 <Image
                   src="/logo.png"
-                  alt="MTboss"
+                  alt="MTBOSS"
                   width={100}
                   height={30}
                   className="h-7 w-auto object-contain"

@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'architect for home design Moradabad, home design architect near me, house layout design Moradabad, vastu home design Moradabad, 3D home design near me, home interior design architect, house plan design Moradabad, MTBOSS Moradabad, home design cost Moradabad, house design consultant near me',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-for-home-design-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/architect-for-home-design-in-moradabad',
   },
   openGraph: {
     title: 'Architect for Home Design in Moradabad | MTBOSS',
     description:
       'Need an architect for home design in Moradabad? Learn about layout planning, vastu, 3D visualization, costs, and how MTBOSS supports design-to-build.',
-    url: 'https://www.mtboss.in/architect-for-home-design-in-moradabad',
+    url: 'https://www.MTBOSS.in/architect-for-home-design-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-home-design-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-home-design-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect for Home Design in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Architect for Home Design in Moradabad | MTBOSS',
     description:
       'Need an architect for home design in Moradabad? Learn about layout planning, vastu, 3D visualization, costs, and how MTBOSS supports design-to-build.',
-    images: ['https://www.mtboss.in/og-architect-home-design-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-architect-home-design-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-for-home-design-in-moradabad',
+    url: 'https://www.MTBOSS.in/architect-for-home-design-in-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

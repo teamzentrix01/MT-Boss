@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            MT Boss: Labour Contractor for Construction in Moradabad With
+            MTBOSS: Labour Contractor for Construction in Moradabad With
             Skilled Trades and Site Supervision
           </h2>
 
@@ -27,12 +27,12 @@ const Content = () => {
                 That is why many owners and builders look for a labour
                 contractor for construction in Moradabad: someone who can supply
                 the right trades, manage them on site and take responsibility
-                for the quality of their work. MT Boss (MTBOSS Construction
+                for the quality of their work. MTBOSS (MTBOSS Construction
                 Private Limited) works as a civil and building contractor in
                 Moradabad and Bareilly, and organises skilled teams for
                 residential, commercial, hotel, institutional and industrial
                 projects. This page explains how labour contracting works, which
-                trades MT Boss manages, and what owners should agree before work
+                trades MTBOSS manages, and what owners should agree before work
                 begins.
               </p>
             </section>
@@ -84,7 +84,7 @@ const Content = () => {
                 Labour-Only vs Labour-With-Material: Choosing the Right Model
               </h3>
               <p className="mb-3">
-                MT Boss helps owners decide which arrangement fits their
+                MTBOSS helps owners decide which arrangement fits their
                 project.
               </p>
 
@@ -143,7 +143,7 @@ const Content = () => {
                 Supervised Labour Contract
               </h4>
               <p className="mb-3">
-                For owners who want professional guidance, MT Boss provides
+                For owners who want professional guidance, MTBOSS provides
                 engineering supervision with the labour team. Engineers review
                 drawings, check critical stages and guide the workforce, even
                 where the owner supplies materials.
@@ -152,10 +152,10 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Skilled Trades Managed by MT Boss
+                Skilled Trades Managed by MTBOSS
               </h3>
               <p className="mb-3">
-                MT Boss organises trades according to the stage of construction.
+                MTBOSS organises trades according to the stage of construction.
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -250,7 +250,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Labour rates in construction are generally agreed in one of
-                three ways. MT Boss explains these options clearly before any
+                three ways. MTBOSS explains these options clearly before any
                 contract is signed.
               </p>
 
@@ -304,7 +304,7 @@ const Content = () => {
               </h3>
               <p className="mb-3">
                 Supplying workers is easy. Supervising them properly is what
-                protects the building. MT Boss pairs labour teams with engineers
+                protects the building. MTBOSS pairs labour teams with engineers
                 and supervisors who:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -325,7 +325,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quality Standards for Workmanship at MT Boss
+                Quality Standards for Workmanship at MTBOSS
               </h3>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
@@ -375,14 +375,14 @@ const Content = () => {
                 <li>Fittings installed neatly and securely</li>
               </ul>
               <p className="mt-3">
-                These standards apply across MT Boss projects, whether the team
+                These standards apply across MTBOSS projects, whether the team
                 is working on a home, a showroom or a warehouse.
               </p>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Safety and Welfare on MT Boss Sites
+                Safety and Welfare on MTBOSS Sites
               </h3>
               <p className="mb-3">
                 A safe, well-managed workforce is more productive and more
@@ -423,7 +423,7 @@ const Content = () => {
                 Payment Terms and Records in Labour Contracts
               </h3>
               <p className="mb-3">
-                Clear payment terms protect both sides. MT Boss recommends the
+                Clear payment terms protect both sides. MTBOSS recommends the
                 following.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -463,7 +463,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Typical Projects Where Owners Hire MT Boss for Labour
+                Typical Projects Where Owners Hire MTBOSS for Labour
                 Contracting
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -493,7 +493,7 @@ const Content = () => {
                 <li>
                   <strong>Seasonal availability.</strong> Festival and wedding
                   seasons, and agricultural cycles in nearby villages, can
-                  reduce labour availability. MT Boss plans schedules with
+                  reduce labour availability. MTBOSS plans schedules with
                   realistic buffers.
                 </li>
                 <li>
@@ -515,7 +515,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Starting a Labour Contract With MT Boss
+                Starting a Labour Contract With MTBOSS
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -543,7 +543,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Beyond Labour: Complete Support From MT Boss
+                Beyond Labour: Complete Support From MTBOSS
               </h3>
               <p className="mb-3">
                 Owners who start with a labour contract can also use other MT
@@ -563,17 +563,17 @@ const Content = () => {
                 <li>Building materials through the online shop</li>
                 <li>
                   Careers for engineers, supervisors and skilled workers who
-                  want to join MT Boss
+                  want to join MTBOSS
                 </li>
               </ul>
             </section>
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Talk to MT Boss About Your Workforce Needs
+                Talk to MTBOSS About Your Workforce Needs
               </h3>
               <p className="mb-3">
-                Tell the MT Boss team what you plan to build and which trades
+                Tell the MTBOSS team what you plan to build and which trades
                 you need. We will recommend the right contract type and prepare
                 a clear quotation.
               </p>
@@ -588,21 +588,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                 </li>
               </ul>
@@ -619,11 +619,11 @@ const Content = () => {
                     in Moradabad?
                   </strong>
                   <br />
-                  MT Boss organises skilled trades with engineer supervision for
+                  MTBOSS organises skilled trades with engineer supervision for
                   homes, commercial buildings, hotels and industrial projects.
                 </li>
                 <li>
-                  <strong>Q2. Which trades does MT Boss manage?</strong>
+                  <strong>Q2. Which trades does MTBOSS manage?</strong>
                   <br />
                   We manage masons, bar benders, shuttering carpenters, tile
                   layers, painters, plumbers, electricians and helpers.
@@ -633,7 +633,7 @@ const Content = () => {
                     Q3. Can I hire labour only and buy materials myself?
                   </strong>
                   <br />
-                  Yes. MT Boss offers labour-and-supervision contracts, as well
+                  Yes. MTBOSS offers labour-and-supervision contracts, as well
                   as contracts that include materials.
                 </li>
                 <li>
@@ -656,25 +656,25 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q7. Can MT Boss handle only finishing work like painting or
+                    Q7. Can MTBOSS handle only finishing work like painting or
                     tiling?
                   </strong>
                   <br />
-                  Yes. You can hire MT Boss for specific trades or for the
+                  Yes. You can hire MTBOSS for specific trades or for the
                   complete building.
                 </li>
                 <li>
-                  <strong>Q8. How can I contact MT Boss?</strong>
+                  <strong>Q8. How can I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp +91 94584 10866, email
-                  mtboss2016@gmail.com, or visit{" "}
+                  MTBOSS2016@gmail.com, or visit{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    www.mtboss.in
+                    www.MTBOSS.in
                   </a>
                   .
                 </li>

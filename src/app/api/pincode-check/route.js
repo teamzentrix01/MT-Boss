@@ -42,7 +42,7 @@ export async function GET(req) {
           return NextResponse.json({
             success: true,
             available: false,
-            message: `${city} is not enabled by MTBoss.`,
+            message: `${city} is not enabled by MTBOSS.`,
           });
         }
         dbCheck = await pool.query(

@@ -73,7 +73,7 @@ export default function AgentCTA() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-7">
           <div>
             <p className={`text-[9px] font-black uppercase tracking-[0.4em] mb-1.5 ${dark ? "text-[var(--brand-blue)]" : "text-[var(--brand-blue-deep)]"}`}>
-              Earn with MTBoss
+              Earn with MTBOSS
             </p>
             <h2 className={`text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none ${dark ? "text-white" : "text-zinc-900"}`}>
               Become an <span className="text-[var(--brand-blue)]">Agent</span>

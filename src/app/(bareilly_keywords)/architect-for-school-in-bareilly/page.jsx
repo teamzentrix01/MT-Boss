@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'architect for school in Bareilly, school architect Bareilly, school design Bareilly, school planning Bareilly, school building design Bareilly, school construction Bareilly, school renovation architect Bareilly, school extension design Bareilly, campus design Bareilly, coaching institute architect Bareilly, MTBOSS Bareilly, architect near me Bareilly',
   alternates: {
-    canonical: 'https://www.mtboss.in/architect-for-school-bareilly',
+    canonical: 'https://www.MTBOSS.in/architect-for-school-bareilly',
   },
   openGraph: {
     title: 'Architect for School in Bareilly',
     description:
       'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBOSS supports safe, practical campuses. Call or WhatsApp.',
-    url: 'https://www.mtboss.in/architect-for-school-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-school-bareilly',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-architect-for-school-bareilly.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-for-school-bareilly.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect for School in Bareilly - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Architect for School in Bareilly',
     description:
       'Architect for school in Bareilly: planning, design and construction guidance for new schools, extensions and renovations. MTBOSS supports safe, practical campuses. Call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-architect-for-school-bareilly.jpg'],
+    images: ['https://www.MTBOSS.in/og-architect-for-school-bareilly.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/architect-for-school-bareilly',
+    url: 'https://www.MTBOSS.in/architect-for-school-bareilly',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress:

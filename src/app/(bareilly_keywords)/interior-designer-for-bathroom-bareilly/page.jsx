@@ -17,7 +17,7 @@ export const metadata = {
 
   alternates: {
     canonical:
-      "https://www.mtboss.in/interior-designer-for-bathroom-in-bareilly",
+      "https://www.MTBOSS.in/interior-designer-for-bathroom-in-bareilly",
   },
 
   openGraph: {
@@ -26,13 +26,13 @@ export const metadata = {
     description:
       "Looking for an interior designer for bathroom Bareilly? MTBOSS plans waterproof, anti-skid and stylish bathrooms with smart storage. Call +91 94584 10866.",
 
-    url: "https://www.mtboss.in/interior-designer-for-bathroom-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-bathroom-in-bareilly",
 
     siteName: "MTBOSS Construction Private Limited",
 
     images: [
       {
-        url: "https://www.mtboss.in/og-interior-designer-bathroom-bareilly.jpg",
+        url: "https://www.MTBOSS.in/og-interior-designer-bathroom-bareilly.jpg",
         width: 1200,
         height: 630,
         alt: "Interior Designer for Bathroom in Bareilly - MTBOSS",
@@ -52,7 +52,7 @@ export const metadata = {
       "Looking for an interior designer for bathroom Bareilly? MTBOSS plans waterproof, anti-skid and stylish bathrooms with smart storage. Call +91 94584 10866.",
 
     images: [
-      "https://www.mtboss.in/og-interior-designer-bathroom-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-bathroom-bareilly.jpg",
     ],
   },
 
@@ -67,11 +67,11 @@ export default function Page() {
     "@context": "https://schema.org",
     "@type": "InteriorDesignService",
     name: "MTBOSS Construction Private Limited",
-    url: "https://www.mtboss.in/interior-designer-for-bathroom-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-bathroom-in-bareilly",
     telephone: "+91-9458410866",
-    email: "mtboss2016@gmail.com",
+    email: "MTBOSS2016@gmail.com",
     image:
-      "https://www.mtboss.in/og-interior-designer-bathroom-bareilly.jpg",
+      "https://www.MTBOSS.in/og-interior-designer-bathroom-bareilly.jpg",
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
@@ -116,13 +116,13 @@ export default function Page() {
     name: "Bathroom Interior Design and Renovation Services in Bareilly",
     description:
       "MTBOSS provides bathroom interior design and renovation services in Bareilly. Services include bathroom layout planning, waterproofing, floor slope and drainage, wall and floor tiling, sanitaryware installation, CP fittings, plumbing work, electrical work, vanity and storage, mirror and lighting, shower area and partition, ventilation, false ceiling and painting, door and window fitting, bathroom renovation and full home interiors.",
-    url: "https://www.mtboss.in/interior-designer-for-bathroom-in-bareilly",
+    url: "https://www.MTBOSS.in/interior-designer-for-bathroom-in-bareilly",
     provider: {
       "@type": "InteriorDesignService",
       name: "MTBOSS Construction Private Limited",
       telephone: "+91-9458410866",
-      email: "mtboss2016@gmail.com",
-      url: "https://www.mtboss.in",
+      email: "MTBOSS2016@gmail.com",
+      url: "https://www.MTBOSS.in",
     },
     areaServed: [
       {
@@ -217,19 +217,19 @@ export default function Page() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://www.mtboss.in/",
+        item: "https://www.MTBOSS.in/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Interior Design Services",
-        item: "https://www.mtboss.in/interior-design-services",
+        item: "https://www.MTBOSS.in/interior-design-services",
       },
       {
         "@type": "ListItem",
         position: 3,
         name: "Interior Designer for Bathroom in Bareilly",
-        item: "https://www.mtboss.in/interior-designer-for-bathroom-in-bareilly",
+        item: "https://www.MTBOSS.in/interior-designer-for-bathroom-in-bareilly",
       },
     ],
   };

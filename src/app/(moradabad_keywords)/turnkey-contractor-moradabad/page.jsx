@@ -6,23 +6,23 @@ import CalculatorCTA from '../../components/CalculatorCTA';
 import Services from '../../components/Services';
 
 export const metadata = {
-  title: 'Turnkey Contractor in Moradabad | MT Boss Construction',
+  title: 'Turnkey Contractor in Moradabad | MTBOSS Construction',
   description:
-    'Looking for a turnkey contractor in Moradabad? MT Boss handles design, construction and finishing in one package with transparent pricing and on-time handover.',
+    'Looking for a turnkey contractor in Moradabad? MTBOSS handles design, construction and finishing in one package with transparent pricing and on-time handover.',
   keywords:
-    'turnkey contractor Moradabad, turnkey construction Moradabad, turnkey house construction Moradabad, design and build contractor Moradabad, complete construction package Moradabad, turnkey home construction Moradabad, turnkey commercial construction Moradabad, construction company Moradabad, MT Boss Moradabad, MTBOSS Construction',
+    'turnkey contractor Moradabad, turnkey construction Moradabad, turnkey house construction Moradabad, design and build contractor Moradabad, complete construction package Moradabad, turnkey home construction Moradabad, turnkey commercial construction Moradabad, construction company Moradabad, MTBOSS Moradabad, MTBOSS Construction',
   alternates: {
-    canonical: 'https://www.mtboss.in/turnkey-contractor-moradabad',
+    canonical: 'https://www.MTBOSS.in/turnkey-contractor-moradabad',
   },
   openGraph: {
-    title: 'Turnkey Contractor in Moradabad | MT Boss Construction',
+    title: 'Turnkey Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a turnkey contractor in Moradabad? MT Boss handles design, construction and finishing in one package with transparent pricing and on-time handover.',
-    url: 'https://www.mtboss.in/turnkey-contractor-moradabad',
+      'Looking for a turnkey contractor in Moradabad? MTBOSS handles design, construction and finishing in one package with transparent pricing and on-time handover.',
+    url: 'https://www.MTBOSS.in/turnkey-contractor-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-turnkey-contractor-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-turnkey-contractor-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Turnkey Contractor in Moradabad - MTBOSS',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Turnkey Contractor in Moradabad | MT Boss Construction',
+    title: 'Turnkey Contractor in Moradabad | MTBOSS Construction',
     description:
-      'Looking for a turnkey contractor in Moradabad? MT Boss handles design, construction and finishing in one package with transparent pricing and on-time handover.',
-    images: ['https://www.mtboss.in/og-turnkey-contractor-moradabad.jpg'],
+      'Looking for a turnkey contractor in Moradabad? MTBOSS handles design, construction and finishing in one package with transparent pricing and on-time handover.',
+    images: ['https://www.MTBOSS.in/og-turnkey-contractor-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export default function Page() {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
-    url: 'https://www.mtboss.in/turnkey-contractor-moradabad',
+    url: 'https://www.MTBOSS.in/turnkey-contractor-moradabad',
     telephone: '+91-9458410866',
-    email: 'mtboss2016@gmail.com',
+    email: 'MTBOSS2016@gmail.com',
     address: {
       '@type': 'PostalAddress',
       streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

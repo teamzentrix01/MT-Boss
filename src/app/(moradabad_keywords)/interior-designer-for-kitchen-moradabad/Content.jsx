@@ -191,7 +191,7 @@ const Content = () => {
     },
   ];
 
-  const mtBossBenefits = [
+  const MTBOSSBenefits = [
     {
       title: "Construction-backed knowledge:",
       description:
@@ -298,8 +298,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Interior Designer for Kitchen in Moradabad: Smart, Durable and
-            Beautiful Kitchens by MT Boss
+            Interior Designer for Kitchen in Moradabad: MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -317,26 +316,13 @@ const Content = () => {
               </p>
 
               <p className="mt-3">
-                MT Boss, also known as MTBOSS Construction Private Limited, is
+                MTBOSS, also known as MTBOSS Construction Private Limited, is
                 a Moradabad-based construction and interiors company. We plan
                 kitchens with both the design side and the building side in
                 mind.
               </p>
 
-              <p className="mt-3">
-                Because we understand plumbing lines, electrical loads,
-                ventilation and wall structure, our kitchen designs are
-                practical as well as attractive.
-              </p>
-
-              <p className="mt-3">
-                Whether you are building a new home, renovating an old kitchen
-                or setting up a commercial kitchen, this guide explains what
-                you should know before hiring a kitchen interior designer in
-                Moradabad. You will learn about layouts, materials, storage,
-                appliances, lighting, Vastu, budget planning and how MT Boss
-                handles the process from start to finish.
-              </p>
+              
             </section>
 
             <section>
@@ -532,7 +518,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                Kitchen Materials: What Works Best in Moradabad Homes
+                Kitchen Materials:
               </SectionTitle>
 
               <div className="space-y-5">
@@ -718,7 +704,7 @@ const Content = () => {
               <p className="mt-4">
                 Our{" "}
                 <a
-                  href="https://www.mtboss.in/quick"
+                  href="https://www.MTBOSS.in/quick"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -806,7 +792,7 @@ const Content = () => {
               <p className="mt-4">
                 Learn more in our{" "}
                 <a
-                  href="https://www.mtboss.in/blog/vastu-shastra-principles-for-modern-home-architecture"
+                  href="https://www.MTBOSS.in/blog/vastu-shastra-principles-for-modern-home-architecture"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -867,7 +853,7 @@ const Content = () => {
               <p className="mt-4">
                 Use our{" "}
                 <a
-                  href="https://www.mtboss.in/calculator"
+                  href="https://www.MTBOSS.in/calculator"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -876,7 +862,7 @@ const Content = () => {
                 </a>{" "}
                 and read the{" "}
                 <a
-                  href="https://www.mtboss.in/blog/house-construction-cost-estimation-guide-india-2026"
+                  href="https://www.MTBOSS.in/blog/house-construction-cost-estimation-guide-india-2026"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -889,7 +875,7 @@ const Content = () => {
 
             <section>
               <SectionTitle>
-                How MT Boss Designs Your Kitchen: Step by Step
+                How MTBOSS Designs Your Kitchen: Step by Step
               </SectionTitle>
 
               <div className="space-y-5">
@@ -975,53 +961,21 @@ const Content = () => {
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 8: Carpentry and Installation
-                  </h4>
-                  <BulletList
-                    items={[
-                      "Cabinets, shutters, countertop and accessories are fitted by skilled workers.",
-                      "Supervisors check alignment, levels and finish.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 9: Final Inspection and Handover
-                  </h4>
-                  <BulletList
-                    items={[
-                      "We test drawers, hinges, lights, water flow and drainage.",
-                      "Any snags are corrected and the kitchen is cleaned before handover.",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
-                    Step 10: After-Service Support
-                  </h4>
-                  <p>
-                    For small repairs and adjustments, you can reach us by
-                    phone or WhatsApp.
-                  </p>
-                </div>
+                
               </div>
             </section>
 
             <section>
               <SectionTitle>
-                Why Choose MT Boss as Your Kitchen Interior Designer in
+                Why Choose MTBOSS as Your Kitchen Interior Designer in
                 Moradabad
               </SectionTitle>
-              <BulletList items={mtBossBenefits} />
+              <BulletList items={MTBOSSBenefits} />
 
               <p className="mt-4">
                 Explore materials through{" "}
                 <a
-                  href="https://www.mtboss.in/ShopNow"
+                  href="https://www.MTBOSS.in/ShopNow"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1030,7 +984,7 @@ const Content = () => {
                 </a>
                 , find tradespeople through our{" "}
                 <a
-                  href="https://www.mtboss.in/Services/professionals"
+                  href="https://www.MTBOSS.in/Services/professionals"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1039,7 +993,7 @@ const Content = () => {
                 </a>
                 , and view completed work in our{" "}
                 <a
-                  href="https://www.mtboss.in/FeaturedProjects/ProjectGallery"
+                  href="https://www.MTBOSS.in/FeaturedProjects/ProjectGallery"
                   className="text-blue-600 underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1104,7 +1058,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Kitchen Design Trends in Moradabad for 2026</SectionTitle>
+              <SectionTitle>Kitchen Design Trends in Moradabad </SectionTitle>
               <BulletList
                 items={[
                   {
@@ -1157,7 +1111,7 @@ const Content = () => {
             </section>
 
             <section>
-              <SectionTitle>Contact MT Boss for Your Kitchen Project</SectionTitle>
+              <SectionTitle>Contact MTBOSS for Your Kitchen Project</SectionTitle>
               <p className="mb-3">
                 Share kitchen photos or measurements, your preferred layout,
                 style and budget. You will receive a clear discussion, a site
@@ -1180,10 +1134,10 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
@@ -1193,7 +1147,7 @@ const Content = () => {
                 <li>
                   <strong>Contact Page:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/contact"
+                    href="https://www.MTBOSS.in/contact"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"

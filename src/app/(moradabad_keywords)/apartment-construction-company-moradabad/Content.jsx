@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="order-1 flex-1 px-4 py-12 sm:px-8 md:px-16 lg:order-1">
           <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
-            Apartment Construction Company in Moradabad: Multi-Storey Homes
-            Planned for Living, Selling and Lasting
+            Apartment Construction Company in Moradabad:
           </h2>
 
           <div className="max-w-4xl space-y-6 leading-relaxed text-gray-700">
@@ -36,36 +35,6 @@ const Content = () => {
                 villas, along with commercial, hospitality, institutional and
                 industrial work, serving Moradabad and Bareilly with quality
                 work, transparent pricing and on-time delivery.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="mb-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-                Who Builds Apartments, and Why It Matters to Plan Early
-              </h3>
-
-              <ul className="ml-4 list-inside list-disc space-y-2">
-                <li>
-                  Landowners converting a plot into a multi-storey building of
-                  flats.
-                </li>
-                <li>
-                  Developers and investors building flats for sale or rent.
-                </li>
-                <li>
-                  Families constructing a building where each floor or flat is
-                  for a family member or tenant.
-                </li>
-                <li>
-                  Joint ventures between landowners and builders.
-                </li>
-              </ul>
-
-              <p className="mt-3">
-                In every case, early decisions about the number of flats,
-                floors, parking and common areas lock in most of the cost and
-                value of the project, so it pays to plan with an experienced
-                team before construction starts.
               </p>
             </section>
 
@@ -127,15 +96,7 @@ const Content = () => {
                   <strong>Flooring and finishing:</strong> Tile and marble work,
                   paint, false ceilings, doors, windows and fixtures.
                 </li>
-                <li>
-                  <strong>Facade and elevation:</strong> Exterior design and
-                  finishing that gives the building a clean, attractive
-                  identity.
-                </li>
-                <li>
-                  <strong>Parking and external works:</strong> Parking areas,
-                  paving, drainage, boundary wall and gate.
-                </li>
+              
                 <li>
                   <strong>Interior coordination:</strong> Modular kitchens and
                   interior planning where included in the scope.
@@ -321,26 +282,6 @@ const Content = () => {
                   <strong>Step 6 — Scope and agreement:</strong> Scope,
                   specifications, timeline and payment stages are documented.
                 </li>
-                <li>
-                  <strong>Step 7 — Foundation and structure:</strong>
-                  Excavation, foundations and the RCC frame are built floor by
-                  floor under supervision.
-                </li>
-                <li>
-                  <strong>Step 8 — Masonry and services:</strong> Walls,
-                  conduits, plumbing lines and waterproofing are completed in a
-                  planned sequence.
-                </li>
-                <li>
-                  <strong>Step 9 — Finishing and common areas:</strong>
-                  Flooring, plaster, paint, doors, windows, staircases and
-                  facade are completed.
-                </li>
-                <li>
-                  <strong>Step 10 — Inspection and handover:</strong> Final
-                  walkthrough and snag correction before handover, flat by flat
-                  where applicable.
-                </li>
               </ul>
             </section>
 
@@ -435,19 +376,6 @@ const Content = () => {
                 <li>
                   <strong>Parking:</strong> Covered or basement parking costs
                   more than open parking.
-                </li>
-                <li>
-                  <strong>Finishing level:</strong> Basic, standard and premium
-                  finishing change the cost significantly.
-                </li>
-                <li>
-                  <strong>Facade and common area finish:</strong> Entrances,
-                  staircases and elevation influence both cost and market
-                  appeal.
-                </li>
-                <li>
-                  <strong>Site conditions:</strong> Soil, plot shape and road
-                  access affect foundation and transport cost.
                 </li>
                 <li>
                   <strong>Material quality:</strong> The grade of cement, steel,
@@ -644,21 +572,21 @@ const Content = () => {
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in"
+                    href="https://www.MTBOSS.in"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in
+                    https://www.MTBOSS.in
                   </a>
                 </li>
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>

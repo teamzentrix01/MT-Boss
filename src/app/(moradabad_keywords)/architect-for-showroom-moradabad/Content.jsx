@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Showroom in Moradabad: Design and Build with MT Boss
+            Architect for Showroom in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -17,18 +17,13 @@ const Content = () => {
               <p>
                 A showroom sells before a salesperson says a word. The façade draws
                 people in, the lighting shapes how products look, and the layout decides
-                whether customers browse for two minutes or twenty. In a busy market like
-                Moradabad, where competition for footfall is strong, the right architect
-                for showroom Moradabad can make the difference between a store that people
-                pass by and a store that people remember.
+                whether customers browse for two minutes or twenty. 
               </p>
               <p className="mt-3">
-                MT Boss is a construction company serving Moradabad and Bareilly with
+                MTBOSS is a construction company serving Moradabad and Bareilly with
                 commercial, residential, hospitality and industrial projects. We handle
                 architecture, interior design, construction, modular work and waterproofing
-                under one team. That means your showroom moves from a plot or an empty
-                shell to a finished, branded, ready-to-open space without gaps between
-                designer and builder.
+                under one team. 
               </p>
               <p className="mt-3">
                 This guide explains what a showroom architect does, which showroom types
@@ -148,7 +143,7 @@ const Content = () => {
                 Showroom Architecture Services We Provide
               </h3>
               <p className="mb-3">
-                You can hire MT Boss for a single stage or for the complete journey from
+                You can hire MTBOSS for a single stage or for the complete journey from
                 concept to opening day.
               </p>
 
@@ -203,7 +198,7 @@ const Content = () => {
                 Construction and Project Management
               </h4>
               <p>
-                MT Boss builds what we design. Our engineers and site supervisors manage
+                MTBOSS builds what we design. Our engineers and site supervisors manage
                 materials, labour, schedules and quality checks, and keep you updated at
                 each stage.
               </p>
@@ -303,7 +298,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Our Showroom Design Process at MT Boss
+                Our Showroom Design Process at MTBOSS
               </h3>
               <p className="mb-3">
                 A clear process saves time and money. Here is how we handle a showroom
@@ -333,58 +328,14 @@ const Content = () => {
                   itemised estimate covering materials, labour and finishing. You can also
                   try the{" "}
                   <a href="/calculator" className="text-blue-600 underline">
-                    MT Boss construction cost calculator
+                    MTBOSS construction cost calculator
                   </a>{" "}
                   for an early idea.
                 </li>
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                What Should You Consider Before Designing a Showroom?
-              </h3>
-              <p className="mb-3">
-                Planning ahead prevents expensive corrections later. Think through these
-                points before you meet your architect.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Location and visibility.</strong> Study road frontage, traffic
-                  direction, nearby competitors and how far your signage can be seen.
-                </li>
-                <li>
-                  <strong>Target customers.</strong> A premium jewellery showroom and a
-                  family furniture store need very different atmospheres.
-                </li>
-                <li>
-                  <strong>Product range and display needs.</strong> Measure your largest
-                  products, count your categories and decide how much stock you want on
-                  display versus in storage.
-                </li>
-                <li>
-                  <strong>Brand identity.</strong> Decide your colours, style and message
-                  so that the design reflects your brand consistently.
-                </li>
-                <li>
-                  <strong>Budget.</strong> Set a realistic total budget covering
-                  construction, interiors, lighting, furniture, signage and contingency.
-                </li>
-                <li>
-                  <strong>Timeline.</strong> Plan around your target opening date,
-                  festival seasons or brand launch schedule.
-                </li>
-                <li>
-                  <strong>Approvals and rules.</strong> Confirm building norms, signage
-                  regulations, parking requirements and any franchise design guidelines
-                  with the relevant authorities and your brand partner.
-                </li>
-                <li>
-                  <strong>Future growth.</strong> Think about whether you may add
-                  products, floors or branches later.
-                </li>
-              </ul>
-            </section>
+            
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -455,7 +406,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss: A Reliable Partner for Showroom Projects
+                 A Reliable Partner for Showroom Projects
               </h3>
               <p className="mb-3">
                 Choosing a partner for a showroom is a serious business decision. These
@@ -497,7 +448,7 @@ const Content = () => {
               </ul>
               <p className="mt-3">
                 If you are searching for an architect for showroom Moradabad who can take
-                you from idea to grand opening, MT Boss offers both the design skill and
+                you from idea to grand opening, MTBOSS offers both the design skill and
                 the construction capability to deliver.
               </p>
             </section>
@@ -545,46 +496,7 @@ const Content = () => {
               </p>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Common Mistakes to Avoid When Building a Showroom
-              </h3>
-              <p className="mb-3">
-                Learning from the mistakes of other owners can save a great deal of money
-                and time.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  <strong>Choosing a location without checking visibility.</strong> A
-                  showroom hidden behind a divider or a narrow lane loses customers no
-                  matter how good the design is.
-                </li>
-                <li>
-                  <strong>Ignoring parking.</strong> Difficult parking pushes customers to
-                  competitors.
-                </li>
-                <li>
-                  <strong>Poor lighting.</strong> Dull or harsh lighting makes products
-                  look cheap.
-                </li>
-                <li>
-                  <strong>Cluttered layouts.</strong> Too many displays confuse customers
-                  and slow down decisions.
-                </li>
-                <li>
-                  <strong>Skipping the 3D design stage.</strong> Without visualisation,
-                  you may discover problems only after construction.
-                </li>
-                <li>
-                  <strong>Underestimating the budget.</strong> Forgetting signage,
-                  furniture, lighting and air conditioning leads to sudden overspending.
-                </li>
-                <li>
-                  <strong>Hiring unconnected teams.</strong> When designer, contractor and
-                  interior team do not coordinate, errors and delays multiply.
-                </li>
-              </ul>
-            </section>
+          
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -638,7 +550,7 @@ const Content = () => {
               </p>
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Contact MT Boss
+                Contact MTBOSS
               </h4>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -655,21 +567,21 @@ const Content = () => {
                 <li>
                   <strong>Email:</strong>{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                 </li>
                 <li>
                   <strong>Website:</strong>{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    https://www.mtboss.in/
+                    https://www.MTBOSS.in/
                   </a>
                 </li>
                 <li>
@@ -703,9 +615,9 @@ const Content = () => {
                   and prepares drawings for construction.
                 </li>
                 <li>
-                  <strong>Q2. Does MT Boss handle both design and construction?</strong>
+                  <strong>Q2. Does MTBOSS handle both design and construction?</strong>
                   <br />
-                  Yes. MT Boss manages architecture, interiors, construction and
+                  Yes. MTBOSS manages architecture, interiors, construction and
                   waterproofing under one team.
                 </li>
                 <li>
@@ -755,7 +667,7 @@ const Content = () => {
                 </li>
                 <li>
                   <strong>
-                    Q10. How can I contact MT Boss for a showroom project?
+                    Q10. How can I contact MTBOSS for a showroom project?
                   </strong>
                   <br />
                   Call or WhatsApp{" "}
@@ -769,19 +681,19 @@ const Content = () => {
                   </a>
                   , email{" "}
                   <a
-                    href="mailto:mtboss2016@gmail.com"
+                    href="mailto:MTBOSS2016@gmail.com"
                     className="text-blue-600 underline"
                   >
-                    mtboss2016@gmail.com
+                    MTBOSS2016@gmail.com
                   </a>
                   , or request a quote at{" "}
                   <a
-                    href="https://www.mtboss.in/"
+                    href="https://www.MTBOSS.in/"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    mtboss.in
+                    MTBOSS.in
                   </a>
                   .
                 </li>

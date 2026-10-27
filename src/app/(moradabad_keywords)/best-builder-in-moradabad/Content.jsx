@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Best Builder in Moradabad — How to Find the Right One for Your Project
+            Best Builder in Moradabad:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
@@ -22,9 +22,7 @@ const Content = () => {
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
                 What Makes a Builder the &quot;Best&quot; in a City Like Moradabad?
               </h3>
-              <p className="mb-3">
-                Not every builder who advertises as &quot;the best&quot; actually earns that title. The genuine top-tier builders share certain traits:
-              </p>
+
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>Long-standing track record with a large number of completed projects</li>
                 <li>Transparent, itemized cost estimates instead of vague lump-sum quotes</li>
@@ -61,7 +59,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why Moradabad Residents Need the Best Builder — Not Just Any Builder
+                Why Moradabad Residents Need the Best Builder 
               </h3>
               <p className="mb-3">
                 Choosing an inexperienced or unverified builder in a fast-growing city like Moradabad carries real risks:
@@ -131,33 +129,7 @@ const Content = () => {
               </ul>
             </section>
 
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MTBOSS Is Considered Among the Best Builders in Moradabad
-              </h3>
-              <p className="mb-3">
-                Based on their published company profile, MTBOSS Construction Private Limited checks nearly every box on the &quot;best builder&quot; checklist:
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>22+ years of industry experience, founded in 2002 as a small contracting firm</li>
-                <li>450+ successfully completed projects across residential, commercial, and industrial sectors</li>
-                <li>12 million+ square feet built, demonstrating large-project capability</li>
-                <li>150+ skilled professionals, including engineers, supervisors, and technicians</li>
-                <li>Free Construction Budget Calculator for instant, city-specific BOQ estimates</li>
-                <li>Four quality tiers — Basic, Standard, Premium, and Luxury — matching every budget</li>
-                <li>Doorstep home services covering electricians, plumbers, AC technicians, and pest control</li>
-                <li>Verified property marketplace for buying, selling, and renting with zero rental brokerage</li>
-                <li>Direct wholesale material supply for cement, steel, bricks, tiles, and paints</li>
-                <li>Franchise opportunities for entrepreneurs wanting to build a construction business under a known brand</li>
-                <li>Agent commission programs with payouts for property, construction, and franchise referrals</li>
-                <li>Technology-driven process, integrating AI and BIM since 2018</li>
-                <li>Recognized achievement — &quot;Most Sustainable Infrastructure Company,&quot; Northern Region, 2024</li>
-                <li>Instant WhatsApp support for quick quotes and follow-ups</li>
-              </ul>
-              <p className="mt-3">
-                This combination of scale, transparency, technology, and service variety is exactly what separates a top-tier builder from a purely local, single-service contractor.
-              </p>
-            </section>
+           
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
@@ -259,8 +231,8 @@ const Content = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li><strong>Company:</strong> MTBOSS Construction Private Limited</li>
-                <li><strong>Website:</strong> <a href="https://www.mtboss.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.mtboss.in</a></li>
-                <li><strong>Email:</strong> <a href="mailto:mtboss2016@gmail.com" className="text-blue-600 underline">mtboss2016@gmail.com</a></li>
+                <li><strong>Website:</strong> <a href="https://www.MTBOSS.in" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">https://www.MTBOSS.in</a></li>
+                <li><strong>Email:</strong> <a href="mailto:MTBOSS2016@gmail.com" className="text-blue-600 underline">MTBOSS2016@gmail.com</a></li>
                 <li><strong>Phone / Call:</strong> +91 94584 10866</li>
                 <li><strong>WhatsApp:</strong> <a href="https://wa.me/9458410866" className="text-blue-600 underline" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></li>
                 <li><strong>Office Address:</strong> Harthala Kanth Road, Behind Kr Collection, near Domino&apos;s, Moradabad, Uttar Pradesh, India</li>

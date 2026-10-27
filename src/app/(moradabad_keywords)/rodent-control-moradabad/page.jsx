@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'rodent control Moradabad, rat control Moradabad, mice control Moradabad, rat removal Moradabad, rodent pest control Moradabad, rat proofing Moradabad, rodent control near me Moradabad, rat control for godowns Moradabad, rodent control for shops Moradabad, MTBOSS rodent control Moradabad',
   alternates: {
-    canonical: 'https://www.mtboss.in/rodent-control-moradabad',
+    canonical: 'https://www.MTBOSS.in/rodent-control-moradabad',
   },
   openGraph: {
     title: 'Rodent Control in Moradabad',
     description:
       'Professional rodent control in Moradabad for homes, shops and godowns. MTBOSS offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
-    url: 'https://www.mtboss.in/rodent-control-moradabad',
+    url: 'https://www.MTBOSS.in/rodent-control-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-rodent-control-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-rodent-control-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Rodent Control in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Rodent Control in Moradabad',
     description:
       'Professional rodent control in Moradabad for homes, shops and godowns. MTBOSS offers inspection, rat removal, sealing and prevention. Book by call or WhatsApp.',
-    images: ['https://www.mtboss.in/og-rodent-control-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-rodent-control-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/rodent-control-moradabad',
+  url: 'https://www.MTBOSS.in/rodent-control-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

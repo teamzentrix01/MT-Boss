@@ -12,17 +12,17 @@ export const metadata = {
   keywords:
     'civil construction in Moradabad, civil construction company Moradabad, construction services Moradabad, civil engineering Moradabad, building construction Moradabad, industrial construction Moradabad, residential civil work Moradabad, commercial construction Moradabad, MTBOSS Moradabad, construction company near me',
   alternates: {
-    canonical: 'https://www.mtboss.in/civil-construction-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
   },
   openGraph: {
     title: 'Civil Construction in Moradabad | MTBOSS Construction Company',
     description:
       'Planning civil construction in Moradabad? MTBOSS offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
-    url: 'https://www.mtboss.in/civil-construction-in-moradabad',
+    url: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.mtboss.in/og-civil-construction-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-civil-construction-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Civil Construction in Moradabad - MTBOSS',
@@ -36,7 +36,7 @@ export const metadata = {
     title: 'Civil Construction in Moradabad | MTBOSS Construction Company',
     description:
       'Planning civil construction in Moradabad? MTBOSS offers residential, commercial & industrial building solutions with transparent pricing. Get a free quote!',
-    images: ['https://www.mtboss.in/og-civil-construction-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-civil-construction-moradabad.jpg'],
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.mtboss.in/civil-construction-in-moradabad',
+  url: 'https://www.MTBOSS.in/civil-construction-in-moradabad',
   telephone: '+91-9458410866',
-  email: 'mtboss2016@gmail.com',
+  email: 'MTBOSS2016@gmail.com',
   address: {
     '@type': 'PostalAddress',
     streetAddress: "Harthala Kanth Road, Behind Kr Collection, near Domino's",

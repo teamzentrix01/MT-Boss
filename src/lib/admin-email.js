@@ -1,4 +1,4 @@
-const LEGACY_ADMIN_EMAILS = ['admin@mtboss.in'];
+const LEGACY_ADMIN_EMAILS = ['admin@MTBOSS.in'];
 
 export function isAdminEmail(email) {
   const normalized = String(email || '').trim().toLowerCase();

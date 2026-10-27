@@ -9,7 +9,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Top Architect in Moradabad: MT Boss
+            Top Architect in Moradabad: MTBOSS
           </h2>
 
 
@@ -19,17 +19,17 @@ const Content = () => {
                 When people search for a top architect in Moradabad, they are usually at an important moment. A plot has been bought, a shop is being planned or an old house needs a fresh start, and the next decision will shape the project for years. The right architect makes the building safer, cheaper to run and easier to live in. The wrong one leaves you with change orders, wasted space and repair bills.
               </p>
               <p className="mt-3">
-                MT Boss is a Moradabad-based construction, property and home services company. Our team plans and designs homes, shops, showrooms, hotels, schools and industrial buildings, and then builds them. Because design and construction sit under one roof, you deal with one accountable team from the first sketch to the final handover.
+                MTBOSS is a Moradabad-based construction, property and home services company. Our team plans and designs homes, shops, showrooms, hotels, schools and industrial buildings, and then builds them. Because design and construction sit under one roof, you deal with one accountable team from the first sketch to the final handover.
               </p>
               <p className="mt-3">
-                This page shows what separates a top architect from an average one, what MT Boss delivers and how to shortlist professionals with confidence.
+                This page shows what separates a top architect from an average one, what MTBOSS delivers and how to shortlist professionals with confidence.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Qualities That Define a Top Architect in Moradabad
+              Define a Top Architect in Moradabad
               </h3>
               <p className="mb-3">
                 Rankings and advertisements say little. These practical qualities say a lot.
@@ -51,24 +51,21 @@ const Content = () => {
                   <strong>Climate-smart thinking.</strong> The design should keep the building cooler in summer, dry in the monsoon and comfortable in winter.
                 </li>
                 <li>
-                  <strong>Clear, regular communication.</strong> You should always know what is being designed, what it costs and what happens next.
-                </li>
-                <li>
                   <strong>Responsibility after the drawing.</strong> What is built on site matters more than what is drawn on paper.
                 </li>
               </ul>
               <p className="mt-3">
-                MT Boss builds its way of working around these qualities.
+                MTBOSS builds its way of working around these qualities.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Why MT Boss Is a Top Architect Choice in Moradabad
+                Why MTBOSS Is a Top Architect Choice in Moradabad
               </h3>
               <p className="mb-3">
-                MT Boss is a construction company first, and that shapes how we design.
+                MTBOSS is a construction company first, and that shapes how we design.
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -84,9 +81,9 @@ const Content = () => {
                   <strong>Local understanding.</strong> We know Moradabad&apos;s climate, plot patterns, material markets and lifestyle.
                 </li>
                 <li>
-                  <strong>Material access.</strong> Through the MT Boss{" "}
+                  <strong>Material access.</strong> Through the MTBOSS{" "}
                   <a
-                    href="https://www.mtboss.in/ShopNow"
+                    href="https://www.MTBOSS.in/ShopNow"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -98,7 +95,7 @@ const Content = () => {
                 <li>
                   <strong>Support after handover.</strong> Our{" "}
                   <a
-                    href="https://www.mtboss.in/quick"
+                    href="https://www.MTBOSS.in/quick"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -113,17 +110,8 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Architectural Services by MT Boss
+                Architectural Services by MTBOSS
               </h3>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                House Design and Floor Planning
-              </h4>
-              <p className="mb-3">
-                We design independent houses, duplexes, villas, farmhouses and builder floors. Every plan starts with your family size, lifestyle and budget, and is shaped for light, airflow, privacy and storage. We are used to the small and irregular plots common in older localities and newer colonies.
-              </p>
-
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 3D Elevation and Exterior Design
@@ -139,24 +127,12 @@ const Content = () => {
               <p className="mb-3">
                 We design shops, showrooms, offices, clinics and restaurants with attention to visibility, customer flow, parking and fire safety.
               </p>
-
-
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Hotels, Resorts and Banquet Spaces
-              </h4>
-              <p className="mb-3">
-                We plan room mix, lobby flow, dining, banquet halls and back-of-house areas so that hospitality buildings work well for guests and staff.
-              </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Schools and Educational Buildings
               </h4>
               <p className="mb-3">
                 We design classrooms, labs, playgrounds and circulation with safety, supervision and future expansion in mind.
               </p>
-
-
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Industrial and Warehouse Buildings
               </h4>
@@ -173,19 +149,12 @@ const Content = () => {
               </p>
 
 
-              <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
-                Renovation, Extension and Additional Floors
-              </h4>
-              <p className="mb-3">
-                We assess your existing structure and redesign it to add space, improve light and refresh the look, without unnecessary demolition.
-              </p>
-
 
               <h4 className="text-lg font-semibold text-gray-900 mt-4 mb-2">
                 Interior Design Coordination
               </h4>
               <p className="mb-3">
-                Because MT Boss also offers interiors, your architectural and interior plans can be developed together for a seamless result.
+                Because MTBOSS also offers interiors, your architectural and interior plans can be developed together for a seamless result.
               </p>
             </section>
 
@@ -203,21 +172,17 @@ const Content = () => {
                 <li>3D views that show the finished look before you commit.</li>
                 <li>Working drawings with dimensions, sections and details that workers can follow.</li>
                 <li>Coordination with engineers for structure, electrical and plumbing design.</li>
-                <li>A bill of quantities or itemised estimate, so costs are visible.</li>
-                <li>Material and finish guidance, balancing looks, durability and budget.</li>
-                <li>Approvals guidance, helping you understand the documents typically needed.</li>
+                
                 <li>Site visits and supervision, so the building matches the drawings.</li>
                 <li>Honest advice, including telling you when an idea is too costly or unsafe.</li>
               </ul>
-              <p className="mt-3">
-                MT Boss delivers all of these as part of a complete project, not as extras.
-              </p>
+             
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Design and Construction Process
+                MTBOSS Design and Construction Process
               </h3>
               <p className="mb-3">
                 We keep the process clear so you always know what comes next.
@@ -236,9 +201,9 @@ const Content = () => {
                   <strong>Step 4: Approvals guidance.</strong> We guide you on the drawings and documents typically needed for local approvals. Requirements vary by project and area, so please confirm final rules with the relevant authorities.
                 </li>
                 <li>
-                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MT Boss{" "}
+                  <strong>Step 5: Budget and quotation.</strong> You receive a clear written estimate. For a quick early figure, try the MTBOSS{" "}
                   <a
-                    href="https://www.mtboss.in/calculator"
+                    href="https://www.MTBOSS.in/calculator"
                     className="text-blue-600 underline"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -248,7 +213,7 @@ const Content = () => {
                   .
                 </li>
                 <li>
-                  <strong>Step 6: Construction and supervision.</strong> If you choose MT Boss for construction, our team builds exactly to the approved design with regular site checks.
+                  <strong>Step 6: Construction and supervision.</strong> If you choose MTBOSS for construction, our team builds exactly to the approved design with regular site checks.
                 </li>
                 <li>
                   <strong>Step 7: Finishing and handover.</strong> We complete finishing, inspection and cleaning, and hand over a building that is ready to use.
@@ -287,21 +252,7 @@ const Content = () => {
                   <strong>Scope of service:</strong> design only, or design with construction and interiors.
                 </li>
               </ul>
-              <p className="mt-3">
-                Architect fees are usually a small share of the total project cost, and good planning often saves far more than the fee through less rework and wastage. Be cautious of fees or quotes that look unrealistically low, since they often lead to missing details or extra charges later.
-              </p>
-              <p className="mt-3">
-                MT Boss provides an itemised quote so there are no hidden charges. For a personal estimate, request a{" "}
-                <a
-                  href="https://www.mtboss.in/CTASection/get-quote"
-                  className="text-blue-600 underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  free quote
-                </a>
-                .
-              </p>
+
             </section>
 
 
@@ -310,7 +261,7 @@ const Content = () => {
                 Climate-Smart Design for Moradabad
               </h3>
               <p className="mb-3">
-                Good architecture responds to its surroundings. For projects in Moradabad, MT Boss focuses on:
+                Good architecture responds to its surroundings. For projects in Moradabad, MTBOSS focuses on:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -435,14 +386,14 @@ const Content = () => {
                 </li>
               </ul>
               <p className="mt-3">
-                A trustworthy architect welcomes these checks, and MT Boss answers each of them openly during your free consultation.
+                A trustworthy architect welcomes these checks, and MTBOSS answers each of them openly during your free consultation.
               </p>
             </section>
 
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Areas Served by MT Boss in Moradabad
+                Areas Served by MTBOSS in Moradabad
               </h3>
               <p className="mb-3">
                 We work with home and business owners across Moradabad, including areas such as Civil Lines, Kanth Road, Delhi Road, Ramganga Vihar, Buddhi Vihar, Lajpat Nagar, Katghar, Line Par and Gandhi Nagar, along with nearby colonies and commercial belts.
@@ -455,21 +406,21 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                MT Boss Architect FAQs
+                MTBOSS Architect FAQs
               </h3>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>
-                  <strong>Q1. Does MT Boss offer architect services in Moradabad?</strong>
+                  <strong>Q1. Does MTBOSS offer architect services in Moradabad?</strong>
                   <br />
                   Yes. We handle house plans, 3D elevations, commercial design and construction.
                 </li>
                 <li>
                   <strong>Q2. Is the first consultation free?</strong>
                   <br />
-                  Yes. MT Boss offers a free consultation and site visit.
+                  Yes. MTBOSS offers a free consultation and site visit.
                 </li>
                 <li>
-                  <strong>Q3. Can MT Boss also build my project?</strong>
+                  <strong>Q3. Can MTBOSS also build my project?</strong>
                   <br />
                   Yes. We provide complete design-and-build services, from planning to handover.
                 </li>
@@ -504,7 +455,7 @@ const Content = () => {
                   Yes. You get a written breakup of materials, labour and finishes.
                 </li>
                 <li>
-                  <strong>Q10. How do I contact MT Boss?</strong>
+                  <strong>Q10. How do I contact MTBOSS?</strong>
                   <br />
                   Call or WhatsApp <strong>+91 94584 10866</strong>, or fill in the online quote form on our website.
                 </li>
