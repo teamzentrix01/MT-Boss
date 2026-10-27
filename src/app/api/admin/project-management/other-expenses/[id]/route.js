@@ -66,13 +66,46 @@ export async function PATCH(req, { params }) {
 
       const storedNote = itemName ? (noteText ? `[Item: ${itemName}] ${noteText}` : `[Item: ${itemName}]`) : (noteText || null);
 
-      const r = await c.query(
-        `UPDATE pm_other_expenses
-         SET amount = $1, category = $2, expense_date = $3, note = $4
-         WHERE id = $5
-         RETURNING *`,
-        [amt, cat, b.expense_date, storedNote, id]
-      );
+      if (['tools', 'rent'].includes(cat)) {
+        try {
+          await pool.query(
+            `ALTER TABLE pm_other_expenses DROP CONSTRAINT IF EXISTS pm_other_expenses_category_check;
+             ALTER TABLE pm_other_expenses ADD CONSTRAINT pm_other_expenses_category_check CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent'))`
+          );
+        } catch {}
+      }
+
+      let r;
+      await c.query('SAVEPOINT oe_update');
+      try {
+        r = await c.query(
+          `UPDATE pm_other_expenses
+           SET amount = $1, category = $2, expense_date = $3, note = $4
+           WHERE id = $5
+           RETURNING *`,
+          [amt, cat, b.expense_date, storedNote, id]
+        );
+        await c.query('RELEASE SAVEPOINT oe_update');
+      } catch (updateErr) {
+        if (
+          updateErr &&
+          (updateErr.code === '23514' ||
+            (updateErr.message && updateErr.message.includes('pm_other_expenses_category_check')))
+        ) {
+          await c.query('ROLLBACK TO SAVEPOINT oe_update');
+          const fallbackCat = cat === 'rent' ? 'machine_rent' : 'misc';
+          const fallbackNote = `[Category: ${cat}] ${storedNote || ''}`.trim();
+          r = await c.query(
+            `UPDATE pm_other_expenses
+             SET amount = $1, category = $2, expense_date = $3, note = $4
+             WHERE id = $5
+             RETURNING *`,
+            [amt, fallbackCat, b.expense_date, fallbackNote, id]
+          );
+        } else {
+          throw updateErr;
+        }
+      }
 
       const actor = actorFromAdmin(auth.user);
       await writePmPhase2Audit(c, 'pm_other_expenses', id, 'updated', actor, old, r.rows[0]);
@@ -83,6 +116,7 @@ export async function PATCH(req, { params }) {
         success: true,
         data: {
           ...saved,
+          category: cat,
           item_name: itemName || null,
           display_note: noteText || null,
         }

@@ -233,23 +233,28 @@ const matchesContractorType = (trade, filter) => {
 const usedBlank = { material_id: '', material_name: '', unit: 'bags', quantity: '', used_date: today(), used_for: '', note: '' };
 const adjustmentBlank = { material_id: '', material_name: '', unit: 'bags', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', item_name: '', amount: '', expense_date: today(), note: '' };
+const commissionBlank = { commission_date: today(), person_name: '', amount: '', note: '' };
 
 export function parseExpenseItem(row) {
-  if (!row) return { item_name: '', note: '' };
-  if (row.item_name) {
-    return {
-      item_name: String(row.item_name).trim(),
-      note: String(row.display_note || row.note || '').trim(),
-    };
+  if (!row) return { category: '', item_name: '', note: '' };
+  let category = row.category || '';
+  let rawNote = String(row.display_note || row.note || '').trim();
+
+  const catMatch = rawNote.match(/^\[Category:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+  if (catMatch) {
+    category = catMatch[1].trim();
+    rawNote = (catMatch[2] || '').trim();
   }
-  const match = String(row.note || '').match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
-  if (match) {
-    return {
-      item_name: match[1].trim(),
-      note: (match[2] || '').trim(),
-    };
+
+  let item_name = row.item_name ? String(row.item_name).trim() : '';
+  if (!item_name && rawNote) {
+    const match = rawNote.match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+    if (match) {
+      item_name = match[1].trim();
+      rawNote = (match[2] || '').trim();
+    }
   }
-  return { item_name: '', note: String(row.note || '').trim() };
+  return { category, item_name, note: rawNote };
 }
 
 export function packExpenseNote(itemName, noteText) {
@@ -335,6 +340,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (!isAgent || agentSpecs.includes('construction') || agentSpecs.includes('payments')) {
       tabs.push('suppliers');
     }
+    tabs.push('commission');
     return tabs;
   }, [isAgent, isSupervisor, agentSpecs]);
 
@@ -361,6 +367,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'payments' || s === 'payment') return 'payments';
     if (s === 'construction' || s === 'materials' || s === 'expenses') return 'construction';
     if (s === 'suppliers' || s === 'supplier') return 'suppliers';
+    if (s === 'commission' || s === 'commissions') return 'commission';
     return null;
   };
 
@@ -728,6 +735,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [expenseForm, setExpenseForm] = useState(expenseBlank);
   const [editingExpenseId, setEditingExpenseId] = useState(null);
 
+  // ── Commission State ───────────────────────────────────────────────────────
+  const [commissionRows, setCommissionRows] = useState([]);
+  const [commissionSummary, setCommissionSummary] = useState({ totalAmount: 0 });
+  const [commissionSearch, setCommissionSearch] = useState('');
+  const [commissionModal, setCommissionModal] = useState(false);
+  const [commissionForm, setCommissionForm] = useState(commissionBlank);
+  const [editingCommissionId, setEditingCommissionId] = useState(null);
+
   const expenseItemSuggestions = useMemo(() => {
     const set = new Set();
     (expenseRows || []).forEach((row) => {
@@ -856,13 +871,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const pid = projId || project?.id;
     if (!pid) return;
     try {
-      const [mRes, stRes, rcRes, usRes, adRes, expRes] = await Promise.all([
+      const [mRes, stRes, rcRes, usRes, adRes, expRes, comRes] = await Promise.all([
         api('/api/admin/project-management/materials?pageSize=100').catch(() => ({ data: [] })),
         api(`/api/admin/project-management/stock?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-received?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-used?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-adjustments?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/other-expenses?projectId=${pid}&pageSize=100`).catch(() => ({ data: [], summary: {} })),
+        api(`/api/admin/project-management/commissions?projectId=${pid}&pageSize=100`).catch(() => ({ data: [], summary: {} })),
       ]);
 
       setMaterialsMaster(mRes.data || []);
@@ -872,6 +888,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setAdjustmentRows(adRes.data || []);
       setExpenseRows(expRes.data || []);
       setExpenseSummary(expRes.summary || { totalAmount: 0 });
+      setCommissionRows(comRes.data || []);
+      setCommissionSummary(comRes.summary || { totalAmount: 0 });
     } catch (e) {
       console.error('Error loading Phase 3 data:', e);
     }
@@ -1480,6 +1498,86 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   };
 
+  // ── Save Commission Entry ───────────────────────────────────────────────────
+  const saveCommissionEntry = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+
+    const personName = String(commissionForm.person_name || '').trim();
+    const amt = Number(commissionForm.amount);
+    const dateStr = String(commissionForm.commission_date || '').trim();
+
+    if (!personName) {
+      const err = 'Person Name is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+    if (!Number.isFinite(amt) || amt <= 0) {
+      const err = 'Valid commission amount is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+    if (!dateStr) {
+      const err = 'Date is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+
+    const payload = {
+      project_id: project.id,
+      person_name: personName,
+      amount: amt,
+      commission_date: dateStr,
+      note: commissionForm.note ? String(commissionForm.note).trim() : '',
+    };
+
+    try {
+      if (editingCommissionId) {
+        const prevComm = commissionRows.find((row) => Number(row.id) === Number(editingCommissionId));
+        const result = await api(`/api/admin/project-management/commissions/${editingCommissionId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+        if (result.data) {
+          setCommissionRows((prev) =>
+            prev.map((row) => (Number(row.id) === Number(editingCommissionId) ? result.data : row))
+          );
+          setCommissionSummary((prev) => ({
+            ...prev,
+            totalAmount:
+              Number(prev.totalAmount || 0) +
+              Number(result.data.amount || 0) -
+              Number(prevComm?.amount || 0),
+          }));
+        }
+        setMessage('Commission record updated successfully');
+      } else {
+        const result = await api('/api/admin/project-management/commissions', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        if (result.data) {
+          setCommissionRows((prev) => [
+            result.data,
+            ...prev.filter((row) => Number(row.id) !== Number(result.data.id)),
+          ]);
+          setCommissionSummary((prev) => ({
+            ...prev,
+            totalAmount: Number(prev.totalAmount || 0) + Number(result.data.amount || 0),
+          }));
+        }
+        setMessage('Commission recorded successfully');
+      }
+      setCommissionModal(false);
+      setEditingCommissionId(null);
+      setModalError('');
+      setCommissionForm(commissionBlank);
+    } catch (err) {
+      setMessage(err.message);
+      throw err;
+    }
+  };
+
   // ── Party CRUD ───────────────────────────────────────────────────────────────
   const saveParty = async (e) => {
     e.preventDefault();
@@ -1563,6 +1661,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       } else if (kind === 'expense') {
         await api(`/api/admin/project-management/other-expenses/${id}`, { method: 'DELETE' });
         refreshProjectData();
+      } else if (kind === 'commission') {
+        const deletedComm = commissionRows.find((row) => Number(row.id) === Number(id));
+        await api(`/api/admin/project-management/commissions/${id}`, { method: 'DELETE' });
+        setCommissionRows((prev) => prev.filter((row) => Number(row.id) !== Number(id)));
+        setCommissionSummary((prev) => ({
+          ...prev,
+          totalAmount: Math.max(0, Number(prev.totalAmount || 0) - Number(deletedComm?.amount || 0)),
+        }));
       } else if (kind === 'labor') {
         await api(`/api/admin/project-management/labor/${id}`, { method: 'DELETE' });
         loadProjectLabors(project.id);
@@ -2690,6 +2796,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('suppliers'); }}
                       >
                         🚚 Suppliers ({projectSuppliers.length})
+                      </button>
+                    )}
+                    {allowedMainTabs.includes('commission') && (
+                      <button
+                        className={projectTab === 'commission' ? 'active' : ''}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('commission'); }}
+                      >
+                        🤝 Commission ({commissionRows.length})
                       </button>
                     )}
                   </div>
@@ -5775,11 +5889,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <tbody>
                       {expenseRows
                         .filter((r) => {
-                          if (expenseCategoryFilter && r.category !== expenseCategoryFilter) return false;
+                          const parsed = parseExpenseItem(r);
+                          const rowCat = parsed.category || r.category;
+                          if (expenseCategoryFilter && rowCat !== expenseCategoryFilter) return false;
                           if (expenseSearch.trim()) {
                             const q = expenseSearch.trim().toLowerCase();
-                            const parsed = parseExpenseItem(r);
-                            const cat = (r.category || '').toLowerCase();
+                            const cat = (rowCat || '').toLowerCase();
                             const creator = (r.created_by || '').toLowerCase();
                             return (
                               parsed.item_name.toLowerCase().includes(q) ||
@@ -5792,12 +5907,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         })
                         .map((r) => {
                           const parsed = parseExpenseItem(r);
+                          const rowCat = parsed.category || r.category;
                           return (
                             <tr key={r.id}>
                               <td>{r.expense_date}</td>
                               <td>
                                 <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
-                                  {r.category?.replace(/_/g, ' ')}
+                                  {rowCat?.replace(/_/g, ' ')}
                                 </span>
                               </td>
                               <td style={{ fontWeight: 500, color: parsed.item_name ? '#0f172a' : '#94a3b8' }}>
@@ -5813,7 +5929,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     setEditingExpenseId(r.id);
                                     const parsedItem = parseExpenseItem(r);
                                     setExpenseForm({
-                                      category: r.category,
+                                      category: parsedItem.category || r.category,
                                       item_name: parsedItem.item_name,
                                       amount: r.amount,
                                       expense_date: r.expense_date,
@@ -5835,11 +5951,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           );
                         })}
                       {expenseRows.filter((r) => {
-                        if (expenseCategoryFilter && r.category !== expenseCategoryFilter) return false;
+                        const parsed = parseExpenseItem(r);
+                        const rowCat = parsed.category || r.category;
+                        if (expenseCategoryFilter && rowCat !== expenseCategoryFilter) return false;
                         if (expenseSearch.trim()) {
                           const q = expenseSearch.trim().toLowerCase();
-                          const parsed = parseExpenseItem(r);
-                          const cat = (r.category || '').toLowerCase();
+                          const cat = (rowCat || '').toLowerCase();
                           const creator = (r.created_by || '').toLowerCase();
                           return (
                             parsed.item_name.toLowerCase().includes(q) ||
@@ -5860,6 +5977,111 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </table>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {/* ── 7. COMMISSION TAB ───────────────────────────────────── */}
+                  {projectTab === 'commission' && (
+                    <div className="card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <input
+                            type="text"
+                            placeholder="Search person name, note..."
+                            value={commissionSearch}
+                            onChange={(e) => setCommissionSearch(e.target.value)}
+                            style={{ maxWidth: 260 }}
+                          />
+                          <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+                            Total: {INR(commissionSummary.totalAmount)}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            setCommissionForm(commissionBlank);
+                            setEditingCommissionId(null);
+                            setModalError('');
+                            setCommissionModal(true);
+                          }}
+                        >
+                          + Record Commission
+                        </button>
+                      </div>
+
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Person Name</th>
+                            <th>Amount</th>
+                            <th>Note</th>
+                            <th>Recorded By</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {commissionRows
+                            .filter((r) => {
+                              if (commissionSearch.trim()) {
+                                const q = commissionSearch.trim().toLowerCase();
+                                const pName = String(r.person_name || '').toLowerCase();
+                                const note = String(r.note || '').toLowerCase();
+                                const creator = String(r.created_by || '').toLowerCase();
+                                return pName.includes(q) || note.includes(q) || creator.includes(q);
+                              }
+                              return true;
+                            })
+                            .map((r) => (
+                              <tr key={r.id}>
+                                <td>{r.commission_date}</td>
+                                <td style={{ fontWeight: 600, color: '#0f172a' }}>{r.person_name}</td>
+                                <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
+                                <td>{r.note || '—'}</td>
+                                <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
+                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    className="muted"
+                                    onClick={() => {
+                                      setEditingCommissionId(r.id);
+                                      setCommissionForm({
+                                        person_name: r.person_name,
+                                        amount: r.amount,
+                                        commission_date: r.commission_date,
+                                        note: r.note || '',
+                                      });
+                                      setModalError('');
+                                      setCommissionModal(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('commission', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          {commissionRows.filter((r) => {
+                            if (commissionSearch.trim()) {
+                              const q = commissionSearch.trim().toLowerCase();
+                              const pName = String(r.person_name || '').toLowerCase();
+                              const note = String(r.note || '').toLowerCase();
+                              const creator = String(r.created_by || '').toLowerCase();
+                              return pName.includes(q) || note.includes(q) || creator.includes(q);
+                            }
+                            return true;
+                          }).length === 0 && (
+                            <tr>
+                              <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                {commissionRows.length === 0 ? 'No commission records found for this project.' : 'No commission records match the search.'}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   )}
 
@@ -7548,6 +7770,91 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     Cancel
                   </button>
                   <button type="submit" disabled={submitAction.isSubmitting('expense')}>{submitAction.isSubmitting('expense') ? 'Saving…' : 'Save Expense'}</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: COMMISSION ────────────────────────────────────────── */}
+          {commissionModal && (
+            <div className="modal-overlay">
+              <form
+                onSubmit={(e) =>
+                  submitAction.submit('commission', () => saveCommissionEntry(e), {
+                    successMessage: editingCommissionId ? 'Commission updated successfully' : 'Commission recorded successfully',
+                    onError: setModalError,
+                  })
+                }
+                className="modal-card"
+              >
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  {editingCommissionId ? 'Edit' : 'Record'} Commission
+                </h3>
+                {modalError && (
+                  <div
+                    role="alert"
+                    style={{
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      marginBottom: 12,
+                      fontSize: 13,
+                    }}
+                  >
+                    {modalError}
+                  </div>
+                )}
+                <div className="grid">
+                  <Input
+                    label="Date"
+                    name="commission_date"
+                    type="date"
+                    value={commissionForm.commission_date}
+                    set={setCommissionForm}
+                    required
+                  />
+                  <Input
+                    label="Person Name"
+                    name="person_name"
+                    value={commissionForm.person_name}
+                    set={setCommissionForm}
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                    maxLength={150}
+                  />
+                  <Input
+                    label="Amount (₹)"
+                    name="amount"
+                    type="number"
+                    step="any"
+                    min="1"
+                    value={commissionForm.amount}
+                    set={setCommissionForm}
+                    required
+                    placeholder="e.g. 5000"
+                  />
+                  <Input
+                    label="Note"
+                    name="note"
+                    value={commissionForm.note}
+                    set={setCommissionForm}
+                    placeholder="e.g. Client reference commission"
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    disabled={submitAction.isSubmitting('commission')}
+                    onClick={() => setCommissionModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('commission')}>
+                    {submitAction.isSubmitting('commission') ? 'Saving…' : 'Save Commission'}
+                  </button>
                 </div>
               </form>
             </div>

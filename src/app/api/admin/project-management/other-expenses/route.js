@@ -4,6 +4,33 @@ import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase
 
 const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc', 'tools', 'rent'];
 
+export function parseExpenseData(row) {
+  if (!row) return { category: '', item_name: '', note: '' };
+  let cat = row.category || '';
+  let note = row.note || '';
+  let item_name = row.item_name || '';
+
+  const catMatch = String(note).match(/^\[Category:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+  if (catMatch) {
+    cat = catMatch[1].trim();
+    note = (catMatch[2] || '').trim();
+  }
+
+  if (!item_name && note) {
+    const itemMatch = String(note).match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+    if (itemMatch) {
+      item_name = itemMatch[1].trim();
+      note = (itemMatch[2] || '').trim();
+    }
+  }
+
+  return {
+    category: cat,
+    item_name: item_name || '',
+    note: note || '',
+  };
+}
+
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
@@ -27,8 +54,14 @@ export async function GET(req) {
     const params = [projectId];
 
     if (category) {
-      params.push(category);
-      where += ` AND category = $${params.length}`;
+      if (category === 'rent') {
+        where += ` AND (category = 'rent' OR (category = 'machine_rent' AND note LIKE '[Category: rent]%'))`;
+      } else if (category === 'tools') {
+        where += ` AND (category = 'tools' OR (category = 'misc' AND note LIKE '[Category: tools]%'))`;
+      } else {
+        params.push(category);
+        where += ` AND category = $${params.length}`;
+      }
     }
     if (startDate) {
       params.push(startDate);
@@ -59,19 +92,12 @@ export async function GET(req) {
     const totalAmount = Number(r.rows[0]?.filtered_total_amount || 0);
 
     const rows = r.rows.map((row) => {
-      let item_name = row.item_name || null;
-      let display_note = row.note || '';
-      if (!item_name && row.note) {
-        const m = String(row.note).match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
-        if (m) {
-          item_name = m[1].trim();
-          display_note = (m[2] || '').trim();
-        }
-      }
+      const parsed = parseExpenseData(row);
       return {
         ...row,
-        item_name: item_name || null,
-        display_note: display_note || null,
+        category: parsed.category,
+        item_name: parsed.item_name || null,
+        display_note: parsed.note || null,
       };
     });
 
@@ -130,18 +156,52 @@ export async function POST(req) {
     const auth = await assertAgentAccess(req, p, 'construction');
     if (!auth.allowed) return auth.response;
 
+    // Self-healing attempt to alter constraint if needed
+    if (['tools', 'rent'].includes(cat)) {
+      try {
+        await pool.query(
+          `ALTER TABLE pm_other_expenses DROP CONSTRAINT IF EXISTS pm_other_expenses_category_check;
+           ALTER TABLE pm_other_expenses ADD CONSTRAINT pm_other_expenses_category_check CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent'))`
+        );
+      } catch {}
+    }
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
 
-      const r = await c.query(
-        `INSERT INTO pm_other_expenses(
-           project_id, category, amount, expense_date, note, created_by
-         ) VALUES ($1,$2,$3,$4,$5,$6)
-         RETURNING *`,
-        [p, cat, amt, b.expense_date, storedNote, actor]
-      );
+      let r;
+      await c.query('SAVEPOINT oe_insert');
+      try {
+        r = await c.query(
+          `INSERT INTO pm_other_expenses(
+             project_id, category, amount, expense_date, note, created_by
+           ) VALUES ($1,$2,$3,$4,$5,$6)
+           RETURNING *`,
+          [p, cat, amt, b.expense_date, storedNote, actor]
+        );
+        await c.query('RELEASE SAVEPOINT oe_insert');
+      } catch (insertErr) {
+        if (
+          insertErr &&
+          (insertErr.code === '23514' ||
+            (insertErr.message && insertErr.message.includes('pm_other_expenses_category_check')))
+        ) {
+          await c.query('ROLLBACK TO SAVEPOINT oe_insert');
+          const fallbackCat = cat === 'rent' ? 'machine_rent' : 'misc';
+          const fallbackNote = `[Category: ${cat}] ${storedNote || ''}`.trim();
+          r = await c.query(
+            `INSERT INTO pm_other_expenses(
+               project_id, category, amount, expense_date, note, created_by
+             ) VALUES ($1,$2,$3,$4,$5,$6)
+             RETURNING *`,
+            [p, fallbackCat, amt, b.expense_date, fallbackNote, actor]
+          );
+        } else {
+          throw insertErr;
+        }
+      }
 
       await writePmPhase2Audit(c, 'pm_other_expenses', r.rows[0].id, 'created', actor, null, r.rows[0]);
       await c.query('COMMIT');
@@ -151,6 +211,7 @@ export async function POST(req) {
         success: true,
         data: {
           ...saved,
+          category: cat,
           item_name: itemName || null,
           display_note: noteText || null,
         }

@@ -268,7 +268,17 @@ async function pmSchemaLooksReady() {
          WHERE table_schema = 'public'
            AND table_name = 'pm_material_adjustments'
            AND column_name = 'bill_url'
-      ) AS has_ma_bill_url
+      ) AS has_ma_bill_url,
+      EXISTS (
+        SELECT 1
+          FROM pg_constraint c
+          JOIN pg_class t ON c.conrelid = t.oid
+         WHERE t.relname = 'pm_other_expenses'
+           AND c.conname = 'pm_other_expenses_category_check'
+           AND pg_get_constraintdef(c.oid) LIKE '%tools%'
+           AND pg_get_constraintdef(c.oid) LIKE '%rent%'
+      ) AS has_oe_tools_rent_constraint,
+      to_regclass('public.pm_commissions') IS NOT NULL AS has_commissions
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -287,6 +297,8 @@ async function pmSchemaLooksReady() {
     && row.has_lp_tx_ref
     && row.has_mr_bill_url
     && row.has_ma_bill_url
+    && row.has_oe_tools_rent_constraint
+    && row.has_commissions
   );
 }
 
@@ -339,6 +351,9 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   try {
     await pool.query(`ALTER TABLE pm_other_expenses DROP CONSTRAINT IF EXISTS pm_other_expenses_category_check; ALTER TABLE pm_other_expenses ADD CONSTRAINT pm_other_expenses_category_check CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent'))`);
   } catch {}
+  await pool.query(`CREATE TABLE IF NOT EXISTS pm_commissions(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,person_name VARCHAR(150) NOT NULL,amount NUMERIC(14,2) NOT NULL CHECK(amount>0),commission_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_commissions_proj_idx ON pm_commissions(project_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_commissions_proj_del_idx ON pm_commissions(project_id, is_deleted)`);
   // Agent Specializations Column
   await pool.query(`ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`);
   
