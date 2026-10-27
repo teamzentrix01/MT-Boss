@@ -781,7 +781,15 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                     <div style={{ color: muted }}>{lead.client_phone}</div>
                     <div style={{ color: muted, fontSize: '0.7rem' }}>{lead.city}</div>
                   </td>
-                  <td style={{ padding: '0.6rem', color: muted }}>{lead.service_type || '-'}<br />{lead.lead_type || ''}</td>
+                  <td style={{ padding: '0.6rem', color: muted }}>
+                    <div style={{ color: text, fontWeight: 700 }}>{lead.service_type || '-'}</div>
+                    <div style={{ fontSize: '0.72rem' }}>{lead.lead_type || ''}</div>
+                    {lead.time_slot && (
+                      <div style={{ marginTop: 3, display: 'inline-block', fontSize: '0.68rem', fontWeight: 800, color: 'var(--accent, #2563eb)', background: isDarkMode ? '#1e293b' : '#eff6ff', padding: '1px 6px', borderRadius: 4 }}>
+                        ⏰ {lead.time_slot}
+                      </div>
+                    )}
+                  </td>
                   <td style={{ padding: '0.6rem', color: muted }}>{lead.lead_source || '-'}</td>
                   <td style={{ padding: '0.6rem' }}>
                     <select
@@ -816,7 +824,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <td style={{ padding: '0.6rem' }}>
                     <select style={inputStyle} value={lead.agent_id || ''} onChange={(e) => updateLead(lead.id, { agent_id: e.target.value })}>
                       <option value="">Not assigned</option>
-                      {agents.map((item) => <option key={item.id} value={item}>{item.name}</option>)}
+                      {agents.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
                     </select>
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>
@@ -870,8 +878,14 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,minmax(0,1fr))', gap: 10 }}>
               {[
                 ['Phone', selected.client_phone],
+                ['Alternate Phone', selected.alternate_phone || '-'],
                 ['Email', selected.client_email || '-'],
                 ['City', selected.city],
+                ['State', selected.state || '-'],
+                ['Address', selected.address || '-'],
+                ['Preferred Time Slot', selected.time_slot || '-'],
+                ['Meeting Date', selected.meeting_date ? new Date(selected.meeting_date).toLocaleDateString('en-IN') : '-'],
+                ['GPS Location', selected.gps_location || '-'],
                 ['Service', selected.service_type || '-'],
                 ['Lead Type', selected.lead_type || '-'],
                 ['Source', selected.lead_source || '-'],
