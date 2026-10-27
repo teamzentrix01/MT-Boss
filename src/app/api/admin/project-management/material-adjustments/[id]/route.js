@@ -87,13 +87,14 @@ export async function PATCH(req, { params }) {
         return NextResponse.json({ success: false, error: 'Invalid adjustment parameters' }, { status: 400 });
       }
 
+      const unit = b.unit !== undefined ? (b.unit ? String(b.unit).trim() : null) : old.unit;
       const r = await c.query(
         `UPDATE pm_material_adjustments
          SET quantity = $1, adjustment_type = $2, adjustment_date = $3, note = $4,
-             amount = $5, supplier_name = $6, supplier_id = $7
-         WHERE id = $8
+             amount = $5, supplier_name = $6, supplier_id = $7, unit = $8
+         WHERE id = $9
          RETURNING *`,
-        [q, adjType, b.adjustment_date, b.note || null, amount, supplierName, supplierId, id]
+        [q, adjType, b.adjustment_date, b.note || null, amount, supplierName, supplierId, unit, id]
       );
 
       const actor = actorFromAdmin(auth.user);

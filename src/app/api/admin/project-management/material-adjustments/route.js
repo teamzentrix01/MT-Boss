@@ -62,7 +62,7 @@ export async function GET(req) {
     params.push(pageSize, offset);
 
     const r = await pool.query(
-      `SELECT a.*, m.name AS material_name, m.unit AS material_unit,
+      `SELECT a.*, m.name AS material_name, COALESCE(a.unit, m.unit, 'units') AS material_unit,
               tp.name AS to_project_name, COUNT(*) OVER()::int AS total_count
        FROM pm_material_adjustments a
        JOIN pm_materials m ON m.id = a.material_id
@@ -96,6 +96,7 @@ export async function POST(req) {
     let supplierId = b.supplier_id ? Number(b.supplier_id) : null;
     const supplierName = b.supplier_name ? String(b.supplier_name).trim() : null;
     let amount = b.amount !== undefined && b.amount !== null && b.amount !== '' ? Number(b.amount) : null;
+    const selectedUnit = b.unit ? String(b.unit).trim() : null;
 
     if (
       !Number.isInteger(p) ||
@@ -119,7 +120,8 @@ export async function POST(req) {
         ADD COLUMN IF NOT EXISTS bill_filename text,
         ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2),
         ADD COLUMN IF NOT EXISTS supplier_name text,
-        ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL
+        ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL,
+        ADD COLUMN IF NOT EXISTS unit VARCHAR(50)
       `);
     } catch {}
 
@@ -127,6 +129,10 @@ export async function POST(req) {
     try {
       await c.query('BEGIN');
       const actor = actorFromAdmin(auth.user);
+
+      if (selectedUnit) {
+        await c.query('UPDATE pm_materials SET unit = $1 WHERE id = $2 AND (unit IS NULL OR unit = \'\' OR unit <> $1)', [selectedUnit, m]);
+      }
 
       if (!supplierId && supplierName) {
         const supMatch = await c.query(
@@ -168,10 +174,10 @@ export async function POST(req) {
         `INSERT INTO pm_material_adjustments(
            project_id, material_id, adjustment_type, quantity,
            adjustment_date, to_project_id, note, bill_url, bill_filename, created_by, over_used,
-           amount, supplier_name, supplier_id
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+           amount, supplier_name, supplier_id, unit
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
          RETURNING *`,
-        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed, amount, supplierName, supplierId]
+        [p, m, adjType, q, b.adjustment_date, toProjId, b.note || null, b.bill_url || null, b.bill_filename || null, actor, isOverUsed, amount, supplierName, supplierId, selectedUnit]
       );
       const adjRow = adjRes.rows[0];
 
