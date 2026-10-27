@@ -143,7 +143,7 @@ const matchesContractorType = (trade, filter) => {
   return v.includes(f) || f.includes(v);
 };
 const usedBlank = { material_id: '', material_name: '', quantity: '', used_date: today(), used_for: '', note: '' };
-const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
+const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
 const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
@@ -1217,6 +1217,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         material_id,
         project_id: project.id,
         amount: adjustmentForm.amount ? Number(adjustmentForm.amount) : null,
+        supplier_id: adjustmentForm.supplier_id ? Number(adjustmentForm.supplier_id) : null,
         supplier_name: adjustmentForm.supplier_name ? String(adjustmentForm.supplier_name).trim() : null,
         bill_url,
         bill_filename,
@@ -1248,6 +1249,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setEditingAdjId(null);
       setAdjustmentForm(adjustmentBlank);
       setBillFile(null);
+      loadProjectSuppliers(project.id);
+      if (selectedSupplier) {
+        loadSupplierLedger(project?.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+      }
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
@@ -1372,6 +1377,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         refreshProjectData();
       } else if (kind === 'adjustment') {
         await api(`/api/admin/project-management/material-adjustments/${id}`, { method: 'DELETE' });
+        loadProjectSuppliers(project?.id);
+        if (selectedSupplier) {
+          loadSupplierLedger(project?.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+        }
         refreshProjectData();
       } else if (kind === 'expense') {
         await api(`/api/admin/project-management/other-expenses/${id}`, { method: 'DELETE' });
@@ -4386,6 +4395,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tr>
                                 <th>Supplier</th>
                                 <th>Total Supplied</th>
+                                <th>Total Returned</th>
                                 <th>Total Paid</th>
                                 <th>Balance</th>
                                 <th>Last Delivery</th>
@@ -4429,6 +4439,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                         {s.delivery_count} {s.delivery_count === 1 ? 'delivery' : 'deliveries'}
                                       </span>
                                     </td>
+                                    <td style={{ fontWeight: 600, color: '#dc2626' }}>
+                                      {INR(s.total_returned || 0)}
+                                      <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
+                                        {s.return_count || 0} {s.return_count === 1 ? 'return' : 'returns'}
+                                      </span>
+                                    </td>
                                     <td style={{ fontWeight: 600, color: '#16a34a' }}>
                                       {INR(s.total_paid)}
                                       <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
@@ -4448,7 +4464,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                         <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
                                       )}
                                     </td>
-                                    <td>{s.last_delivery || '—'}</td>
+                                    <td>{s.last_delivery ? s.last_delivery.slice(0, 10) : '—'}</td>
                                     <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
                                       <button
                                         className="muted"
@@ -4562,14 +4578,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </div>
 
                           {/* Summary Cards */}
-                          <div className="stat-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 16 }}>
+                          <div className="stat-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 16 }}>
                             <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #0369a1' }}>
                               <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Supplied</small>
                               <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
                                 {INR(supplierLedgerData.summary?.total_supplied ?? selectedSupplier.total_supplied)}
                               </div>
                               <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                                {supplierLedgerData.deliveries?.length || 0} deliveries
+                                {supplierLedgerData.deliveries?.length || selectedSupplier.delivery_count || 0} deliveries
+                              </div>
+                            </div>
+                            <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #dc2626' }}>
+                              <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Returned</small>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: '#dc2626', marginTop: 4 }}>
+                                {INR(supplierLedgerData.summary?.total_returned ?? selectedSupplier.total_returned ?? 0)}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {supplierLedgerData.returns?.length || selectedSupplier.return_count || 0} returns
                               </div>
                             </div>
                             <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #16a34a' }}>
@@ -4578,7 +4603,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {INR(supplierLedgerData.summary?.total_paid ?? selectedSupplier.total_paid)}
                               </div>
                               <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                                {supplierLedgerData.payments?.length || 0} payments
+                                {supplierLedgerData.payments?.length || selectedSupplier.payment_count || 0} payments
                               </div>
                             </div>
                             <div
@@ -4607,7 +4632,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   ? 'Overpayment / Advance available'
                                   : (supplierLedgerData.summary?.balance ?? selectedSupplier.balance) === 0
                                   ? 'All cleared'
-                                  : 'Payment pending to supplier'}
+                                  : 'Net payment pending'}
                               </div>
                             </div>
                           </div>
@@ -4619,6 +4644,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               onClick={() => setSupplierLedgerTab('deliveries')}
                             >
                               📦 Deliveries ({supplierLedgerData.deliveries?.length || 0})
+                            </button>
+                            <button
+                              className={supplierLedgerTab === 'returns' ? 'active-btn' : 'muted'}
+                              onClick={() => setSupplierLedgerTab('returns')}
+                            >
+                              🔄 Returns ({supplierLedgerData.returns?.length || 0})
                             </button>
                             <button
                               className={supplierLedgerTab === 'payments' ? 'active-btn' : 'muted'}
@@ -4649,7 +4680,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tbody>
                                 {(supplierLedgerData.deliveries || []).map((d) => (
                                   <tr key={d.id}>
-                                    <td>{d.received_date}</td>
+                                    <td>{d.received_date ? d.received_date.slice(0, 10) : '—'}</td>
                                     <td><b>{d.material_name}</b></td>
                                     <td>{Number(d.quantity).toFixed(2)}</td>
                                     <td>{d.material_unit || 'units'}</td>
@@ -4682,6 +4713,58 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 )}
                               </tbody>
                             </table>
+                          ) : supplierLedgerTab === 'returns' ? (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Material Name</th>
+                                  <th>Returned Qty</th>
+                                  <th>Unit</th>
+                                  {!isSupervisor && <th>Credit / Amount</th>}
+                                  <th>Slip</th>
+                                  <th>Note / Reason</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(supplierLedgerData.returns || []).map((ret) => (
+                                  <tr key={ret.id}>
+                                    <td>{ret.adjustment_date ? ret.adjustment_date.slice(0, 10) : '—'}</td>
+                                    <td><b>{ret.material_name}</b></td>
+                                    <td style={{ color: '#dc2626', fontWeight: 600 }}>{Number(ret.quantity).toFixed(2)}</td>
+                                    <td>{ret.material_unit || 'units'}</td>
+                                    {!isSupervisor && (
+                                      <td style={{ fontWeight: 600, color: '#dc2626' }}>
+                                        {ret.amount ? INR(ret.amount) : '—'}
+                                      </td>
+                                    )}
+                                    <td>
+                                      {ret.bill_url ? (
+                                        <a href={ret.bill_url} target="_blank" rel="noreferrer" title={ret.bill_filename || 'View Slip'} style={{ textDecoration: 'none', fontSize: 16 }}>
+                                          📄
+                                        </a>
+                                      ) : '—'}
+                                    </td>
+                                    <td>{ret.note || ret.reason || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                      {!isAgent && (
+                                        <button className="danger" onClick={() => del('adjustment', ret.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {(supplierLedgerData.returns || []).length === 0 && (
+                                  <tr>
+                                    <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                      No material returns recorded for this supplier.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
                           ) : (
                             <table>
                               <thead>
@@ -4698,7 +4781,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tbody>
                                 {(supplierLedgerData.payments || []).map((p) => (
                                   <tr key={p.id}>
-                                    <td>{p.payment_date}</td>
+                                    <td>{p.payment_date ? p.payment_date.slice(0, 10) : '—'}</td>
                                     <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
                                     <td><span className="badge" style={{ textTransform: 'capitalize' }}>{p.mode || 'bank'}</span></td>
                                     <td>{p.transaction_reference || '—'}</td>
@@ -5248,6 +5331,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     quantity: r.quantity,
                                     adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
                                     to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    supplier_id: r.supplier_id ? String(r.supplier_id) : '',
                                     supplier_name: r.supplier_name || '',
                                     amount: r.amount || '',
                                     note: r.note || '',
@@ -6880,11 +6964,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           list="project-suppliers-list"
                           placeholder="Select or enter supplier name"
                           value={adjustmentForm.supplier_name || ''}
-                          onChange={(e) => setAdjustmentForm({ ...adjustmentForm, supplier_name: e.target.value })}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const matched = (projectSuppliers || []).find((s) => (s.supplier_name || s.name || '').toLowerCase() === val.trim().toLowerCase());
+                            setAdjustmentForm({
+                              ...adjustmentForm,
+                              supplier_name: val,
+                              supplier_id: matched ? (matched.supplier_id || matched.id || '') : adjustmentForm.supplier_id
+                            });
+                          }}
                         />
                         <datalist id="project-suppliers-list">
                           {projectSuppliers.map((s) => (
-                            <option key={s.id || s.supplier_id} value={s.supplier_name || s.name} />
+                            <option key={s.key || s.id || s.supplier_id} value={s.supplier_name || s.name} />
                           ))}
                         </datalist>
                       </label>

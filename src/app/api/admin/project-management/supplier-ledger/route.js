@@ -20,21 +20,29 @@ export async function GET(req) {
 
     let deliveryWhere = 'r.project_id = $1 AND NOT r.is_deleted';
     let paymentWhere = 'p.project_id = $1 AND NOT p.is_deleted';
+    let returnWhere = "a.project_id = $1 AND NOT a.is_deleted AND a.adjustment_type IN ('return_to_supplier', 'return_material')";
     const deliveryParams = [projectId];
     const paymentParams = [projectId];
+    const returnParams = [projectId];
 
     if (supplierId && Number.isInteger(supplierId)) {
       deliveryParams.push(supplierId);
-      deliveryWhere += ` AND r.supplier_id = $${deliveryParams.length}`;
+      deliveryWhere += ` AND (r.supplier_id = $${deliveryParams.length} OR (r.supplier_id IS NULL AND LOWER(TRIM(COALESCE(r.supplier_name, ''))) = (SELECT LOWER(TRIM(COALESCE(shop_name, business_name, ''))) FROM suppliers WHERE id = $${deliveryParams.length} LIMIT 1)))`;
 
       paymentParams.push(supplierId);
-      paymentWhere += ` AND p.supplier_id = $${paymentParams.length}`;
+      paymentWhere += ` AND (p.supplier_id = $${paymentParams.length} OR (p.supplier_id IS NULL AND LOWER(TRIM(COALESCE(p.supplier_name, ''))) = (SELECT LOWER(TRIM(COALESCE(shop_name, business_name, ''))) FROM suppliers WHERE id = $${paymentParams.length} LIMIT 1)))`;
+
+      returnParams.push(supplierId);
+      returnWhere += ` AND (a.supplier_id = $${returnParams.length} OR (a.supplier_id IS NULL AND LOWER(TRIM(COALESCE(a.supplier_name, ''))) = (SELECT LOWER(TRIM(COALESCE(shop_name, business_name, ''))) FROM suppliers WHERE id = $${returnParams.length} LIMIT 1)))`;
     } else if (supplierName) {
       deliveryParams.push(supplierName.toLowerCase());
-      deliveryWhere += ` AND (r.supplier_id IS NULL AND LOWER(TRIM(COALESCE(r.supplier_name, ''))) = $${deliveryParams.length})`;
+      deliveryWhere += ` AND (LOWER(TRIM(COALESCE(r.supplier_name, ''))) = $${deliveryParams.length} OR r.supplier_id IN (SELECT id FROM suppliers WHERE LOWER(TRIM(COALESCE(shop_name, business_name, ''))) = $${deliveryParams.length}))`;
 
       paymentParams.push(supplierName.toLowerCase());
-      paymentWhere += ` AND (p.supplier_id IS NULL AND LOWER(TRIM(COALESCE(p.supplier_name, ''))) = $${paymentParams.length})`;
+      paymentWhere += ` AND (LOWER(TRIM(COALESCE(p.supplier_name, ''))) = $${paymentParams.length} OR p.supplier_id IN (SELECT id FROM suppliers WHERE LOWER(TRIM(COALESCE(shop_name, business_name, ''))) = $${paymentParams.length}))`;
+
+      returnParams.push(supplierName.toLowerCase());
+      returnWhere += ` AND (LOWER(TRIM(COALESCE(a.supplier_name, ''))) = $${returnParams.length} OR a.supplier_id IN (SELECT id FROM suppliers WHERE LOWER(TRIM(COALESCE(shop_name, business_name, ''))) = $${returnParams.length}))`;
     }
 
     const deliveriesRes = await pool.query(
@@ -85,6 +93,31 @@ export async function GET(req) {
       paymentParams
     );
 
+    const returnsRes = await pool.query(
+      `SELECT 
+        a.id,
+        a.project_id,
+        a.material_id,
+        COALESCE(m.name, 'Material') AS material_name,
+        COALESCE(m.unit, 'units') AS material_unit,
+        COALESCE(s.shop_name, a.supplier_name) AS supplier_name,
+        a.supplier_id,
+        a.quantity,
+        a.amount,
+        a.adjustment_date,
+        a.note,
+        a.bill_url,
+        a.bill_filename,
+        a.created_by,
+        a.created_at
+       FROM pm_material_adjustments a
+       LEFT JOIN pm_materials m ON m.id = a.material_id
+       LEFT JOIN suppliers s ON s.id = a.supplier_id
+       WHERE ${returnWhere}
+       ORDER BY a.adjustment_date DESC, a.created_at DESC`,
+      returnParams
+    );
+
     const isSupervisor = auth.role === 'site_supervisor';
     const deliveries = deliveriesRes.rows.map(row => {
       if (isSupervisor) {
@@ -93,16 +126,27 @@ export async function GET(req) {
       return row;
     });
 
+    const returns = returnsRes.rows.map(row => {
+      if (isSupervisor) {
+        return { ...row, amount: null };
+      }
+      return row;
+    });
+
     const totalSupplied = deliveriesRes.rows.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+    const totalReturned = returnsRes.rows.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
     const totalPaid = paymentsRes.rows.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-    const balance = Number((totalSupplied - totalPaid).toFixed(2));
+    // Net balance due = (Total Supplied - Total Returned) - Total Paid
+    const balance = Number((totalSupplied - totalReturned - totalPaid).toFixed(2));
 
     return NextResponse.json({
       success: true,
       deliveries,
       payments: paymentsRes.rows,
+      returns,
       summary: {
         total_supplied: Number(totalSupplied.toFixed(2)),
+        total_returned: Number(totalReturned.toFixed(2)),
         total_paid: Number(totalPaid.toFixed(2)),
         balance,
         is_advance: balance < 0,
