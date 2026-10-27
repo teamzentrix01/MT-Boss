@@ -88,6 +88,14 @@ export async function POST(req) {
     const auth = await assertAgentAccess(req, p, 'construction');
     if (!auth.allowed) return auth.response;
 
+    try {
+      await pool.query(`
+        ALTER TABLE pm_material_adjustments 
+        ADD COLUMN IF NOT EXISTS bill_url text,
+        ADD COLUMN IF NOT EXISTS bill_filename text
+      `);
+    } catch {}
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');

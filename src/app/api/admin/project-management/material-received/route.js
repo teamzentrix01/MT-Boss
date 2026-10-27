@@ -95,6 +95,14 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid received entry' }, { status: 400 });
     }
 
+    try {
+      await pool.query(`
+        ALTER TABLE pm_material_received 
+        ADD COLUMN IF NOT EXISTS bill_url text,
+        ADD COLUMN IF NOT EXISTS bill_filename text
+      `);
+    } catch {}
+
     const c = await pool.connect();
     try {
       await c.query('BEGIN');
