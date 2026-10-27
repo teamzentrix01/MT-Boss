@@ -8,7 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Home Design in Bareilly: Floor Plans, Layouts and
+            Architect for Home Design in Bareilly: Floor Plans and
             Elevations Made for Your Family
           </h2>
 

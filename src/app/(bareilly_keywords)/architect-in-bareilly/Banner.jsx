@@ -9,7 +9,7 @@ export default function Banner() {
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[450px] overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://i.pinimg.com/1200x/1a/34/e3/1a34e3d39d31824b1cb861694e8092c1.jpg"
+            src="https://res.cloudinary.com/kokjkyt6/image/upload/v1792568833/architect.jpg"
             alt={pageTitle}
             fill
             priority

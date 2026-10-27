@@ -8,8 +8,7 @@ const Content = () => {
         {/* Content Section */}
         <div className="flex-1 px-4 sm:px-8 md:px-16 py-12 order-1 lg:order-1">
           <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold mb-8 text-gray-900">
-            Architect for Clinic in Bareilly: Calm, Hygienic and Efficient Clinic
-            Design by MTBOSS
+            Architect for Clinic in Bareilly:MTBOSS
           </h2>
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
