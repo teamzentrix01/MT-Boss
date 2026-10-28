@@ -167,6 +167,57 @@ export default function AgentsPage() {
     }
   };
 
+  const toggleManagerRole = async (id, currentIsManager) => {
+    setUpdating(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/agents', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id, is_manager: !currentIsManager }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not update manager role.');
+        return;
+      }
+      setAgents(prev => prev.map(a => a.id === id ? { ...a, is_manager: !currentIsManager } : a));
+      if (selected?.id === id) setSelected(prev => ({ ...prev, is_manager: !currentIsManager }));
+      await fetchAgents();
+    } catch (err) {
+      setError(err.message || 'Could not update manager role.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const assignAgentManager = async (agentId, managerId) => {
+    setUpdating(true);
+    setError('');
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/agents', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: agentId, manager_id: managerId ? Number(managerId) : null }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Could not assign manager.');
+        return;
+      }
+      const mgrName = data.data?.manager_name || (managerId ? agents.find(a => a.id === Number(managerId))?.name : null);
+      setAgents(prev => prev.map(a => a.id === agentId ? { ...a, manager_id: managerId ? Number(managerId) : null, manager_name: mgrName } : a));
+      if (selected?.id === agentId) setSelected(prev => ({ ...prev, manager_id: managerId ? Number(managerId) : null, manager_name: mgrName }));
+      await fetchAgents();
+    } catch (err) {
+      setError(err.message || 'Could not assign manager.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const handleCreateAgent = async (e) => {
     e.preventDefault();
     setCreateSaving(true);
@@ -260,12 +311,17 @@ export default function AgentsPage() {
       a.name.toLowerCase().includes(search.toLowerCase()) ||
       a.email.toLowerCase().includes(search.toLowerCase()) ||
       a.city?.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === 'All' || a.status === filter;
+    const matchFilter = filter === 'All'
+      ? true
+      : filter === 'Managers'
+      ? Boolean(a.is_manager)
+      : a.status === filter;
     return matchSearch && matchFilter;
   });
 
   const counts = {
     All:       agents.length,
+    Managers:  agents.filter(a => a.is_manager).length,
     Pending:   agents.filter(a => a.status === 'Pending').length,
     Reviewing: agents.filter(a => a.status === 'Reviewing').length,
     Approved:  agents.filter(a => a.status === 'Approved').length,
@@ -844,6 +900,80 @@ export default function AgentsPage() {
                 >
                   {selected.has_project_management_access ? 'Revoke PM Access' : 'Grant PM Access'}
                 </button>
+                <button
+                  type="button"
+                  className="ag-close-btn"
+                  disabled={updating}
+                  onClick={() => {
+                    const confirmMsg = selected.is_manager
+                      ? 'Are you sure you want to remove Manager/Head role from this agent?'
+                      : 'Designate this agent as Head Agent / Manager? They will be able to assign tasks to their team and monitor team performance.';
+                    if (window.confirm(confirmMsg)) {
+                      toggleManagerRole(selected.id, selected.is_manager);
+                    }
+                  }}
+                  style={selected.is_manager ? { color: '#b45309', borderColor: '#f59e0b', background: '#fef3c7', fontWeight: 700 } : { color: '#4f46e5', borderColor: '#6366f1', fontWeight: 600 }}
+                >
+                  {selected.is_manager ? '⭐ Remove Manager Role' : '⭐ Make Head / Manager'}
+                </button>
+              </div>
+            )}
+
+            {/* Manager / Reporting Structure Info */}
+            {selected.status === 'Approved' && (
+              <div style={{ marginTop: '0.75rem', marginBottom: '0.875rem', padding: '0.85rem', border: '1px solid var(--border)', borderRadius: 8, background: selected.is_manager ? '#fffbeb' : 'var(--bg)' }}>
+                {selected.is_manager ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#92400e', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span>⭐</span> Head Agent / Manager Role Active
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#b45309', marginTop: 2 }}>
+                        This agent has managerial access in the Agent Portal to assign and monitor tasks for their subordinate team.
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                      👔 Reporting Manager / Team Lead
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 8 }}>
+                      Assign which Head Agent / Manager oversees this agent (or leave as Direct to Admin):
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <select
+                        value={selected.manager_id || ''}
+                        onChange={(e) => assignAgentManager(selected.id, e.target.value)}
+                        disabled={updating}
+                        style={{
+                          padding: '0.4rem 0.65rem',
+                          fontSize: '0.8125rem',
+                          borderRadius: 6,
+                          border: '1px solid var(--border)',
+                          background: 'var(--surface)',
+                          color: 'var(--text)',
+                          fontWeight: 600,
+                          minWidth: '240px',
+                        }}
+                      >
+                        <option value="">Direct to Admin (No Manager)</option>
+                        {agents
+                          .filter(a => a.is_manager && a.id !== selected.id && a.status === 'Approved')
+                          .map(mgr => (
+                            <option key={mgr.id} value={mgr.id}>
+                              ⭐ {mgr.name} ({mgr.city}) - Manager
+                            </option>
+                          ))}
+                      </select>
+                      {selected.manager_name && (
+                        <span style={{ fontSize: '0.72rem', color: '#6366f1', fontWeight: 600 }}>
+                          Currently reports to: {selected.manager_name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1131,10 +1261,11 @@ export default function AgentsPage() {
         {/* Stats */}
         <div className="ag-stats">
           {[
-            { label: 'Total',    value: counts.All },
-            { label: 'Pending',  value: counts.Pending },
-            { label: 'Approved', value: counts.Approved },
-            { label: 'Rejected', value: counts.Rejected },
+            { label: 'Total',     value: counts.All },
+            { label: '⭐ Managers', value: counts.Managers },
+            { label: 'Pending',   value: counts.Pending },
+            { label: 'Approved',  value: counts.Approved },
+            { label: 'Rejected',  value: counts.Rejected },
           ].map(s => (
             <div key={s.label} className="ag-stat">
               <div className="ag-stat-label">{s.label}</div>
@@ -1145,13 +1276,13 @@ export default function AgentsPage() {
 
         {/* Filter tabs */}
         <div className="ag-filters">
-          {['All', ...STATUS_OPTIONS].map(f => (
+          {['All', 'Managers', ...STATUS_OPTIONS].map(f => (
             <button
               key={f}
               className={`ag-filter-btn${filter === f ? ' active' : ''}`}
               onClick={() => setFilter(f)}
             >
-              {f}
+              {f === 'Managers' ? '⭐ Managers' : f}
               <span className="ag-count">{counts[f] ?? 0}</span>
             </button>
           ))}
@@ -1182,8 +1313,22 @@ export default function AgentsPage() {
                     return (
                       <tr key={agent.id} onClick={() => openAgent(agent)}>
                         <td>
-                          <div className="ag-name">{agent.name}</div>
-                          <div className="ag-muted">{agent.occupation}</div>
+                          <div className="ag-name" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                            <span>{agent.name}</span>
+                            {agent.is_manager && (
+                              <span style={{ fontSize: '0.6875rem', fontWeight: 800, background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: 999 }}>
+                                ⭐ Manager
+                              </span>
+                            )}
+                          </div>
+                          <div className="ag-muted" style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                            <span>{agent.occupation}</span>
+                            {agent.manager_name && (
+                              <span style={{ fontSize: '0.6875rem', color: '#4338ca', background: '#e0e7ff', padding: '1px 6px', borderRadius: 4, fontWeight: 600 }}>
+                                Lead: {agent.manager_name}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td>
                           <div style={{ fontSize: '0.8125rem' }}>{agent.email}</div>

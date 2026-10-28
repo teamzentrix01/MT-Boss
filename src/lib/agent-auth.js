@@ -10,6 +10,7 @@ export function signAgentToken(agent) {
       email: agent.email,
       role: 'agent',
       city: agent.city,
+      is_manager: Boolean(agent.is_manager),
       authVersion: Number(agent.auth_version || 0),
     },
     getJwtSecret(),
@@ -42,7 +43,7 @@ export async function requireAgent(req) {
   const result = await pool.query(
     `SELECT id, name, email, phone, city, state, occupation, agent_type,
             status, login_enabled, must_change_password, auth_version, last_login_at, created_at,
-            has_project_management_access, specializations
+            has_project_management_access, specializations, is_manager, manager_id
        FROM agents
       WHERE id = $1 AND login_enabled = TRUE AND status = 'Approved'`,
     [payload.id]
@@ -57,7 +58,13 @@ export function requireAdmin(req) {
   return requireRole(req, 'admin');
 }
 
-export const ensureAgentSchema = createInitializationGuard(async () => {
+export const ensureAgentSchema = createInitializationGuard(async function ensureAgentSchemaV2() {
+  // Always ensure manager columns exist on agents table
+  await pool.query(`
+    ALTER TABLE agents ADD COLUMN IF NOT EXISTS is_manager BOOLEAN DEFAULT FALSE;
+    ALTER TABLE agents ADD COLUMN IF NOT EXISTS manager_id INTEGER REFERENCES agents(id) ON DELETE SET NULL;
+  `).catch(() => {});
+
   // Fast path: if core tables already exist, ensure high-performance indexes and exit immediately
   const tablesCheck = await pool.query(`
     SELECT (SELECT to_regclass('public.agents') IS NOT NULL) AS has_agents,
@@ -70,6 +77,10 @@ export const ensureAgentSchema = createInitializationGuard(async () => {
         ON agent_leads (agent_id, status, created_at DESC);
       CREATE INDEX IF NOT EXISTS agent_schedule_agent_date_idx
         ON agent_schedule (agent_id, schedule_date);
+      CREATE INDEX IF NOT EXISTS agents_is_manager_idx
+        ON agents (is_manager);
+      CREATE INDEX IF NOT EXISTS agents_manager_id_idx
+        ON agents (manager_id);
     `);
     return;
   }

@@ -88,11 +88,11 @@ export default function PanelLayout({
           {sidebarOpen ? (
             <div className="flex items-center gap-2 min-w-0">
               <span className={`font-black text-xl tracking-tight ${textPrimary}`}>MTBOSS</span>
-              {roleDisplay && (
+              {/* {roleDisplay && (
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-[rgba(33,150,243,0.12)] text-[#0284c7]">
                   {roleDisplay}
                 </span>
-              )}
+              )} */}
             </div>
           ) : (
             <span className={`font-black text-lg ${textPrimary} mx-auto`}>MT</span>

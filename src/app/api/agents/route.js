@@ -13,7 +13,7 @@ const AGENT_SAFE_COLUMNS = `
   id, name, email, phone, city, state, occupation, agent_type, experience,
   network, message, status, login_enabled, must_change_password, approved_at,
   approved_by, auth_version, last_login_at, created_at, updated_at, has_project_management_access,
-  specializations
+  specializations, is_manager, manager_id
 `;
 
 function cleanSpecializations(specs) {
@@ -72,8 +72,9 @@ export async function GET(req) {
 
     vals.push(limit, offset);
     const result = await pool.query(
-      `SELECT ${cols}${countSelect}
+      `SELECT ${cols}, m.name AS manager_name${countSelect}
        FROM agents a
+       LEFT JOIN agents m ON m.id = a.manager_id
        ${whereSql}
        ORDER BY a.created_at DESC
        LIMIT $${vals.length - 1} OFFSET $${vals.length}`,
@@ -155,13 +156,13 @@ export async function PATCH(req) {
     }
 
     const body = await req.json();
-    const { id, status, createLogin, action, specializations, has_project_management_access } = body;
+    const { id, status, createLogin, action, specializations, has_project_management_access, is_manager, manager_id } = body;
     if (!id) {
       return NextResponse.json({ success: false, error: 'Agent id is required' }, { status: 400 });
     }
 
-    // Direct update of specializations / pm access without changing status
-    if (!status && (specializations !== undefined || has_project_management_access !== undefined)) {
+    // Direct update of specializations / pm access / manager status without changing status
+    if (!status && (specializations !== undefined || has_project_management_access !== undefined || is_manager !== undefined || manager_id !== undefined)) {
       const updates = [];
       const params = [];
       if (specializations !== undefined) {
@@ -172,6 +173,14 @@ export async function PATCH(req) {
       if (typeof has_project_management_access === 'boolean') {
         params.push(has_project_management_access);
         updates.push(`has_project_management_access = $${params.length}`);
+      }
+      if (typeof is_manager === 'boolean') {
+        params.push(is_manager);
+        updates.push(`is_manager = $${params.length}`);
+      }
+      if (manager_id !== undefined) {
+        params.push(manager_id ? Number(manager_id) : null);
+        updates.push(`manager_id = $${params.length}`);
       }
       updates.push(`updated_at = NOW()`);
       params.push(id);
@@ -210,6 +219,8 @@ export async function PATCH(req) {
 
     const extraSpecsSql = specializations !== undefined ? `, specializations = '${JSON.stringify(cleanSpecializations(specializations))}'::jsonb` : '';
     const extraPmSql = typeof has_project_management_access === 'boolean' ? `, has_project_management_access = ${has_project_management_access}` : '';
+    const extraManagerSql = typeof is_manager === 'boolean' ? `, is_manager = ${is_manager}` : '';
+    const extraManagerIdSql = manager_id !== undefined ? `, manager_id = ${manager_id ? Number(manager_id) : 'NULL'}` : '';
 
     if (resetPassword || createLogin || (status === 'Approved' && !agent.login_enabled)) {
       if (!agent.city) {
@@ -241,7 +252,7 @@ export async function PATCH(req) {
                 auth_version = auth_version + 1,
                 approved_at = NOW(),
                 approved_by = $2,
-                updated_at = NOW()${extraSpecsSql}${extraPmSql}
+                updated_at = NOW()${extraSpecsSql}${extraPmSql}${extraManagerSql}${extraManagerIdSql}
           WHERE id = $3
           RETURNING ${AGENT_SAFE_COLUMNS}`,
         [passwordHash, admin.email || 'admin', id]
@@ -289,7 +300,7 @@ export async function PATCH(req) {
               auth_version = CASE WHEN $1::VARCHAR = 'Approved' THEN auth_version ELSE auth_version + 1 END,
               approved_at = CASE WHEN $1::VARCHAR = 'Approved' THEN approved_at ELSE NULL END,
               approved_by = CASE WHEN $1::VARCHAR = 'Approved' THEN approved_by ELSE NULL END,
-              updated_at = NOW()${extraSpecsSql}${extraPmSql}
+              updated_at = NOW()${extraSpecsSql}${extraPmSql}${extraManagerSql}${extraManagerIdSql}
         WHERE id = $2
         RETURNING ${AGENT_SAFE_COLUMNS}`,
       [status, id]
