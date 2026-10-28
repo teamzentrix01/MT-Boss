@@ -39,6 +39,14 @@ const DEFAULT_SETTINGS = {
     Window: 0.012,
     Door: 0.01,
   },
+  supervisionPercent: 3.5,
+  contingencyPercent: 2.5,
+  wastagePercent: 3.5,
+  additionalCharges: {
+    supervisionPercent: 3.5,
+    contingencyPercent: 2.5,
+    wastagePercent: 3.5,
+  },
 };
 
 let readyPromise;
@@ -47,7 +55,27 @@ function hasAuth(req) {
   return Boolean(requireRole(req, 'admin'));
 }
 
+function cleanPercentage(value, fallback) {
+  if (value === undefined || value === null || value === '') return fallback;
+  const next = Number(value);
+  if (!Number.isFinite(next) || next < 0 || next > 100) return fallback;
+  return Math.round(next * 100) / 100;
+}
+
 function mergeSettings(saved = {}) {
+  const supervisionPercent = cleanPercentage(
+    saved.supervisionPercent ?? saved.additionalCharges?.supervisionPercent,
+    DEFAULT_SETTINGS.supervisionPercent
+  );
+  const contingencyPercent = cleanPercentage(
+    saved.contingencyPercent ?? saved.additionalCharges?.contingencyPercent,
+    DEFAULT_SETTINGS.contingencyPercent
+  );
+  const wastagePercent = cleanPercentage(
+    saved.wastagePercent ?? saved.additionalCharges?.wastagePercent,
+    DEFAULT_SETTINGS.wastagePercent
+  );
+
   return {
     cityRates: {
       ...DEFAULT_SETTINGS.cityRates,
@@ -69,6 +97,14 @@ function mergeSettings(saved = {}) {
       ...DEFAULT_SETTINGS.materialFactors,
       ...(saved.materialFactors || {}),
     },
+    supervisionPercent,
+    contingencyPercent,
+    wastagePercent,
+    additionalCharges: {
+      supervisionPercent,
+      contingencyPercent,
+      wastagePercent,
+    },
   };
 }
 
@@ -79,6 +115,18 @@ function cleanNumber(value, fallback) {
 
 function sanitizeSettings(input = {}) {
   const merged = mergeSettings(input);
+  const supervisionPercent = cleanPercentage(
+    merged.supervisionPercent,
+    DEFAULT_SETTINGS.supervisionPercent
+  );
+  const contingencyPercent = cleanPercentage(
+    merged.contingencyPercent,
+    DEFAULT_SETTINGS.contingencyPercent
+  );
+  const wastagePercent = cleanPercentage(
+    merged.wastagePercent,
+    DEFAULT_SETTINGS.wastagePercent
+  );
 
   return {
     cityRates: Object.fromEntries(
@@ -125,6 +173,14 @@ function sanitizeSettings(input = {}) {
         cleanNumber(value, DEFAULT_SETTINGS.materialFactors[key] || 0),
       ])
     ),
+    supervisionPercent,
+    contingencyPercent,
+    wastagePercent,
+    additionalCharges: {
+      supervisionPercent,
+      contingencyPercent,
+      wastagePercent,
+    },
   };
 }
 
@@ -174,7 +230,10 @@ export async function GET() {
     }
 
     const settings = mergeSettings(result.rows[0]?.settings || {});
-    return NextResponse.json({ success: true, data: settings });
+    return NextResponse.json(
+      { success: true, data: settings },
+      { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+    );
   } catch (error) {
     console.error('GET calculator-settings error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
@@ -187,7 +246,31 @@ export async function PUT(req) {
     if (!hasAuth(req)) return unauthorized();
 
     const body = await req.json();
-    const settings = sanitizeSettings(body.settings || body);
+    const rawSettings = body.settings || body;
+
+    const validateCharge = (val, name) => {
+      if (val === undefined || val === null || val === '') return `${name} cannot be empty.`;
+      const num = Number(val);
+      if (!Number.isFinite(num) || num < 0 || num > 100) return `${name} must be a number between 0 and 100.`;
+      const parts = String(val).split('.');
+      if (parts[1] && parts[1].length > 2) return `${name} can have at most 2 decimal places.`;
+      return null;
+    };
+
+    const sp = rawSettings.supervisionPercent ?? rawSettings.additionalCharges?.supervisionPercent;
+    const cp = rawSettings.contingencyPercent ?? rawSettings.additionalCharges?.contingencyPercent;
+    const wp = rawSettings.wastagePercent ?? rawSettings.additionalCharges?.wastagePercent;
+
+    const validationError =
+      (sp !== undefined ? validateCharge(sp, 'Supervision %') : null) ||
+      (cp !== undefined ? validateCharge(cp, 'Contingency %') : null) ||
+      (wp !== undefined ? validateCharge(wp, 'Wastage %') : null);
+
+    if (validationError) {
+      return NextResponse.json({ error: validationError }, { status: 400 });
+    }
+
+    const settings = sanitizeSettings(rawSettings);
     const result = await pool.query(
       `UPDATE calculator_settings
        SET settings=$1, updated_at=NOW()

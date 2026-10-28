@@ -41,9 +41,30 @@ const DEFAULT_RATE_SETTINGS = {
     Window: 0.012,
     Door: 0.01,
   },
+  supervisionPercent: 3.5,
+  contingencyPercent: 2.5,
+  wastagePercent: 3.5,
+  additionalCharges: {
+    supervisionPercent: 3.5,
+    contingencyPercent: 2.5,
+    wastagePercent: 3.5,
+  },
 };
 
 function mergeRateSettings(settings = {}) {
+  const supervisionPercent =
+    settings.supervisionPercent !== undefined && settings.supervisionPercent !== null && settings.supervisionPercent !== ''
+      ? settings.supervisionPercent
+      : settings.additionalCharges?.supervisionPercent ?? DEFAULT_RATE_SETTINGS.supervisionPercent;
+  const contingencyPercent =
+    settings.contingencyPercent !== undefined && settings.contingencyPercent !== null && settings.contingencyPercent !== ''
+      ? settings.contingencyPercent
+      : settings.additionalCharges?.contingencyPercent ?? DEFAULT_RATE_SETTINGS.contingencyPercent;
+  const wastagePercent =
+    settings.wastagePercent !== undefined && settings.wastagePercent !== null && settings.wastagePercent !== ''
+      ? settings.wastagePercent
+      : settings.additionalCharges?.wastagePercent ?? DEFAULT_RATE_SETTINGS.wastagePercent;
+
   return {
     cityRates: { ...DEFAULT_RATE_SETTINGS.cityRates, ...(settings.cityRates || {}) },
     qualityLevels: Object.fromEntries(
@@ -59,6 +80,14 @@ function mergeRateSettings(settings = {}) {
       ])
     ),
     materialFactors: { ...DEFAULT_RATE_SETTINGS.materialFactors, ...(settings.materialFactors || {}) },
+    supervisionPercent,
+    contingencyPercent,
+    wastagePercent,
+    additionalCharges: {
+      supervisionPercent,
+      contingencyPercent,
+      wastagePercent,
+    },
   };
 }
 
@@ -206,6 +235,17 @@ export default function CalculatorManager({ isDarkMode }) {
     }));
   };
 
+  const updateAdditionalCharge = (key, value) => {
+    setRateSettings((current) => ({
+      ...current,
+      [key]: value,
+      additionalCharges: {
+        ...(current.additionalCharges || {}),
+        [key]: value,
+      },
+    }));
+  };
+
   const selectedCities = formData.available_cities || [];
   const qualityNames = Object.keys(rateSettings.qualityLevels || DEFAULT_RATE_SETTINGS.qualityLevels);
   const selectedPackage = qualityNames.includes(bulkPackage) ? bulkPackage : qualityNames[0] || 'Basic';
@@ -258,7 +298,34 @@ export default function CalculatorManager({ isDarkMode }) {
   };
 
   const saveRateSettings = async () => {
-    setMessage(''); setError(''); setSavingRates(true);
+    setMessage(''); setError('');
+
+    const validateCharge = (val, name) => {
+      if (val === '' || val === null || val === undefined) {
+        return `${name} cannot be empty.`;
+      }
+      const num = Number(val);
+      if (!Number.isFinite(num) || num < 0 || num > 100) {
+        return `${name} must be a number between 0 and 100.`;
+      }
+      const parts = String(val).split('.');
+      if (parts[1] && parts[1].length > 2) {
+        return `${name} can have at most 2 decimal places.`;
+      }
+      return null;
+    };
+
+    const err =
+      validateCharge(rateSettings.supervisionPercent, 'Supervision %') ||
+      validateCharge(rateSettings.contingencyPercent, 'Contingency %') ||
+      validateCharge(rateSettings.wastagePercent, 'Wastage %');
+
+    if (err) {
+      setError(err);
+      return;
+    }
+
+    setSavingRates(true);
     try {
       const token = localStorage.getItem('admin-token') || localStorage.getItem('token');
       const res = await fetch('/api/calculator-settings', {
@@ -829,6 +896,89 @@ export default function CalculatorManager({ isDarkMode }) {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="cm-rate-section">
+            <div className="cm-rate-title">Additional charges</div>
+            <div style={{ color: 'var(--cm-muted)', fontSize: '.75rem', marginBottom: 12 }}>
+              Set percentages for supervision, contingency overheads and floor wastage applied by the calculator.
+            </div>
+            <div className="cm-rate-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+              <div className="cm-rate-card">
+                <div className="cm-rate-name">Supervision %</div>
+                <div className="cm-rate-fields">
+                  <div>
+                    <label className="cm-label">Supervision %</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        className="cm-input"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        style={{ paddingRight: '28px' }}
+                        value={rateSettings.supervisionPercent ?? ''}
+                        onChange={(e) => updateAdditionalCharge('supervisionPercent', e.target.value)}
+                        placeholder="3.5"
+                      />
+                      <span style={{ position: 'absolute', right: 10, color: 'var(--cm-muted)', fontWeight: 800, fontSize: '.8rem', pointerEvents: 'none' }}>
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cm-rate-card">
+                <div className="cm-rate-name">Contingency %</div>
+                <div className="cm-rate-fields">
+                  <div>
+                    <label className="cm-label">Contingency %</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        className="cm-input"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        style={{ paddingRight: '28px' }}
+                        value={rateSettings.contingencyPercent ?? ''}
+                        onChange={(e) => updateAdditionalCharge('contingencyPercent', e.target.value)}
+                        placeholder="2.5"
+                      />
+                      <span style={{ position: 'absolute', right: 10, color: 'var(--cm-muted)', fontWeight: 800, fontSize: '.8rem', pointerEvents: 'none' }}>
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cm-rate-card">
+                <div className="cm-rate-name">Wastage %</div>
+                <div className="cm-rate-fields">
+                  <div>
+                    <label className="cm-label">Wastage %</label>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        className="cm-input"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        style={{ paddingRight: '28px' }}
+                        value={rateSettings.wastagePercent ?? ''}
+                        onChange={(e) => updateAdditionalCharge('wastagePercent', e.target.value)}
+                        placeholder="3.5"
+                      />
+                      <span style={{ position: 'absolute', right: 10, color: 'var(--cm-muted)', fontWeight: 800, fontSize: '.8rem', pointerEvents: 'none' }}>
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
