@@ -614,6 +614,8 @@ function AppearanceManager() {
     finally { setSaving(false); }
   };
 
+  const [newHeroUrl, setNewHeroUrl] = useState('');
+
   const updatePromo = (index, field, value) => setContent((current) => ({ ...current, promos: current.promos.map((promo, i) => i === index ? { ...promo, [field]: value } : promo) }));
 
   const handleUpload = async (event) => {
@@ -622,10 +624,41 @@ function AppearanceManager() {
     setUploading(true);
     try {
       const imageUrl = await uploadImage(file);
-      setContent((current) => ({ ...current, hero_image: imageUrl }));
+      setContent((current) => {
+        const existing = Array.isArray(current.hero_images) ? current.hero_images : [current.hero_image].filter(Boolean);
+        return {
+          ...current,
+          hero_image: imageUrl,
+          hero_images: [...existing, imageUrl],
+        };
+      });
     }
     catch (error) { setNotice(error.message); }
     finally { setUploading(false); event.target.value = ''; }
+  };
+
+  const addHeroImageUrl = () => {
+    if (!newHeroUrl.trim()) return;
+    setContent((current) => {
+      const existing = Array.isArray(current.hero_images) ? current.hero_images : [current.hero_image].filter(Boolean);
+      return {
+        ...current,
+        hero_images: [...existing, newHeroUrl.trim()],
+      };
+    });
+    setNewHeroUrl('');
+  };
+
+  const removeHeroImage = (idx) => {
+    setContent((current) => {
+      const existing = Array.isArray(current.hero_images) ? current.hero_images : [];
+      const updated = existing.filter((_, i) => i !== idx);
+      return {
+        ...current,
+        hero_images: updated,
+        hero_image: updated[0] || '',
+      };
+    });
   };
 
   return <div className="shop-admin-panel">
@@ -705,18 +738,107 @@ function AppearanceManager() {
               </label>
             ))}
             <label className="shop-admin-wide">
-              Banner image URL
+              Banner primary image URL
               <input
                 value={content.hero_image ?? ''}
                 onChange={(e) => setContent({ ...content, hero_image: e.target.value })}
               />
             </label>
           </div>
-          <div className="shop-admin-form-footer">
-            <label className="shop-admin-upload">
-              {uploading ? 'Uploading...' : 'Upload banner image'}
-              <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
-            </label>
+
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+            <strong style={{ display: 'block', marginBottom: 10, fontSize: 13, color: '#1e293b' }}>
+              🔄 Auto-Scroll Banner Images ({Array.isArray(content.hero_images) ? content.hero_images.length : 0})
+            </strong>
+            <p style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
+              These images automatically scroll in the banner on the Shop Now page.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+              {(Array.isArray(content.hero_images) ? content.hero_images : []).map((imgUrl, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    position: 'relative',
+                    width: 100,
+                    height: 70,
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    border: '2px solid #cbd5e1',
+                    background: '#f1f5f9',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imgUrl}
+                    alt={`Banner ${idx + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeHeroImage(idx)}
+                    title="Remove image"
+                    style={{
+                      position: 'absolute',
+                      top: 4,
+                      right: 4,
+                      background: 'rgba(239, 68, 68, 0.9)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: 20,
+                      height: 20,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11,
+                      fontWeight: 'bold',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    ✕
+                  </button>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 3,
+                      left: 4,
+                      background: 'rgba(15, 23, 42, 0.75)',
+                      color: '#fff',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      padding: '1px 5px',
+                      borderRadius: 4,
+                    }}
+                  >
+                    #{idx + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="url"
+                placeholder="Paste Cloudinary / image URL to add..."
+                value={newHeroUrl}
+                onChange={(e) => setNewHeroUrl(e.target.value)}
+                style={{ flex: '1 1 280px', minWidth: 200 }}
+              />
+              <button
+                type="button"
+                onClick={addHeroImageUrl}
+                className="shop-admin-button"
+                style={{ padding: '8px 16px', fontWeight: 700 }}
+              >
+                + Add Image URL
+              </button>
+              <label className="shop-admin-upload" style={{ margin: 0 }}>
+                {uploading ? 'Uploading...' : 'Upload Image'}
+                <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
+              </label>
+            </div>
           </div>
         </div>
 

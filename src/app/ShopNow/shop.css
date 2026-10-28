@@ -534,7 +534,18 @@
 
 .store-hero-photo {
   background: #d5e9fc;
-  position: relative
+  position: relative;
+  overflow: hidden;
+  min-height: 330px;
+}
+
+.hero-banner-gallery-root:hover .hero-gallery-arrow {
+  opacity: 1 !important;
+}
+
+.hero-gallery-arrow:hover {
+  background: rgba(15, 23, 42, 0.85) !important;
+  transform: translateY(-50%) scale(1.1) !important;
 }
 
 .store-hero-photo-label {
@@ -550,7 +561,8 @@
   font-size: 12px;
   font-weight: 800;
   color: #24693e;
-  box-shadow: 0 10px 30px #0003
+  box-shadow: 0 10px 30px #0003;
+  z-index: 15;
 }
 
 .store-promos {

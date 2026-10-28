@@ -6,7 +6,8 @@
         "dev": "node --use-system-ca node_modules/next/dist/bin/next dev --webpack",
         "build": "next build",
         "start": "next start",
-        "lint": "eslint"
+        "lint": "eslint",
+        "postinstall": "node scripts/patch-next-router.mjs"
     },
     "dependencies": {
         "@emailjs/browser": "^4.4.1",

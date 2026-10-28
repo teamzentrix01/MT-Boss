@@ -13,6 +13,8 @@ import ShopCategoryNav from "./ShopCategoryNav";
 import MobileStorefront from "./MobileStorefront";
 import ProductGalleryCarousel from "./ProductGalleryCarousel";
 import AutoSwipeGallery from "./AutoSwipeGallery";
+import HeroBannerGallery from "./HeroBannerGallery";
+import { defaultHeroImages } from "@/lib/shop-storefront-defaults";
 import { getCartStep } from "@/lib/cart-step";
 export function normalizeShopImageUrl(value) {
   const imageUrl = String(value || '').trim();
@@ -588,7 +590,7 @@ export default function Storefront({ categories, products, offers = [], content,
           <section className="store-hero">
             <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
             <div className="store-hero-photo" role="img" aria-label="Construction materials" style={{ position: 'relative' }}>
-              <OptimizedImage src={content.hero_image} alt="" fill sizes="(max-width: 560px) 100vw, 48vw" quality={75} priority />
+              <HeroBannerGallery images={content?.hero_images || defaultHeroImages} alt="Construction materials" delay={3500} />
               <span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span>
             </div>
           </section>
