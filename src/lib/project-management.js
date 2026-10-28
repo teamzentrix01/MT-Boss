@@ -66,7 +66,13 @@ export async function requirePmAccess(req, projectId = null) {
     if (dbAgent?.has_project_management_access) {
       if (projectId) {
         const assignmentRes = await pool.query(
-          'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+          `SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2
+           UNION
+           SELECT 1 FROM pm_projects p JOIN agent_leads l ON l.id = p.source_lead_id WHERE p.id = $1 AND l.agent_id = $2
+           UNION
+           SELECT 1 FROM projects p WHERE p.id = $1 AND (p.assigned_agent_id = $2 OR EXISTS (SELECT 1 FROM agent_leads l WHERE l.id = p.source_lead_id AND l.agent_id = $2))
+           UNION
+           SELECT 1 FROM agent_leads l WHERE l.id = $1 AND l.agent_id = $2`,
           [projectId, agent.id]
         );
         if (assignmentRes.rows.length === 0) return null; // Not assigned to this project

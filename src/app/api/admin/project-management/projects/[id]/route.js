@@ -50,6 +50,96 @@ const valid = (b) => {
     ];
 };
 
+const PROJECT_DETAIL_SQL = `WITH party_totals AS (
+  SELECT project_id, SUM(amount) received
+  FROM pm_party_payments
+  WHERE project_id = $1 AND NOT is_deleted
+  GROUP BY project_id
+),
+labour AS (
+  SELECT pv.project_id, SUM(a.wage_amount) amount
+  FROM pm_project_vendors pv
+  JOIN pm_attendance a ON a.project_vendor_id = pv.id
+  WHERE pv.project_id = $1 AND pv.pay_type = 'daily_wage'
+  GROUP BY pv.project_id
+),
+materials AS (
+  SELECT pv.project_id, SUM(m.amount) amount
+  FROM pm_project_vendors pv
+  JOIN pm_vendor_material_supply m ON m.project_vendor_id = pv.id
+  WHERE pv.project_id = $1 AND NOT m.is_deleted
+  GROUP BY pv.project_id
+),
+vendor_paid AS (
+  SELECT pv.project_id, SUM(x.amount) amount
+  FROM pm_project_vendors pv
+  JOIN pm_vendor_payments x ON x.project_vendor_id = pv.id
+  WHERE pv.project_id = $1 AND NOT x.is_deleted
+  GROUP BY pv.project_id
+),
+contract_due AS (
+  SELECT project_id, SUM(contract_amount) amount
+  FROM pm_project_vendors
+  WHERE project_id = $1 AND pay_type = 'contract'
+  GROUP BY project_id
+),
+direct_mat AS (
+  SELECT project_id, SUM(amount) amount
+  FROM pm_material_received
+  WHERE project_id = $1 AND NOT is_deleted AND vendor_supply_id IS NULL AND NOT transfer_in
+  GROUP BY project_id
+),
+other_exp AS (
+  SELECT project_id, SUM(amount) amount
+  FROM pm_other_expenses
+  WHERE project_id = $1 AND NOT is_deleted
+  GROUP BY project_id
+),
+ind_labour AS (
+  SELECT l.project_id, SUM(la.wage_amount) amount
+  FROM pm_labor l
+  JOIN pm_labor_attendance la ON la.labor_id = l.id
+  WHERE l.project_id = $1
+  GROUP BY l.project_id
+),
+supplier_paid AS (
+  SELECT project_id, SUM(amount) amount
+  FROM pm_supplier_payments
+  WHERE project_id = $1 AND NOT is_deleted
+  GROUP BY project_id
+)
+SELECT p.*, pa.name party_name,
+  COALESCE(pt.received, 0) received,
+  p.contract_value - COALESCE(pt.received, 0) pending,
+  GREATEST(0, CURRENT_DATE - p.start_date::date) days_running,
+  COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) total_labour_cost,
+  COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) vendor_labour_cost,
+  COALESCE(il.amount, 0) individual_labour_cost,
+  COALESCE(l.amount, 0) daily_labour_cost,
+  COALESCE(cd.amount, 0) contract_labour_cost,
+  COALESCE(m.amount, 0) total_vendor_material_cost,
+  COALESCE(dm.amount, 0) direct_material_cost,
+  COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) total_material_cost,
+  COALESCE(oe.amount, 0) total_other_expenses,
+  (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
+  COALESCE(vp.amount, 0) total_paid_to_vendors,
+  COALESCE(sp.amount, 0) total_paid_to_suppliers,
+  (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0)) - COALESCE(vp.amount, 0) total_vendor_balance_pending,
+  COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
+  COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
+FROM pm_projects p
+JOIN pm_parties pa ON pa.id = p.party_id
+LEFT JOIN party_totals pt ON pt.project_id = p.id
+LEFT JOIN labour l ON l.project_id = p.id
+LEFT JOIN materials m ON m.project_id = p.id
+LEFT JOIN vendor_paid vp ON vp.project_id = p.id
+LEFT JOIN contract_due cd ON cd.project_id = p.id
+LEFT JOIN direct_mat dm ON dm.project_id = p.id
+LEFT JOIN other_exp oe ON oe.project_id = p.id
+LEFT JOIN ind_labour il ON il.project_id = p.id
+LEFT JOIN supplier_paid sp ON sp.project_id = p.id
+WHERE p.id = $1`;
+
 export async function GET(req, { params }) {
     const paramId = (await params).id;
     const admin = await requirePmAccess(req, paramId);
@@ -57,97 +147,86 @@ export async function GET(req, { params }) {
     try {
         await ensureProjectManagementPhase5Schema();
         const id = Number(paramId);
-        const result = await pool.query(
-            `WITH party_totals AS (
-         SELECT project_id, SUM(amount) received
-         FROM pm_party_payments
-         WHERE project_id = $1 AND NOT is_deleted
-         GROUP BY project_id
-       ),
-       labour AS (
-         SELECT pv.project_id, SUM(a.wage_amount) amount
-         FROM pm_project_vendors pv
-         JOIN pm_attendance a ON a.project_vendor_id = pv.id
-         WHERE pv.project_id = $1 AND pv.pay_type = 'daily_wage'
-         GROUP BY pv.project_id
-       ),
-       materials AS (
-         SELECT pv.project_id, SUM(m.amount) amount
-         FROM pm_project_vendors pv
-         JOIN pm_vendor_material_supply m ON m.project_vendor_id = pv.id
-         WHERE pv.project_id = $1 AND NOT m.is_deleted
-         GROUP BY pv.project_id
-       ),
-       vendor_paid AS (
-         SELECT pv.project_id, SUM(x.amount) amount
-         FROM pm_project_vendors pv
-         JOIN pm_vendor_payments x ON x.project_vendor_id = pv.id
-         WHERE pv.project_id = $1 AND NOT x.is_deleted
-         GROUP BY pv.project_id
-       ),
-       contract_due AS (
-         SELECT project_id, SUM(contract_amount) amount
-         FROM pm_project_vendors
-         WHERE project_id = $1 AND pay_type = 'contract'
-         GROUP BY project_id
-       ),
-       direct_mat AS (
-         SELECT project_id, SUM(amount) amount
-         FROM pm_material_received
-         WHERE project_id = $1 AND NOT is_deleted AND vendor_supply_id IS NULL AND NOT transfer_in
-         GROUP BY project_id
-       ),
-       other_exp AS (
-         SELECT project_id, SUM(amount) amount
-         FROM pm_other_expenses
-         WHERE project_id = $1 AND NOT is_deleted
-         GROUP BY project_id
-       ),
-       ind_labour AS (
-         SELECT l.project_id, SUM(la.wage_amount) amount
-         FROM pm_labor l
-         JOIN pm_labor_attendance la ON la.labor_id = l.id
-         WHERE l.project_id = $1
-         GROUP BY l.project_id
-       ),
-       supplier_paid AS (
-         SELECT project_id, SUM(amount) amount
-         FROM pm_supplier_payments
-         WHERE project_id = $1 AND NOT is_deleted
-         GROUP BY project_id
-       )
-       SELECT p.*, pa.name party_name,
-         COALESCE(pt.received, 0) received,
-         p.contract_value - COALESCE(pt.received, 0) pending,
-         GREATEST(0, CURRENT_DATE - p.start_date::date) days_running,
-         COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) total_labour_cost,
-         COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) vendor_labour_cost,
-         COALESCE(il.amount, 0) individual_labour_cost,
-         COALESCE(l.amount, 0) daily_labour_cost,
-         COALESCE(cd.amount, 0) contract_labour_cost,
-         COALESCE(m.amount, 0) total_vendor_material_cost,
-         COALESCE(dm.amount, 0) direct_material_cost,
-         COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) total_material_cost,
-         COALESCE(oe.amount, 0) total_other_expenses,
-         (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
-         COALESCE(vp.amount, 0) total_paid_to_vendors,
-          COALESCE(sp.amount, 0) total_paid_to_suppliers,
-         (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0)) - COALESCE(vp.amount, 0) total_vendor_balance_pending,
-         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
-         COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
-       FROM pm_projects p
-       JOIN pm_parties pa ON pa.id = p.party_id
-       LEFT JOIN party_totals pt ON pt.project_id = p.id
-       LEFT JOIN labour l ON l.project_id = p.id
-       LEFT JOIN materials m ON m.project_id = p.id
-       LEFT JOIN vendor_paid vp ON vp.project_id = p.id
-       LEFT JOIN contract_due cd ON cd.project_id = p.id
-       LEFT JOIN direct_mat dm ON dm.project_id = p.id
-       LEFT JOIN other_exp oe ON oe.project_id = p.id
-       LEFT JOIN ind_labour il ON il.project_id = p.id
-        LEFT JOIN supplier_paid sp ON sp.project_id = p.id
-       WHERE p.id = $1`, [id]
-        );
+        let result = await pool.query(PROJECT_DETAIL_SQL, [id]);
+
+        if (!result.rows[0]) {
+          // Fallback: check if id is an operational project or lead ID
+          const fallbackRes = await pool.query(
+            `SELECT p.id AS op_id, p.title, p.location, p.deal_amount, p.status, p.assigned_agent_id,
+                    l.id AS lead_id, l.client_name, l.client_phone, l.client_email, l.city, l.service_type,
+                    l.converted_project_id, l.agent_id, l.final_amount
+               FROM projects p
+               FULL OUTER JOIN agent_leads l ON l.id = p.source_lead_id
+              WHERE p.id = $1 OR l.id = $1 OR p.source_lead_id = $1
+              ORDER BY (p.id = $1) DESC, (l.id = $1) DESC
+              LIMIT 1`,
+            [id]
+          );
+
+          if (fallbackRes.rows[0]) {
+            const op = fallbackRes.rows[0];
+            let targetPmId = op.converted_project_id;
+            if (!targetPmId && op.lead_id) {
+              const existingPm = await pool.query(
+                `SELECT id FROM pm_projects WHERE source_lead_id = $1 LIMIT 1`,
+                [op.lead_id]
+              );
+              targetPmId = existingPm.rows[0]?.id;
+            }
+
+            if (!targetPmId) {
+              const partyName = op.client_name || op.title || 'Client';
+              const partyPhone = op.client_phone || '';
+              const partyEmail = op.client_email || '';
+              const partyAddress = op.city || op.location || '';
+              const contractVal = Number(op.deal_amount || op.final_amount || 0);
+
+              let partyId = null;
+              if (partyPhone) {
+                const foundParty = await pool.query(`SELECT id FROM pm_parties WHERE phone = $1 LIMIT 1`, [partyPhone]);
+                partyId = foundParty.rows[0]?.id;
+              }
+              if (!partyId && partyEmail) {
+                const foundParty = await pool.query(`SELECT id FROM pm_parties WHERE email = $1 LIMIT 1`, [partyEmail]);
+                partyId = foundParty.rows[0]?.id;
+              }
+              if (!partyId) {
+                const newParty = await pool.query(
+                  `INSERT INTO pm_parties (name, phone, email, address) VALUES ($1, $2, $3, $4) RETURNING id`,
+                  [partyName, partyPhone, partyEmail, partyAddress]
+                );
+                partyId = newParty.rows[0].id;
+              }
+
+              const newPm = await pool.query(
+                `INSERT INTO pm_projects (party_id, name, site_address, start_date, contract_value, status, source_lead_id)
+                 VALUES ($1, $2, $3, CURRENT_DATE, $4, 'running', $5) RETURNING id`,
+                [partyId, op.title || op.service_type || 'Project', partyAddress, contractVal, op.lead_id || null]
+              );
+              targetPmId = newPm.rows[0].id;
+
+              const agentId = op.assigned_agent_id || op.agent_id;
+              if (agentId) {
+                await pool.query(
+                  `INSERT INTO pm_project_agents (project_id, agent_id, assigned_by)
+                   VALUES ($1, $2, 'system') ON CONFLICT DO NOTHING`,
+                  [targetPmId, agentId]
+                );
+              }
+
+              if (op.lead_id) {
+                await pool.query(
+                  `UPDATE agent_leads SET converted_project_id = $1 WHERE id = $2`,
+                  [targetPmId, op.lead_id]
+                );
+              }
+            }
+
+            if (targetPmId) {
+              result = await pool.query(PROJECT_DETAIL_SQL, [targetPmId]);
+            }
+          }
+        }
 
         if (!result.rows[0]) return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 });
         const row = {...result.rows[0] };

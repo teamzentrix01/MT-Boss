@@ -241,14 +241,7 @@ async function getLeadRows({
   }
 
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
-  const orderSql = `
-     ORDER BY
-       CASE
-         WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
-         WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
-         ELSE 1
-       END ASC,
-       l.created_at DESC`;
+  const orderSql = ` ORDER BY l.created_at DESC, l.id DESC`;
 
   if (unbounded) {
     const result = await pool.query(
@@ -260,6 +253,8 @@ async function getLeadRows({
          COALESCE(l.state, pse.state, NULL) AS state,
          COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
          COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
+         CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id) ELSE NULL END AS converted_project_id,
+         op.id AS operational_project_id,
          a.name AS agent_name,
          a.email AS agent_email,
          a.phone AS agent_phone,
@@ -272,6 +267,8 @@ async function getLeadRows({
        LEFT JOIN agents a ON a.id = l.agent_id
        LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
        LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
+       LEFT JOIN pm_projects pm ON (pm.id = l.converted_project_id OR pm.source_lead_id = l.id)
+       LEFT JOIN projects op ON (op.source_lead_id = l.id AND op.project_kind = 'operational')
        LEFT JOIN primary_service_enquiries pse ON (l.source_ref_table = 'primary_service_enquiries' AND pse.id = l.source_ref_id)
        LEFT JOIN service_bookings sb ON (l.source_ref_table = 'service_bookings' AND sb.id = l.source_ref_id)
        ${where}
@@ -296,7 +293,8 @@ async function getLeadRows({
        COALESCE(l.state, pse.state, NULL) AS state,
        COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
        COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
-       CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id, op.id) ELSE NULL END AS converted_project_id,
+       CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id) ELSE NULL END AS converted_project_id,
+       op.id AS operational_project_id,
        a.name AS agent_name,
        a.email AS agent_email,
        a.phone AS agent_phone,
@@ -352,7 +350,8 @@ export async function GET(req) {
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.site_address, op.location) ELSE NULL END AS project_site_address,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.status, op.status, op.project_status) ELSE NULL END AS project_status,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.contract_value, op.deal_amount::numeric, 0) ELSE 0 END AS project_contract_value,
-           CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, p.id, op.id) ELSE NULL END AS converted_project_id,
+           CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, p.id) ELSE NULL END AS converted_project_id,
+           op.id AS operational_project_id,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.id, op.id) ELSE NULL END AS project_id
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id

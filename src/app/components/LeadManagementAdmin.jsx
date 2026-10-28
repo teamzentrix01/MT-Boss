@@ -153,9 +153,24 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       .sort((a, b) => a.localeCompare(b));
   }, [leads]);
 
+  const getLeadAgentIds = useCallback((lead) => {
+    if (!lead) return [];
+    const ids = new Set();
+    if (lead.agent_id) ids.add(String(lead.agent_id));
+    if (Array.isArray(lead.assigned_agent_ids)) {
+      lead.assigned_agent_ids.forEach((id) => id && ids.add(String(id)));
+    } else if (typeof lead.assigned_agent_ids === 'string') {
+      try {
+        const parsed = JSON.parse(lead.assigned_agent_ids);
+        if (Array.isArray(parsed)) parsed.forEach((id) => id && ids.add(String(id)));
+      } catch {}
+    }
+    return Array.from(ids);
+  }, []);
+
   const byAgentCount = useMemo(() => {
-    return leads.filter((lead) => Boolean(lead.agent_id)).length;
-  }, [leads]);
+    return leads.filter((lead) => getLeadAgentIds(lead).length > 0).length;
+  }, [leads, getLeadAgentIds]);
 
   const agentOptions = useMemo(() => {
     const map = new Map();
@@ -163,17 +178,20 @@ export default function LeadManagementAdmin({ isDarkMode }) {
       if (a?.id) map.set(String(a.id), { id: String(a.id), name: a.name || `Agent #${a.id}` });
     });
     leads.forEach((l) => {
-      if (l.agent_id && !map.has(String(l.agent_id))) {
-        map.set(String(l.agent_id), { id: String(l.agent_id), name: l.agent_name || `Agent #${l.agent_id}` });
-      }
+      const ids = getLeadAgentIds(l);
+      ids.forEach((aid) => {
+        if (!map.has(aid)) {
+          map.set(aid, { id: aid, name: (l.agent_id && String(l.agent_id) === aid && l.agent_name) || `Agent #${aid}` });
+        }
+      });
     });
     return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
-  }, [agents, leads]);
+  }, [agents, leads, getLeadAgentIds]);
 
   const filteredLeads = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
 
-    return leads.filter((lead) => {
+    const result = leads.filter((lead) => {
       const matchesSearch = !query || [
         lead.client_name,
         lead.client_phone,
@@ -187,8 +205,9 @@ export default function LeadManagementAdmin({ isDarkMode }) {
         lead.client_requirement,
       ].some((value) => String(value ?? '').toLocaleLowerCase().includes(query));
 
+      const leadAgentIds = getLeadAgentIds(lead);
       const matchesAgent = !byAgentTab || (
-        Boolean(lead.agent_id) && (!selectedAgentId || String(lead.agent_id) === String(selectedAgentId))
+        leadAgentIds.length > 0 && (!selectedAgentId || leadAgentIds.includes(String(selectedAgentId)))
       );
 
       return matchesSearch
@@ -197,7 +216,15 @@ export default function LeadManagementAdmin({ isDarkMode }) {
         && (!source || lead.lead_source === source)
         && (!city || lead.city === city);
     });
-  }, [leads, search, status, source, city, byAgentTab, selectedAgentId]);
+
+    // Ensure the newest leads are always shown at the top of the table
+    return [...result].sort((a, b) => {
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      if (timeB !== timeA) return timeB - timeA;
+      return (Number(b.id) || 0) - (Number(a.id) || 0);
+    });
+  }, [leads, search, status, source, city, byAgentTab, selectedAgentId, getLeadAgentIds]);
 
   const stats = useMemo(() => ({
     total: filteredLeads.length,
@@ -825,6 +852,9 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                     <select style={inputStyle} value={lead.agent_id || ''} onChange={(e) => updateLead(lead.id, { agent_id: e.target.value })}>
                       <option value="">Not assigned</option>
                       {agents.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                      {lead.agent_id && !agents.some((ag) => String(ag.id) === String(lead.agent_id)) && (
+                        <option value={lead.agent_id}>{lead.agent_name || `Agent #${lead.agent_id}`}</option>
+                      )}
                     </select>
                   </td>
                   <td style={{ padding: '0.6rem', color: muted, whiteSpace: 'nowrap' }}>{lead.follow_up_date ? new Date(lead.follow_up_date).toLocaleDateString('en-IN') : '-'}</td>

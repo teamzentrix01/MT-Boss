@@ -26,18 +26,15 @@ export async function GET(req) {
     if (gate) return gate;
 
     const result = await pool.query(
-      `SELECT l.*, p.id AS project_id
+      `SELECT l.*,
+              COALESCE(l.converted_project_id, pm.id) AS converted_project_id,
+              COALESCE(pm.id, p.id) AS project_id
          FROM agent_leads l
+         LEFT JOIN pm_projects pm ON (pm.id = l.converted_project_id OR pm.source_lead_id = l.id)
          LEFT JOIN projects p ON p.source_lead_id = l.id
-        WHERE l.agent_id = $1
-        ORDER BY
-          CASE
-            WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
-            WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
-            ELSE 1
-          END ASC,
-          l.created_at DESC`,
-      [agent.id]
+        WHERE (l.agent_id = $1 OR COALESCE(l.assigned_agent_ids, '[]'::jsonb) @> $2::jsonb)
+        ORDER BY l.created_at DESC, l.id DESC`,
+      [agent.id, JSON.stringify([agent.id])]
     );
 
     return NextResponse.json({ success: true, data: result.rows, city: agent.city });
@@ -121,8 +118,8 @@ export async function POST(req) {
         (agent_id, city, client_name, client_phone, client_email, service_type, lead_type,
          status, follow_up_date, notes,
          lead_stage, meeting_done, estimate_sent, final_amount,
-         daily_visit_notes, client_requirement, lead_source)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+         daily_visit_notes, client_requirement, lead_source, assigned_agent_ids)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
        RETURNING *`,
       [
         agent.id,
@@ -142,6 +139,7 @@ export async function POST(req) {
         daily_visit_notes || null,
         client_requirement || null,
         lead_source || 'offline',
+        JSON.stringify([agent.id]),
       ]
     );
 

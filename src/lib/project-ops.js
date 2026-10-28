@@ -198,7 +198,7 @@ export async function convertFinalLeadToProject(db, leadId) {
        project_notes, client_name, client_phone, client_email, deal_amount,
        project_status, source_lead_id, project_kind
      )
-     VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,NULL,$6,$7,$8,$9,$10,$11,'final',$12,'operational')
+     VALUES ($1,$2,$3,$4,'/logo.png','', 'small','draft',$5,$6,$7,$8,$9,$10,$11,$12,'final',$13,'operational')
      ON CONFLICT (source_lead_id) WHERE source_lead_id IS NOT NULL
      DO UPDATE SET
        title = EXCLUDED.title,
@@ -206,6 +206,7 @@ export async function convertFinalLeadToProject(db, leadId) {
        location = EXCLUDED.location,
        description = EXCLUDED.description,
        franchise_id = EXCLUDED.franchise_id,
+       assigned_agent_id = COALESCE(EXCLUDED.assigned_agent_id, projects.assigned_agent_id),
        project_kind = 'operational',
        project_notes = EXCLUDED.project_notes,
        client_name = EXCLUDED.client_name,
@@ -219,6 +220,7 @@ export async function convertFinalLeadToProject(db, leadId) {
       lead.city || '',
       lead.client_requirement || lead.notes || '',
       lead.assigned_franchise_id || null,
+      lead.agent_id || null,
       lead.assigned_by_role || 'agent',
       [lead.client_requirement, lead.notes].filter(Boolean).join('\n\n'),
       lead.client_name,
