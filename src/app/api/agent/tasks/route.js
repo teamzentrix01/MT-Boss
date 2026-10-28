@@ -50,16 +50,19 @@ export async function GET(req) {
     }
 
     const query = `
-      SELECT *
-        FROM agent_tasks
-       WHERE ${conditions.join(' AND ')}
+      SELECT t.*,
+             m.name AS creator_name,
+             m.city AS creator_city
+        FROM agent_tasks t
+        LEFT JOIN agents m ON m.id = t.created_by_agent_id
+       WHERE ${conditions.map(c => 't.' + c).join(' AND ')}
        ORDER BY 
-         CASE WHEN status = 'Pending' THEN 1
-              WHEN status = 'In Progress' THEN 2
-              WHEN status = 'Overdue' THEN 3
+         CASE WHEN t.status = 'Pending' THEN 1
+              WHEN t.status = 'In Progress' THEN 2
+              WHEN t.status = 'Overdue' THEN 3
               ELSE 4 END ASC,
-         due_date ASC,
-         created_at DESC
+         t.due_date ASC,
+         t.created_at DESC
     `;
 
     const result = await pool.query(query, values);
@@ -138,6 +141,25 @@ export async function PATCH(req) {
        WHERE id = $4 AND agent_id = $5
        RETURNING *
     `, [newStatus, newRemark, completedAt, id, agent.id]);
+
+    // If completed and assigned by a manager, notify that manager
+    if (newStatus === 'Completed' && current.created_by_agent_id) {
+      try {
+        await pool.query(`
+          INSERT INTO agent_notifications (agent_id, type, title, message, entity_type, entity_id, dedupe_key)
+          VALUES ($1, 'task_completed', $2, $3, 'task', $4, $5)
+          ON CONFLICT (agent_id, dedupe_key) WHERE dedupe_key IS NOT NULL DO NOTHING
+        `, [
+          current.created_by_agent_id,
+          `Team Task Completed by ${agent.name}`,
+          `Task "${current.title}" marked Completed. Remark: ${newRemark || 'None'}`,
+          current.id,
+          `task_comp_${current.id}_${Date.now()}`,
+        ]);
+      } catch (notifErr) {
+        console.warn('Manager completion notification warning:', notifErr.message);
+      }
+    }
 
     return NextResponse.json({
       success: true,

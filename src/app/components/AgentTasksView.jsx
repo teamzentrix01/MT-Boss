@@ -330,6 +330,14 @@ export default function AgentTasksView({
                     </p>
                   )}
 
+                  {/* Assigned By */}
+                  <div className="mt-2.5 flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500">
+                    <span>Assigned by:</span>
+                    <span className="font-bold text-sky-600 dark:text-sky-400">
+                      {task.creator_name ? `👔 ${task.creator_name} (Manager)` : (task.assigned_by_name || '👑 Admin')}
+                    </span>
+                  </div>
+
                   {/* Agent Remark (if submitted) */}
                   {task.agent_remark && (
                     <div className="mt-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs">
@@ -550,13 +558,21 @@ export default function AgentTasksView({
                 </button>
               </div>
 
-              {/* Deadline card */}
-              <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-4 flex items-center justify-between">
+              {/* Deadline & Assignee card */}
+              <div className="p-3.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Target Deadline</div>
                   <div className={`text-xs font-extrabold mt-0.5 ${textTitle}`}>{dueInfo.text}</div>
                 </div>
-                <div className="text-right">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Assigned By</div>
+                  <div className="text-xs font-black mt-0.5 text-sky-600 dark:text-sky-400">
+                    {selectedDetailTask.creator_name
+                      ? `👔 ${selectedDetailTask.creator_name} (Manager)`
+                      : (selectedDetailTask.assigned_by_name || '👑 Admin')}
+                  </div>
+                </div>
+                <div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Status</div>
                   <div className={`text-xs font-black mt-0.5 ${isCompleted ? 'text-emerald-500' : 'text-blue-500'}`}>
                     {selectedDetailTask.status}

@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PartyProjectManagement from '@/app/components/PartyProjectManagement';
 import AgentTasksView from '@/app/components/AgentTasksView';
+import AgentTeamTasksView from '@/app/components/AgentTeamTasksView';
 import PanelLayout from '@/app/components/PanelLayout';
 import {
   LayoutDashboard,
@@ -14,6 +15,7 @@ import {
   CalendarClock,
   Clock,
   User,
+  Users,
   Plus,
   ArrowLeft,
 } from '@/app/components/ui/icons';
@@ -62,7 +64,7 @@ function AgentDashboardContent() {
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    return ['overview', 'leads', 'projects', 'tasks', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'overview';
+    return ['overview', 'leads', 'projects', 'tasks', 'team-tasks', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'overview';
   });
   const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
@@ -107,7 +109,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['overview', 'leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
+    if (['overview', 'leads', 'projects', 'tasks', 'team-tasks', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -819,6 +821,14 @@ function AgentDashboardContent() {
       badgeColor: 'bg-amber-500 text-white',
     },
     {
+      key: 'team-tasks',
+      label: 'Team Tasks',
+      icon: Users,
+      badge: 'Manager',
+      badgeColor: 'bg-sky-500 text-white',
+      hidden: !agent?.is_manager,
+    },
+    {
       key: 'project-management',
       label: 'Project Management',
       icon: Building2,
@@ -840,7 +850,7 @@ function AgentDashboardContent() {
       title="Agent Workspace"
       subtitle={`${agent?.name || 'Agent'} · ${agent?.city ? agent.city + ', ' : ''}${agent?.state || ''}`}
       user={agent || {}}
-      roleBadge="Agent"
+      roleBadge={agent?.is_manager ? 'Head Agent (Manager)' : 'Agent'}
       menuItems={menuItems}
       activeTab={activeTab}
       onTabChange={(tab) => {
@@ -899,6 +909,21 @@ function AgentDashboardContent() {
                 <CalendarClock size={22} />
               </div>
             </div>
+            {/* {agent?.is_manager && (
+              <div
+                className={`border ${card} p-5 rounded-lg flex items-center justify-between cursor-pointer hover:border-sky-500 transition-colors bg-gradient-to-tr from-sky-500/10 to-indigo-500/10 border-sky-500/30`}
+                onClick={() => { setActiveTab('team-tasks'); router.push('/agent/dashboard?tab=team-tasks'); }}
+                title="Click to manage team tasks"
+              >
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">Team Tasks</p>
+                  <p className="text-sm font-black mt-1 text-zinc-900 dark:text-zinc-100">Manager Panel →</p>
+                </div>
+                <div className="w-10 h-10 rounded-lg bg-sky-500/15 text-sky-600 flex items-center justify-center">
+                  <Users size={22} />
+                </div>
+              </div>
+            )} */}
             <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Today Follow-ups</p>
@@ -1632,6 +1657,12 @@ function AgentDashboardContent() {
               onUpdateStatus={updateAgentTaskStatus}
               dark={dark}
             />
+          </section>
+        )}
+
+        {activeTab === 'team-tasks' && agent?.is_manager && (
+          <section className="animate-fade-in">
+            <AgentTeamTasksView dark={dark} />
           </section>
         )}
 

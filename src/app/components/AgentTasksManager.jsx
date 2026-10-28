@@ -14,6 +14,8 @@ import {
   Pencil,
   X,
   User,
+  Users,
+  ShieldCheck,
   RefreshCw,
   Eye,
   ChevronDown,
@@ -417,9 +419,17 @@ function AgentCheckboxDropdown({
                           whiteSpace: 'nowrap',
                           textOverflow: 'ellipsis',
                           overflow: 'hidden',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
                         }}
                       >
-                        {ag.name}
+                        <span>{ag.name}</span>
+                        {ag.is_manager && (
+                          <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: 4, fontWeight: 700 }}>
+                            ⭐ Manager
+                          </span>
+                        )}
                       </div>
                       <div
                         style={{
@@ -456,10 +466,15 @@ export default function AgentTasksManager({ isDarkMode = false }) {
   const [filterAgentIds, setFilterAgentIds] = useState([]);
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterAssignedBy, setFilterAssignedBy] = useState('all');
 
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showHeadAgentsModal, setShowHeadAgentsModal] = useState(false);
+  const [headModalSearch, setHeadModalSearch] = useState('');
+  const [headModalTab, setHeadModalTab] = useState('all'); // 'all' | 'managers' | 'field'
+  const [updatingAgentId, setUpdatingAgentId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [viewDetailTask, setViewDetailTask] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -488,6 +503,92 @@ export default function AgentTasksManager({ isDarkMode = false }) {
     agent_remark: '',
   });
 
+  const headAgents = useMemo(() => agents.filter((a) => Boolean(a.is_manager)), [agents]);
+  const headAgentsCount = headAgents.length;
+
+  const filteredHeadModalAgents = useMemo(() => {
+    return agents.filter((ag) => {
+      if (headModalTab === 'managers' && !ag.is_manager) return false;
+      if (headModalTab === 'field' && ag.is_manager) return false;
+      if (!headModalSearch.trim()) return true;
+      const q = headModalSearch.toLowerCase();
+      return (
+        (ag.name && ag.name.toLowerCase().includes(q)) ||
+        (ag.city && ag.city.toLowerCase().includes(q)) ||
+        (ag.phone && ag.phone.includes(q)) ||
+        (ag.email && ag.email.toLowerCase().includes(q))
+      );
+    });
+  }, [agents, headModalTab, headModalSearch]);
+
+  const handleToggleHeadAgent = async (agent) => {
+    const isCurrentlyManager = Boolean(agent.is_manager);
+    const confirmMsg = isCurrentlyManager
+      ? `Are you sure you want to remove Head Agent / Manager status for "${agent.name}"?`
+      : `Make "${agent.name}" a Head Agent / Manager? They will be able to assign and monitor tasks for their subordinate agents in the Agent Portal.`;
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      setUpdatingAgentId(agent.id);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+      const res = await fetch('/api/agents', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: agent.id,
+          is_manager: !isCurrentlyManager,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(!isCurrentlyManager ? `⭐ "${agent.name}" is now a Head Agent / Manager!` : `Removed Head Agent role from "${agent.name}"`);
+        await fetchAgents();
+        await fetchTasks();
+      } else {
+        alert(data.error || 'Could not update agent');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error updating agent');
+    } finally {
+      setUpdatingAgentId(null);
+    }
+  };
+
+  const handleAssignAgentManager = async (agentId, managerId) => {
+    try {
+      setUpdatingAgentId(agentId);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+      const res = await fetch('/api/agents', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: agentId,
+          manager_id: managerId ? Number(managerId) : null,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Reporting manager updated successfully');
+        await fetchAgents();
+      } else {
+        alert(data.error || 'Could not assign manager');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error assigning manager');
+    } finally {
+      setUpdatingAgentId(null);
+    }
+  };
+
   const showToast = (msg) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), 4000);
@@ -503,6 +604,7 @@ export default function AgentTasksManager({ isDarkMode = false }) {
       }
       if (filterType && filterType !== 'all') params.set('task_type', filterType);
       if (filterStatus && filterStatus !== 'all') params.set('status', filterStatus);
+      if (filterAssignedBy && filterAssignedBy !== 'all') params.set('assigned_by', filterAssignedBy);
       if (search.trim()) params.set('search', search.trim());
 
       const res = await fetch(`/api/admin/agent-tasks?${params.toString()}`, {
@@ -521,7 +623,7 @@ export default function AgentTasksManager({ isDarkMode = false }) {
     } finally {
       setLoading(false);
     }
-  }, [filterAgentIds, filterType, filterStatus, search, agents.length]);
+  }, [filterAgentIds, filterType, filterStatus, filterAssignedBy, search, agents.length]);
 
   const fetchAgents = useCallback(async () => {
     try {
@@ -720,26 +822,49 @@ export default function AgentTasksManager({ isDarkMode = false }) {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowCreateModal(true)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.6rem 1.25rem',
-            borderRadius: '8px',
-            background: 'var(--brand-blue, #0284c7)',
-            color: '#fff',
-            fontWeight: 700,
-            fontSize: '0.875rem',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
-          }}
-        >
-          <Plus size={18} /> Assign New Task
-        </button>
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => setShowHeadAgentsModal(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              padding: '0.6rem 1.15rem',
+              borderRadius: '8px',
+              background: '#fffbeb',
+              color: '#b45309',
+              border: '1px solid #fde68a',
+              fontWeight: 800,
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(245, 158, 11, 0.15)',
+            }}
+          >
+            <span>⭐</span> Head Agents Setup ({headAgentsCount})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowCreateModal(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.6rem 1.25rem',
+              borderRadius: '8px',
+              background: 'var(--brand-blue, #0284c7)',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '0.875rem',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+            }}
+          >
+            <Plus size={18} /> Assign New Task
+          </button>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -801,6 +926,29 @@ export default function AgentTasksManager({ isDarkMode = false }) {
           </div>
           <div style={{ fontSize: '1.75rem', fontWeight: 900, marginTop: '0.25rem', color: '#ef4444' }}>
             {stats.overdue_tasks || 0}
+          </div>
+        </div>
+
+        <div
+          onClick={() => setShowHeadAgentsModal(true)}
+          style={{
+            padding: '1rem',
+            background: 'var(--surface)',
+            border: '1px solid #fde68a',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+          }}
+          className="hover:scale-[1.02] hover:shadow-md"
+          title="Click to manage Head Agents & team hierarchy"
+        >
+          <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 800, color: '#b45309', letterSpacing: '0.05em', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>⭐ Head Agents</span>
+            <span style={{ fontSize: '0.68rem', color: '#0284c7', textDecoration: 'underline' }}>Setup →</span>
+          </div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, marginTop: '0.25rem', color: '#b45309', display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+            <span>{headAgentsCount}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600 }}>/ {agents.length} agents</span>
           </div>
         </div>
       </div>
@@ -892,6 +1040,25 @@ export default function AgentTasksManager({ isDarkMode = false }) {
             <option value="In Progress">🔄 In Progress</option>
             <option value="Completed">✓ Completed</option>
             <option value="Overdue">⚠️ Overdue</option>
+          </select>
+
+          {/* Filter Assigned By (Admin vs Manager) */}
+          <select
+            value={filterAssignedBy}
+            onChange={(e) => setFilterAssignedBy(e.target.value)}
+            style={{
+              padding: '0.45rem 0.75rem',
+              borderRadius: '6px',
+              border: '1px solid var(--border)',
+              background: 'var(--bg)',
+              color: 'var(--text)',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+            }}
+          >
+            <option value="all">👥 All Creators</option>
+            <option value="admin">👑 Admin Created</option>
+            <option value="manager">👔 Manager Assigned</option>
           </select>
         </div>
 
@@ -1068,10 +1235,26 @@ export default function AgentTasksManager({ isDarkMode = false }) {
                             {task.agent_name ? task.agent_name.slice(0, 1).toUpperCase() : 'A'}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 700, color: 'var(--text)' }}>{task.agent_name || 'Agent'}</div>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
-                              {task.agent_city || 'City N/A'} · {task.agent_phone || ''}
+                            <div style={{ fontWeight: 700, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                              <span>{task.agent_name || 'Agent'}</span>
+                              {task.agent_is_manager && (
+                                <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', padding: '1px 5px', borderRadius: 4, fontWeight: 800 }}>
+                                  ⭐ Manager
+                                </span>
+                              )}
                             </div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+                              {task.agent_city || 'City N/A'} {task.agent_phone ? `· ${task.agent_phone}` : ''}
+                            </div>
+                            {task.created_by_agent_id ? (
+                              <div style={{ fontSize: '0.7rem', color: '#6366f1', marginTop: '2px', display: 'inline-flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
+                                <span>👔 Assigned by: {task.creator_name || task.assigned_by_name || 'Manager'}</span>
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '0.7rem', color: '#0284c7', marginTop: '2px', display: 'inline-flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
+                                <span>👑 Assigned by: Admin</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -1880,6 +2063,20 @@ export default function AgentTasksManager({ isDarkMode = false }) {
                       </div>
                     )}
                   </div>
+                  <div style={{ marginTop: '0.75rem', paddingTop: '0.6rem', borderTop: '1px solid var(--border)', fontSize: '0.75rem' }}>
+                    <div style={{ color: 'var(--muted)', fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                      Task Creator / Hierarchy
+                    </div>
+                    {viewDetailTask.created_by_agent_id ? (
+                      <div style={{ color: '#6366f1', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span>👔</span> Assigned by Head Agent: <strong>{viewDetailTask.creator_name || viewDetailTask.assigned_by_name || 'Manager'}</strong>
+                      </div>
+                    ) : (
+                      <div style={{ color: '#0284c7', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span>👑</span> Assigned directly by: <strong>Admin</strong>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Timeline Card */}
@@ -2078,6 +2275,409 @@ export default function AgentTasksManager({ isDarkMode = false }) {
           </div>
         );
       })()}
+
+      {/* Head Agents / Manager Allocation Modal */}
+      {showHeadAgentsModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(3px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowHeadAgentsModal(false);
+          }}
+        >
+          <div
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              width: '100%',
+              maxWidth: '900px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                padding: '1.25rem 1.5rem',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(2, 132, 199, 0.04) 100%)',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.4rem' }}>⭐</span>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 900, color: 'var(--text)' }}>
+                    Head Agents (Team Managers) Setup
+                  </h2>
+                </div>
+                <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: 'var(--muted)' }}>
+                  Yahan se direct kisi bhi agent ko <strong>Head Agent / Manager</strong> banayein ya hatayein. Head agents apne team agents ko tasks de sakte hain aur unhe monitor kar sakte hain.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowHeadAgentsModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--muted)',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Quick Stats Banner */}
+            <div
+              style={{
+                padding: '0.85rem 1.5rem',
+                background: 'var(--bg)',
+                borderBottom: '1px solid var(--border)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1.5rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <span style={{ fontWeight: 800, color: '#f59e0b', fontSize: '1.1rem' }}>⭐ {headAgentsCount}</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontWeight: 600 }}>Active Head Agents</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <span style={{ fontWeight: 800, color: '#0284c7', fontSize: '1.1rem' }}>👥 {agents.length}</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontWeight: 600 }}>Total Approved Agents</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <span style={{ fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
+                  🔗 {agents.filter((a) => Boolean(a.manager_id)).length}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontWeight: 600 }}>Assigned to a Head Agent</span>
+              </div>
+            </div>
+
+            {/* Active Head Agents Highlights */}
+            {headAgents.length > 0 && (
+              <div style={{ padding: '1rem 1.5rem 0.5rem', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#b45309', marginBottom: '0.65rem' }}>
+                  Current Head Agents ({headAgents.length})
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.75rem' }}>
+                  {headAgents.map((mgr) => {
+                    const subordinates = agents.filter((a) => a.manager_id === mgr.id);
+                    return (
+                      <div
+                        key={mgr.id}
+                        style={{
+                          padding: '0.85rem',
+                          background: '#fffbeb',
+                          border: '1px solid #fde68a',
+                          borderRadius: '10px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '50%',
+                                background: '#f59e0b',
+                                color: '#fff',
+                                fontWeight: 800,
+                                fontSize: '0.85rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              {mgr.name.slice(0, 1).toUpperCase()}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#92400e', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span>{mgr.name}</span>
+                                <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '1px 5px', borderRadius: '4px' }}>
+                                  Manager
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: '#b45309' }}>
+                                {mgr.city || 'No City'} {mgr.phone ? `· ${mgr.phone}` : ''}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Team member badges */}
+                        <div style={{ fontSize: '0.72rem', color: '#92400e', background: 'rgba(245, 158, 11, 0.1)', padding: '0.35rem 0.5rem', borderRadius: '6px' }}>
+                          <strong>Subordinate Team: </strong>
+                          {subordinates.length === 0 ? (
+                            <span style={{ fontStyle: 'italic', color: '#b45309' }}>Can assign to any active agent or allocate below</span>
+                          ) : (
+                            <span>{subordinates.length} agent(s) ({subordinates.map((s) => s.name).join(', ')})</span>
+                          )}
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.2rem' }}>
+                          <button
+                            type="button"
+                            disabled={updatingAgentId === mgr.id}
+                            onClick={() => handleToggleHeadAgent(mgr)}
+                            style={{
+                              padding: '0.3rem 0.65rem',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              borderRadius: '6px',
+                              background: '#fff',
+                              color: '#dc2626',
+                              border: '1px solid #fca5a5',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {updatingAgentId === mgr.id ? 'Updating...' : 'Remove Head Role'}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Filter and Search Bar inside Modal */}
+            <div style={{ padding: '1rem 1.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+                <Search size={15} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+                <input
+                  type="text"
+                  placeholder="Search agent by name, city, phone..."
+                  value={headModalSearch}
+                  onChange={(e) => setHeadModalSearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.45rem 0.75rem 0.45rem 2rem',
+                    borderRadius: '6px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg)',
+                    color: 'var(--text)',
+                    fontSize: '0.82rem',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.4rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setHeadModalTab('all')}
+                  style={{
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background: headModalTab === 'all' ? 'var(--brand-blue, #0284c7)' : 'var(--bg)',
+                    color: headModalTab === 'all' ? '#fff' : 'var(--text)',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  All ({agents.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHeadModalTab('managers')}
+                  style={{
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background: headModalTab === 'managers' ? '#f59e0b' : 'var(--bg)',
+                    color: headModalTab === 'managers' ? '#fff' : 'var(--text)',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  ⭐ Head Agents ({headAgentsCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHeadModalTab('field')}
+                  style={{
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    background: headModalTab === 'field' ? '#64748b' : 'var(--bg)',
+                    color: headModalTab === 'field' ? '#fff' : 'var(--text)',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  Field Agents ({agents.length - headAgentsCount})
+                </button>
+              </div>
+            </div>
+
+            {/* Agent List Table */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 1.5rem 1.5rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--muted)', fontSize: '0.72rem', textTransform: 'uppercase' }}>
+                    <th style={{ padding: '0.65rem 0.5rem' }}>Agent Name & Contact</th>
+                    <th style={{ padding: '0.65rem 0.5rem' }}>Location</th>
+                    <th style={{ padding: '0.65rem 0.5rem' }}>Role</th>
+                    <th style={{ padding: '0.65rem 0.5rem' }}>Assigned Head Agent</th>
+                    <th style={{ padding: '0.65rem 0.5rem', textAlign: 'right' }}>Make / Remove Head Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredHeadModalAgents.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--muted)' }}>
+                        No agents match search
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredHeadModalAgents.map((ag) => {
+                      const isHead = Boolean(ag.is_manager);
+                      const isUpdating = updatingAgentId === ag.id;
+                      return (
+                        <tr
+                          key={ag.id}
+                          style={{
+                            borderBottom: '1px solid var(--border)',
+                            background: isHead ? 'rgba(245, 158, 11, 0.04)' : 'transparent',
+                          }}
+                        >
+                          <td style={{ padding: '0.75rem 0.5rem' }}>
+                            <div style={{ fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span>{ag.name}</span>
+                              {isHead && (
+                                <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>
+                                  ⭐ Head
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+                              {ag.phone || 'No phone'} · {ag.email}
+                            </div>
+                          </td>
+                          <td style={{ padding: '0.75rem 0.5rem', color: 'var(--text)' }}>
+                            {ag.city || '—'}, {ag.state || ''}
+                          </td>
+                          <td style={{ padding: '0.75rem 0.5rem' }}>
+                            {isHead ? (
+                              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '0.2rem 0.55rem', borderRadius: '6px', border: '1px solid #fde68a', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                ⭐ Head Agent (Manager)
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--muted)', background: 'var(--bg)', padding: '0.2rem 0.55rem', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                                Field Agent
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: '0.75rem 0.5rem' }}>
+                            {isHead ? (
+                              <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontStyle: 'italic' }}>
+                                Leads Team (Reports to Admin)
+                              </span>
+                            ) : (
+                              <select
+                                value={ag.manager_id || ''}
+                                disabled={isUpdating}
+                                onChange={(e) => handleAssignAgentManager(ag.id, e.target.value)}
+                                style={{
+                                  padding: '0.35rem 0.55rem',
+                                  fontSize: '0.75rem',
+                                  borderRadius: '6px',
+                                  border: '1px solid var(--border)',
+                                  background: 'var(--bg)',
+                                  color: 'var(--text)',
+                                  fontWeight: 600,
+                                  maxWidth: '200px',
+                                }}
+                              >
+                                <option value="">Direct to Admin</option>
+                                {headAgents
+                                  .filter((m) => m.id !== ag.id)
+                                  .map((m) => (
+                                    <option key={m.id} value={m.id}>
+                                      ⭐ {m.name} ({m.city})
+                                    </option>
+                                  ))}
+                              </select>
+                            )}
+                          </td>
+                          <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right' }}>
+                            <button
+                              type="button"
+                              disabled={isUpdating}
+                              onClick={() => handleToggleHeadAgent(ag)}
+                              style={{
+                                padding: '0.35rem 0.85rem',
+                                borderRadius: '6px',
+                                fontSize: '0.75rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                                border: isHead ? '1px solid #fca5a5' : '1px solid #f59e0b',
+                                background: isHead ? '#fff' : '#fffbeb',
+                                color: isHead ? '#dc2626' : '#b45309',
+                                boxShadow: isHead ? 'none' : '0 1px 3px rgba(245, 158, 11, 0.2)',
+                              }}
+                            >
+                              {isUpdating ? 'Saving...' : isHead ? 'Remove Head Role' : '⭐ Make Head Agent'}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setShowHeadAgentsModal(false)}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  borderRadius: '8px',
+                  background: 'var(--brand-blue, #0284c7)',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

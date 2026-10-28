@@ -28,6 +28,8 @@ export async function GET(req) {
     const status = searchParams.get('status');
     const taskType = searchParams.get('task_type');
     const search = searchParams.get('search');
+    const assignedBy = searchParams.get('assigned_by'); // 'admin' | 'manager' | 'all'
+    const managerId = searchParams.get('manager_id');
 
     const conditions = [];
     const values = [];
@@ -41,6 +43,17 @@ export async function GET(req) {
     } else if (agentId && agentId !== 'all') {
       values.push(parseInt(agentId, 10));
       conditions.push(`t.agent_id = $${values.length}`);
+    }
+
+    if (managerId && managerId !== 'all') {
+      values.push(parseInt(managerId, 10));
+      conditions.push(`(t.created_by_agent_id = $${values.length} OR a.manager_id = $${values.length})`);
+    }
+
+    if (assignedBy === 'admin') {
+      conditions.push(`t.created_by_agent_id IS NULL`);
+    } else if (assignedBy === 'manager') {
+      conditions.push(`t.created_by_agent_id IS NOT NULL`);
     }
 
     if (status && status !== 'all') {
@@ -65,9 +78,13 @@ export async function GET(req) {
              a.name AS agent_name,
              a.city AS agent_city,
              a.phone AS agent_phone,
-             a.email AS agent_email
+             a.email AS agent_email,
+             a.is_manager AS agent_is_manager,
+             m.name AS creator_name,
+             m.is_manager AS creator_is_manager
         FROM agent_tasks t
         JOIN agents a ON a.id = t.agent_id
+        LEFT JOIN agents m ON m.id = t.created_by_agent_id
        ${whereClause}
        ORDER BY 
          CASE WHEN t.status = 'Pending' THEN 1
