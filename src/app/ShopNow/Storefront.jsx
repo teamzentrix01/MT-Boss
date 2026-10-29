@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
-  Hammer, MapPin, Minus, Mountain, Package, PaintBucket, Plus,
+  Hammer, MapPin, Minus, Mountain, Package, PaintBucket, Percent, Plus,
   Search, ShieldCheck, ShoppingCart, Truck, Wallet, Wrench, X,
 } from "lucide-react";
 import "./shop.css";
@@ -17,6 +17,18 @@ import AutoSwipeGallery from "./AutoSwipeGallery";
 import HeroBannerGallery from "./HeroBannerGallery";
 import { defaultHeroImages } from "@/lib/shop-storefront-defaults";
 import { getCartStep } from "@/lib/cart-step";
+
+const SEARCH_PLACEHOLDERS = [
+  'Search "Cement"',
+  'Search "Plywood & MDF"',
+  'Search "Steel & TMT Bars"',
+  'Search "Plumbing pipes & fittings"',
+  'Search "Electrical wires & switches"',
+  'Search "Paints & Waterproofing"',
+  'Search "Hardware & Hinges"',
+  'Search "Tiles & Adhesives"',
+];
+
 export function normalizeShopImageUrl(value) {
   const imageUrl = String(value || '').trim();
   if (!imageUrl) return '';
@@ -263,6 +275,46 @@ export default function Storefront({ categories, products, offers = [], content,
   const searchScrolled = useRef(false);
   const catalogScrollFrame = useRef(null);
   const storeHeaderRef = useRef(null);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
+    }, 2800);
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeCatObj = useMemo(() => {
+    return categories.find((c) => String(c.id) === String(activeCategory)) || null;
+  }, [categories, activeCategory]);
+
+  const activeSubcats = useMemo(() => {
+    if (!activeCatObj) return [];
+    const list = [];
+    if (Array.isArray(activeCatObj.subcategories) && activeCatObj.subcategories.length > 0) {
+      activeCatObj.subcategories.forEach((s) => {
+        const name = typeof s === 'object' && s !== null ? s.name : s;
+        if (name && !list.some((item) => (typeof item === 'object' ? item.name : item) === name)) list.push(s);
+      });
+    }
+    if (Array.isArray(activeCatObj.types) && activeCatObj.types.length > 0) {
+      activeCatObj.types.forEach((t) => {
+        if (t && !list.some((item) => (typeof item === 'object' ? item.name : item) === t)) list.push(t);
+      });
+    }
+    if (list.length === 0) {
+      const treeMatch = CATEGORY_NAV_TREE.find(
+        (p) =>
+          p.label.toLowerCase().includes(activeCatObj.name.toLowerCase()) ||
+          activeCatObj.name.toLowerCase().includes(p.label.toLowerCase())
+      );
+      if (treeMatch && Array.isArray(treeMatch.children)) {
+        list.push(...treeMatch.children);
+      }
+    }
+    return list;
+  }, [activeCatObj]);
+
 
   const effectiveCashbackPreview = (Array.isArray(cart) && cart.length > 0) ? cashbackPreview : null;
 
@@ -583,14 +635,9 @@ export default function Storefront({ categories, products, offers = [], content,
     if (nextSearch) url.searchParams.set('q', nextSearch);
     else url.searchParams.delete('q');
     window.history.replaceState(window.history.state, '', url);
-    // Wait for React to remove the other catalogue sections before calculating
-    // the target position. Scrolling against the old layout lands at the footer.
-    if (catalogScrollFrame.current) cancelAnimationFrame(catalogScrollFrame.current);
-    catalogScrollFrame.current = requestAnimationFrame(() => {
-      catalogScrollFrame.current = requestAnimationFrame(() => {
-        document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     // Immediately drop focus from the clicked card so :focus style never sticks during scroll
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
@@ -636,7 +683,8 @@ export default function Storefront({ categories, products, offers = [], content,
               </button>
               {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
             </div>
-            <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={content.search_placeholder} aria-label="Search materials" /></label>
+            <label className="store-search"><Search size={20} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={SEARCH_PLACEHOLDERS[placeholderIndex] || content.search_placeholder} aria-label="Search materials" /></label>
+
             {productManagerHref && <Link href={productManagerHref} className="store-admin-add"><Plus size={18} /> Add Product</Link>}
             <Link href="/material-orders?role=user" className="store-orders" title="Track orders"><ClipboardList size={18} /><span>Orders</span></Link>
             <Link
@@ -670,90 +718,193 @@ export default function Storefront({ categories, products, offers = [], content,
         />
 
         <main className="store-main">
-          <div className="store-breadcrumb"><Link href="/">Home</Link><span>/</span><strong>Shop materials</strong></div>
+          {/* Breadcrumb Navigation */}
+          <div className="store-breadcrumb">
+            <Link href="/">Home</Link>
+            <span>/</span>
+            {!searchTerm && activeCategory === "all" ? (
+              <strong>Shop materials</strong>
+            ) : (
+              <>
+                <button type="button" className="store-breadcrumb-btn" onClick={() => chooseCategory("all")}>
+                  Shop materials
+                </button>
+                <span>/</span>
+                <strong className="store-breadcrumb-btn is-current">
+                  {searchTerm && !activeCatObj ? `Search: “${search}”` : (activeCatObj?.name || 'Category')}
+                </strong>
+              </>
+            )}
+          </div>
+
+          {/* Hero Banner (Always shown on all pages/categories) */}
           <section className="store-hero">
-            <div className="store-hero-copy"><span className="store-eyebrow">{content.hero_kicker}</span><h1>{content.hero_title} <em>{content.hero_highlight}</em></h1><p>{content.hero_description}</p><button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>{content.hero_button} <ArrowRight size={18} /></button></div>
+            <div className="store-hero-copy">
+              <span className="store-eyebrow">{content.hero_kicker}</span>
+              <h1>{content.hero_title} <em>{content.hero_highlight}</em></h1>
+              <p>{content.hero_description}</p>
+              <button type="button" className="store-hero-button" onClick={() => chooseCategory("all")}>
+                {content.hero_button} <ArrowRight size={18} />
+              </button>
+            </div>
             <div className="store-hero-photo" role="img" aria-label="Construction materials" style={{ position: 'relative' }}>
               <HeroBannerGallery images={content?.hero_images || defaultHeroImages} alt="Construction materials" delay={3500} />
               <span className="store-hero-photo-label"><CheckCircle2 size={17} /> {content.hero_badge}</span>
             </div>
           </section>
 
-          <section className="store-promos" aria-label="Shopping benefits">
-            {[Package, ShieldCheck, Truck].map((Icon, index) => <div key={index} className={`store-promo store-promo-${index}`}><Icon size={32} /><div><strong>{content.promos[index].title}</strong><span>{content.promos[index].subtitle}</span></div><ArrowRight size={18} /></div>)}
-          </section>
+          {/* 4 Value Proposition Badges (Always shown) */}
+          <div className="store-hero-value-props" aria-label="Store highlights">
+            <div className="store-value-badge">
+              <Truck size={22} style={{ color: "var(--brand-blue, #0077c8)", flexShrink: 0 }} />
+              <span>Site Delivery Guaranteed</span>
+            </div>
+            <div className="store-value-badge">
+              <ShieldCheck size={22} style={{ color: "#16a34a", flexShrink: 0 }} />
+              <span>100% Verified Suppliers</span>
+            </div>
+            <div className="store-value-badge">
+              <CheckCircle2 size={22} style={{ color: "#d97706", flexShrink: 0 }} />
+              <span>Pay on Delivery Available</span>
+            </div>
+            <div className="store-value-badge">
+              <Percent size={22} style={{ color: "var(--brand-blue, #0077c8)", flexShrink: 0 }} />
+              <span>Upto 2% Cashback on Orders</span>
+            </div>
+          </div>
 
-          <section className="store-section" aria-labelledby="store-categories-heading">
-            <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
-            {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
-              const { tone, Icon } = categoryStyle(category.name);
-              const catImgs = Array.from(new Set([
-                category.image,
-                ...(Array.isArray(category.images) ? category.images : [])
-              ].filter(Boolean)));
-              return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}>
-                <span className="store-category-art" style={{ position: 'relative', display: 'block', overflow: 'hidden' }}>
-                  {catImgs.length > 0 ? (
-                    <AutoSwipeGallery images={catImgs} alt={category.name} delay={3000} />
-                  ) : (
-                    <Icon size={37} strokeWidth={1.5} />
-                  )}
-                </span>
-                <strong>{category.name}</strong>
-                <span>Explore <ArrowRight size={13} /></span>
-              </button>;
-            })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
-          </section>
+          {!searchTerm && activeCategory === "all" ? (
+            /* ── HOMEPAGE OVERVIEW FLOW (HomeRun Style) ── */
+            <>
+              <section className="store-section" aria-labelledby="store-categories-heading">
 
-          {!searchTerm && activeCategory === "all" && featured.length > 0 && <section className="store-section" aria-labelledby="store-featured-heading"><div className="store-section-heading"><div><span className="store-section-kicker">POPULAR PICKS</span><h2 id="store-featured-heading">{content.featured_heading}</h2></div><span className="store-section-note">Fixed-price orders and custom quotes</span></div><div className="store-product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
+                <div className="store-section-heading"><div><span className="store-section-kicker">START SHOPPING</span><h2 id="store-categories-heading">{content.categories_heading}</h2></div><span className="store-section-note">Pick a category to see materials</span></div>
+                {loading ? <div className="store-loading">Loading categories...</div> : categories.length ? <div className="store-category-grid">{categories.map((category) => {
+                  const { tone, Icon } = categoryStyle(category.name);
+                  const catImgs = Array.from(new Set([
+                    category.image,
+                    ...(Array.isArray(category.images) ? category.images : [])
+                  ].filter(Boolean)));
+                  return <button type="button" key={category.id} className={`store-category store-category-${tone}`} onClick={() => chooseCategory(category.id)}>
+                    <span className="store-category-art" style={{ position: 'relative', display: 'block', overflow: 'hidden' }}>
+                      {catImgs.length > 0 ? (
+                        <AutoSwipeGallery images={catImgs} alt={category.name} delay={3000} />
+                      ) : (
+                        <Icon size={37} strokeWidth={1.5} />
+                      )}
+                    </span>
+                    <strong>{category.name}</strong>
+                    <span>Explore <ArrowRight size={13} /></span>
+                  </button>;
+                })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
+              </section>
 
-          {!searchTerm && activeCategory === 'all' && deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
+              {deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
 
-          {!searchTerm && activeCategory === 'all' && arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
+              {arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
 
-          <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
-            <div className="store-section-heading"><div><span className="store-section-kicker">THE CATALOGUE</span><h2 id="store-products-heading">{searchTerm ? `Results for “${search}”` : activeCategory === "all" ? content.catalog_heading : categories.find((category) => String(category.id) === String(activeCategory))?.name || "Materials"}</h2></div><span className="store-section-note">{visible.length} items</span></div>
-            <div className="store-filter-row"><button type="button" className={activeCategory === "all" ? "is-active" : ""} onClick={() => chooseCategory("all")}>All</button>{categories.map((category) => <button key={category.id} type="button" className={String(activeCategory) === String(category.id) ? "is-active" : ""} onClick={() => chooseCategory(category.id)}>{category.name}</button>)}</div>
+              <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
+                <div className="store-homerun-header">
+                  <h2 className="store-homerun-title" id="store-products-heading">
+                    {content.catalog_heading || "All Materials"}
+                  </h2>
+                  <div className="store-homerun-filter-bar">
+                    <div className="store-homerun-filter-left">
+                      <span className="store-homerun-filter-label">Filter:</span>
+                      <div className="store-homerun-select-wrap">
+                        <select
+                          value={activeCategory}
+                          onChange={(e) => chooseCategory(e.target.value)}
+                          className="store-homerun-filter-select"
+                          aria-label="Filter by Category"
+                        >
+                          <option value="all">Category: All</option>
+                          {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="store-homerun-select-icon" />
+                      </div>
 
-            {/* Sub-categories showcase strip when a category is selected */}
-            {(() => {
-              if (activeCategory === "all") return null;
-              const activeCatObj = categories.find((c) => String(c.id) === String(activeCategory));
-              if (!activeCatObj) return null;
-              const subcats = (() => {
-                const list = [];
-                if (Array.isArray(activeCatObj.subcategories) && activeCatObj.subcategories.length > 0) {
-                  activeCatObj.subcategories.forEach((s) => {
-                    const name = typeof s === 'object' && s !== null ? s.name : s;
-                    if (name && !list.some((item) => (typeof item === 'object' ? item.name : item) === name)) list.push(s);
-                  });
-                }
-                if (Array.isArray(activeCatObj.types) && activeCatObj.types.length > 0) {
-                  activeCatObj.types.forEach((t) => {
-                    if (t && !list.some((item) => (typeof item === 'object' ? item.name : item) === t)) list.push(t);
-                  });
-                }
-                if (list.length === 0) {
-                  const treeMatch = CATEGORY_NAV_TREE.find(
-                    (p) =>
-                      p.label.toLowerCase().includes(activeCatObj.name.toLowerCase()) ||
-                      activeCatObj.name.toLowerCase().includes(p.label.toLowerCase())
-                  );
-                  if (treeMatch && Array.isArray(treeMatch.children)) {
-                    list.push(...treeMatch.children);
-                  }
-                }
-                return list;
-              })();
-              if (!subcats.length) return null;
-              return (
-                <div className="store-subcategories-strip">
-                  <div className="store-subcategories-title">
-                    <span>Sub-categories &amp; Varieties in {activeCatObj.name}</span>
-                    {searchTerm && (
+                      {brands.length > 0 && (
+                        <div className="store-homerun-select-wrap">
+                          <select
+                            value={brandFilter}
+                            onChange={(e) => setBrandFilter(e.target.value)}
+                            className="store-homerun-filter-select"
+                            aria-label="Filter by Brand"
+                          >
+                            <option value="all">Brand: All</option>
+                            {brands.map((brand) => (
+                              <option key={brand} value={brand}>{brand}</option>
+                            ))}
+                          </select>
+                          <ChevronDown size={14} className="store-homerun-select-icon" />
+                        </div>
+                      )}
+
+                      <div className="store-homerun-select-wrap">
+                        <select
+                          value={sortBy.startsWith('price') ? sortBy : 'all'}
+                          onChange={(e) => {
+                            if (e.target.value !== 'all') setSortBy(e.target.value);
+                          }}
+                          className="store-homerun-filter-select"
+                          aria-label="Filter by Price"
+                        >
+                          <option value="all">Price ▾</option>
+                          <option value="price-asc">Price: Low to High</option>
+                          <option value="price-desc">Price: High to Low</option>
+                        </select>
+                        <ChevronDown size={14} className="store-homerun-select-icon" />
+                      </div>
+                    </div>
+
+                    <div className="store-homerun-filter-right">
+                      <span className="store-homerun-product-count">
+                        {visible.length} {visible.length === 1 ? 'product' : 'products'}
+                      </span>
+                      <div className="store-homerun-sort-wrap">
+                        <span className="store-homerun-sort-label">Sort by:</span>
+                        <div className="store-homerun-select-wrap">
+                          <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="store-homerun-sort-select"
+                            aria-label="Sort by"
+                          >
+                            <option value="featured">Relevance</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name">Name: A to Z</option>
+                          </select>
+                          <ChevronDown size={14} className="store-homerun-select-icon" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
+              </section>
+            </>
+          ) : (
+            /* ── CATEGORY / SEARCH COLLECTION FLOW (Exact Image 2 Style) ── */
+            <section className="store-section store-catalog" id="store-products" style={{ marginTop: 0, paddingTop: 0 }}>
+              <div className="store-homerun-header">
+                {/* Breadcrumb Navigation (Image 2 style) */}
+                <nav aria-label="Breadcrumb" className="store-breadcrumb" style={{ margin: "0 0 12px 0" }}>
+                  <Link href="/">Home</Link>
+                  <span>›</span>
+                  <button type="button" className="store-breadcrumb-btn" onClick={() => chooseCategory("all")}>
+                    Shop materials
+                  </button>
+                  {activeCatObj && (
+                    <>
+                      <span>›</span>
                       <button
                         type="button"
-                        className="store-subcategories-reset"
+                        className={`store-breadcrumb-btn ${!searchTerm ? "is-current" : ""}`}
                         onClick={() => {
                           setSearch("");
                           const url = new URL(window.location.href);
@@ -761,66 +912,155 @@ export default function Storefront({ categories, products, offers = [], content,
                           window.history.replaceState(window.history.state, '', url);
                         }}
                       >
-                        Show All {activeCatObj.name}
+                        {activeCatObj.name}
+                      </button>
+                    </>
+                  )}
+                  {searchTerm && (
+                    <>
+                      <span>›</span>
+                      <strong className="is-current">{search}</strong>
+                    </>
+                  )}
+                </nav>
+
+                {/* Heading (Image 2 style) */}
+                <h1 className="store-homerun-title">
+                  {searchTerm ? search : (activeCatObj?.name || 'Materials')}
+                </h1>
+
+                {/* Single Unified Filter Bar (Image 2 style) */}
+                <div className="store-homerun-filter-bar">
+                  <div className="store-homerun-filter-left">
+                    <span className="store-homerun-filter-label">Filter:</span>
+
+                    {/* Category Dropdown */}
+                    <div className="store-homerun-select-wrap">
+                      <select
+                        value={activeCategory}
+                        onChange={(e) => chooseCategory(e.target.value)}
+                        className="store-homerun-filter-select"
+                        aria-label="Filter by Category"
+                      >
+                        <option value="all">Category: All</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </select>
+                      <ChevronDown size={14} className="store-homerun-select-icon" />
+                    </div>
+
+                    {/* Sub-category / Type Dropdown */}
+                    {activeSubcats.length > 0 && (
+                      <div className="store-homerun-select-wrap">
+                        <select
+                          value={searchTerm || "all"}
+                          onChange={(e) => {
+                            const val = e.target.value === "all" ? "" : e.target.value;
+                            setSearch(val);
+                            const url = new URL(window.location.href);
+                            if (val) url.searchParams.set('q', val);
+                            else url.searchParams.delete('q');
+                            window.history.replaceState(window.history.state, '', url);
+                          }}
+                          className="store-homerun-filter-select"
+                          aria-label="Filter by Subcategory"
+                        >
+                          <option value="all">Sub-category: All</option>
+                          {activeSubcats.map((sub, sIdx) => {
+                            const subName = typeof sub === 'object' && sub !== null ? sub.name : sub;
+                            return (
+                              <option key={`${subName}-${sIdx}`} value={subName}>
+                                {subName}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        <ChevronDown size={14} className="store-homerun-select-icon" />
+                      </div>
+                    )}
+
+                    {/* Brand Dropdown */}
+                    {brands.length > 0 && (
+                      <div className="store-homerun-select-wrap">
+                        <select
+                          value={brandFilter}
+                          onChange={(e) => setBrandFilter(e.target.value)}
+                          className="store-homerun-filter-select"
+                          aria-label="Filter by Brand"
+                        >
+                          <option value="all">Brand: All</option>
+                          {brands.map((brand) => (
+                            <option key={brand} value={brand}>{brand}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="store-homerun-select-icon" />
+                      </div>
+                    )}
+
+                    {/* Price Filter */}
+                    <div className="store-homerun-select-wrap">
+                      <select
+                        value={sortBy.startsWith('price') ? sortBy : 'all'}
+                        onChange={(e) => {
+                          if (e.target.value !== 'all') setSortBy(e.target.value);
+                        }}
+                        className="store-homerun-filter-select"
+                        aria-label="Filter by Price"
+                      >
+                        <option value="all">Price ▾</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                      </select>
+                      <ChevronDown size={14} className="store-homerun-select-icon" />
+                    </div>
+
+                    {/* Reset Button */}
+                    {(activeCategory !== 'all' || searchTerm || brandFilter !== 'all') && (
+                      <button
+                        type="button"
+                        className="store-homerun-reset-btn"
+                        onClick={() => {
+                          chooseCategory("all");
+                          setBrandFilter("all");
+                        }}
+                      >
+                        Reset
                       </button>
                     )}
                   </div>
-                  <div className="store-subcategories-grid">
-                    {subcats.map((sub, sIdx) => {
-                      const subName = typeof sub === 'object' && sub !== null ? sub.name : sub;
-                      const subPrice = typeof sub === 'object' && sub !== null ? sub.price : '';
-                      const subImgs = typeof sub === 'object' && sub !== null
-                        ? Array.from(new Set([sub.image, ...(Array.isArray(sub.images) ? sub.images : [])].filter(Boolean)))
-                        : [];
-                      const isSelected = Boolean(
-                        searchTerm && (
-                          searchTerm === subName.toLowerCase() ||
-                          subName.toLowerCase().includes(searchTerm) ||
-                          searchTerm.includes(subName.toLowerCase())
-                        )
-                      );
-                      return (
-                        <div
-                          key={`${subName}-${sIdx}`}
-                          className={`store-subcategory-card${isSelected ? " is-active" : ""}`}
-                          onClick={() => {
-                            const nextSearch = isSelected ? "" : subName;
-                            setSearch(nextSearch);
-                            const url = new URL(window.location.href);
-                            if (nextSearch) url.searchParams.set('q', nextSearch);
-                            else url.searchParams.delete('q');
-                            window.history.replaceState(window.history.state, '', url);
-                            document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                          }}
-                          title={`Browse ${subName}`}
+
+                  <div className="store-homerun-filter-right">
+                    <span className="store-homerun-product-count">
+                      {visible.length} {visible.length === 1 ? 'product' : 'products'}
+                    </span>
+                    <div className="store-homerun-sort-wrap">
+                      <span className="store-homerun-sort-label">Sort by:</span>
+                      <div className="store-homerun-select-wrap">
+                        <select
+                          value={sortBy}
+                          onChange={(e) => setSortBy(e.target.value)}
+                          className="store-homerun-sort-select"
+                          aria-label="Sort by"
                         >
-                          <div className="store-subcategory-img-box">
-                            {subImgs.length > 0 ? (
-                              <AutoSwipeGallery images={subImgs} alt={subName} delay={3200} />
-                            ) : (
-                              <Package size={26} className="text-gray-400" />
-                            )}
-                          </div>
-                          <div className="store-subcategory-info">
-                            <strong className="store-subcategory-name">{subName}</strong>
-                            {subPrice ? (
-                              <span className="store-subcategory-price">{subPrice.startsWith('₹') ? subPrice : `₹${subPrice}`}</span>
-                            ) : (
-                              <span className="store-subcategory-explore">Explore</span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                          <option value="featured">Relevance</option>
+                          <option value="price-asc">Price: Low to High</option>
+                          <option value="price-desc">Price: High to Low</option>
+                          <option value="name">Name: A to Z</option>
+                        </select>
+                        <ChevronDown size={14} className="store-homerun-select-icon" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              );
-            })()}
+              </div>
 
-            <div className="store-catalog-tools"><label>Brand <select value={brandFilter} onChange={(event) => setBrandFilter(event.target.value)}><option value="all">All brands</option>{brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}</select></label><label>Sort by <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name: A to Z</option></select></label></div>
-            {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
-          </section>
+              {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found in this category. Try another filter or search.</div>}
+            </section>
+          )}
+
         </main>
+
       </div>
     </div>
   );

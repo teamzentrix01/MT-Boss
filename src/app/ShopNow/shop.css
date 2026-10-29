@@ -6240,3 +6240,335 @@ img[src*=".PNG"],
   75% { transform: scale(1.22) rotate(-2deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
+
+/* ── HomeRun Flow: Category View & Filter Pills ────────────────────────── */
+.store-breadcrumb-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #7a847c;
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.store-breadcrumb-btn:hover {
+  color: var(--brand-blue, #0077c8);
+}
+.store-breadcrumb-btn.is-current {
+  font-weight: 700;
+  color: #1a241e;
+  text-decoration: none;
+  cursor: default;
+}
+.dark-mode .store-breadcrumb-btn.is-current {
+  color: #f1f5f9;
+}
+
+.store-category-view-hero {
+  margin: 10px 0 20px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e0effe 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.dark-mode .store-category-view-hero {
+  background: linear-gradient(135deg, #132438 0%, #1a324d 100%);
+  border-color: #27456b;
+}
+
+.store-category-view-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+.dark-mode .store-category-view-title {
+  color: #f8fafc;
+}
+
+.store-category-view-count {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0284c7;
+}
+.dark-mode .store-category-view-count {
+  color: #38bdf8;
+}
+
+.store-subcategories-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+}
+.store-subcategories-pills-row::-webkit-scrollbar {
+  height: 4px;
+}
+.store-subcategories-pills-row::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.store-subcat-pill {
+  white-space: nowrap;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 24px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.store-subcat-pill:hover {
+  border-color: var(--brand-blue, #0077c8);
+  color: var(--brand-blue, #0077c8);
+  transform: translateY(-1px);
+}
+.store-subcat-pill.is-active {
+  background: var(--brand-blue, #0077c8) !important;
+  color: #ffffff !important;
+  border-color: var(--brand-blue, #0077c8) !important;
+  box-shadow: 0 4px 12px rgba(0, 119, 200, 0.25);
+}
+.dark-mode .store-subcat-pill {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+.dark-mode .store-subcat-pill:hover {
+  border-color: #60a5fa;
+  color: #60a5fa;
+}
+.dark-mode .store-subcat-pill.is-active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+}
+
+.store-hero-value-props {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+@media (max-width: 900px) {
+  .store-hero-value-props {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.store-value-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1e293b;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.dark-mode .store-value-badge {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.store-category-clear-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.store-category-clear-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+.dark-mode .store-category-clear-btn {
+  background: #1e293b;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+.dark-mode .store-category-clear-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+/* ── HomeRun Style Header & Filter Bar (Image 2) ─────────────────── */
+.store-homerun-header {
+  margin: 20px 0 14px;
+}
+
+.store-homerun-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  margin: 0 0 16px 0;
+  line-height: 1.25;
+}
+.dark-mode .store-homerun-title {
+  color: #f8fafc;
+}
+
+.store-homerun-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+.dark-mode .store-homerun-filter-bar {
+  border-bottom-color: #334155;
+}
+
+.store-homerun-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.store-homerun-filter-label {
+  font-size: 14px;
+  color: #71717a;
+  font-weight: 500;
+  margin-right: 2px;
+}
+.dark-mode .store-homerun-filter-label {
+  color: #94a3b8;
+}
+
+.store-homerun-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.store-homerun-filter-select,
+.store-homerun-sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: #ffffff;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  height: 36px;
+  padding: 0 28px 0 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #18181b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+  font-family: inherit;
+}
+.store-homerun-filter-select:hover,
+.store-homerun-sort-select:hover {
+  border-color: #71717a;
+}
+.store-homerun-filter-select:focus,
+.store-homerun-sort-select:focus {
+  border-color: var(--brand-blue, #0077c8);
+  box-shadow: 0 0 0 2px rgba(0, 119, 200, 0.15);
+}
+.dark-mode .store-homerun-filter-select,
+.dark-mode .store-homerun-sort-select {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+.dark-mode .store-homerun-filter-select:hover,
+.dark-mode .store-homerun-sort-select:hover {
+  border-color: #64748b;
+}
+
+.store-homerun-select-icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #71717a;
+}
+
+.store-homerun-filter-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.store-homerun-product-count {
+  font-size: 13.5px;
+  color: #71717a;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.dark-mode .store-homerun-product-count {
+  color: #94a3b8;
+}
+
+.store-homerun-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.store-homerun-sort-label {
+  font-size: 13.5px;
+  color: #71717a;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.dark-mode .store-homerun-sort-label {
+  color: #94a3b8;
+}
+
+.store-homerun-reset-btn {
+  background: transparent;
+  border: none;
+  color: var(--brand-blue, #0077c8);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s ease;
+}
+.store-homerun-reset-btn:hover {
+  opacity: 0.8;
+}
+
