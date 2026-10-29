@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Grid3X3,
+  ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Clock, CreditCard, Grid3X3,
   Hammer, MapPin, Minus, Mountain, Package, PaintBucket, Percent, Plus,
   Search, ShieldCheck, ShoppingCart, Truck, Wallet, Wrench, X,
 } from "lucide-react";
@@ -156,6 +156,70 @@ export function displayUnit(value, fallback = 'unit') {
   return String(value || '').trim().replace(/^per\s+/i, '') || fallback;
 }
 
+export function getLowestBulkPrice(product) {
+  if (!product) return null;
+  const tiers = Array.isArray(product.bulk_pricing) ? product.bulk_pricing : [];
+  const valid = tiers
+    .map((t) => Number(t.price))
+    .filter((p) => Number.isFinite(p) && p > 0);
+  if (valid.length > 0) {
+    return Math.min(...valid);
+  }
+  return null;
+}
+
+export function formatPromoSpend(value) {
+  const num = Number(value) || 0;
+  if (num >= 1000 && num % 1000 === 0) {
+    return `${num / 1000}k`;
+  }
+  return `₹${num.toLocaleString('en-IN')}`;
+}
+
+export function productMatchesPromoCategories(product, applicableCategories) {
+  if (!Array.isArray(applicableCategories) || applicableCategories.length === 0) {
+    return true; // Empty array means applies to ALL materials & categories!
+  }
+  const rawCat = typeof product?.category === 'object' ? product?.category?.name : product?.category;
+  const catNames = [
+    rawCat,
+    product?.category_name,
+    product?.categoryName,
+    product?.category?.title,
+    product?.subcategory,
+    product?.name,
+  ].filter(Boolean).map((v) => String(v).trim().toLowerCase());
+
+  return applicableCategories.some((c) => {
+    const target = String(c).trim().toLowerCase();
+    if (!target) return false;
+    return catNames.some((cat) => cat === target || cat.includes(target) || target.includes(cat));
+  });
+}
+
+export function getProductPromotions(product, promotions = []) {
+  if (!promotions || !Array.isArray(promotions) || promotions.length === 0) return [];
+  return promotions.filter((p) => {
+    if (!p.is_active) return false;
+    return productMatchesPromoCategories(product, p.applicable_categories);
+  });
+}
+
+export function getProductPromotion(product, promotions = []) {
+  const matches = getProductPromotions(product, promotions);
+  if (matches.length === 0) return null;
+  const discountPromo = matches.find((p) => p.promo_type === 'percentage' || p.promo_type === 'flat');
+  return discountPromo || matches[0];
+}
+
+export function getProductFreeShippingPromo(product, promotions = []) {
+  if (!promotions || !Array.isArray(promotions) || promotions.length === 0) return null;
+  return promotions.find((p) => {
+    if (!p.is_active || p.promo_type !== 'free_shipping') return false;
+    return productMatchesPromoCategories(product, p.applicable_categories);
+  }) || null;
+}
+
 function productCanOrder(product, selectedCity) {
   const normalizedCity = selectedCity.trim().toLowerCase();
   const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
@@ -192,7 +256,7 @@ function applyOffer(product, offer) {
   };
 }
 
-function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, selectedCity }) {
+function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, onBuy, selectedCity, promotions = [], shippingSettings }) {
   const productImage = getProductImage(product, product.category);
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
@@ -202,6 +266,11 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const canOrder = productCanOrder(product, selectedCity);
   const detailId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id);
   const detailHref = `/ShopNow/${detailId}`;
+
+  // Bulk pricing & promotion logic
+  const lowestBulkPrice = getLowestBulkPrice(product);
+  const activePromos = getProductPromotions(product, promotions);
+
   return (
     <article className="store-product-card">
       {(product.offer?.display_badge || discount > 0) && (
@@ -229,14 +298,61 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
           <h3>{product.name}</h3>
         </Link>
         <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
+
+        {/* Price row */}
         <div className="store-product-price-slot">
           {hasFixedPrice ? (
             <div className="store-product-price">
-              <strong>₹{price.toLocaleString('en-IN')} / {displayUnit(product.unit)}</strong>
               {Number(product.compare_at_price) > price && <del>₹{Number(product.compare_at_price).toLocaleString('en-IN')}</del>}
+              <strong>₹{price.toLocaleString('en-IN')} / {displayUnit(product.unit)}</strong>
             </div>
           ) : null}
         </div>
+
+        {/* Promotion Strip(s) (HomeRun Image 2 style - supports ANY active promotion) */}
+        {activePromos.slice(0, 2).map((promo) => {
+          const isFreeShipping = promo.promo_type === 'free_shipping';
+          const isFlat = promo.promo_type === 'flat';
+          const isPercent = promo.promo_type === 'percentage';
+
+          const stickerLabel = isFreeShipping ? 'FREE' : isFlat ? 'FLAT' : 'Special';
+          const stickerVal = isFreeShipping ? 'SHIP' : isPercent ? `${promo.discount_value}%` : `₹${Number(promo.discount_value).toLocaleString('en-IN')}`;
+          const promoTitle = isFreeShipping ? 'Free Delivery' : 'Discount';
+          const promoSpendText = promo.min_cart_value > 0 ? `on orders above ${formatPromoSpend(promo.min_cart_value)}` : 'on all orders';
+
+          return (
+            <div
+              key={promo.id || promo.name}
+              className={`store-homerun-promo-strip ${isFreeShipping ? 'store-homerun-promo-shipping' : ''}`}
+              title={promo.description || promo.name}
+            >
+              <div className={`store-promo-sticker ${isFreeShipping ? 'store-promo-sticker-shipping' : ''}`}>
+                <span className="store-promo-sticker-label">{stickerLabel}</span>
+                <span className="store-promo-sticker-pct">{stickerVal}</span>
+              </div>
+              <div className="store-promo-text">
+                <strong className="store-promo-title">{promoTitle}</strong>
+                <span className="store-promo-sub">{promoSpendText}</span>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Bulk Prices link (Image 2 style: Unlock Bulk Prices of ₹335) */}
+        {lowestBulkPrice ? (
+          <button
+            type="button"
+            className="store-bulk-price-link"
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuote(product);
+            }}
+            title="Unlock bulk pricing — click to view tiers & request bulk quote"
+          >
+            Unlock Bulk Prices of ₹{lowestBulkPrice.toLocaleString('en-IN')}
+          </button>
+        ) : null}
+
         <div className="store-product-footer">
           {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
           {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
@@ -258,7 +374,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings, shippingQuote }) {
+export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings, shippingQuote, promotions = [] }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [cartOpen, setCartOpen] = useState(false);
@@ -669,6 +785,7 @@ export default function Storefront({ categories, products, offers = [], content,
           onApplyCoupon={onApplyCoupon}
           onSelectCoupon={onSelectCoupon}
           onClearCoupon={onClearCoupon}
+          promotions={promotions}
         />
       </div>
 
@@ -799,9 +916,9 @@ export default function Storefront({ categories, products, offers = [], content,
                 })}</div> : <div className="store-empty">Categories are being added. Please check back soon.</div>}
               </section>
 
-              {deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
+              {deals.length > 0 && <section className="store-section" aria-labelledby="store-deals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">CURRENT OFFERS</span><h2 id="store-deals-heading">{content.deals_heading}</h2></div><span className="store-section-note">Request today&apos;s best supplier quote</span></div><div className="store-product-grid">{deals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} promotions={promotions} shippingSettings={shippingSettings} />)}</div></section>}
 
-              {arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div></section>}
+              {arrivals.length > 0 && <section className="store-section" aria-labelledby="store-arrivals-heading"><div className="store-section-heading"><div><span className="store-section-kicker">JUST ADDED</span><h2 id="store-arrivals-heading">{content.arrivals_heading}</h2></div><span className="store-section-note">Recently added products</span></div><div className="store-product-grid">{arrivals.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} promotions={promotions} shippingSettings={shippingSettings} />)}</div></section>}
 
               <section className="store-section store-catalog" id="store-products" aria-labelledby="store-products-heading">
                 <div className="store-homerun-header">
@@ -885,7 +1002,7 @@ export default function Storefront({ categories, products, offers = [], content,
                   </div>
                 </div>
 
-                {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
+                {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} promotions={promotions} shippingSettings={shippingSettings} />)}</div> : <div className="store-empty">No materials found. Try another search or category.</div>}
               </section>
             </>
           ) : (
@@ -1055,7 +1172,7 @@ export default function Storefront({ categories, products, offers = [], content,
                 </div>
               </div>
 
-              {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} />)}</div> : <div className="store-empty">No materials found in this category. Try another filter or search.</div>}
+              {loading ? <div className="store-loading">Loading materials...</div> : visible.length ? <div className="store-product-grid">{visible.map((product) => <ProductCard key={product.id} product={product} quantity={cart.find((item) => item.product.id === product.id)?.quantity || 0} canAdd={cart.length < 20} onAdd={onAdd} onChangeQty={onChangeQty} onQuote={onQuote} onBuy={onBuy} selectedCity={selectedCity} promotions={promotions} shippingSettings={shippingSettings} />)}</div> : <div className="store-empty">No materials found in this category. Try another filter or search.</div>}
             </section>
           )}
 

@@ -106,11 +106,19 @@ export default function ShopCouponsManager() {
       setEditingPromo(null);
       setShowPromoForm(false);
       setNotice('Promotion saved successfully!');
+      notifyPromotionChange();
       await loadAll();
     } catch (error) {
       setNotice(error.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const notifyPromotionChange = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('promotionsUpdated'));
+      try { localStorage.setItem('MTBOSS-promotions-updated', String(Date.now())); } catch {}
     }
   };
 
@@ -144,6 +152,7 @@ export default function ShopCouponsManager() {
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error);
       setNotice('Promotion deleted.');
+      notifyPromotionChange();
       await loadAll();
     } catch (error) {
       setNotice(error.message);
@@ -159,6 +168,7 @@ export default function ShopCouponsManager() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error);
+      notifyPromotionChange();
       await loadAll();
     } catch (error) {
       setNotice(error.message);
