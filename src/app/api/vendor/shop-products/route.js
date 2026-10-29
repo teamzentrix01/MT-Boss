@@ -87,8 +87,8 @@ async function validProduct(body) {
   }
 
   const price = body.price === '' || body.price == null ? null : Number(body.price);
-  if (price !== null && (!Number.isFinite(price) || price <= 0 || price > 99999999.99)) {
-    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
+  if (price === null || !Number.isFinite(price) || price <= 0 || price > 99999999.99) {
+    return { error: 'Buy Now fixed price is required and must be a positive number' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {

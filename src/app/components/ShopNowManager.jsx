@@ -21,7 +21,7 @@ const ShopCouponsManager = dynamic(() => import('./ShopCouponsManager'), {
 });
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: 'all', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const mobileHeaderFields = [
   ['delivery_tagline', 'Delivery Tagline (e.g. 60 Mins delivery)'],
   ['search_placeholder', 'Search Placeholder (e.g. Search for Cement, TMT Bars, Tiles...)'],
@@ -204,21 +204,53 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setNotice('');
   };
 
+  const startAddProduct = () => {
+    setEditingId(null);
+    setForm(emptyProduct);
+    setImagesList([]);
+    setNewImageUrl('');
+    setGalleryText('');
+    setSpecsText('');
+    setBulkText('');
+    setNotice('');
+    setShowProductForm(true);
+    requestAnimationFrame(() => {
+      document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   const save = async (event) => {
     event.preventDefault();
     setSaving(true);
     setNotice('');
     try {
-      const parseLines = (value) => value.split('\n').map((line) => line.trim()).filter(Boolean);
-      const specifications = Object.fromEntries(parseLines(specsText).map((line) => {
+      if (form.price === '' || form.price == null || Number(form.price) <= 0 || !Number.isFinite(Number(form.price))) {
+        throw new Error('Please enter a valid positive Buy Now fixed price.');
+      }
+
+      const parseLines = (value) => (value || '').split('\n').map((line) => line.trim()).filter(Boolean);
+      const specifications = {};
+      parseLines(specsText).forEach((line) => {
         const separator = line.indexOf(':');
-        if (separator < 1 || !line.slice(separator + 1).trim()) throw new Error('Specifications: use Name: Value on each line');
-        return [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
-      }));
-      const bulk_pricing = parseLines(bulkText).map((line) => {
-        const [minimum, price] = line.split(':').map((part) => part.trim());
-        if (!minimum || !price || !Number.isInteger(Number(minimum)) || Number(minimum) < 2 || Number(price) <= 0) throw new Error('Bulk prices: use Quantity: Price, for example 10: 415');
-        return { min_quantity: Number(minimum), price: Number(price) };
+        if (separator !== -1) {
+          const key = line.slice(0, separator).trim();
+          const val = line.slice(separator + 1).trim();
+          if (key && val) specifications[key] = val;
+        } else if (line.trim()) {
+          specifications[line.trim()] = 'Yes';
+        }
+      });
+
+      const bulk_pricing = [];
+      parseLines(bulkText).forEach((line) => {
+        const parts = line.split(/[:\s-]+/).map((part) => part.trim()).filter(Boolean);
+        if (parts.length >= 2) {
+          const minQty = Number(parts[0]);
+          const tierPrice = Number(parts[1]);
+          if (Number.isInteger(minQty) && minQty >= 1 && Number.isFinite(tierPrice) && tierPrice > 0) {
+            bulk_pricing.push({ min_quantity: minQty, price: tierPrice });
+          }
+        }
       });
 
       const allImgs = Array.from(new Set([
@@ -227,15 +259,17 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       ].filter(Boolean)));
       const mainCover = allImgs[0] || form.image_url || '';
 
+      const isEditing = Boolean(editingId);
       const response = await fetch(productEndpoint, {
-        method: editingId ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
+        method: isEditing ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
         body: JSON.stringify({
           ...form,
+          quote_price_range: form.quote_price_range || null,
           image_url: mainCover,
           images: allImgs,
           specifications,
           bulk_pricing,
-          ...(editingId ? { id: editingId } : {})
+          ...(isEditing ? { id: editingId } : {})
         }),
       });
       const data = await readApiJson(response);
@@ -244,12 +278,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       reset();
       if (isVendor) {
         setNotice(
-          editingId
+          isEditing
             ? (data?.resubmitted_for_approval ? 'Submitted for admin approval.' : 'Product updated.')
             : 'Submitted for admin approval.'
         );
       } else {
-        setNotice(editingId ? 'Product updated.' : 'Product added.');
+        setNotice(isEditing ? 'Product updated.' : 'Product added successfully.');
       }
       await load();
     } catch (error) { setNotice(error.message); }
@@ -383,7 +417,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             </button>
             <div>
               <h2>{editingId ? 'Edit product' : 'Add product'}</h2>
-              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Every product needs a Get Quote range and a fixed Buy Now price.'}</p>
+              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Enter product details and fixed Buy Now price.'}</p>
             </div>
           </div>
         </div>
@@ -395,11 +429,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
         <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
         <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}><option value="">Select subcategory</option>{(categories.find((cat) => cat.name === form.category)?.subcategories || []).map((subcategory) => { const name = typeof subcategory === 'object' && subcategory !== null ? subcategory.name : subcategory; return <option key={name} value={name}>{name}</option>; })}</select></label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
-        <label>Get Quote price range (₹, optional)<input type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80 (optional)" /><small>Optional lump-sum range e.g. 40-80.</small></label>
-        <label>Buy Now fixed price (₹, optional)<input type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Leave empty for Price on request" /><small>Leave empty to show &quot;Price on request&quot;.</small></label>
+        <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
         <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
-        <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
+        <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
         <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
         <label className="shop-admin-wide">Description<textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
 
@@ -510,11 +543,11 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           </details>
         </div>
 
-        <label className="shop-admin-wide">Specifications (one Name: Value per line)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Grade: PPC&#10;Pack size: 50 kg" /></label>
-        <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="10: 415&#10;30: 405" /></label>
+        <label className="shop-admin-wide">Specifications (one Name: Value per line, optional)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Optional: e.g. Grade: PPC&#10;Pack size: 50 kg" /><small>Optional: Leave blank if not applicable, or enter specifications one per line.</small></label>
+        <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line, optional)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="Optional: e.g. 10: 415&#10;30: 405" /><small>Optional: Leave blank if not offering bulk tier discounts.</small></label>
         <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
+      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button><button type="button" onClick={reset}>Cancel</button></div>
     </form>
       </>
     ) : (
@@ -522,12 +555,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
         <div className="shop-admin-heading">
           <div>
             <h2>{isVendor ? 'My products' : 'Products'}</h2>
-            <p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
+            <p>Enter product details and fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               type="button"
-              onClick={() => { setShowProductForm(true); reset(); }}
+              onClick={startAddProduct}
               style={{
                 background: 'var(--brand-blue, #2563eb)',
                 color: '#fff',
@@ -1032,13 +1065,8 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
 }
 
 export function VendorShopProductsManager({ isDarkMode = false }) {
-  const openAddProduct = () => {
-    requestAnimationFrame(() => document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-  };
-
   return <div className="shop-admin-root">
     <VendorCommissionSummary isDarkMode={isDarkMode} />
-    <div className="shop-admin-toolbar"><div><h2>Shop Products</h2><p>Add and manage the products customers can order from your shop.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" />
   </div>;
 }

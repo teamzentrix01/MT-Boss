@@ -70,8 +70,8 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
   }
 
   const rawPrice = body.price === '' || body.price == null ? null : Number(body.price);
-  if (rawPrice !== null && (!Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99)) {
-    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
+  if (rawPrice === null || !Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99) {
+    return { error: 'Buy Now fixed price is required and must be a positive number' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
