@@ -427,7 +427,42 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
-        <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}><option value="">Select subcategory</option>{(categories.find((cat) => cat.name === form.category)?.subcategories || []).map((subcategory) => { const name = typeof subcategory === 'object' && subcategory !== null ? subcategory.name : subcategory; return <option key={name} value={name}>{name}</option>; })}</select></label>
+        <label>Subcategory
+          <select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}>
+            <option value="">Select subcategory (optional)</option>
+            {(() => {
+              const cat = categories.find((item) => item.name === form.category);
+              const list = [];
+              if (Array.isArray(cat?.subcategories) && cat.subcategories.length > 0) {
+                cat.subcategories.forEach((s) => {
+                  const name = typeof s === 'object' && s !== null ? s.name : s;
+                  if (name && !list.includes(name)) list.push(name);
+                });
+              }
+              if (Array.isArray(cat?.types) && cat.types.length > 0) {
+                cat.types.forEach((t) => {
+                  if (t && !list.includes(t)) list.push(t);
+                });
+              }
+              const defaultTree = {
+                'Furniture & Architectural Hardware': ['Hinges, Channels & Handles', 'Kitchen Systems & Accessories', 'Wardrobe & Bed Fittings', 'Door Locks & Hardware'],
+                'Building Materials': ['Cement', 'Iron', 'Steel', 'Aggregate (Barjri)', 'Coarse Sand', 'Fine Sand', 'Brick', 'Block', 'POP', 'Tiles', 'Marble', 'Glass', 'Waterproofing'],
+                'Carpentry': ['Timber', 'Plywood', 'HPL', 'Rough Carpentry'],
+                'Plumbing': ['CPVC Pipes', 'Sanitary', 'Bath Fittings', 'Overhead Tanks'],
+                'Electrical': ['Sockets', 'Switches', 'MCB', 'Distribution Board (DB)', 'LED Lights', 'Electrical Cables'],
+              };
+              if (form.category && defaultTree[form.category]) {
+                defaultTree[form.category].forEach((name) => {
+                  if (!list.includes(name)) list.push(name);
+                });
+              }
+              if (form.subcategory && !list.includes(form.subcategory)) {
+                list.unshift(form.subcategory);
+              }
+              return list.map((name) => <option key={name} value={name}>{name}</option>);
+            })()}
+          </select>
+        </label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
         <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>

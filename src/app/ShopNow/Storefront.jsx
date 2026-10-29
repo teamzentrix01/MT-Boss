@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import "./shop.css";
 import ShopCategoryNav from "./ShopCategoryNav";
+import { CATEGORY_NAV_TREE } from "./categoryNavTree";
 import MobileStorefront from "./MobileStorefront";
 import ProductGalleryCarousel from "./ProductGalleryCarousel";
 import AutoSwipeGallery from "./AutoSwipeGallery";
@@ -194,14 +195,25 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       {(product.offer?.display_badge || discount > 0) && (
         <span className="store-discount-badge">{product.offer?.display_badge || `${discount}% OFF`}</span>
       )}
-      <Link href={detailHref} className="store-product-image-button" aria-label={`View ${product.name} details`}>
+      <Link
+        href={detailHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="store-product-image-button"
+        aria-label={`View ${product.name} details`}
+      >
         <ProductVisual image={productImage} category={product.category} name={product.name} />
       </Link>
       <div className="store-product-details">
         <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : ''}`}>
           {canOrder ? 'Available' : 'Unavailable'}
         </span>
-        <Link href={detailHref} className="store-product-title">
+        <Link
+          href={detailHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="store-product-title"
+        >
           <h3>{product.name}</h3>
         </Link>
         <p className="store-product-category">{(typeof product.category === 'object' ? product.category?.name : product.category) || ''}{product.unit ? ` · ${product.unit}` : ""}</p>
@@ -386,55 +398,89 @@ export default function Storefront({ categories, products, offers = [], content,
     };
   }, []);
 
-  const catalog = useMemo(() => categories.flatMap((category) => {
-    const listed = products.filter((product) => {
-      const assignedCategory = product.category?.trim().toLowerCase();
-      const categoryName = category.name.trim().toLowerCase();
-      return assignedCategory
-        ? assignedCategory === categoryName
-        : product.name?.toLowerCase().includes(categoryName);
+  const catalog = useMemo(() => {
+    const fromCategories = categories.flatMap((category) => {
+      const listed = products.filter((product) => {
+        const assignedCategory = product.category?.trim().toLowerCase();
+        const categoryName = category.name.trim().toLowerCase();
+        return assignedCategory
+          ? assignedCategory === categoryName
+          : product.name?.toLowerCase().includes(categoryName);
+      });
+      if (listed.length) return listed.map((product) => ({
+        id: `supplier-${product.id}`,
+        product_id: product.id,
+        name: product.name,
+        category,
+        subcategory: product.subcategory,
+        unit: product.unit || category.unit || "unit",
+        price: product.price,
+        image: product.image_url || category?.image || "",
+        description: product.description,
+        quote_price_range: product.quote_price_range,
+        brand: product.brand,
+        compare_at_price: product.compare_at_price,
+        is_featured_deal: product.is_featured_deal === true,
+        images: product.images,
+        specifications: product.specifications,
+        bulk_pricing: product.bulk_pricing,
+        quantity: product.quantity,
+        supplier_id: product.supplier_id,
+        available_cities: product.available_cities,
+        created_at: product.created_at,
+        fromSupplier: true,
+      })).map((product) => {
+        const matchingOffers = offers.filter((offer) => offerMatches(offer, product, category));
+        const offer = matchingOffers.sort((a, b) => {
+          const score = (item) => (item.category ? 4 : 0) + (item.subcategory ? 2 : 0) + (item.brand ? 1 : 0);
+          return score(b) - score(a) || Number(a.sort_order) - Number(b.sort_order);
+        })[0];
+        return applyOffer(product, offer);
+      });
+      // Subcategories are categories/filters, not products. Only real products should be displayed.
+      return [];
     });
-    if (listed.length) return listed.map((product) => ({
-      id: `supplier-${product.id}`,
-      product_id: product.id,
-      name: product.name,
-      category,
-      subcategory: product.subcategory,
-      unit: product.unit || category.unit || "unit",
-      price: product.price,
-      image: product.image_url || category?.image || "",
-      description: product.description,
-      quote_price_range: product.quote_price_range,
-      brand: product.brand,
-      compare_at_price: product.compare_at_price,
-      is_featured_deal: product.is_featured_deal === true,
-      images: product.images,
-      specifications: product.specifications,
-      bulk_pricing: product.bulk_pricing,
-      quantity: product.quantity,
-      supplier_id: product.supplier_id,
-      available_cities: product.available_cities,
-      created_at: product.created_at,
-      fromSupplier: true,
-    })).map((product) => {
-      const matchingOffers = offers.filter((offer) => offerMatches(offer, product, category));
-      const offer = matchingOffers.sort((a, b) => {
-        const score = (item) => (item.category ? 4 : 0) + (item.subcategory ? 2 : 0) + (item.brand ? 1 : 0);
-        return score(b) - score(a) || Number(a.sort_order) - Number(b.sort_order);
-      })[0];
-      return applyOffer(product, offer);
-    });
-    const names = Array.isArray(category.types) && category.types.length ? category.types : [category.name];
-    return names.map((name, index) => ({
-      id: `catalog-${category.id}-${index}`,
-      name,
-      category,
-      unit: category.unit || "unit",
-      price: null,
-      image: category?.image || "",
-      fromSupplier: false,
-    }));
-  }), [categories, products, offers]);
+
+    const mappedProductIds = new Set(fromCategories.map((p) => p.product_id || p.id));
+    const extraProducts = products
+      .filter((p) => p && !mappedProductIds.has(p.id) && !mappedProductIds.has(`supplier-${p.id}`))
+      .map((product) => {
+        const syntheticCategory = {
+          id: `custom-${product.category || 'other'}`,
+          name: product.category || 'Other Materials',
+          image: product.image_url || '',
+          unit: product.unit || 'unit',
+        };
+        const item = {
+          id: `supplier-${product.id}`,
+          product_id: product.id,
+          name: product.name,
+          category: syntheticCategory,
+          subcategory: product.subcategory,
+          unit: product.unit || "unit",
+          price: product.price,
+          image: product.image_url || "",
+          description: product.description,
+          quote_price_range: product.quote_price_range,
+          brand: product.brand,
+          compare_at_price: product.compare_at_price,
+          is_featured_deal: product.is_featured_deal === true,
+          images: product.images,
+          specifications: product.specifications,
+          bulk_pricing: product.bulk_pricing,
+          quantity: product.quantity,
+          supplier_id: product.supplier_id,
+          available_cities: product.available_cities,
+          created_at: product.created_at,
+          fromSupplier: true,
+        };
+        const matchingOffers = offers.filter((offer) => offerMatches(offer, item, syntheticCategory));
+        const offer = matchingOffers[0];
+        return applyOffer(item, offer);
+      });
+
+    return [...fromCategories, ...extraProducts];
+  }, [categories, products, offers]);
 
   const dedupeProducts = (list) => {
     const seen = new Set();
@@ -447,15 +493,46 @@ export default function Storefront({ categories, products, offers = [], content,
   };
 
   const searchTerm = search.trim().toLowerCase();
-  const visible = dedupeProducts(catalog.filter((product) => (
-    (activeCategory === "all" || String(product.category.id) === String(activeCategory)) &&
-    (brandFilter === 'all' || product.brand === brandFilter) &&
-    (!searchTerm || `${product.name} ${product.category.name}`.toLowerCase().includes(searchTerm))
-  )).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0));
-  const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category.id) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
-  const featured = dedupeProducts(categories.map((category) => catalog.find((product) => product.category.id === category.id)).filter(Boolean)).slice(0, 8);
+  const visible = dedupeProducts(catalog.filter((product) => {
+    const catId = product.category?.id != null ? String(product.category.id) : '';
+    const catName = (typeof product.category === 'object' ? product.category?.name : (product.category || '')).toLowerCase();
+    const matchesCategory = activeCategory === "all" || catId === String(activeCategory) || catName === String(activeCategory).toLowerCase();
+    const matchesBrand = brandFilter === 'all' || product.brand === brandFilter;
+
+    if (!matchesCategory || !matchesBrand) return false;
+    if (!searchTerm) return true;
+
+    const subName = (product.subcategory || '').toLowerCase();
+    const prodName = (product.name || '').toLowerCase();
+    const brandName = (product.brand || '').toLowerCase();
+    const searchableText = `${prodName} ${catName} ${subName} ${brandName}`;
+
+    // Direct substring
+    if (searchableText.includes(searchTerm)) return true;
+
+    // Word/alias match for subcategory searches like "Hinges, Channels & Handles"
+    const searchWords = searchTerm.split(/[\s,&/]+/).filter((w) => w.length > 2);
+    if (searchWords.length > 0 && searchWords.some((word) => subName.includes(word) || prodName.includes(word))) {
+      return true;
+    }
+
+    if (subName && searchTerm.includes(subName)) return true;
+
+    return false;
+  }).sort((a, b) => sortBy === 'price-asc' ? (Number(a.price) || Infinity) - (Number(b.price) || Infinity) : sortBy === 'price-desc' ? (Number(b.price) || 0) - (Number(a.price) || 0) : sortBy === 'name' ? a.name.localeCompare(b.name) : 0));
+  const brands = [...new Set(catalog.filter((product) => activeCategory === 'all' || String(product.category?.id || product.category) === String(activeCategory)).map((product) => product.brand).filter(Boolean))].sort();
+  const featured = dedupeProducts(categories.map((category) => catalog.find((product) => product.category?.id === category.id)).filter(Boolean)).slice(0, 8);
   const deals = dedupeProducts(catalog.filter((product) => product.is_featured_deal === true).sort((a, b) => discountPercent(b) - discountPercent(a))).slice(0, 6);
-  const arrivals = dedupeProducts(catalog.filter((product) => product.fromSupplier && product.created_at).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))).slice(0, 6);
+  const arrivals = dedupeProducts(
+    catalog
+      .filter((product) => product.fromSupplier || product.product_id || product.id)
+      .sort((a, b) => {
+        const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (timeB !== timeA) return timeB - timeA;
+        return (Number(b.product_id || b.id) || 0) - (Number(a.product_id || a.id) || 0);
+      })
+  ).slice(0, 8);
   const cartCount = useMemo(() => {
     if (!Array.isArray(cart) || cart.length === 0) return 0;
     const uniqueCategories = new Set();
@@ -635,12 +712,51 @@ export default function Storefront({ categories, products, offers = [], content,
             {(() => {
               if (activeCategory === "all") return null;
               const activeCatObj = categories.find((c) => String(c.id) === String(activeCategory));
-              const subcats = Array.isArray(activeCatObj?.subcategories) ? activeCatObj.subcategories : [];
+              if (!activeCatObj) return null;
+              const subcats = (() => {
+                const list = [];
+                if (Array.isArray(activeCatObj.subcategories) && activeCatObj.subcategories.length > 0) {
+                  activeCatObj.subcategories.forEach((s) => {
+                    const name = typeof s === 'object' && s !== null ? s.name : s;
+                    if (name && !list.some((item) => (typeof item === 'object' ? item.name : item) === name)) list.push(s);
+                  });
+                }
+                if (Array.isArray(activeCatObj.types) && activeCatObj.types.length > 0) {
+                  activeCatObj.types.forEach((t) => {
+                    if (t && !list.some((item) => (typeof item === 'object' ? item.name : item) === t)) list.push(t);
+                  });
+                }
+                if (list.length === 0) {
+                  const treeMatch = CATEGORY_NAV_TREE.find(
+                    (p) =>
+                      p.label.toLowerCase().includes(activeCatObj.name.toLowerCase()) ||
+                      activeCatObj.name.toLowerCase().includes(p.label.toLowerCase())
+                  );
+                  if (treeMatch && Array.isArray(treeMatch.children)) {
+                    list.push(...treeMatch.children);
+                  }
+                }
+                return list;
+              })();
               if (!subcats.length) return null;
               return (
                 <div className="store-subcategories-strip">
                   <div className="store-subcategories-title">
                     <span>Sub-categories &amp; Varieties in {activeCatObj.name}</span>
+                    {searchTerm && (
+                      <button
+                        type="button"
+                        className="store-subcategories-reset"
+                        onClick={() => {
+                          setSearch("");
+                          const url = new URL(window.location.href);
+                          url.searchParams.delete('q');
+                          window.history.replaceState(window.history.state, '', url);
+                        }}
+                      >
+                        Show All {activeCatObj.name}
+                      </button>
+                    )}
                   </div>
                   <div className="store-subcategories-grid">
                     {subcats.map((sub, sIdx) => {
@@ -649,11 +765,26 @@ export default function Storefront({ categories, products, offers = [], content,
                       const subImgs = typeof sub === 'object' && sub !== null
                         ? Array.from(new Set([sub.image, ...(Array.isArray(sub.images) ? sub.images : [])].filter(Boolean)))
                         : [];
+                      const isSelected = Boolean(
+                        searchTerm && (
+                          searchTerm === subName.toLowerCase() ||
+                          subName.toLowerCase().includes(searchTerm) ||
+                          searchTerm.includes(subName.toLowerCase())
+                        )
+                      );
                       return (
                         <div
                           key={`${subName}-${sIdx}`}
-                          className="store-subcategory-card"
-                          onClick={() => setSearch(subName)}
+                          className={`store-subcategory-card${isSelected ? " is-active" : ""}`}
+                          onClick={() => {
+                            const nextSearch = isSelected ? "" : subName;
+                            setSearch(nextSearch);
+                            const url = new URL(window.location.href);
+                            if (nextSearch) url.searchParams.set('q', nextSearch);
+                            else url.searchParams.delete('q');
+                            window.history.replaceState(window.history.state, '', url);
+                            document.getElementById("store-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }}
                           title={`Browse ${subName}`}
                         >
                           <div className="store-subcategory-img-box">

@@ -21,6 +21,26 @@ export default function ShopCategoryNav({
     () => DIRECT_NAV_BUTTONS.map((label) => resolveDirectNavItem(label, categories, products)),
     [categories, products],
   );
+  const recentArrivals = useMemo(() => {
+    if (!Array.isArray(products) || products.length === 0) return [];
+    const seen = new Set();
+    return [...products]
+      .filter((p) => {
+        if (!p || (!p.name && !p.id)) return false;
+        const key = p.product_id ? `supplier-${p.product_id}` : p.id;
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (dateB !== dateA) return dateB - dateA;
+        return (Number(b.product_id || b.id) || 0) - (Number(a.product_id || a.id) || 0);
+      })
+      .slice(0, 10);
+  }, [products]);
+
   const [openId, setOpenId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const navRef = useRef(null);
@@ -88,7 +108,9 @@ export default function ShopCategoryNav({
   if (!parents.length) return null;
 
   const leafIsActive = (child) => {
-    if (child.categoryId == null || String(child.categoryId) !== String(activeCategory)) return false;
+    // Never mark a fallback 'all' child as active — only real category IDs count
+    if (child.categoryId == null || child.categoryId === 'all') return false;
+    if (String(child.categoryId) !== String(activeCategory)) return false;
     if (!child.search) return !normalizeName(activeSearch);
     return normalizeName(activeSearch) === normalizeName(child.search)
       || normalizeName(activeSearch).includes(normalizeName(child.search))
@@ -96,8 +118,8 @@ export default function ShopCategoryNav({
   };
 
   const handleLeafSelect = (child) => {
-    if (child.disabled || child.categoryId == null) return;
-    onSelectCategory?.(child.categoryId, child.search ? { search: child.search } : undefined);
+    if (child.disabled && !child.search && child.categoryId == null) return;
+    onSelectCategory?.(child.categoryId ?? "all", { search: child.search || child.label });
     closeMenu();
   };
 
@@ -155,6 +177,7 @@ export default function ShopCategoryNav({
         {parents.map((parent) => {
           const isOpen = openId === parent.id;
           const hasActiveChild = parent.children.some((child) => leafIsActive(child));
+          const isNewLaunches = parent.id === "new-launches";
 
           return (
             <div
@@ -188,37 +211,98 @@ export default function ShopCategoryNav({
 
               <div
                 id={`store-category-panel-${parent.id}`}
-                className="store-category-dropdown"
+                className={`store-category-dropdown${isNewLaunches ? " is-recent-only" : ""}`}
                 data-parent-panel={parent.id}
                 role="menu"
                 hidden={!isOpen}
               >
-                {parent.children.map((child, index) => {
-                  const isActive = leafIsActive(child);
-                  return (
-                    <button
-                      key={child.label}
-                      type="button"
-                      role="menuitem"
-                      data-leaf-index={index}
-                      className={`store-category-leaf${isActive ? " is-active" : ""}${child.disabled ? " is-disabled" : ""}`}
-                      disabled={child.disabled}
-                      aria-disabled={child.disabled}
-                      title={child.disabled ? "Coming soon" : undefined}
-                      onClick={() => handleLeafSelect(child)}
-                      onKeyDown={(event) => handleLeafKeyDown(event, parent, index, parent.children)}
-                    >
-                      <span>{child.label}</span>
-                      {child.disabled && <small>Coming soon</small>}
-                    </button>
-                  );
-                })}
+                {isNewLaunches ? (
+                  <div className="store-category-recent-section">
+                    <div className="store-category-recent-header">
+                      <span className="store-category-recent-title">⚡ Just Added (New Arrivals)</span>
+                      <span className="store-category-recent-pill">New</span>
+                    </div>
+                    <div className="store-category-recent-list">
+                      {recentArrivals.length > 0 ? (
+                        recentArrivals.map((product) => {
+                          const detailId = product.product_id || (String(product.id).startsWith("supplier-") ? product.id.replace("supplier-", "") : product.id);
+                          const detailHref = `/ShopNow/${detailId}`;
+                          const price = Number(product.price);
+                          const productImage = product.image_url || product.image;
+                          return (
+                            <a
+                              key={product.id}
+                              href={detailHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="store-category-recent-item"
+                              onClick={closeMenu}
+                              title={`Open ${product.name} in new tab`}
+                            >
+                              <div className="store-category-recent-thumb">
+                                {productImage ? (
+                                  <img src={productImage} alt={product.name} />
+                                ) : (
+                                  <span>📦</span>
+                                )}
+                              </div>
+                              <div className="store-category-recent-info">
+                                <span className="store-category-recent-name">{product.name}</span>
+                                <span className="store-category-recent-meta">
+                                  {price > 0 ? (
+                                    <strong className="store-category-recent-price">
+                                      ₹{price.toLocaleString("en-IN")}{product.unit ? ` / ${product.unit}` : ""}
+                                    </strong>
+                                  ) : (
+                                    <span className="store-category-recent-cat">
+                                      {typeof product.category === "object" ? product.category?.name : (product.category || "View product")}
+                                    </span>
+                                  )}
+                                  <span className="store-category-recent-arrow" aria-hidden="true">↗</span>
+                                </span>
+                              </div>
+                            </a>
+                          );
+                        })
+                      ) : (
+                        <div className="store-category-recent-empty">
+                          No newly added products found.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {parent.children.map((child, index) => {
+                      const isActive = leafIsActive(child);
+                      return (
+                        <button
+                          key={child.label}
+                          type="button"
+                          role="menuitem"
+                          data-leaf-index={index}
+                          className={`store-category-leaf${isActive ? " is-active" : ""}${child.disabled ? " is-disabled" : ""}`}
+                          disabled={child.disabled}
+                          aria-disabled={child.disabled}
+                          title={child.disabled ? "Coming soon" : undefined}
+                          onClick={() => handleLeafSelect(child)}
+                          onKeyDown={(event) => handleLeafKeyDown(event, parent, index, parent.children)}
+                        >
+                          <span>{child.label}</span>
+                          {child.disabled && <small>Coming soon</small>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
         {directButtons.map((item) => {
+          // Never highlight a direct button when its categoryId is 'all' (fallback)
           const isActive = item.categoryId != null
+            && item.categoryId !== 'all'
             && String(item.categoryId) === String(activeCategory)
             && !normalizeName(activeSearch);
           return (
@@ -230,9 +314,13 @@ export default function ShopCategoryNav({
               aria-disabled={item.disabled}
               title={item.disabled ? "Coming soon" : undefined}
               onClick={() => {
-                if (item.disabled || item.categoryId == null) return;
+                if (item.disabled) return;
                 closeMenu();
-                onSelectCategory?.(item.categoryId);
+                if (item.categoryId === 'all' || item.categoryId == null) {
+                  onSelectCategory?.('all', { search: item.search || item.label });
+                } else {
+                  onSelectCategory?.(item.categoryId, item.search ? { search: item.search } : undefined);
+                }
               }}
             >
               {item.label}

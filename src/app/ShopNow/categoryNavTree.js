@@ -1,5 +1,10 @@
 export const CATEGORY_NAV_TREE = [
   {
+    id: 'new-launches',
+    label: 'New Launches',
+    children: [],
+  },
+  {
     id: 'building-materials',
     label: 'Building Materials',
     children: [
@@ -40,10 +45,35 @@ export const CATEGORY_NAV_TREE = [
       'Electrical Cables',
     ],
   },
+  {
+    id: 'furniture-architectural-hardware',
+    label: 'Furniture & Architectural Hardware',
+    children: [
+      'Hinges, Channels & Handles',
+      'Kitchen Systems & Accessories',
+      'Wardrobe & Bed Fittings',
+      'Door Locks & Hardware',
+    ],
+  },
 ];
 
 /** Map nav leaf labels → alternate live shop_categories.name values. */
 export const CATEGORY_NAV_ALIASES = {
+  'new launches': ['new launches', 'new launch', 'new arrivals', 'new arrival', 'new ariable', 'new', 'arrivals'],
+  'new arrivals': ['new arrivals', 'new arrival', 'new launches', 'new launch', 'new ariable'],
+  'cabinet hardware': ['cabinet hardware', 'cabinet', 'cabinets'],
+  'kitchen systems & hardware': ['kitchen systems & hardware', 'kitchen systems and hardware', 'kitchen systems', 'kitchen hardware'],
+  'general hardware & tools': ['general hardware & tools', 'general hardware and tools', 'hardware & tools', 'tools', 'general hardware'],
+  'bathroom renovation materials': ['bathroom renovation materials', 'bathroom renovation', 'bathroom materials', 'bathroom', 'sanitary'],
+  'conduits & piping': ['conduits & piping', 'conduits and piping', 'conduits', 'conduit', 'piping', 'conduit pipes'],
+  'pvc pipes': ['pvc pipes', 'pvc pipe', 'pvc', 'upvc pipes', 'cpvc pipes', 'pipe', 'pipes'],
+  'kitchen sinks & faucets': ['kitchen sinks & faucets', 'kitchen sinks and faucets', 'kitchen sinks', 'kitchen sink', 'faucets', 'sink', 'sinks'],
+  'home appliances & power backup': ['home appliances & power backup', 'home appliances and power backup', 'home appliances', 'appliances', 'power backup', 'inverter', 'battery'],
+  'furniture & architectural hardware': ['furniture & architectural hardware', 'furniture and architectural hardware', 'architectural hardware', 'furniture hardware'],
+  'hinges, channels & handles': ['hinges, channels & handles', 'hinges channels & handles', 'hinges channels handles', 'hinges', 'channels', 'handles'],
+  'kitchen systems & accessories': ['kitchen systems & accessories', 'kitchen systems and accessories', 'kitchen systems', 'kitchen accessories'],
+  'wardrobe & bed fittings': ['wardrobe & bed fittings', 'wardrobe and bed fittings', 'wardrobe fittings', 'bed fittings'],
+  'door locks & hardware': ['door locks & hardware', 'door locks and hardware', 'door locks', 'door lock', 'locks'],
   timber: ['timber (lakdi)', 'timber(lakdi)'],
   brick: ['bricks'],
   block: ['blocks', 'aac block', 'aac blocks'],
@@ -113,20 +143,30 @@ function findCategoryByLabel(label, categories) {
 }
 
 function productMatchesLeaf(product, leafLabel, parentLabel) {
-  const productCategory = product?.category || '';
+  const productCategory = typeof product?.category === 'object' ? product?.category?.name || '' : (product?.category || '');
   const productName = product?.name || '';
+  const productSubcategory = product?.subcategory || '';
   const leaf = normalizeName(leafLabel);
   const parent = normalizeName(parentLabel);
 
-  if (namesMatch(productCategory, leafLabel) || namesMatch(productName, leafLabel)) return true;
+  if (namesMatch(productCategory, leafLabel) || namesMatch(productName, leafLabel) || namesMatch(productSubcategory, leafLabel)) return true;
 
-  // Product filed under parent category (e.g. category "plumbing", name "CPVC pipes")
+  // Check aliases
+  const aliases = CATEGORY_NAV_ALIASES[leaf] || [];
+  if (aliases.some((alias) => namesMatch(productSubcategory, alias) || namesMatch(productName, alias))) {
+    return true;
+  }
+
+  // Product filed under parent category (e.g. category "Furniture & Architectural Hardware", subcategory "Hinges")
   const underParent = namesMatch(productCategory, parentLabel)
     || (parent && normalizeName(productCategory).includes(parent));
   if (!underParent) return false;
 
   return namesMatch(productName, leafLabel)
-    || leaf.split(' ').filter((part) => part.length > 2).every((part) => normalizeName(productName).includes(part));
+    || namesMatch(productSubcategory, leafLabel)
+    || leaf.split(/[\s,&/]+/).filter((part) => part.length > 2).some((part) =>
+      normalizeName(productName).includes(part) || normalizeName(productSubcategory).includes(part)
+    );
 }
 
 /**
@@ -146,7 +186,7 @@ export function resolveDirectNavItem(label, categories = [], products = []) {
     }
   }
 
-  return { label, categoryId: null, search: '', disabled: true };
+  return { label, categoryId: 'all', search: label, disabled: false };
 }
 
 /** Top-level nav buttons without a dropdown (shown after parent menus; Paints last). */
@@ -202,11 +242,22 @@ export function resolveCategoryNav(tree = CATEGORY_NAV_TREE, categories = [], pr
           };
         }
 
+        // If parent category exists in DB, search under it
+        if (parentCategory) {
+          return {
+            label,
+            categoryId: parentCategory.id,
+            search: label,
+            disabled: false,
+          };
+        }
+
+        // Fallback: active search under 'all'
         return {
           label,
-          categoryId: null,
-          search: '',
-          disabled: true,
+          categoryId: 'all',
+          search: label,
+          disabled: false,
         };
       }),
     };
