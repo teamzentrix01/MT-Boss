@@ -703,7 +703,7 @@ export default function MobileStorefront({
                   placeholder={`Search in ${activeCategory?.name}...`}
                 />
                 {searchQuery && (
-                  <button type="button" onClick={() => setSearchQuery("")} className="mobile-search-clear">
+                  <button type="button" onClick={() => setSearchQuery("")} className="mobile-search-clear" aria-label="Clear search" title="Clear search">
                     <X size={14} />
                   </button>
                 )}

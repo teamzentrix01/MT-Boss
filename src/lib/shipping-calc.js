@@ -265,17 +265,28 @@ export function calculateShipping({ items = [], groups = [], customerCity, setti
       0
     );
 
-    // Check free shipping threshold
-    const minOrderVal = Number(freeRule?.min_order_value);
-    const isFreeActive = Boolean(freeRule?.is_active && Number.isFinite(minOrderVal) && minOrderVal > 0);
-
+    // Check free shipping promotions & threshold rules
+    const freePromotions = Array.isArray(settings?.freePromotions) ? settings.freePromotions : [];
     const allSameCity = items.every((item) =>
       sameCity(item.source_city || item.vendorCity || canonicalCustomerCity, canonicalCustomerCity)
     );
-    const qualifiesForFree =
-      isFreeActive && totalOrderValue >= minOrderVal && (!freeRule.applicable_only_to_same_city || allSameCity);
 
-    if (qualifiesForFree) {
+    const matchedFreePromo = freePromotions.find((promo) => {
+      const minVal = Number(promo.min_cart_value || 0);
+      const isPromoActive = promo.is_active !== false;
+      const sameCityOnly = Boolean(promo.free_shipping_same_city_only);
+      return isPromoActive && totalOrderValue >= minVal && (!sameCityOnly || allSameCity);
+    });
+
+    const minOrderVal = Number(freeRule?.min_order_value);
+    const isFreeActive = Boolean(freeRule?.is_active && Number.isFinite(minOrderVal) && minOrderVal > 0);
+    const qualifiesForFreeRule = isFreeActive && totalOrderValue >= minOrderVal && (!freeRule.applicable_only_to_same_city || allSameCity);
+
+    if (matchedFreePromo || qualifiesForFreeRule) {
+      const label = matchedFreePromo
+        ? (matchedFreePromo.badge_text || `Free shipping promotion applied: ${matchedFreePromo.name} (orders over ₹${Number(matchedFreePromo.min_cart_value).toLocaleString('en-IN')})`)
+        : `Free shipping applied (orders over ₹${minOrderVal.toLocaleString('en-IN')})`;
+
       return {
         breakdown: [
           {
@@ -285,7 +296,7 @@ export function calculateShipping({ items = [], groups = [], customerCity, setti
             orderValue: totalOrderValue,
             distanceKm: null,
             shippingCost: 0,
-            label: `Free shipping applied (orders over ₹${minOrderVal.toLocaleString('en-IN')})`,
+            label,
             free: true,
           },
         ],

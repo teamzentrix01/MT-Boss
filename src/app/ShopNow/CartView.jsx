@@ -18,8 +18,10 @@ import {
   AlertCircle,
   Truck,
   Sparkles,
+  Zap,
 } from 'lucide-react';
 import { calculateCoupon } from '@/lib/coupon-calculations';
+import { evaluateCartPromotions } from '@/lib/promotion-calculations';
 import { getCartStep } from '@/lib/cart-step';
 import { displayUnit, getProductImage, ShopImage } from './Storefront';
 import './shop.css';
@@ -44,6 +46,7 @@ export default function CartView() {
   const [cart, setCart] = useState([]);
   const [cartReady, setCartReady] = useState(false);
   const [coupons, setCoupons] = useState([]);
+  const [promotions, setPromotions] = useState([]);
   const [couponCode, setCouponCode] = useState('');
   const [manualCoupon, setManualCoupon] = useState(null);
   const [couponNotice, setCouponNotice] = useState('');
@@ -83,13 +86,22 @@ export default function CartView() {
     }
   };
 
-  // Fetch coupons from API
+  // Fetch coupons and promotions from API
   useEffect(() => {
     fetch('/api/shop-coupons')
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d?.success && Array.isArray(d.data)) {
           setCoupons(d.data);
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/shop-promotions')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.success && Array.isArray(d.data)) {
+          setPromotions(d.data);
         }
       })
       .catch(() => {});
@@ -164,6 +176,14 @@ export default function CartView() {
     [cart, coupons]
   );
 
+  // Automatic Cart Promotions evaluation (e.g. 50k+ = 5% off / free shipping)
+  const {
+    bestDiscount: promoDiscount,
+    discountAmount: promoDiscountAmount,
+    activeFreeShipping: promoFreeShipping,
+    nextPromotion,
+  } = useMemo(() => evaluateCartPromotions(cart, promotions), [cart, promotions]);
+
   const applyCouponCode = (code) => {
     const cleaned = String(code || '').trim().toUpperCase();
     if (!cleaned) return;
@@ -189,6 +209,10 @@ export default function CartView() {
     setCouponNotice('');
   };
 
+  const couponDiscountAmount = activeCoupon && couponCalculation?.eligible ? (Number(couponCalculation.discount) || 0) : 0;
+  const totalDiscount = couponDiscountAmount + promoDiscountAmount;
+  const finalTotal = Math.max(0, pricedTotal - totalDiscount);
+
   // Live Cashback preview
   useEffect(() => {
     if (!Array.isArray(cart) || cart.length === 0) {
@@ -206,7 +230,6 @@ export default function CartView() {
     }));
 
     const subtotal = pricedTotal;
-    const discount = (activeCoupon && couponCalculation?.eligible) ? (Number(couponCalculation.discount) || 0) : 0;
 
     fetch('/api/cashback/preview', {
       method: 'POST',
@@ -216,7 +239,7 @@ export default function CartView() {
       },
       body: JSON.stringify({
         items,
-        order_total: Math.max(0, subtotal - discount),
+        order_total: Math.max(0, subtotal - totalDiscount),
       }),
     })
       .then((r) => (r.ok ? r.json() : null))
@@ -226,10 +249,7 @@ export default function CartView() {
         }
       })
       .catch(() => {});
-  }, [cart, pricedTotal, activeCoupon, couponCalculation]);
-
-  const discountAmount = activeCoupon && couponCalculation?.eligible ? couponCalculation.discount : 0;
-  const finalTotal = Math.max(0, pricedTotal - discountAmount);
+  }, [cart, pricedTotal, totalDiscount]);
 
   // Styles
   const bg = isDark ? 'bg-zinc-950 text-white' : 'bg-[#f8fafc] text-slate-900';
@@ -469,6 +489,16 @@ export default function CartView() {
                     </strong>
                   </div>
 
+                  {/* Promotional Extra Discount if active */}
+                  {promoDiscount && (
+                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Zap size={13} className="text-amber-500 flex-none" /> {promoDiscount.promotion.name}
+                      </span>
+                      <span>-₹{promoDiscount.calc.discount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
+
                   {/* Coupon Discount if active */}
                   {activeCoupon && couponCalculation?.eligible && (
                     <div className="flex justify-between text-emerald-500 font-bold">
@@ -479,11 +509,37 @@ export default function CartView() {
                     </div>
                   )}
 
-                  {/* Shipping Notice */}
-                  <div className="flex justify-between text-slate-500">
-                    <span>Delivery charges</span>
-                    <span>Calculated at checkout</span>
-                  </div>
+                  {/* Free Shipping Promotion or Standard Notice */}
+                  {promoFreeShipping ? (
+                    <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Truck size={13} className="flex-none" /> Free Delivery Promotion
+                      </span>
+                      <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full text-emerald-700 dark:text-emerald-300 font-black">
+                        FREE (₹0)
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-slate-500">
+                      <span>Delivery charges</span>
+                      <span>Calculated at checkout</span>
+                    </div>
+                  )}
+
+                  {/* Spend Threshold Prompt for next unlocked promotion */}
+                  {nextPromotion && (
+                    <div className="p-3 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-950/30 dark:to-indigo-950/30 border border-sky-200 dark:border-sky-800 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Zap size={15} className="text-amber-500 flex-none" />
+                        <span className="font-extrabold text-slate-900 dark:text-white">
+                          {nextPromotion.promotion.badge_text || nextPromotion.promotion.name}
+                        </span>
+                      </div>
+                      <p className={`text-[11px] mt-1 ${muted}`}>
+                        Add <strong className="text-[var(--brand-blue)]">₹{nextPromotion.calc.gap.toLocaleString('en-IN')}</strong> more to unlock {nextPromotion.promotion.promo_type === 'free_shipping' ? 'FREE Delivery' : `${nextPromotion.promotion.discount_value}% Extra Discount`}!
+                      </p>
+                    </div>
+                  )}
 
                   {/* Cashback earning badge */}
                   {cashbackPreview?.totalCashback > 0 && (
