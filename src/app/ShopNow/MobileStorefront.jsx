@@ -12,6 +12,8 @@ import {
   ChevronRight,
   ChevronUp,
   ClipboardList,
+  Clock,
+  CreditCard,
   Droplet,
   Grid3X3,
   Hammer,
@@ -33,7 +35,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { displayUnit, getProductImage, ShopImage } from "./Storefront";
+import { displayUnit, getProductImage, ShopImage, getLowestBulkPrice, getProductPromotion, getProductPromotions, getProductFreeShippingPromo, formatPromoSpend } from "./Storefront";
 import AutoSwipeGallery from "./AutoSwipeGallery";
 import { getCartStep } from "@/lib/cart-step";
 import { CATEGORY_NAV_TREE } from "./categoryNavTree";
@@ -98,15 +100,6 @@ function getProductDiscount(product) {
     }
   }
   return 8; // fallback realistic bulk discount
-}
-
-function getLowestBulkPrice(product) {
-  const basePrice = Number(product?.price) || 0;
-  if (Array.isArray(product?.bulk_pricing) && product.bulk_pricing.length > 0) {
-    const valid = product.bulk_pricing.map((b) => Number(b.price)).filter((p) => p > 0);
-    if (valid.length > 0) return Math.min(...valid);
-  }
-  return basePrice > 0 ? Math.round(basePrice * 0.92) : null;
 }
 
 function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
@@ -206,6 +199,7 @@ export default function MobileStorefront({
   onSelectCoupon = () => ({ error: 'Coupon service unavailable' }),
   onClearCoupon = () => { },
   shippingQuote = null,
+  promotions = [],
 }) {
   const [mobileView, setMobileView] = useState("home"); // "home" | "listing" | "orders" | "account"
   const [activeCategoryId, setActiveCategoryId] = useState(null);
@@ -703,7 +697,7 @@ export default function MobileStorefront({
                   placeholder={`Search in ${activeCategory?.name}...`}
                 />
                 {searchQuery && (
-                  <button type="button" onClick={() => setSearchQuery("")} className="mobile-search-clear">
+                  <button type="button" onClick={() => setSearchQuery("")} className="mobile-search-clear" aria-label="Clear search" title="Clear search">
                     <X size={14} />
                   </button>
                 )}
@@ -806,6 +800,8 @@ export default function MobileStorefront({
                           selectedCity={selectedCity}
                           categories={categories}
                           isDark={isDark}
+                          promotions={promotions}
+                          shippingSettings={activeShipping}
                         />
                       );
                     })}
@@ -969,6 +965,8 @@ export default function MobileStorefront({
                           freeDeliveryMinOrder={freeDeliveryMinOrder}
                           categories={categories}
                           isDark={isDark}
+                          promotions={promotions}
+                          shippingSettings={activeShipping}
                         />
                       );
                     })}
@@ -1134,6 +1132,8 @@ export default function MobileStorefront({
                         freeDeliveryMinOrder={freeDeliveryMinOrder}
                         categories={categories}
                         isDark={isDark}
+                        promotions={promotions}
+                        shippingSettings={activeShipping}
                       />
                     );
                   })}
@@ -2147,12 +2147,15 @@ function MobileProductCard({
   freeDeliveryMinOrder = 50000,
   categories = [],
   isDark = false,
+  promotions = [],
+  shippingSettings = null,
 }) {
   const price = Number(product.price) || 0;
   const hasFixedPrice = price > 0;
   const mrp = Number(product.compare_at_price) || (price > 0 ? Math.round(price * 1.08) : 0);
   const discount = getProductDiscount(product);
   const bulkPrice = getLowestBulkPrice(product);
+  const activePromos = getProductPromotions(product, promotions);
   const productImage = getProductImage(product, product.category || categories);
 
   const canOrder = !product.fromSupplier || Number(product.quantity) > 0;
@@ -2194,18 +2197,6 @@ function MobileProductCard({
 
         {/* Right: Product details */}
         <div className="mobile-card-details">
-          {/* Free delivery tag */}
-          {isFreeDeliveryActive && (
-            <div className="mobile-free-delivery-tag">
-              <Truck size={12} className="text-[#0D9488] flex-shrink-0" />
-              <span>
-                {freeDeliveryMinOrder > 0
-                  ? `Free Delivery on orders above ₹${freeDeliveryMinOrder.toLocaleString("en-IN")}`
-                  : "Free Delivery on all orders"}
-              </span>
-            </div>
-          )}
-
           {/* Product Name */}
           <Link
             href={detailHref}
@@ -2229,14 +2220,43 @@ function MobileProductCard({
             </div>
           )}
 
-          {/* Bulk Prices link (only if bulk pricing is configured) */}
+          {/* Promotion Strip(s) (HomeRun Image 2 style - supports ANY active promotion) */}
+          {activePromos.slice(0, 2).map((promo) => {
+            const isFreeShipping = promo.promo_type === 'free_shipping';
+            const isFlat = promo.promo_type === 'flat';
+            const isPercent = promo.promo_type === 'percentage';
+
+            const stickerLabel = isFreeShipping ? 'FREE' : isFlat ? 'FLAT' : 'Special';
+            const stickerVal = isFreeShipping ? 'SHIP' : isPercent ? `${promo.discount_value}%` : `₹${Number(promo.discount_value).toLocaleString('en-IN')}`;
+            const promoTitle = isFreeShipping ? 'Free Delivery' : 'Discount';
+            const promoSpendText = promo.min_cart_value > 0 ? `on orders above ${formatPromoSpend(promo.min_cart_value)}` : 'on all orders';
+
+            return (
+              <div
+                key={promo.id || promo.name}
+                className={`store-homerun-promo-strip ${isFreeShipping ? 'store-homerun-promo-shipping' : ''}`}
+                title={promo.description || promo.name}
+              >
+                <div className={`store-promo-sticker ${isFreeShipping ? 'store-promo-sticker-shipping' : ''}`}>
+                  <span className="store-promo-sticker-label">{stickerLabel}</span>
+                  <span className="store-promo-sticker-pct">{stickerVal}</span>
+                </div>
+                <div className="store-promo-text">
+                  <strong className="store-promo-title">{promoTitle}</strong>
+                  <span className="store-promo-sub">{promoSpendText}</span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Bulk Prices link (Image 2 style: Unlock Bulk Prices of ₹335) */}
           {bulkPrice ? (
             <button
               type="button"
-              className="mobile-bulk-link"
+              className="store-bulk-price-link"
               onClick={() => onQuote(product)}
             >
-              Bulk Prices at ₹{bulkPrice.toLocaleString("en-IN")} →
+              Unlock Bulk Prices of ₹{bulkPrice.toLocaleString("en-IN")}
             </button>
           ) : null}
 

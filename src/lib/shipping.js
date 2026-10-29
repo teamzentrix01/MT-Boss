@@ -54,12 +54,13 @@ export async function getShippingSettings() {
     return shippingSettingsCache.data;
   }
   await ensureShippingSchema();
-  const [core, distance, free, routes, qtyRulesRes] = await Promise.all([
+  const [core, distance, free, routes, qtyRulesRes, freePromosRes] = await Promise.all([
     pool.query('SELECT city_name, fixed_cost, is_active FROM shipping_core_city_rates ORDER BY city_name'),
     pool.query('SELECT rate_per_km, is_active FROM shipping_distance_rule WHERE id=1'),
     pool.query('SELECT min_order_value, applicable_only_to_same_city, is_active FROM shipping_free_rule WHERE id=1'),
     pool.query('SELECT from_city, to_city, distance_km, is_active FROM shipping_city_distances ORDER BY from_city, to_city'),
     pool.query("SELECT value FROM pm_settings WHERE key = 'quantity_shipping_rules' LIMIT 1").catch(() => ({ rows: [] })),
+    pool.query("SELECT id, name, promo_type, min_cart_value, free_shipping_same_city_only, is_active, badge_text FROM shop_promotions WHERE is_active=TRUE AND promo_type='free_shipping'").catch(() => ({ rows: [] })),
   ]);
 
   let quantityRules = null;
@@ -83,6 +84,7 @@ export async function getShippingSettings() {
     freeRule: free.rows[0],
     distances: routes.rows,
     quantityRules,
+    freePromotions: freePromosRes?.rows || [],
   };
   shippingSettingsCache = { expiresAt: Date.now() + SHIPPING_TTL_MS, data };
   return data;

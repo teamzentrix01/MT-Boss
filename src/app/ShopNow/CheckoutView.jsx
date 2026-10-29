@@ -26,6 +26,7 @@ import {
 import { useCities } from "@/hooks/useCities";
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
 import { getCartStep } from "@/lib/cart-step";
+import { evaluateCartPromotions } from "@/lib/promotion-calculations";
 import "./shop.css";
 
 function useDarkMode() {
@@ -120,11 +121,24 @@ export default function CheckoutView({ productId: initialProductId }) {
   const [walletPreview, setWalletPreview] = useState(null);
   const [walletLoading, setWalletLoading] = useState(false);
 
+  // Promotions
+  const [promotions, setPromotions] = useState([]);
+
   // Submit
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState(null);
+
+  // Fetch promotions
+  useEffect(() => {
+    fetch('/api/shop-promotions')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.success && Array.isArray(d.data)) setPromotions(d.data);
+      })
+      .catch(() => {});
+  }, []);
 
   // ── Fetch single product or cart ────────────────────────────────────────────
   useEffect(() => {
@@ -301,8 +315,23 @@ export default function CheckoutView({ productId: initialProductId }) {
 
   const itemsSubtotal = product ? singleProductLineTotal : cartLineTotal;
   const shippingCharges = Number(shippingQuote?.totalShipping) || 0;
+
+  // Evaluate promotions for checkout
+  const checkoutItems = useMemo(() => {
+    if (product) {
+      return [{ product: { ...product, price: unitPrice }, quantity: qty }];
+    }
+    return cartItems;
+  }, [product, unitPrice, qty, cartItems]);
+
+  const {
+    bestDiscount: promoDiscount,
+    discountAmount: promoDiscountAmount,
+    activeFreeShipping: promoFreeShipping,
+  } = useMemo(() => evaluateCartPromotions(checkoutItems, promotions), [checkoutItems, promotions]);
+
   const walletDeduct = useWallet && Number(walletAmount) > 0 ? Number(walletAmount) : 0;
-  const grandTotal = Math.max(0, itemsSubtotal + shippingCharges - walletDeduct);
+  const grandTotal = Math.max(0, itemsSubtotal + shippingCharges - promoDiscountAmount - walletDeduct);
 
   // ── Wallet preview ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -401,6 +430,9 @@ export default function CheckoutView({ productId: initialProductId }) {
         selected_city: selectedCity,
         use_wallet: useWallet,
         wallet_amount: walletDeduct,
+        promotion_id: promoDiscount?.promotion?.id || null,
+        promotion_name: promoDiscount?.promotion?.name || null,
+        promotion_discount: promoDiscountAmount,
       };
 
       if (product) {
@@ -1018,10 +1050,23 @@ export default function CheckoutView({ productId: initialProductId }) {
                   <span className={muted}>Items Subtotal</span>
                   <span className="font-bold">{itemsSubtotal > 0 ? `₹${itemsSubtotal.toLocaleString("en-IN")}` : "On Quote"}</span>
                 </div>
+                {promoDiscountAmount > 0 && (
+                  <div className="flex justify-between text-xs text-emerald-600 dark:text-emerald-400 font-bold">
+                    <span className="flex items-center gap-1">
+                      <Zap size={13} className="text-amber-500 flex-none" />
+                      {promoDiscount?.promotion?.name || "Promotion Discount"}
+                    </span>
+                    <span>-₹{promoDiscountAmount.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
                 {shippingQuote?.totalShipping !== undefined && shippingQuote?.totalShipping !== null && (
                   <div className="flex justify-between text-xs">
                     <span className={muted}>Delivery Charges ({selectedCity || "City"})</span>
-                    <span className="font-bold">₹{Number(shippingQuote.totalShipping).toLocaleString("en-IN")}</span>
+                    <span className={`font-bold ${shippingQuote.free || promoFreeShipping || Number(shippingQuote.totalShipping) === 0 ? "text-emerald-600 dark:text-emerald-400 font-black" : ""}`}>
+                      {shippingQuote.free || promoFreeShipping || Number(shippingQuote.totalShipping) === 0
+                        ? "FREE (₹0)"
+                        : `₹${Number(shippingQuote.totalShipping).toLocaleString("en-IN")}`}
+                    </span>
                   </div>
                 )}
                 {walletDeduct > 0 && (

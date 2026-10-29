@@ -479,6 +479,9 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
+              type="button"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              title={isOpen ? "Close menu" : "Open menu"}
               className={`nav-control p-1.5 sm:p-2 rounded-md ${isDarkMode
                 ? 'text-zinc-300 hover:bg-zinc-800'
                 : 'text-black hover:bg-gray-100'
