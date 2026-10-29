@@ -97,6 +97,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const [bulkText, setBulkText] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [showProductForm, setShowProductForm] = useState(initialShowForm);
+  const [isCustomSubcategory, setIsCustomSubcategory] = useState(false);
 
   useEffect(() => {
     if (initialShowForm) setShowProductForm(true);
@@ -123,7 +124,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const loadReferenceData = useCallback(async () => {
     try {
       const [categoryRes, cityRes] = await Promise.all([
-        fetch(isVendor ? '/api/shop-categories?fields=list' : '/api/shop-categories?admin=true&fields=list', { headers: shopHeaders(ownerRole) }),
+        fetch(isVendor ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
         fetch('/api/cities'),
       ]);
       const [categoryData, cityData] = await Promise.all([readApiJson(categoryRes), readApiJson(cityRes)]);
@@ -195,6 +196,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const reset = () => {
     setEditingId(null);
     setShowProductForm(false);
+    setIsCustomSubcategory(false);
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -206,6 +208,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
 
   const startAddProduct = () => {
     setEditingId(null);
+    setIsCustomSubcategory(false);
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -426,42 +429,143 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
-        <label>Subcategory
-          <select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}>
-            <option value="">Select subcategory (optional)</option>
-            {(() => {
-              const cat = categories.find((item) => item.name === form.category);
-              const list = [];
-              if (Array.isArray(cat?.subcategories) && cat.subcategories.length > 0) {
-                cat.subcategories.forEach((s) => {
-                  const name = typeof s === 'object' && s !== null ? s.name : s;
-                  if (name && !list.includes(name)) list.push(name);
-                });
-              }
-              if (Array.isArray(cat?.types) && cat.types.length > 0) {
-                cat.types.forEach((t) => {
-                  if (t && !list.includes(t)) list.push(t);
-                });
-              }
-              const defaultTree = {
-                'Furniture & Architectural Hardware': ['Hinges, Channels & Handles', 'Kitchen Systems & Accessories', 'Wardrobe & Bed Fittings', 'Door Locks & Hardware'],
-                'Building Materials': ['Cement', 'Iron', 'Steel', 'Aggregate (Barjri)', 'Coarse Sand', 'Fine Sand', 'Brick', 'Block', 'POP', 'Tiles', 'Marble', 'Glass', 'Waterproofing'],
-                'Carpentry': ['Timber', 'Plywood', 'HPL', 'Rough Carpentry'],
-                'Plumbing': ['CPVC Pipes', 'Sanitary', 'Bath Fittings', 'Overhead Tanks'],
-                'Electrical': ['Sockets', 'Switches', 'MCB', 'Distribution Board (DB)', 'LED Lights', 'Electrical Cables'],
-              };
-              if (form.category && defaultTree[form.category]) {
-                defaultTree[form.category].forEach((name) => {
-                  if (!list.includes(name)) list.push(name);
-                });
-              }
-              if (form.subcategory && !list.includes(form.subcategory)) {
-                list.unshift(form.subcategory);
-              }
-              return list.map((name) => <option key={name} value={name}>{name}</option>);
-            })()}
+        <label>
+          Category *
+          <select
+            required
+            value={form.category}
+            onChange={(e) => {
+              const selectedVal = e.target.value;
+              const cat = categories.find((item) => (item.name || '').trim().toLowerCase() === selectedVal.trim().toLowerCase());
+              setForm({
+                ...form,
+                category: selectedVal,
+                subcategory: '',
+                unit: cat?.unit || form.unit,
+              });
+              setIsCustomSubcategory(false);
+            }}
+          >
+            <option value="">Select category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
           </select>
+        </label>
+        <label>
+          Subcategory
+          {!isCustomSubcategory ? (
+            <select
+              value={form.subcategory}
+              onChange={(e) => {
+                if (e.target.value === '__CUSTOM__') {
+                  setIsCustomSubcategory(true);
+                  setForm({ ...form, subcategory: '' });
+                } else {
+                  setForm({ ...form, subcategory: e.target.value });
+                }
+              }}
+            >
+              <option value="">Select subcategory (optional)</option>
+              {(() => {
+                const cat = categories.find(
+                  (item) => (item.name || '').trim().toLowerCase() === (form.category || '').trim().toLowerCase()
+                );
+                const list = [];
+
+                // 1. Category DB subcategories
+                let rawSubs = cat?.subcategories;
+                if (typeof rawSubs === 'string') {
+                  try { rawSubs = JSON.parse(rawSubs); } catch {}
+                }
+                if (Array.isArray(rawSubs)) {
+                  rawSubs.forEach((s) => {
+                    const name = typeof s === 'object' && s !== null ? s.name : s;
+                    if (name && typeof name === 'string' && name.trim() && !list.includes(name.trim())) {
+                      list.push(name.trim());
+                    }
+                  });
+                }
+
+                // 2. Category DB types
+                let rawTypes = cat?.types;
+                if (typeof rawTypes === 'string') {
+                  try { rawTypes = JSON.parse(rawTypes); } catch {}
+                }
+                if (Array.isArray(rawTypes)) {
+                  rawTypes.forEach((t) => {
+                    if (t && typeof t === 'string' && t.trim() && !list.includes(t.trim())) {
+                      list.push(t.trim());
+                    }
+                  });
+                }
+
+                // 3. Fallback tree lookup
+                const defaultTree = {
+                  'furniture & architectural hardware': ['Hinges, Channels & Handles', 'Kitchen Systems & Accessories', 'Wardrobe & Bed Fittings', 'Door Locks & Hardware', 'Cabinet Fittings', 'Glass Hardware'],
+                  'building materials': ['Cement', 'Iron', 'Steel', 'Aggregate (Barjri)', 'Coarse Sand', 'Fine Sand', 'Brick', 'Block', 'POP', 'Tiles', 'Marble', 'Glass', 'Waterproofing'],
+                  'carpentry': ['Timber', 'Plywood', 'HPL', 'Rough Carpentry', 'Veneer', 'Flush Doors', 'Laminates'],
+                  'plumbing': ['Sanitary', 'CPVC Pipes', 'Bath Fittings', 'Overhead Tanks', 'Pipes & Fittings', 'Drainage', 'Water Tanks', 'Taps & Showers'],
+                  'electrical': ['Sockets', 'Switches', 'MCB', 'Distribution Board (DB)', 'LED Lights', 'Electrical Cables', 'Wires & Conduits', 'Fans'],
+                  'timber ( lakdi)': ['Teak Wood', 'Imported Teak', 'Sal Wood', 'Pine Wood', 'Sheesham', 'Plywood', 'Board'],
+                  'timber': ['Teak Wood', 'Imported Teak', 'Sal Wood', 'Pine Wood', 'Sheesham', 'Plywood', 'Board'],
+                  'cement': ['OPC 43 & PPC', 'OPC 53', 'Waterproof & White Cement'],
+                  'brick': ['Laal eent', 'Grey eent', 'Concrete Bricks', 'AAC Blocks', 'Fly Ash Bricks'],
+                  'steel': ['TMT Bars', 'Mild Steel Plain Bars', 'Deformed Bars', 'TMX Bars', 'HYSD Bars', 'Binding Wire'],
+                  'sand': ['River Sand (Nadi ki Ret)', 'M-Sand (Manufactured Sand)', 'Coarse Sand', 'Fine Sand', 'Pit Sand'],
+                  'aggregate ( barjri)': ['Fine Aggregate', 'Coarse Aggregate'],
+                  'new launches': ['Cabinet Hardware', 'Kitchen Systems & Hardware', 'General Hardware & Tools', 'Bathroom Renovation Materials', 'Conduits & Piping', 'PVC Pipes', 'Kitchen Sinks & Faucets', 'Home Appliances & Power Backup'],
+                };
+
+                const normCatKey = (form.category || '').toLowerCase().trim();
+                const matchedKey = Object.keys(defaultTree).find((key) => {
+                  return normCatKey === key ||
+                         normCatKey.replace(/\s+/g, '') === key.replace(/\s+/g, '') ||
+                         normCatKey.includes(key) ||
+                         key.includes(normCatKey);
+                });
+
+                if (matchedKey && defaultTree[matchedKey]) {
+                  defaultTree[matchedKey].forEach((name) => {
+                    if (!list.includes(name)) list.push(name);
+                  });
+                }
+
+                if (form.subcategory && !list.includes(form.subcategory)) {
+                  list.unshift(form.subcategory);
+                }
+
+                return list.map((name) => <option key={name} value={name}>{name}</option>);
+              })()}
+              <option value="__CUSTOM__">✍️ + Type custom subcategory...</option>
+            </select>
+          ) : (
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="Enter subcategory name..."
+                value={form.subcategory}
+                onChange={(e) => setForm({ ...form, subcategory: e.target.value })}
+                style={{ flex: 1 }}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setIsCustomSubcategory(false)}
+                style={{
+                  fontSize: 12,
+                  padding: '6px 10px',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Choose from list
+              </button>
+            </div>
+          )}
         </label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
@@ -955,7 +1059,7 @@ function OfferManager() {
   const [loading, setLoading] = useState(true);
   const loadCategories = useCallback(async () => {
     try {
-      const categoriesRes = await fetch('/api/shop-categories?admin=true&fields=list', { headers: shopHeaders() });
+      const categoriesRes = await fetch('/api/shop-categories?admin=true', { headers: shopHeaders() });
       const categoriesData = await readApiJson(categoriesRes);
       if (categoriesRes.ok) setCategories(categoriesData.data || []);
     } catch { /* optional for offer form */ }

@@ -201,10 +201,37 @@ export function resolveCategoryNav(tree = CATEGORY_NAV_TREE, categories = [], pr
   return tree.map((parent) => {
     const parentCategory = findCategoryByLabel(parent.label, categories);
 
+    const childrenLabels = [...parent.children];
+    if (parentCategory) {
+      let rawSubs = parentCategory.subcategories;
+      if (typeof rawSubs === 'string') {
+        try { rawSubs = JSON.parse(rawSubs); } catch {}
+      }
+      if (Array.isArray(rawSubs)) {
+        rawSubs.forEach((entry) => {
+          const name = typeof entry === 'object' && entry !== null ? entry.name : entry;
+          if (name && typeof name === 'string' && !childrenLabels.some((l) => namesMatch(l, name))) {
+            childrenLabels.push(name.trim());
+          }
+        });
+      }
+      let rawTypes = parentCategory.types;
+      if (typeof rawTypes === 'string') {
+        try { rawTypes = JSON.parse(rawTypes); } catch {}
+      }
+      if (Array.isArray(rawTypes)) {
+        rawTypes.forEach((entry) => {
+          if (entry && typeof entry === 'string' && !childrenLabels.some((l) => namesMatch(l, entry))) {
+            childrenLabels.push(entry.trim());
+          }
+        });
+      }
+    }
+
     return {
       id: parent.id,
       label: parent.label,
-      children: parent.children.map((label) => {
+      children: childrenLabels.map((label) => {
         const exactCategory = findCategoryByLabel(label, categories);
         if (exactCategory) {
           return {

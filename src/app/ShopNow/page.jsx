@@ -206,7 +206,7 @@ export default function ShopPage() {
     loadProducts();
 
     const refreshVisibleShop = () => {
-      if (document.visibilityState === "visible") loadProducts();
+      if (document.visibilityState === "visible") loadProducts(true);
     };
     const refreshFromProductChange = (event) => {
       if (event.type !== "storage" || event.key === "MTBOSS-shop-products-updated") loadProducts(true);

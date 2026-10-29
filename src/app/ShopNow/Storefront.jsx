@@ -401,11 +401,13 @@ export default function Storefront({ categories, products, offers = [], content,
   const catalog = useMemo(() => {
     const fromCategories = categories.flatMap((category) => {
       const listed = products.filter((product) => {
-        const assignedCategory = product.category?.trim().toLowerCase();
-        const categoryName = category.name.trim().toLowerCase();
-        return assignedCategory
-          ? assignedCategory === categoryName
-          : product.name?.toLowerCase().includes(categoryName);
+        const prodCat = (typeof product.category === 'object' ? product.category?.name : product.category) || '';
+        const assignedCategory = prodCat.trim().toLowerCase();
+        const categoryName = (category.name || '').trim().toLowerCase();
+        if (!assignedCategory) return product.name?.toLowerCase().includes(categoryName);
+        return assignedCategory === categoryName ||
+          assignedCategory.replace(/\s+/g, '') === categoryName.replace(/\s+/g, '') ||
+          assignedCategory.replace(/&/g, 'and') === categoryName.replace(/&/g, 'and');
       });
       if (listed.length) return listed.map((product) => ({
         id: `supplier-${product.id}`,
@@ -495,8 +497,13 @@ export default function Storefront({ categories, products, offers = [], content,
   const searchTerm = search.trim().toLowerCase();
   const visible = dedupeProducts(catalog.filter((product) => {
     const catId = product.category?.id != null ? String(product.category.id) : '';
-    const catName = (typeof product.category === 'object' ? product.category?.name : (product.category || '')).toLowerCase();
-    const matchesCategory = activeCategory === "all" || catId === String(activeCategory) || catName === String(activeCategory).toLowerCase();
+    const catName = (typeof product.category === 'object' ? product.category?.name : (product.category || '')).toLowerCase().trim();
+    const activeCatObj = categories.find((c) => String(c.id) === String(activeCategory));
+    const activeCatName = activeCatObj ? activeCatObj.name.toLowerCase().trim() : String(activeCategory).toLowerCase().trim();
+    const matchesCategory = activeCategory === "all"
+      || catId === String(activeCategory)
+      || (activeCatObj && catId === String(activeCatObj.id))
+      || catName === activeCatName;
     const matchesBrand = brandFilter === 'all' || product.brand === brandFilter;
 
     if (!matchesCategory || !matchesBrand) return false;

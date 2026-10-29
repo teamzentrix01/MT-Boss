@@ -182,6 +182,7 @@ export async function POST(req) {
         JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
         JSON.stringify(p.available_cities), p.quality_tier]
     );
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0], pending_approval: true }, { status: 201 });
   } catch (error) {
     console.error('POST vendor shop-products error:', error);
@@ -283,6 +284,7 @@ export async function PUT(req) {
         JSON.stringify(p.available_cities), nextAvailable, id, vendor.id, p.quality_tier]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({
       success: true,
       data: result.rows[0],
@@ -306,6 +308,7 @@ export async function DELETE(req) {
       [id, vendor.id]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE vendor shop-products error:', error);
