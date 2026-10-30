@@ -66,10 +66,9 @@ const organizationSchema = {
     { '@type': 'City', name: 'Bilari' },
   ],
   sameAs: [
-    'https://www.facebook.com/share/19QJ3uZKtq/',
-    'https://www.instagram.com/MTBOSS.in',
+    'https://www.facebook.com/share/1ZUCWwWZZu/',
+    'https://www.instagram.com/mtboss.in_',
     'https://in.linkedin.com/company/MTBOSS-construction-company',
-    'https://x.com/MTBOSS',
     'https://youtube.com/@MTBOSSconstruction4906',
   ],
 };
