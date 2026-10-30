@@ -374,7 +374,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
           <div className="shop-admin-heading">
             <div>
               <h2>Shipping Settings (Vendor View)</h2>
-              <p>Platform-wide shipping rules are set by the MT-Boss Admin.</p>
+              <p>Platform-wide shipping rules are set by the MTBOSS Admin.</p>
             </div>
           </div>
 

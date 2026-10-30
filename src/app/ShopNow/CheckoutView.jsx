@@ -544,7 +544,7 @@ export default function CheckoutView({ productId: initialProductId }) {
             <Link href="/ShopNow" className={`p-2 rounded-xl border transition-all ${isDark ? "border-zinc-800 hover:bg-zinc-800 text-zinc-300" : "border-slate-200 hover:bg-slate-100 text-slate-700"}`}>
               <ArrowLeft size={18} />
             </Link>
-            <Image src="/logo.png" alt="MT-Boss" width={100} height={28} className="h-7 w-auto object-contain" priority />
+            <Image src="/logo.png" alt="MTBOSS" width={100} height={28} className="h-7 w-auto object-contain" priority />
           </div>
         </header>
 
@@ -604,7 +604,7 @@ export default function CheckoutView({ productId: initialProductId }) {
               <ArrowLeft size={18} />
             </button>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="MT-Boss" width={100} height={28} className="h-7 w-auto object-contain" priority />
+              <Image src="/logo.png" alt="MTBOSS" width={100} height={28} className="h-7 w-auto object-contain" priority />
               <span className="hidden sm:inline text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-[var(--brand-blue)] text-slate-950 uppercase">
                 CHECKOUT
               </span>
@@ -909,7 +909,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                     <div className="flex items-center gap-2.5">
                       <Wallet size={20} className="text-emerald-500" />
                       <div>
-                        <p className="text-sm font-black">MT-Boss Cashback Wallet</p>
+                        <p className="text-sm font-black">MTBOSS Cashback Wallet</p>
                         <p className={`text-xs ${muted}`}>Available Balance: ₹{walletBalance.toLocaleString("en-IN")}</p>
                       </div>
                     </div>
@@ -967,7 +967,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                 {submitting ? "Placing Order…" : "Confirm & Place Order →"}
               </button>
               <p className={`text-xs text-center ${muted}`}>
-                Orders are verified by official MT-Boss suppliers. Official GST invoice provided upon site delivery.
+                Orders are verified by official MTBOSS suppliers. Official GST invoice provided upon site delivery.
               </p>
             </form>
           </div>

@@ -149,7 +149,7 @@ export default function LeadConsultationModal({ isDarkMode, onDismiss }) {
           <div className="relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-[10px] font-black uppercase tracking-wider mb-4">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              MT-BOSS CONSTRUCTION • VERIFIED
+              MTBOSS CONSTRUCTION • VERIFIED
             </div>
 
             <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-tight mb-2">

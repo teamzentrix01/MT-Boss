@@ -10,7 +10,7 @@ const QUICK_ACTIONS = [
   { label: '🧮 Cost Calculator', href: '/calculator', prompt: 'What are the current house construction rates and packages?' },
   { label: '📦 Buy Materials', href: '/ShopNow', prompt: 'What are the wholesale prices for Cement and TMT Steel?' },
   { label: '🏡 Plots & Properties', href: '/buy-sale', prompt: 'Show me verified plots and properties in Bareilly and UP' },
-  { label: '💼 Franchise Info', href: '/franchise', prompt: 'What are the MT-Boss franchise investment models and requirements?' },
+  { label: '💼 Franchise Info', href: '/franchise', prompt: 'What are the MTBOSS franchise investment models and requirements?' },
 ];
 
 const INITIAL_MESSAGE = {
@@ -295,7 +295,7 @@ export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
                     </span>
                   </div>
                   <p className="text-[10px] text-zinc-400">
-                    Trained on All MT-Boss Services &amp; Rates
+                    Trained on All MTBOSS Services &amp; Rates
                   </p>
                 </div>
               </div>
@@ -391,7 +391,7 @@ export default function ChatbotWidget({ isDarkMode, hideLauncher = false }) {
                   <div className="w-2 h-2 rounded-full bg-sky-400 animate-bounce" />
                   <div className="w-2 h-2 rounded-full bg-sky-400 animate-bounce [animation-delay:0.2s]" />
                   <div className="w-2 h-2 rounded-full bg-sky-400 animate-bounce [animation-delay:0.4s]" />
-                  <span className="text-[10px] text-zinc-400 ml-1">Consulting MT-Boss knowledge base...</span>
+                  <span className="text-[10px] text-zinc-400 ml-1">Consulting MTBOSS knowledge base...</span>
                 </div>
               )}
 

@@ -841,9 +841,9 @@ const INVOICE_CONTENT_W = INVOICE_PAGE_W - INVOICE_MARGIN * 2;
 
 function companyInvoiceConfig() {
   return {
-    name: process.env.COMPANY_NAME || 'MT-BOSS',
+    name: process.env.COMPANY_NAME || 'MTBOSS',
     tagline: process.env.COMPANY_TAGLINE || 'Building Materials & Services',
-    address: process.env.COMPANY_ADDRESS || 'Zentrix MT-Boss Technologies · Moradabad, Uttar Pradesh',
+    address: process.env.COMPANY_ADDRESS || 'Zentrix MTBOSS Technologies · Moradabad, Uttar Pradesh',
     gstin: String(process.env.COMPANY_GSTIN || '').trim(),
     pan: String(process.env.COMPANY_PAN || '').trim(),
     phone: process.env.COMPANY_PHONE || process.env.NEXT_PUBLIC_COMPANY_PHONE || '+91 9410225039',
@@ -1163,7 +1163,7 @@ export async function generateOrderInvoicePdf(order) {
         ];
       } else {
         fulfilledLines = [
-          'MT-Boss Direct Operations',
+          'MTBOSS Direct Operations',
           `Helpline: ${company.phone}`,
           `Email: ${company.email}`,
         ];
@@ -1319,13 +1319,13 @@ export async function generateOrderInvoicePdf(order) {
       doc.fillColor(primaryColor).fontSize(10).font('Helvetica-Bold')
         .text(`Rs. ${formatInvoiceMoney(grandTotal, { dashWhenEmpty: false })}`, rightX + 8, lineY + 6, { width: rightW - 16, align: 'right', lineBreak: false });
       lineY += 28;
-      doc.fillColor(grayColor).fontSize(7).font('Helvetica').text('Authorised Signatory for MT-Boss', rightX + 8, lineY, { width: rightW - 16, align: 'right', lineBreak: false });
+      doc.fillColor(grayColor).fontSize(7).font('Helvetica').text('Authorised Signatory for MTBOSS', rightX + 8, lineY, { width: rightW - 16, align: 'right', lineBreak: false });
 
       // ── Page bottom footer (Safely positioned above page boundary) ──
       const pageFooterY = 780;
       doc.moveTo(INVOICE_MARGIN, pageFooterY).lineTo(INVOICE_PAGE_W - INVOICE_MARGIN, pageFooterY).strokeColor(borderColor).stroke();
       doc.fillColor(grayColor).fontSize(7).font('Helvetica')
-        .text('Thank you for choosing MT-Boss! This is a computer-generated tax invoice and requires no physical signature.', INVOICE_MARGIN, pageFooterY + 6, { align: 'center', width: INVOICE_CONTENT_W, lineBreak: false });
+        .text('Thank you for choosing MTBOSS! This is a computer-generated tax invoice and requires no physical signature.', INVOICE_MARGIN, pageFooterY + 6, { align: 'center', width: INVOICE_CONTENT_W, lineBreak: false });
       doc.text(`${company.address} | Contact: ${company.email}`, INVOICE_MARGIN, pageFooterY + 18, { align: 'center', width: INVOICE_CONTENT_W, lineBreak: false });
 
       doc.end();

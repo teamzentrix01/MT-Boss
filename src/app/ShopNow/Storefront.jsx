@@ -807,7 +807,7 @@ export default function Storefront({ categories, products, offers = [], content,
             <Link
               href="/wallet"
               className="store-wallet-btn"
-              aria-label="MT-Boss Cashback Wallet"
+              aria-label="MTBOSS Cashback Wallet"
               title="My Cashback Wallet"
             >
               <Wallet size={18} />

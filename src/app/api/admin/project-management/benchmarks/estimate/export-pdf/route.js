@@ -136,7 +136,7 @@ export async function GET(req) {
       </table>
 
       <div style="margin-top:20px;padding:10px;background:#f8fafc;border-left:3px solid #1e40af;font-size:10px;color:#475569;">
-        <strong>Notice:</strong> This estimate is generated based on historical cost benchmarks from completed projects in the MT-Boss Project Management system. Actual expenses may vary depending on architectural designs, site conditions, soil conditions, and prevailing market rates.
+        <strong>Notice:</strong> This estimate is generated based on historical cost benchmarks from completed projects in the MTBOSS Project Management system. Actual expenses may vary depending on architectural designs, site conditions, soil conditions, and prevailing market rates.
       </div>
     `;
 
