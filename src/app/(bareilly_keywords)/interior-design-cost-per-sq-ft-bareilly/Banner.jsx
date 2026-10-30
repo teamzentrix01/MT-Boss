@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Banner() {
-  const pageTitle = "Interior Design cost Per Sq Ft In Bareilly";
+  const pageTitle = "Interior Design Cost Per Sq Ft In Bareilly";
 
   return (
     <>
       <section className="relative w-full h-[300px] sm:h-[400px] md:h-[450px] overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://i.pinimg.com/736x/01/bc/cc/01bccca3c464e3ec020d27e9a1c52b77.jpg"            alt={pageTitle}
+            src="https://res.cloudinary.com/kokjkyt6/image/upload/v1792569132/interior.jpg"            alt={pageTitle}
             fill
             priority
             className="object-cover object-center"

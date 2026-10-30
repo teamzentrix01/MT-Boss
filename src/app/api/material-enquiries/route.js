@@ -9,6 +9,7 @@ import { addMaterialOrderEvent, ensureMaterialOrderSchema } from '@/lib/material
 import { notifyAdminSubmission, deliverMaterialOrderReceipt } from '@/lib/customer-communications';
 import { calculateShipping, getShippingSettings } from '@/lib/shipping';
 import { calculateCoupon, couponIsCurrentlyActive, productHasOffer } from '@/lib/coupon-calculations';
+import { evaluateCartPromotions } from '@/lib/promotion-calculations';
 import { getShopVendorCommissionPercent, recordShopVendorCommission, resolveCommissionRate } from '@/lib/shop-commissions';
 import { snapshotOrderCashback, ensureCashbackSchema } from '@/lib/cashback/service';
 import { computeRedeemLimit, reserveWalletRedeem } from '@/lib/wallet/redeem';
@@ -230,10 +231,27 @@ export async function POST(req) {
         const shippingSettings = await getShippingSettings();
         calculatedShipping = calculateShipping({ items: preparedItems, customerCity: canonicalCity, settings: shippingSettings });
       }
+      // Evaluate automatic promotions (e.g. 50k+ = 5% off)
+      let validatedPromotion = null;
+      let promoDiscount = 0;
+      if (productIds.length) {
+        const activePromos = await client.query("SELECT * FROM shop_promotions WHERE is_active=TRUE").catch(() => ({ rows: [] }));
+        if (activePromos.rows.length) {
+          const promoProducts = await client.query(`SELECT id, price, compare_at_price, category, bulk_pricing FROM supplier_materials WHERE id=ANY($1::int[]) AND is_available=TRUE`, [productIds]);
+          const prodMap = new Map(promoProducts.rows.map((p) => [p.id, p]));
+          const serverCart = orderItems.map((item) => ({ product: prodMap.get(Number(item.product_id)), quantity: isCart ? Number(item.quantity) : Number.parseInt(String(quantity_text || ''), 10) })).filter((item) => item.product);
+          const evalRes = evaluateCartPromotions(serverCart, activePromos.rows);
+          if (evalRes.bestDiscount) {
+            validatedPromotion = evalRes.bestDiscount.promotion;
+            promoDiscount = evalRes.bestDiscount.calc.discount;
+          }
+        }
+      }
+
       const chargedCategories = new Set();
       const chargedShippingGroups = new Set();
       let appliedMinimumAdjustment = false;
-      let remainingCouponDiscount = couponDiscount;
+      let remainingCouponDiscount = couponDiscount + promoDiscount;
       const orders = [];
       const shopVendorCommissionPercent = await getShopVendorCommissionPercent();
       for (const item of orderItems) {
@@ -373,12 +391,13 @@ export async function POST(req) {
           failure.status = 409;
           throw failure;
         }
-        const appliedCouponDiscount = couponAppliesToProduct(validatedCoupon, product)
+        const isEligibleForDiscount = couponAppliesToProduct(validatedCoupon, product) || Boolean(validatedPromotion);
+        const appliedCouponDiscount = isEligibleForDiscount
           ? Math.min(productTotal, remainingCouponDiscount)
           : 0;
         remainingCouponDiscount -= appliedCouponDiscount;
         const couponCode = appliedCouponDiscount > 0
-          ? (validatedCoupon?.code || 'AUTO')
+          ? (validatedCoupon?.code || validatedPromotion?.name || 'PROMOTION')
           : null;
         const itemBaseGrandTotal = Math.max(0, productTotal - appliedCouponDiscount) + (Number(shippingCost) || 0);
 

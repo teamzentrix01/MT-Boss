@@ -98,6 +98,33 @@ export const fallbackProjects = [
 
 export const fallbackShopCategories = [
   {
+    id: 'fallback-shop-0',
+    name: 'New Launches',
+    emoji: '🚀',
+    types: [
+      'Cabinet Hardware',
+      'Kitchen Systems & Hardware',
+      'General Hardware & Tools',
+      'Bathroom Renovation Materials',
+      'Conduits & Piping',
+      'PVC Pipes',
+      'Kitchen Sinks & Faucets',
+      'Home Appliances & Power Backup',
+    ],
+    subcategories: [
+      'Cabinet Hardware',
+      'Kitchen Systems & Hardware',
+      'General Hardware & Tools',
+      'Bathroom Renovation Materials',
+      'Conduits & Piping',
+      'PVC Pipes',
+      'Kitchen Sinks & Faucets',
+      'Home Appliances & Power Backup',
+    ],
+    is_active: true,
+    sort_order: -1,
+  },
+  {
     id: 'fallback-shop-1',
     name: 'Cement',
     emoji: 'C',
@@ -145,6 +172,25 @@ export const fallbackShopCategories = [
     types: ['Floor Tiles', 'Wall Tiles', 'Vitrified'],
     is_active: true,
     sort_order: 5,
+  },
+  {
+    id: 'fallback-shop-7',
+    name: 'Furniture & Architectural Hardware',
+    emoji: '🪚',
+    types: [
+      'Hinges, Channels & Handles',
+      'Kitchen Systems & Accessories',
+      'Wardrobe & Bed Fittings',
+      'Door Locks & Hardware',
+    ],
+    subcategories: [
+      'Hinges, Channels & Handles',
+      'Kitchen Systems & Accessories',
+      'Wardrobe & Bed Fittings',
+      'Door Locks & Hardware',
+    ],
+    is_active: true,
+    sort_order: 6,
   },
 ];
 

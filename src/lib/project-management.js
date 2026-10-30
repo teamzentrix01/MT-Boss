@@ -66,7 +66,13 @@ export async function requirePmAccess(req, projectId = null) {
     if (dbAgent?.has_project_management_access) {
       if (projectId) {
         const assignmentRes = await pool.query(
-          'SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2',
+          `SELECT 1 FROM pm_project_agents WHERE project_id = $1 AND agent_id = $2
+           UNION
+           SELECT 1 FROM pm_projects p JOIN agent_leads l ON l.id = p.source_lead_id WHERE p.id = $1 AND l.agent_id = $2
+           UNION
+           SELECT 1 FROM projects p WHERE p.id = $1 AND (p.assigned_agent_id = $2 OR EXISTS (SELECT 1 FROM agent_leads l WHERE l.id = p.source_lead_id AND l.agent_id = $2))
+           UNION
+           SELECT 1 FROM agent_leads l WHERE l.id = $1 AND l.agent_id = $2`,
           [projectId, agent.id]
         );
         if (assignmentRes.rows.length === 0) return null; // Not assigned to this project
@@ -268,7 +274,17 @@ async function pmSchemaLooksReady() {
          WHERE table_schema = 'public'
            AND table_name = 'pm_material_adjustments'
            AND column_name = 'bill_url'
-      ) AS has_ma_bill_url
+      ) AS has_ma_bill_url,
+      EXISTS (
+        SELECT 1
+          FROM pg_constraint c
+          JOIN pg_class t ON c.conrelid = t.oid
+         WHERE t.relname = 'pm_other_expenses'
+           AND c.conname = 'pm_other_expenses_category_check'
+           AND pg_get_constraintdef(c.oid) LIKE '%tools%'
+           AND pg_get_constraintdef(c.oid) LIKE '%rent%'
+      ) AS has_oe_tools_rent_constraint,
+      to_regclass('public.pm_commissions') IS NOT NULL AS has_commissions
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -287,6 +303,8 @@ async function pmSchemaLooksReady() {
     && row.has_lp_tx_ref
     && row.has_mr_bill_url
     && row.has_ma_bill_url
+    && row.has_oe_tools_rent_constraint
+    && row.has_commissions
   );
 }
 
@@ -321,7 +339,7 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_received(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,supplier_name TEXT,supplier_vendor_id BIGINT REFERENCES pm_vendors(id) ON DELETE SET NULL,vendor_supply_id BIGINT REFERENCES pm_vendor_material_supply(id) ON DELETE SET NULL,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),rate NUMERIC(14,2) NOT NULL CHECK(rate>=0),amount NUMERIC(14,2) NOT NULL,received_date DATE NOT NULL,challan_no VARCHAR(100),note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,transfer_in BOOLEAN NOT NULL DEFAULT FALSE)`);
   await pool.query(`ALTER TABLE pm_material_received ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL`);
   await pool.query(`ALTER TABLE pm_material_received ADD COLUMN IF NOT EXISTS bill_url text, ADD COLUMN IF NOT EXISTS bill_filename text`);
-  await pool.query(`ALTER TABLE pm_material_adjustments ADD COLUMN IF NOT EXISTS bill_url text, ADD COLUMN IF NOT EXISTS bill_filename text, ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2), ADD COLUMN IF NOT EXISTS supplier_name TEXT`);
+  await pool.query(`ALTER TABLE pm_material_adjustments ADD COLUMN IF NOT EXISTS bill_url text, ADD COLUMN IF NOT EXISTS bill_filename text, ADD COLUMN IF NOT EXISTS amount NUMERIC(14,2), ADD COLUMN IF NOT EXISTS supplier_name TEXT, ADD COLUMN IF NOT EXISTS supplier_id BIGINT REFERENCES suppliers(id) ON DELETE SET NULL`);
   try {
     await pool.query(`ALTER TABLE pm_material_adjustments DROP CONSTRAINT IF EXISTS pm_material_adjustments_adjustment_type_check; ALTER TABLE pm_material_adjustments ADD CONSTRAINT pm_material_adjustments_adjustment_type_check CHECK(adjustment_type IN ('wastage','damage','return_to_supplier','return_material','scrap_material','scrap','transfer_out'))`);
   } catch {}
@@ -330,9 +348,18 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`ALTER TABLE pm_party_payments ADD COLUMN IF NOT EXISTS transaction_reference VARCHAR(255)`);
   await pool.query(`ALTER TABLE pm_labor_payments ADD COLUMN IF NOT EXISTS transaction_reference VARCHAR(255)`);
   await pool.query(`ALTER TABLE pm_supplier_payments ADD COLUMN IF NOT EXISTS transaction_reference TEXT`);
+  await pool.query(`ALTER TABLE pm_material_received ADD COLUMN IF NOT EXISTS unit VARCHAR(50)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_used(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),used_date DATE NOT NULL,used_for TEXT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ,over_used BOOLEAN NOT NULL DEFAULT FALSE)`);
+  await pool.query(`ALTER TABLE pm_material_used ADD COLUMN IF NOT EXISTS unit VARCHAR(50)`);
   await pool.query(`CREATE TABLE IF NOT EXISTS pm_material_adjustments(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,material_id BIGINT NOT NULL REFERENCES pm_materials(id) ON DELETE RESTRICT,adjustment_type VARCHAR(30) NOT NULL CHECK(adjustment_type IN ('wastage','damage','return_to_supplier','return_material','scrap_material','scrap','transfer_out')),quantity NUMERIC(14,3) NOT NULL CHECK(quantity>0),adjustment_date DATE NOT NULL,to_project_id BIGINT REFERENCES pm_projects(id) ON DELETE RESTRICT,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),over_used BOOLEAN NOT NULL DEFAULT FALSE,amount NUMERIC(14,2),supplier_name TEXT)`);
-  await pool.query(`CREATE TABLE IF NOT EXISTS pm_other_expenses(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,category VARCHAR(30) NOT NULL CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc')),amount NUMERIC(14,2) NOT NULL CHECK(amount>0),expense_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  await pool.query(`ALTER TABLE pm_material_adjustments ADD COLUMN IF NOT EXISTS unit VARCHAR(50)`);
+  await pool.query(`CREATE TABLE IF NOT EXISTS pm_other_expenses(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,category VARCHAR(30) NOT NULL CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent')),amount NUMERIC(14,2) NOT NULL CHECK(amount>0),expense_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  try {
+    await pool.query(`ALTER TABLE pm_other_expenses DROP CONSTRAINT IF EXISTS pm_other_expenses_category_check; ALTER TABLE pm_other_expenses ADD CONSTRAINT pm_other_expenses_category_check CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent'))`);
+  } catch {}
+  await pool.query(`CREATE TABLE IF NOT EXISTS pm_commissions(id BIGSERIAL PRIMARY KEY,project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE RESTRICT,person_name VARCHAR(150) NOT NULL,amount NUMERIC(14,2) NOT NULL CHECK(amount>0),commission_date DATE NOT NULL,note TEXT,is_deleted BOOLEAN NOT NULL DEFAULT FALSE,created_by TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_commissions_proj_idx ON pm_commissions(project_id)`);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_commissions_proj_del_idx ON pm_commissions(project_id, is_deleted)`);
   // Agent Specializations Column
   await pool.query(`ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`);
   

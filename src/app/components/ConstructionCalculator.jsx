@@ -256,9 +256,37 @@ const DEFAULT_SETTINGS = {
     ])
   ),
   materialFactors: Object.fromEntries(CATEGORY_SPECS.map((spec) => [spec.key, spec.factor])),
+  supervisionPercent: 3.5,
+  contingencyPercent: 2.5,
+  wastagePercent: 3.5,
+  additionalCharges: {
+    supervisionPercent: 3.5,
+    contingencyPercent: 2.5,
+    wastagePercent: 3.5,
+  },
 };
 
+function cleanPercentage(value, fallback) {
+  if (value === undefined || value === null || value === '') return fallback;
+  const next = Number(value);
+  if (!Number.isFinite(next) || next < 0 || next > 100) return fallback;
+  return Math.round(next * 100) / 100;
+}
+
 function mergeCalculatorSettings(settings = {}) {
+  const supervisionPercent = cleanPercentage(
+    settings.supervisionPercent ?? settings.additionalCharges?.supervisionPercent,
+    DEFAULT_SETTINGS.supervisionPercent
+  );
+  const contingencyPercent = cleanPercentage(
+    settings.contingencyPercent ?? settings.additionalCharges?.contingencyPercent,
+    DEFAULT_SETTINGS.contingencyPercent
+  );
+  const wastagePercent = cleanPercentage(
+    settings.wastagePercent ?? settings.additionalCharges?.wastagePercent,
+    DEFAULT_SETTINGS.wastagePercent
+  );
+
   return {
     cityRates: {
       ...DEFAULT_SETTINGS.cityRates,
@@ -280,6 +308,14 @@ function mergeCalculatorSettings(settings = {}) {
       ...DEFAULT_SETTINGS.materialFactors,
       ...(settings.materialFactors || {}),
     },
+    supervisionPercent,
+    contingencyPercent,
+    wastagePercent,
+    additionalCharges: {
+      supervisionPercent,
+      contingencyPercent,
+      wastagePercent,
+    },
   };
 }
 
@@ -292,6 +328,17 @@ const formatCurrency = (value) =>
 
 const formatNumber = (value) =>
   new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(Number.isFinite(value) ? value : 0);
+
+const SQFT_PER_SQM = 10.7639;
+
+const formatPerUnit = (amount, builtUpArea, unit = 'sqft', isApprox = false) => {
+  if (!builtUpArea || builtUpArea <= 0 || !Number.isFinite(amount)) return '-';
+  const perSqft = amount / builtUpArea;
+  const rate = unit === 'sqm' ? perSqft * SQFT_PER_SQM : perSqft;
+  const unitLabel = unit === 'sqm' ? 'sq.m' : 'sqft';
+  const prefix = isApprox ? '~' : '';
+  return `${prefix}${formatCurrency(Math.round(rate))} / ${unitLabel}`;
+};
 
 function getProductPrice(product, city, quality) {
   if (quality && city && product.price_matrix && typeof product.price_matrix === 'object') {
@@ -422,6 +469,14 @@ function makeEstimateSnapshot({ project, estimate, phaseTotals, quoteForm }) {
       transportTotal: estimate.transportTotal,
       supervisionTotal: estimate.supervisionTotal,
       contingencyTotal: estimate.contingencyTotal,
+      supervisionPercent: estimate.supervisionPercent,
+      contingencyPercent: estimate.contingencyPercent,
+      wastagePercent: estimate.wastagePercent,
+    },
+    percentages: {
+      supervisionPercent: estimate.supervisionPercent,
+      contingencyPercent: estimate.contingencyPercent,
+      wastagePercent: estimate.wastagePercent,
     },
     phaseTotals,
     lineItems: estimate.lineItems.map((item) => ({
@@ -546,8 +601,8 @@ function buildReportHtml(snapshot) {
             <div class="line"><b>Material Total</b><strong>${formatCurrency(snapshot.totals.materialTotal)}</strong></div>
             <div class="line"><b>Labour Cost</b><strong>${formatCurrency(snapshot.totals.labourTotal)}</strong></div>
             <div class="line"><b>Transport</b><strong>${formatCurrency(snapshot.totals.transportTotal)}</strong></div>
-            <div class="line"><b>Supervision</b><strong>${formatCurrency(snapshot.totals.supervisionTotal)}</strong></div>
-            <div class="line"><b>Contingency</b><strong>${formatCurrency(snapshot.totals.contingencyTotal)}</strong></div>
+            <div class="line"><b>Supervision (${snapshot.percentages?.supervisionPercent ?? snapshot.totals?.supervisionPercent ?? 3.5}%)</b><strong>${formatCurrency(snapshot.totals.supervisionTotal)}</strong></div>
+            <div class="line"><b>Contingency (${snapshot.percentages?.contingencyPercent ?? snapshot.totals?.contingencyPercent ?? 2.5}%)</b><strong>${formatCurrency(snapshot.totals.contingencyTotal)}</strong></div>
           </div>
         </div>
 
@@ -601,6 +656,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
   const [included, setIncluded] = useState(() =>
     CATEGORY_SPECS.reduce((acc, spec) => ({ ...acc, [spec.key]: spec.type === 'Mandatory' || spec.phase !== 'Finishing' }), {})
   );
+  const [costUnit, setCostUnit] = useState('sqft');
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [quoteStep, setQuoteStep] = useState('details');
   const [quoteForm, setQuoteForm] = useState({ name: '', email: '', phone: '', address: '' });
@@ -617,7 +673,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       try {
         const [productRes, settingsRes, cityRes] = await Promise.all([
           fetch('/api/calculator-products'),
-          fetch('/api/calculator-settings'),
+          fetch('/api/calculator-settings', { cache: 'no-store' }),
           fetch('/api/cities?fields=lite'),
         ]);
         const productData = await productRes.json();
@@ -726,7 +782,10 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
     const area = Math.max(Number(project.area) || 0, 1);
     const floors = Math.max(Number(project.floors) || 1, 1);
     const builtUpArea = area * floors;
-    const floorWastage = 1 + Math.max(floors - 1, 0) * 0.035;
+    const supervisionPercent = cleanPercentage(settings.supervisionPercent, 3.5);
+    const contingencyPercent = cleanPercentage(settings.contingencyPercent, 2.5);
+    const wastagePercent = cleanPercentage(settings.wastagePercent, 3.5);
+    const floorWastage = 1 + Math.max(floors - 1, 0) * (wastagePercent / 100);
 
     const lineItems = CATEGORY_SPECS.filter((spec) => included[spec.key]).map((spec) => {
       const options = productsByCategory.get(spec.key) || [];
@@ -758,8 +817,8 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
     const labourBase = builtUpArea * effectiveLabourRate * quality.labourMultiplier * foundation.labourMultiplier;
     const labourTotal = Math.round(labourBase);
     const transportTotal = Math.round(builtUpArea * cityRate.transport);
-    const supervisionTotal = Math.round((materialTotal + labourTotal) * 0.035);
-    const contingencyTotal = Math.round((materialTotal + labourTotal + transportTotal) * 0.025);
+    const supervisionTotal = Math.round((materialTotal + labourTotal) * (supervisionPercent / 100));
+    const contingencyTotal = Math.round((materialTotal + labourTotal + transportTotal) * (contingencyPercent / 100));
     const grandTotal = materialTotal + labourTotal + transportTotal + supervisionTotal + contingencyTotal;
 
     return {
@@ -777,6 +836,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
       cityRate,
       quality,
       foundation,
+      supervisionPercent,
+      contingencyPercent,
+      wastagePercent,
     };
   }, [included, productsByCategory, project, selectedProducts, settings, rateOverrides]);
 
@@ -784,6 +846,91 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
     acc[item.spec.phase] = (acc[item.spec.phase] || 0) + item.amount;
     return acc;
   }, {});
+
+  const isZeroArea = !Number(project.area) || Number(project.area) <= 0;
+  const displayBuiltUpArea = isZeroArea ? 0 : estimate.builtUpArea;
+
+  const packageRates = useMemo(() => {
+    const cityRate = settings.cityRates[project.city] || settings.cityRates.Moradabad;
+    const foundation = settings.foundationTypes[project.foundation] || settings.foundationTypes.Normal;
+    const area = Math.max(Number(project.area) || 0, 1);
+    const floors = Math.max(Number(project.floors) || 1, 1);
+    const builtUpArea = area * floors;
+    const supervisionPercent = cleanPercentage(settings.supervisionPercent, 3.5);
+    const contingencyPercent = cleanPercentage(settings.contingencyPercent, 2.5);
+    const wastagePercent = cleanPercentage(settings.wastagePercent, 3.5);
+    const floorWastage = 1 + Math.max(floors - 1, 0) * (wastagePercent / 100);
+
+    const rates = {};
+
+    Object.keys(settings.qualityLevels).forEach((tierKey) => {
+      if (tierKey === project.quality) {
+        rates[tierKey] = {
+          grandTotal: estimate.grandTotal,
+          perSqft: estimate.perSqft,
+        };
+        return;
+      }
+
+      const quality = settings.qualityLevels[tierKey] || settings.qualityLevels.Standard;
+
+      let materialTotal = 0;
+      CATEGORY_SPECS.forEach((spec) => {
+        if (!included[spec.key]) return;
+
+        const categoryProducts = products
+          .filter((product) => product.category?.toLowerCase() === spec.key.toLowerCase())
+          .map((product, index) => normalizeProduct(product, spec, index));
+        const availableProducts = categoryProducts.filter((product) =>
+          isProductAvailableForSelection(product, project.city, tierKey)
+        );
+        const fallback = spec.fallbackProducts.map((product, index) => normalizeProduct(product, spec, index));
+        const tierMatches = getTierProducts(spec, tierProducts, project.city, tierKey);
+        const options = tierMatches.length > 0 ? tierMatches : categoryProducts.length > 0 ? availableProducts : fallback;
+        const selected = options[0];
+
+        const rawBaseFactor = selected?.factorOverride || settings.materialFactors[spec.key] || spec.factor;
+        const baseFactor = getEffectiveRate('qty_' + spec.key.toLowerCase(), tierKey, rawBaseFactor, rateOverrides);
+        const structureMultiplier = spec.phase === 'Structure' ? foundation.materialMultiplier : 1;
+        const finishMultiplier = spec.phase === 'Finishing' ? quality.finishMultiplier : 1;
+        const factor = baseFactor * structureMultiplier * floorWastage * finishMultiplier;
+        const rawQuantity = builtUpArea * factor;
+        const quantity = Math.max(Math.ceil(rawQuantity), 1);
+        const rawBasePrice = selected ? getProductPrice(selected, project.city, tierKey) : 0;
+        const basePrice = getEffectiveRate('rate_' + spec.key.toLowerCase(), tierKey, rawBasePrice, rateOverrides);
+        const price = Math.round(basePrice);
+        materialTotal += quantity * price;
+      });
+
+      const effectiveLabourRate = getEffectiveRate('labour_rate', tierKey, cityRate.labour, rateOverrides);
+      const labourBase = builtUpArea * effectiveLabourRate * quality.labourMultiplier * foundation.labourMultiplier;
+      const labourTotal = Math.round(labourBase);
+      const transportTotal = Math.round(builtUpArea * cityRate.transport);
+      const supervisionTotal = Math.round((materialTotal + labourTotal) * (supervisionPercent / 100));
+      const contingencyTotal = Math.round((materialTotal + labourTotal + transportTotal) * (contingencyPercent / 100));
+      const grandTotal = materialTotal + labourTotal + transportTotal + supervisionTotal + contingencyTotal;
+
+      rates[tierKey] = {
+        grandTotal,
+        perSqft: builtUpArea > 0 ? grandTotal / builtUpArea : 0,
+      };
+    });
+
+    return rates;
+  }, [
+    settings,
+    project.city,
+    project.quality,
+    project.foundation,
+    project.area,
+    project.floors,
+    included,
+    products,
+    tierProducts,
+    rateOverrides,
+    estimate.grandTotal,
+    estimate.perSqft,
+  ]);
 
   // Automatic lead sync on calculation change (debounced)
   useEffect(() => {
@@ -1079,7 +1226,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-chip { display: inline-flex; align-items: center; gap: 5px; height: 28px; border: 1px solid var(--boq-line); border-radius: 999px; padding: 0 10px; color: var(--boq-muted); background: var(--boq-soft); font-size: .72rem; font-weight: 900; white-space: nowrap; }
         .boq-quality-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; padding: 18px; }
         .boq-quality {
-          min-height: 112px !important;
+          min-height: 124px !important;
           border: 1px solid var(--boq-line) !important;
           border-radius: 8px !important;
           background: var(--boq-soft) !important;
@@ -1111,6 +1258,18 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-quality span { display: block; color: var(--boq-muted); font-size: .74rem; line-height: 1.42; }
         .boq-quality.active span,
         .boq-quality:hover span { color: #333333 !important; }
+        .boq-quality-rate {
+          display: block;
+          margin-top: 10px;
+          font-size: .82rem;
+          font-weight: 800;
+          color: var(--boq-text);
+          letter-spacing: -0.01em;
+        }
+        .boq-quality.active .boq-quality-rate {
+          color: #111 !important;
+          font-weight: 900;
+        }
         .boq-items { display: grid; gap: 12px; padding: 18px; }
         .boq-item {
           display: grid;
@@ -1148,9 +1307,47 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-total-band span { display: block; color: rgba(255,255,255,.7); font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
         .boq-total-band strong { display: block; margin-top: 8px; font-size: 2.05rem; line-height: 1; }
         .boq-total-band small { display: block; margin-top: 8px; color: #f8dc7e; font-size: .82rem; font-weight: 900; }
+        .boq-unit-toggle {
+          display: inline-flex;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 999px;
+          padding: 3px;
+          gap: 2px;
+        }
+        .boq-unit-btn {
+          background: transparent;
+          border: 0;
+          color: rgba(255, 255, 255, 0.7);
+          font-size: .72rem;
+          font-weight: 800;
+          padding: 4px 10px;
+          border-radius: 999px;
+          cursor: pointer;
+          transition: all .15s ease;
+          white-space: nowrap;
+        }
+        .boq-unit-btn:hover {
+          color: #fff;
+        }
+        .boq-unit-btn.active {
+          background: var(--boq-accent);
+          color: #111;
+          font-weight: 900;
+        }
         .boq-summary-body { padding: 18px; display: grid; gap: 12px; }
         .boq-line-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--boq-muted); font-size: .82rem; }
         .boq-line-row strong { color: var(--boq-text); font-size: .88rem; }
+        .boq-line-val { text-align: right; }
+        .boq-line-unit-rate {
+          display: block;
+          font-size: .72rem;
+          color: var(--boq-muted);
+          font-weight: 700;
+          margin-top: 2px;
+          line-height: 1.2;
+        }
         .boq-divider { height: 1px; background: var(--boq-line); margin: 4px 0; }
         .boq-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         .boq-stat { border: 1px solid var(--boq-line); background: var(--boq-soft); border-radius: 8px; padding: 12px; }
@@ -1390,6 +1587,9 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                     >
                       <strong>{item.label}</strong>
                       <span>{item.note}</span>
+                      <span className="boq-quality-rate">
+                        {formatPerUnit(packageRates[key]?.grandTotal, displayBuiltUpArea, costUnit, true)}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -1475,9 +1675,33 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
 
             <aside className="boq-panel boq-summary">
               <div className="boq-total-band">
-                <span>Total Estimate</span>
-                <strong>{formatCurrency(estimate.grandTotal)}</strong>
-                <small>{formatCurrency(estimate.perSqft)} per sqft</small>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', flexWrap: 'wrap' }}>
+                  <div>
+                    <span>Total Estimate</span>
+                    <strong>{formatCurrency(estimate.grandTotal)}</strong>
+                    <small>
+                      {displayBuiltUpArea > 0
+                        ? `${formatCurrency(Math.round((estimate.grandTotal / displayBuiltUpArea) * (costUnit === 'sqm' ? SQFT_PER_SQM : 1)))} per ${costUnit === 'sqm' ? 'sq.m' : 'sqft'}`
+                        : '-'}
+                    </small>
+                  </div>
+                  <div className="boq-unit-toggle" role="group" aria-label="Cost rate unit">
+                    <button
+                      type="button"
+                      className={`boq-unit-btn${costUnit === 'sqft' ? ' active' : ''}`}
+                      onClick={() => setCostUnit('sqft')}
+                    >
+                      per sqft
+                    </button>
+                    <button
+                      type="button"
+                      className={`boq-unit-btn${costUnit === 'sqm' ? ' active' : ''}`}
+                      onClick={() => setCostUnit('sqm')}
+                    >
+                      per sq.m
+                    </button>
+                  </div>
+                </div>
               </div>
               <div className="boq-summary-body">
                 <div className="boq-stat-grid">
@@ -1503,29 +1727,59 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                 {['Structure', 'Masonry', 'Services', 'Finishing'].map((phase) => (
                   <div className="boq-line-row" key={phase}>
                     <span>{phase}</span>
-                    <strong>{formatCurrency(phaseTotals[phase] || 0)}</strong>
+                    <div className="boq-line-val">
+                      <strong>{formatCurrency(phaseTotals[phase] || 0)}</strong>
+                      <span className="boq-line-unit-rate">
+                        {formatPerUnit(phaseTotals[phase] || 0, displayBuiltUpArea, costUnit)}
+                      </span>
+                    </div>
                   </div>
                 ))}
                 <div className="boq-divider" />
                 <div className="boq-line-row">
                   <span>Material total</span>
-                  <strong>{formatCurrency(estimate.materialTotal)}</strong>
+                  <div className="boq-line-val">
+                    <strong>{formatCurrency(estimate.materialTotal)}</strong>
+                    <span className="boq-line-unit-rate">
+                      {formatPerUnit(estimate.materialTotal, displayBuiltUpArea, costUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="boq-line-row">
                   <span>Labour cost</span>
-                  <strong>{formatCurrency(estimate.labourTotal)}</strong>
+                  <div className="boq-line-val">
+                    <strong>{formatCurrency(estimate.labourTotal)}</strong>
+                    <span className="boq-line-unit-rate">
+                      {formatPerUnit(estimate.labourTotal, displayBuiltUpArea, costUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="boq-line-row">
                   <span>Transport</span>
-                  <strong>{formatCurrency(estimate.transportTotal)}</strong>
+                  <div className="boq-line-val">
+                    <strong>{formatCurrency(estimate.transportTotal)}</strong>
+                    <span className="boq-line-unit-rate">
+                      {formatPerUnit(estimate.transportTotal, displayBuiltUpArea, costUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="boq-line-row">
-                  <span>Supervision</span>
-                  <strong>{formatCurrency(estimate.supervisionTotal)}</strong>
+                  <span>Supervision ({estimate.supervisionPercent}%)</span>
+                  <div className="boq-line-val">
+                    <strong>{formatCurrency(estimate.supervisionTotal)}</strong>
+                    <span className="boq-line-unit-rate">
+                      {formatPerUnit(estimate.supervisionTotal, displayBuiltUpArea, costUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="boq-line-row">
-                  <span>Contingency</span>
-                  <strong>{formatCurrency(estimate.contingencyTotal)}</strong>
+                  <span>Contingency ({estimate.contingencyPercent}%)</span>
+                  <div className="boq-line-val">
+                    <strong>{formatCurrency(estimate.contingencyTotal)}</strong>
+                    <span className="boq-line-unit-rate">
+                      {formatPerUnit(estimate.contingencyTotal, displayBuiltUpArea, costUnit)}
+                    </span>
+                  </div>
                 </div>
                 <div className="boq-divider" />
                 <div className="boq-line-row">

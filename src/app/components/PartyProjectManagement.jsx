@@ -18,7 +18,7 @@ function INR(val) {
   return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
 }
 
-function Input({ label, name, type = 'text', value, set, required, placeholder, min, step }) {
+function Input({ label, name, type = 'text', value, set, required, placeholder, min, step, list, maxLength, onChange }) {
   const inputId = useId();
   return (
     <label htmlFor={inputId}>
@@ -33,9 +33,97 @@ function Input({ label, name, type = 'text', value, set, required, placeholder, 
         placeholder={placeholder}
         min={min}
         step={step}
+        list={list}
+        maxLength={maxLength}
         value={value ?? ''}
-        onChange={(e) => set((prev) => ({ ...prev, [name]: e.target.value }))}
+        onChange={(e) => {
+          if (onChange) {
+            onChange(e);
+          } else if (set) {
+            set((prev) => ({ ...prev, [name]: e.target.value }));
+          }
+        }}
       />
+    </label>
+  );
+}
+
+export const COMMON_MATERIAL_UNITS = [
+  { value: 'bags', label: 'Bags (बोरी)' },
+  { value: 'kg', label: 'Kg (किलो)' },
+  { value: 'tonne', label: 'Tonne (टन)' },
+  { value: 'pcs', label: 'Pcs (नग)' },
+  { value: 'cft', label: 'CFT (घन फुट)' },
+  { value: 'brass', label: 'Brass (ब्रास)' },
+  { value: 'litre', label: 'Litre (लीटर)' },
+  { value: 'meter', label: 'Meter (मीटर)' },
+];
+
+export function getDefaultUnitForMaterial(name = '') {
+  const s = String(name || '').toLowerCase().trim();
+  if (!s) return 'bags';
+  if (/(cement|putty|adhesive|gypsum|boc|birla|ambuja|ultratech|shree|acc|jk)/.test(s)) return 'bags';
+  if (/(sariya|steel|rebar|tmt|loha|iron|wire|nail|binding\s*wire)/.test(s)) return 'kg';
+  if (/(brick|brik|eent|int|block|aac|paver|door|window|pipe|fitting|tile|marble|granite|plywood|sheet|glass|board)/.test(s)) return 'pcs';
+  if (/(sand|reet|ret|balu|badarpur|gitti|grit|aggregate|dust|morrum|soil|mitti)/.test(s)) return 'cft';
+  if (/(paint|primer|distemper|enamel|chemical|thinner|waterproof|dr\s*fixit)/.test(s)) return 'litre';
+  return 'bags';
+}
+
+function UnitSelector({ label = 'Unit / इकाई', value = 'bags', onChange, required = false }) {
+  const curVal = (value || '').toLowerCase().trim();
+  const isKnown = COMMON_MATERIAL_UNITS.some((u) => u.value === curVal);
+  const [customActive, setCustomActive] = useState(() => Boolean(curVal && !isKnown));
+
+  return (
+    <label>
+      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
+        {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
+      </small>
+      {!customActive ? (
+        <select
+          value={isKnown ? curVal : (curVal ? '__custom__' : 'bags')}
+          onChange={(e) => {
+            if (e.target.value === '__custom__') {
+              setCustomActive(true);
+            } else {
+              onChange?.(e.target.value);
+            }
+          }}
+          required={required}
+        >
+          {COMMON_MATERIAL_UNITS.map((u) => (
+            <option key={u.value} value={u.value}>
+              {u.label}
+            </option>
+          ))}
+          <option value="__custom__">+ Other (Type Custom Unit)</option>
+        </select>
+      ) : (
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <input
+            type="text"
+            autoFocus
+            value={value ?? ''}
+            placeholder="e.g. bundle, roll, drum"
+            onChange={(e) => onChange?.(e.target.value)}
+            required={required}
+            style={{ flex: 1 }}
+          />
+          <button
+            type="button"
+            className="muted"
+            onClick={() => {
+              setCustomActive(false);
+              onChange?.('bags');
+            }}
+            style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap' }}
+            title="Back to dropdown"
+          >
+            ← List
+          </button>
+        </div>
+      )}
     </label>
   );
 }
@@ -121,8 +209,8 @@ const projectBlank = {
   include_in_benchmark: false,
 };
 
-const materialBlank = { name: '', unit: 'kg', category: 'Civil', min_stock_level: 0, is_active: true };
-const receivedBlank = { material_id: '', material_name: '', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
+const materialBlank = { name: '', unit: 'bags', category: 'Civil', min_stock_level: 0, is_active: true };
+const receivedBlank = { material_id: '', material_name: '', unit: 'bags', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
 const contractorTrades = ['General Vendor', 'Civil Contractor', 'Plumber / Plumbing', 'Electrician', 'Mason', 'Carpenter', 'Painter', 'Fabricator', 'Tile / Flooring', 'Waterproofing', 'HVAC', 'Other'];
 const matchesContractorType = (trade, filter) => {
   if (!filter || filter === 'all') return true;
@@ -142,9 +230,39 @@ const matchesContractorType = (trade, filter) => {
   if (f === 'general vendor' || f === 'general') return v.includes('general') || v.includes('vendor');
   return v.includes(f) || f.includes(v);
 };
-const usedBlank = { material_id: '', material_name: '', quantity: '', used_date: today(), used_for: '', note: '' };
-const adjustmentBlank = { material_id: '', material_name: '', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
-const expenseBlank = { category: 'transport', amount: '', expense_date: today(), note: '' };
+const usedBlank = { material_id: '', material_name: '', unit: 'bags', quantity: '', used_date: today(), used_for: '', note: '' };
+const adjustmentBlank = { material_id: '', material_name: '', unit: 'bags', adjustment_type: 'wastage', quantity: '', adjustment_date: today(), to_project_id: '', supplier_id: '', supplier_name: '', amount: '', note: '', bill_url: '', bill_filename: '' };
+const expenseBlank = { category: 'transport', item_name: '', amount: '', expense_date: today(), note: '' };
+const commissionBlank = { commission_date: today(), person_name: '', amount: '', note: '' };
+
+export function parseExpenseItem(row) {
+  if (!row) return { category: '', item_name: '', note: '' };
+  let category = row.category || '';
+  let rawNote = String(row.display_note || row.note || '').trim();
+
+  const catMatch = rawNote.match(/^\[Category:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+  if (catMatch) {
+    category = catMatch[1].trim();
+    rawNote = (catMatch[2] || '').trim();
+  }
+
+  let item_name = row.item_name ? String(row.item_name).trim() : '';
+  if (!item_name && rawNote) {
+    const match = rawNote.match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+    if (match) {
+      item_name = match[1].trim();
+      rawNote = (match[2] || '').trim();
+    }
+  }
+  return { category, item_name, note: rawNote };
+}
+
+export function packExpenseNote(itemName, noteText) {
+  const cleanItem = String(itemName || '').trim();
+  const cleanNote = String(noteText || '').trim();
+  if (!cleanItem) return cleanNote;
+  return cleanNote ? `[Item: ${cleanItem}] ${cleanNote}` : `[Item: ${cleanItem}]`;
+}
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
   const submitAction = useSubmitAction();
@@ -222,6 +340,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (!isAgent || agentSpecs.includes('construction') || agentSpecs.includes('payments')) {
       tabs.push('suppliers');
     }
+    tabs.push('commission');
     return tabs;
   }, [isAgent, isSupervisor, agentSpecs]);
 
@@ -248,6 +367,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'payments' || s === 'payment') return 'payments';
     if (s === 'construction' || s === 'materials' || s === 'expenses') return 'construction';
     if (s === 'suppliers' || s === 'supplier') return 'suppliers';
+    if (s === 'commission' || s === 'commissions') return 'commission';
     return null;
   };
 
@@ -379,6 +499,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const handlePaymentsSubChange = (sub) => {
     setPaymentsSubTab(sub);
     updateUrlParams('payments', sub);
+    if (sub === 'supplier' && project?.id) {
+      loadSupplierPayments(project.id);
+    }
   };
 
   const handleConstructionSubChange = (sub) => {
@@ -518,7 +641,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [supplyModal, setSupplyModal] = useState(false);
   const [supplyForm, setSupplyForm] = useState({
     item_name: '',
-    unit: '',
+    unit: 'bags',
     quantity: '',
     rate: '',
     supply_date: today(),
@@ -607,9 +730,27 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [expenseRows, setExpenseRows] = useState([]);
   const [expenseSummary, setExpenseSummary] = useState({ totalAmount: 0 });
   const [expenseCategoryFilter, setExpenseCategoryFilter] = useState('');
+  const [expenseSearch, setExpenseSearch] = useState('');
   const [expenseModal, setExpenseModal] = useState(false);
   const [expenseForm, setExpenseForm] = useState(expenseBlank);
   const [editingExpenseId, setEditingExpenseId] = useState(null);
+
+  // ── Commission State ───────────────────────────────────────────────────────
+  const [commissionRows, setCommissionRows] = useState([]);
+  const [commissionSummary, setCommissionSummary] = useState({ totalAmount: 0 });
+  const [commissionSearch, setCommissionSearch] = useState('');
+  const [commissionModal, setCommissionModal] = useState(false);
+  const [commissionForm, setCommissionForm] = useState(commissionBlank);
+  const [editingCommissionId, setEditingCommissionId] = useState(null);
+
+  const expenseItemSuggestions = useMemo(() => {
+    const set = new Set();
+    (expenseRows || []).forEach((row) => {
+      const { item_name } = parseExpenseItem(row);
+      if (item_name) set.add(item_name);
+    });
+    return Array.from(set);
+  }, [expenseRows]);
 
   // ── Phase 3: Reports State ────────────────────────────────────────────────
   const [reportType, setReportType] = useState('cost_summary');
@@ -730,13 +871,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const pid = projId || project?.id;
     if (!pid) return;
     try {
-      const [mRes, stRes, rcRes, usRes, adRes, expRes] = await Promise.all([
+      const [mRes, stRes, rcRes, usRes, adRes, expRes, comRes] = await Promise.all([
         api('/api/admin/project-management/materials?pageSize=100').catch(() => ({ data: [] })),
         api(`/api/admin/project-management/stock?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-received?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-used?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/material-adjustments?projectId=${pid}&pageSize=100`).catch(() => ({ data: [] })),
         api(`/api/admin/project-management/other-expenses?projectId=${pid}&pageSize=100`).catch(() => ({ data: [], summary: {} })),
+        api(`/api/admin/project-management/commissions?projectId=${pid}&pageSize=100`).catch(() => ({ data: [], summary: {} })),
       ]);
 
       setMaterialsMaster(mRes.data || []);
@@ -746,6 +888,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setAdjustmentRows(adRes.data || []);
       setExpenseRows(expRes.data || []);
       setExpenseSummary(expRes.summary || { totalAmount: 0 });
+      setCommissionRows(comRes.data || []);
+      setCommissionSummary(comRes.summary || { totalAmount: 0 });
     } catch (e) {
       console.error('Error loading Phase 3 data:', e);
     }
@@ -1049,18 +1193,45 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   };
 
+  const handleMaterialNameChange = (name, formState, setFormState, nameField = 'material_name') => {
+    const prevSuggested = getDefaultUnitForMaterial(formState[nameField]);
+    const nextSuggested = getDefaultUnitForMaterial(name);
+    const matchedMaster = materialsMaster.find((m) => String(m.name || '').trim().toLowerCase() === String(name || '').trim().toLowerCase());
+    const matchedUnit = matchedMaster?.unit;
+    const newUnit = matchedUnit || (formState.unit === prevSuggested || !formState.unit ? nextSuggested : formState.unit);
+
+    setFormState((prev) => ({
+      ...prev,
+      [nameField]: name,
+      ...(matchedMaster ? { material_id: String(matchedMaster.id) } : {}),
+      unit: newUnit || 'bags',
+    }));
+  };
+
   // ── Save Master Material ────────────────────────────────────────────────────
   // Material endpoints retain their material_id contract. The simplified UI uses
   // a name, resolving an existing master record or creating one invisibly.
-  const resolveMaterialId = async (materialName, fallbackId = '') => {
+  const resolveMaterialId = async (materialName, fallbackId = '', unit = '') => {
     const name = String(materialName || '').trim();
     if (!name) throw new Error('Material name is required');
     const matching = materialsMaster.find((material) => String(material.name || '').trim().toLowerCase() === name.toLowerCase());
-    if (matching) return matching.id;
+    if (matching) {
+      if (unit && unit.trim() && matching.unit !== unit.trim()) {
+        try {
+          await api(`/api/admin/project-management/materials/${matching.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ unit: unit.trim() }),
+          });
+          matching.unit = unit.trim();
+        } catch {}
+      }
+      return matching.id;
+    }
     if (fallbackId) return fallbackId;
+    const chosenUnit = unit && unit.trim() ? unit.trim() : getDefaultUnitForMaterial(name);
     const created = await api('/api/admin/project-management/materials', {
       method: 'POST',
-      body: JSON.stringify({ ...materialBlank, name }),
+      body: JSON.stringify({ ...materialBlank, name, unit: chosenUnit }),
     });
     if (created.data) setMaterialsMaster((previous) => [...previous, created.data]);
     return created.data?.id;
@@ -1098,8 +1269,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         bill_filename = uploadData.filename;
       }
       
-      const material_id = await resolveMaterialId(receivedForm.material_name, receivedForm.material_id);
-      const payload = { ...receivedForm, material_id, project_id: project.id, bill_url, bill_filename };
+      const unit = receivedForm.unit || getDefaultUnitForMaterial(receivedForm.material_name);
+      const material_id = await resolveMaterialId(receivedForm.material_name, receivedForm.material_id, unit);
+      const payload = { ...receivedForm, material_id, project_id: project.id, bill_url, bill_filename, unit };
       
       if (editingReceivedId) {
         await api(`/api/admin/project-management/material-received/${editingReceivedId}`, {
@@ -1170,17 +1342,18 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     e.preventDefault();
     if (!project?.id) return;
     try {
-      const material_id = await resolveMaterialId(usedForm.material_name, usedForm.material_id);
+      const unit = usedForm.unit || getDefaultUnitForMaterial(usedForm.material_name);
+      const material_id = await resolveMaterialId(usedForm.material_name, usedForm.material_id, unit);
       let res;
       if (editingUsedId) {
         res = await api(`/api/admin/project-management/material-used/${editingUsedId}`, {
           method: 'PATCH',
-          body: JSON.stringify({ ...usedForm, material_id }),
+          body: JSON.stringify({ ...usedForm, material_id, unit }),
         });
       } else {
         res = await api('/api/admin/project-management/material-used', {
           method: 'POST',
-          body: JSON.stringify({ ...usedForm, material_id, project_id: project.id }),
+          body: JSON.stringify({ ...usedForm, material_id, project_id: project.id, unit }),
         });
       }
       if (res.warning) {
@@ -1211,12 +1384,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         bill_filename = uploadData.filename;
       }
       
-      const material_id = await resolveMaterialId(adjustmentForm.material_name, adjustmentForm.material_id);
+      const unit = adjustmentForm.unit || getDefaultUnitForMaterial(adjustmentForm.material_name);
+      const material_id = await resolveMaterialId(adjustmentForm.material_name, adjustmentForm.material_id, unit);
       const payload = {
         ...adjustmentForm,
         material_id,
         project_id: project.id,
+        unit,
         amount: adjustmentForm.amount ? Number(adjustmentForm.amount) : null,
+        supplier_id: adjustmentForm.supplier_id ? Number(adjustmentForm.supplier_id) : null,
         supplier_name: adjustmentForm.supplier_name ? String(adjustmentForm.supplier_name).trim() : null,
         bill_url,
         bill_filename,
@@ -1248,6 +1424,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setEditingAdjId(null);
       setAdjustmentForm(adjustmentBlank);
       setBillFile(null);
+      loadProjectSuppliers(project.id);
+      if (selectedSupplier) {
+        loadSupplierLedger(project?.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+      }
       refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
@@ -1259,12 +1439,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const saveExpenseEntry = async (e) => {
     e.preventDefault();
     if (!project?.id) return;
+
+    const cat = String(expenseForm.category || '').trim();
+    const isItemRequired = cat === 'tools' || cat === 'rent';
+    const trimmedItem = String(expenseForm.item_name || '').trim();
+
+    if (isItemRequired && !trimmedItem) {
+      const catLabel = cat === 'tools' ? 'Tools' : 'Rent';
+      const err = `Item / Tool name is required when Category is ${catLabel}.`;
+      setModalError(err);
+      throw new Error(err);
+    }
+
+    const cleanNote = String(expenseForm.note || '').trim();
+    const packedNote = packExpenseNote(trimmedItem, cleanNote);
+    const payload = {
+      ...expenseForm,
+      item_name: trimmedItem || undefined,
+      note: packedNote,
+    };
+
     try {
       if (editingExpenseId) {
         const previousExpense = expenseRows.find((row) => Number(row.id) === Number(editingExpenseId));
         const result = await api(`/api/admin/project-management/other-expenses/${editingExpenseId}`, {
           method: 'PATCH',
-          body: JSON.stringify(expenseForm),
+          body: JSON.stringify(payload),
         });
         if (result.data) {
           setExpenseRows((previous) => previous.map((row) => Number(row.id) === Number(editingExpenseId) ? result.data : row));
@@ -1277,7 +1477,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       } else {
         const result = await api('/api/admin/project-management/other-expenses', {
           method: 'POST',
-          body: JSON.stringify({ ...expenseForm, project_id: project.id }),
+          body: JSON.stringify({ ...payload, project_id: project.id }),
         });
         if (result.data) {
           setExpenseRows((previous) => [result.data, ...previous.filter((row) => Number(row.id) !== Number(result.data.id))]);
@@ -1287,10 +1487,91 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       }
       setExpenseModal(false);
       setEditingExpenseId(null);
+      setModalError('');
       setExpenseForm(expenseBlank);
       // Refresh related project cards in the background. The expense list above
       // is updated immediately from the authoritative save response.
       refreshProjectData(project.id);
+    } catch (err) {
+      setMessage(err.message);
+      throw err;
+    }
+  };
+
+  // ── Save Commission Entry ───────────────────────────────────────────────────
+  const saveCommissionEntry = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+
+    const personName = String(commissionForm.person_name || '').trim();
+    const amt = Number(commissionForm.amount);
+    const dateStr = String(commissionForm.commission_date || '').trim();
+
+    if (!personName) {
+      const err = 'Person Name is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+    if (!Number.isFinite(amt) || amt <= 0) {
+      const err = 'Valid commission amount is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+    if (!dateStr) {
+      const err = 'Date is required.';
+      setModalError(err);
+      throw new Error(err);
+    }
+
+    const payload = {
+      project_id: project.id,
+      person_name: personName,
+      amount: amt,
+      commission_date: dateStr,
+      note: commissionForm.note ? String(commissionForm.note).trim() : '',
+    };
+
+    try {
+      if (editingCommissionId) {
+        const prevComm = commissionRows.find((row) => Number(row.id) === Number(editingCommissionId));
+        const result = await api(`/api/admin/project-management/commissions/${editingCommissionId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+        if (result.data) {
+          setCommissionRows((prev) =>
+            prev.map((row) => (Number(row.id) === Number(editingCommissionId) ? result.data : row))
+          );
+          setCommissionSummary((prev) => ({
+            ...prev,
+            totalAmount:
+              Number(prev.totalAmount || 0) +
+              Number(result.data.amount || 0) -
+              Number(prevComm?.amount || 0),
+          }));
+        }
+        setMessage('Commission record updated successfully');
+      } else {
+        const result = await api('/api/admin/project-management/commissions', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        if (result.data) {
+          setCommissionRows((prev) => [
+            result.data,
+            ...prev.filter((row) => Number(row.id) !== Number(result.data.id)),
+          ]);
+          setCommissionSummary((prev) => ({
+            ...prev,
+            totalAmount: Number(prev.totalAmount || 0) + Number(result.data.amount || 0),
+          }));
+        }
+        setMessage('Commission recorded successfully');
+      }
+      setCommissionModal(false);
+      setEditingCommissionId(null);
+      setModalError('');
+      setCommissionForm(commissionBlank);
     } catch (err) {
       setMessage(err.message);
       throw err;
@@ -1372,10 +1653,22 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         refreshProjectData();
       } else if (kind === 'adjustment') {
         await api(`/api/admin/project-management/material-adjustments/${id}`, { method: 'DELETE' });
+        loadProjectSuppliers(project?.id);
+        if (selectedSupplier) {
+          loadSupplierLedger(project?.id, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
+        }
         refreshProjectData();
       } else if (kind === 'expense') {
         await api(`/api/admin/project-management/other-expenses/${id}`, { method: 'DELETE' });
         refreshProjectData();
+      } else if (kind === 'commission') {
+        const deletedComm = commissionRows.find((row) => Number(row.id) === Number(id));
+        await api(`/api/admin/project-management/commissions/${id}`, { method: 'DELETE' });
+        setCommissionRows((prev) => prev.filter((row) => Number(row.id) !== Number(id)));
+        setCommissionSummary((prev) => ({
+          ...prev,
+          totalAmount: Math.max(0, Number(prev.totalAmount || 0) - Number(deletedComm?.amount || 0)),
+        }));
       } else if (kind === 'labor') {
         await api(`/api/admin/project-management/labor/${id}`, { method: 'DELETE' });
         loadProjectLabors(project.id);
@@ -1652,17 +1945,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     e.preventDefault();
     if (!selectedVendor) return;
     try {
+      const unit = supplyForm.unit || getDefaultUnitForMaterial(supplyForm.item_name);
       await api('/api/admin/project-management/material-supply', {
         method: 'POST',
         body: JSON.stringify({
           ...supplyForm,
-          material_id: supplyForm.item_name ? await resolveMaterialId(supplyForm.item_name, supplyForm.material_id) : null,
+          material_id: supplyForm.item_name ? await resolveMaterialId(supplyForm.item_name, supplyForm.material_id, unit) : null,
           project_vendor_id: selectedVendor.id,
+          unit,
         }),
       });
       setMessage('Vendor material supply recorded');
       setSupplyModal(false);
-      setSupplyForm({ item_name: '', unit: '', quantity: '', rate: '', supply_date: today(), material_id: '', note: '' });
+      setSupplyForm({ item_name: '', unit: 'bags', quantity: '', rate: '', supply_date: today(), material_id: '', note: '' });
       openVendorDetail(selectedVendor);
       refreshProjectData();
     } catch (e) {
@@ -2501,6 +2796,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('suppliers'); }}
                       >
                         🚚 Suppliers ({projectSuppliers.length})
+                      </button>
+                    )}
+                    {allowedMainTabs.includes('commission') && (
+                      <button
+                        className={projectTab === 'commission' ? 'active' : ''}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('commission'); }}
+                      >
+                        🤝 Commission ({commissionRows.length})
                       </button>
                     )}
                   </div>
@@ -3829,25 +4132,6 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             + Record Labor Payment
                           </button>
                         )}
-                        {paymentsSubTab === 'supplier' && !isSupervisor && (
-                          <button
-                            onClick={() => {
-                              setSupplierPaymentForm({
-                                supplier_id: projectSuppliers[0]?.supplier_id || '',
-                                supplier_name: projectSuppliers[0]?.supplier_name || '',
-                                amount: '',
-                                payment_date: today(),
-                                mode: 'bank',
-                                transaction_reference: '',
-                                note: '',
-                              });
-                              setModalError('');
-                              setSupplierPaymentModal(true);
-                            }}
-                          >
-                            + Record Supplier Payment
-                          </button>
-                        )}
                       </div>
 
                       {paymentsSubTab === 'vendor' && (
@@ -4321,6 +4605,107 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </table>
                         </div>
                       )}
+
+                      {paymentsSubTab === 'supplier' && (
+                        <div>
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: 12,
+                            padding: '12px 16px',
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: 8,
+                            marginBottom: 16
+                          }}>
+                            <div>
+                              <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>
+                                ℹ️ Supplier Payment Details (View Only)
+                              </div>
+                              <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                                Payment add, edit ya delete sirf <b>Suppliers</b> tab me jaakar kiya ja sakta hai.
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              onClick={() => setProjectTab('suppliers')}
+                              style={{ fontSize: 12 }}
+                            >
+                              Go to Suppliers Tab ➔
+                            </button>
+                          </div>
+
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Date</th>
+                                <th>Supplier Name</th>
+                                <th>Amount</th>
+                                <th>Payment Mode</th>
+                                <th>Reference / Cheque</th>
+                                <th>Note</th>
+                                <th>Recorded By</th>
+                                <th style={{ textAlign: 'right' }}>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {supplierPaymentsList.map((p) => {
+                                const supplierName = p.supplier_display || p.supplier_name || (projectSuppliers.find(s => s.supplier_id === p.supplier_id)?.supplier_name) || `Supplier #${p.supplier_id || ''}`;
+                                return (
+                                  <tr key={p.id}>
+                                    <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
+                                    <td>
+                                      <b>{supplierName}</b>
+                                      {p.supplier_phone && (
+                                        <div style={{ fontSize: 11, color: '#64748b' }}>📞 {p.supplier_phone}</div>
+                                      )}
+                                    </td>
+                                    <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
+                                    <td>
+                                      <span className="badge" style={{ textTransform: 'capitalize' }}>
+                                        {p.mode || 'bank'}
+                                      </span>
+                                    </td>
+                                    <td>{p.transaction_reference || '—'}</td>
+                                    <td>{p.note || '—'}</td>
+                                    <td style={{ fontSize: 12, color: '#64748b' }}>{p.created_by || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ fontSize: 11 }}
+                                        onClick={() => {
+                                          const matched = projectSuppliers.find(
+                                            (s) => (p.supplier_id && s.supplier_id === p.supplier_id) ||
+                                                   (s.supplier_name && (s.supplier_name.toLowerCase() === (p.supplier_name || '').toLowerCase()))
+                                          );
+                                          setProjectTab('suppliers');
+                                          if (matched) {
+                                            openSupplierLedger(matched);
+                                          }
+                                        }}
+                                        title="View ledger in Suppliers tab"
+                                      >
+                                        📒 View in Suppliers
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                              {supplierPaymentsList.length === 0 && (
+                                <tr>
+                                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                    No supplier payments recorded yet. Payments can be recorded in the Suppliers tab.
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -4386,6 +4771,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tr>
                                 <th>Supplier</th>
                                 <th>Total Supplied</th>
+                                <th>Total Returned</th>
                                 <th>Total Paid</th>
                                 <th>Balance</th>
                                 <th>Last Delivery</th>
@@ -4429,6 +4815,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                         {s.delivery_count} {s.delivery_count === 1 ? 'delivery' : 'deliveries'}
                                       </span>
                                     </td>
+                                    <td style={{ fontWeight: 600, color: '#dc2626' }}>
+                                      {INR(s.total_returned || 0)}
+                                      <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
+                                        {s.return_count || 0} {s.return_count === 1 ? 'return' : 'returns'}
+                                      </span>
+                                    </td>
                                     <td style={{ fontWeight: 600, color: '#16a34a' }}>
                                       {INR(s.total_paid)}
                                       <span style={{ fontSize: 11, color: '#64748b', display: 'block' }}>
@@ -4448,7 +4840,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                         <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
                                       )}
                                     </td>
-                                    <td>{s.last_delivery || '—'}</td>
+                                    <td>{s.last_delivery ? s.last_delivery.slice(0, 10) : '—'}</td>
                                     <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
                                       <button
                                         className="muted"
@@ -4562,14 +4954,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </div>
 
                           {/* Summary Cards */}
-                          <div className="stat-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 16 }}>
+                          <div className="stat-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 16 }}>
                             <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #0369a1' }}>
                               <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Supplied</small>
                               <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginTop: 4 }}>
                                 {INR(supplierLedgerData.summary?.total_supplied ?? selectedSupplier.total_supplied)}
                               </div>
                               <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                                {supplierLedgerData.deliveries?.length || 0} deliveries
+                                {supplierLedgerData.deliveries?.length || selectedSupplier.delivery_count || 0} deliveries
+                              </div>
+                            </div>
+                            <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #dc2626' }}>
+                              <small style={{ color: '#64748b', fontWeight: 600, textTransform: 'uppercase', fontSize: 11 }}>Total Returned</small>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: '#dc2626', marginTop: 4 }}>
+                                {INR(supplierLedgerData.summary?.total_returned ?? selectedSupplier.total_returned ?? 0)}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                {supplierLedgerData.returns?.length || selectedSupplier.return_count || 0} returns
                               </div>
                             </div>
                             <div className="card" style={{ padding: '12px 16px', borderLeft: '4px solid #16a34a' }}>
@@ -4578,7 +4979,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {INR(supplierLedgerData.summary?.total_paid ?? selectedSupplier.total_paid)}
                               </div>
                               <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                                {supplierLedgerData.payments?.length || 0} payments
+                                {supplierLedgerData.payments?.length || selectedSupplier.payment_count || 0} payments
                               </div>
                             </div>
                             <div
@@ -4607,7 +5008,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   ? 'Overpayment / Advance available'
                                   : (supplierLedgerData.summary?.balance ?? selectedSupplier.balance) === 0
                                   ? 'All cleared'
-                                  : 'Payment pending to supplier'}
+                                  : 'Net payment pending'}
                               </div>
                             </div>
                           </div>
@@ -4619,6 +5020,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               onClick={() => setSupplierLedgerTab('deliveries')}
                             >
                               📦 Deliveries ({supplierLedgerData.deliveries?.length || 0})
+                            </button>
+                            <button
+                              className={supplierLedgerTab === 'returns' ? 'active-btn' : 'muted'}
+                              onClick={() => setSupplierLedgerTab('returns')}
+                            >
+                              🔄 Returns ({supplierLedgerData.returns?.length || 0})
                             </button>
                             <button
                               className={supplierLedgerTab === 'payments' ? 'active-btn' : 'muted'}
@@ -4649,7 +5056,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tbody>
                                 {(supplierLedgerData.deliveries || []).map((d) => (
                                   <tr key={d.id}>
-                                    <td>{d.received_date}</td>
+                                    <td>{d.received_date ? d.received_date.slice(0, 10) : '—'}</td>
                                     <td><b>{d.material_name}</b></td>
                                     <td>{Number(d.quantity).toFixed(2)}</td>
                                     <td>{d.material_unit || 'units'}</td>
@@ -4682,6 +5089,58 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 )}
                               </tbody>
                             </table>
+                          ) : supplierLedgerTab === 'returns' ? (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Material Name</th>
+                                  <th>Returned Qty</th>
+                                  <th>Unit</th>
+                                  {!isSupervisor && <th>Credit / Amount</th>}
+                                  <th>Slip</th>
+                                  <th>Note / Reason</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {(supplierLedgerData.returns || []).map((ret) => (
+                                  <tr key={ret.id}>
+                                    <td>{ret.adjustment_date ? ret.adjustment_date.slice(0, 10) : '—'}</td>
+                                    <td><b>{ret.material_name}</b></td>
+                                    <td style={{ color: '#dc2626', fontWeight: 600 }}>{Number(ret.quantity).toFixed(2)}</td>
+                                    <td>{ret.material_unit || 'units'}</td>
+                                    {!isSupervisor && (
+                                      <td style={{ fontWeight: 600, color: '#dc2626' }}>
+                                        {ret.amount ? INR(ret.amount) : '—'}
+                                      </td>
+                                    )}
+                                    <td>
+                                      {ret.bill_url ? (
+                                        <a href={ret.bill_url} target="_blank" rel="noreferrer" title={ret.bill_filename || 'View Slip'} style={{ textDecoration: 'none', fontSize: 16 }}>
+                                          📄
+                                        </a>
+                                      ) : '—'}
+                                    </td>
+                                    <td>{ret.note || ret.reason || '—'}</td>
+                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
+                                      {!isAgent && (
+                                        <button className="danger" onClick={() => del('adjustment', ret.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {(supplierLedgerData.returns || []).length === 0 && (
+                                  <tr>
+                                    <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                      No material returns recorded for this supplier.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
                           ) : (
                             <table>
                               <thead>
@@ -4698,7 +5157,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <tbody>
                                 {(supplierLedgerData.payments || []).map((p) => (
                                   <tr key={p.id}>
-                                    <td>{p.payment_date}</td>
+                                    <td>{p.payment_date ? p.payment_date.slice(0, 10) : '—'}</td>
                                     <td style={{ fontWeight: 700, color: '#16a34a' }}>{INR(p.amount)}</td>
                                     <td><span className="badge" style={{ textTransform: 'capitalize' }}>{p.mode || 'bank'}</span></td>
                                     <td>{p.transaction_reference || '—'}</td>
@@ -4798,6 +5257,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               onClick={() => {
                                 setExpenseForm(expenseBlank);
                                 setEditingExpenseId(null);
+                                setModalError('');
                                 setExpenseModal(true);
                               }}
                             >
@@ -4970,6 +5430,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       setReceivedForm({
                                         material_id: String(r.material_id),
                                         material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
                                         quantity: r.quantity,
                                         rate: r.rate,
                                         received_date: r.received_date,
@@ -5072,6 +5533,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       setUsedForm({
                                         material_id: String(r.material_id),
                                         material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
                                         quantity: r.quantity,
                                         used_date: r.used_date,
                                         used_for: r.used_for || '',
@@ -5156,6 +5618,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   setAdjustmentForm({
                                     material_id: String(r.material_id),
                                     material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                    unit: r.material_unit || r.unit || 'bags',
                                     adjustment_type: r.adjustment_type,
                                     quantity: r.quantity,
                                     adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
@@ -5244,10 +5707,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   setAdjustmentForm({
                                     material_id: String(r.material_id),
                                     material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                    unit: r.material_unit || r.unit || 'bags',
                                     adjustment_type: r.adjustment_type,
                                     quantity: r.quantity,
                                     adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
                                     to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                    supplier_id: r.supplier_id ? String(r.supplier_id) : '',
                                     supplier_name: r.supplier_name || '',
                                     amount: r.amount || '',
                                     note: r.note || '',
@@ -5332,6 +5797,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   setAdjustmentForm({
                                     material_id: String(r.material_id),
                                     material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                    unit: r.material_unit || r.unit || 'bags',
                                     adjustment_type: r.adjustment_type,
                                     quantity: r.quantity,
                                     adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
@@ -5369,11 +5835,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       {constructionSubTab === 'expenses' && (
                         <div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                       <select
                         value={expenseCategoryFilter}
                         onChange={(e) => setExpenseCategoryFilter(e.target.value)}
-                        style={{ maxWidth: 220 }}
+                        style={{ maxWidth: 180 }}
                       >
                         <option value="">All Categories</option>
                         <option value="transport">Transport</option>
@@ -5384,6 +5850,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <option value="tools">Tools</option>
                         <option value="rent">Rent</option>
                       </select>
+                      <input
+                        type="text"
+                        placeholder="Search item, note..."
+                        value={expenseSearch}
+                        onChange={(e) => setExpenseSearch(e.target.value)}
+                        style={{ maxWidth: 200 }}
+                      />
                       <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
                         Total: {INR(expenseSummary.totalAmount)}
                       </span>
@@ -5393,6 +5866,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       onClick={() => {
                         setExpenseForm(expenseBlank);
                         setEditingExpenseId(null);
+                        setModalError('');
                         setExpenseModal(true);
                       }}
                     >
@@ -5405,6 +5879,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <tr>
                         <th>Date</th>
                         <th>Category</th>
+                        <th>Item</th>
                         <th>Amount</th>
                         <th>Note</th>
                         <th>Recorded By</th>
@@ -5413,46 +5888,88 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </thead>
                     <tbody>
                       {expenseRows
-                        .filter((r) => !expenseCategoryFilter || r.category === expenseCategoryFilter)
-                        .map((r) => (
-                          <tr key={r.id}>
-                            <td>{r.expense_date}</td>
-                            <td>
-                              <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
-                                {r.category?.replace(/_/g, ' ')}
-                              </span>
-                            </td>
-                            <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
-                            <td>{r.note || '—'}</td>
-                            <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingExpenseId(r.id);
-                                  setExpenseForm({
-                                    category: r.category,
-                                    amount: r.amount,
-                                    expense_date: r.expense_date,
-                                    note: r.note || '',
-                                  });
-                                  setExpenseModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('expense', r.id)}>
-                                  Delete
+                        .filter((r) => {
+                          const parsed = parseExpenseItem(r);
+                          const rowCat = parsed.category || r.category;
+                          if (expenseCategoryFilter && rowCat !== expenseCategoryFilter) return false;
+                          if (expenseSearch.trim()) {
+                            const q = expenseSearch.trim().toLowerCase();
+                            const cat = (rowCat || '').toLowerCase();
+                            const creator = (r.created_by || '').toLowerCase();
+                            return (
+                              parsed.item_name.toLowerCase().includes(q) ||
+                              parsed.note.toLowerCase().includes(q) ||
+                              cat.includes(q) ||
+                              creator.includes(q)
+                            );
+                          }
+                          return true;
+                        })
+                        .map((r) => {
+                          const parsed = parseExpenseItem(r);
+                          const rowCat = parsed.category || r.category;
+                          return (
+                            <tr key={r.id}>
+                              <td>{r.expense_date}</td>
+                              <td>
+                                <span className="badge badge-active" style={{ textTransform: 'capitalize' }}>
+                                  {rowCat?.replace(/_/g, ' ')}
+                                </span>
+                              </td>
+                              <td style={{ fontWeight: 500, color: parsed.item_name ? '#0f172a' : '#94a3b8' }}>
+                                {parsed.item_name || '—'}
+                              </td>
+                              <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
+                              <td>{parsed.note || '—'}</td>
+                              <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
+                              <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  className="muted"
+                                  onClick={() => {
+                                    setEditingExpenseId(r.id);
+                                    const parsedItem = parseExpenseItem(r);
+                                    setExpenseForm({
+                                      category: parsedItem.category || r.category,
+                                      item_name: parsedItem.item_name,
+                                      amount: r.amount,
+                                      expense_date: r.expense_date,
+                                      note: parsedItem.note,
+                                    });
+                                    setModalError('');
+                                    setExpenseModal(true);
+                                  }}
+                                >
+                                  Edit
                                 </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      {expenseRows.length === 0 && (
+                                {!isAgent && (
+                                  <button className="danger" onClick={() => del('expense', r.id)}>
+                                    Delete
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      {expenseRows.filter((r) => {
+                        const parsed = parseExpenseItem(r);
+                        const rowCat = parsed.category || r.category;
+                        if (expenseCategoryFilter && rowCat !== expenseCategoryFilter) return false;
+                        if (expenseSearch.trim()) {
+                          const q = expenseSearch.trim().toLowerCase();
+                          const cat = (rowCat || '').toLowerCase();
+                          const creator = (r.created_by || '').toLowerCase();
+                          return (
+                            parsed.item_name.toLowerCase().includes(q) ||
+                            parsed.note.toLowerCase().includes(q) ||
+                            cat.includes(q) ||
+                            creator.includes(q)
+                          );
+                        }
+                        return true;
+                      }).length === 0 && (
                         <tr>
-                          <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            No other expenses recorded for this project.
+                          <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                            {expenseRows.length === 0 ? 'No other expenses recorded for this project.' : 'No expenses match the filter.'}
                           </td>
                         </tr>
                       )}
@@ -5460,6 +5977,111 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </table>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {/* ── 7. COMMISSION TAB ───────────────────────────────────── */}
+                  {projectTab === 'commission' && (
+                    <div className="card">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <input
+                            type="text"
+                            placeholder="Search person name, note..."
+                            value={commissionSearch}
+                            onChange={(e) => setCommissionSearch(e.target.value)}
+                            style={{ maxWidth: 260 }}
+                          />
+                          <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+                            Total: {INR(commissionSummary.totalAmount)}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            setCommissionForm(commissionBlank);
+                            setEditingCommissionId(null);
+                            setModalError('');
+                            setCommissionModal(true);
+                          }}
+                        >
+                          + Record Commission
+                        </button>
+                      </div>
+
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Person Name</th>
+                            <th>Amount</th>
+                            <th>Note</th>
+                            <th>Recorded By</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {commissionRows
+                            .filter((r) => {
+                              if (commissionSearch.trim()) {
+                                const q = commissionSearch.trim().toLowerCase();
+                                const pName = String(r.person_name || '').toLowerCase();
+                                const note = String(r.note || '').toLowerCase();
+                                const creator = String(r.created_by || '').toLowerCase();
+                                return pName.includes(q) || note.includes(q) || creator.includes(q);
+                              }
+                              return true;
+                            })
+                            .map((r) => (
+                              <tr key={r.id}>
+                                <td>{r.commission_date}</td>
+                                <td style={{ fontWeight: 600, color: '#0f172a' }}>{r.person_name}</td>
+                                <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
+                                <td>{r.note || '—'}</td>
+                                <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
+                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    className="muted"
+                                    onClick={() => {
+                                      setEditingCommissionId(r.id);
+                                      setCommissionForm({
+                                        person_name: r.person_name,
+                                        amount: r.amount,
+                                        commission_date: r.commission_date,
+                                        note: r.note || '',
+                                      });
+                                      setModalError('');
+                                      setCommissionModal(true);
+                                    }}
+                                  >
+                                    Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" onClick={() => del('commission', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          {commissionRows.filter((r) => {
+                            if (commissionSearch.trim()) {
+                              const q = commissionSearch.trim().toLowerCase();
+                              const pName = String(r.person_name || '').toLowerCase();
+                              const note = String(r.note || '').toLowerCase();
+                              const creator = String(r.created_by || '').toLowerCase();
+                              return pName.includes(q) || note.includes(q) || creator.includes(q);
+                            }
+                            return true;
+                          }).length === 0 && (
+                            <tr>
+                              <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                {commissionRows.length === 0 ? 'No commission records found for this project.' : 'No commission records match the search.'}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   )}
 
@@ -6498,10 +7120,40 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </p>
 
                 <div className="grid">
-                  <Input label="Item Name (e.g. Red Bricks, Sand)" name="item_name" value={supplyForm.item_name} set={setSupplyForm} required />
-                  <Input label="Unit (e.g. cft, pcs, bags)" name="unit" value={supplyForm.unit} set={setSupplyForm} required />
-                  <Input label="Quantity" name="quantity" type="number" step="any" min="0.01" value={supplyForm.quantity} set={setSupplyForm} required />
-                  <Input label="Rate (₹)" name="rate" type="number" step="any" min="0" value={supplyForm.rate} set={setSupplyForm} required />
+                  <Input
+                    label="Item Name (e.g. Red Bricks, Sand)"
+                    name="item_name"
+                    list="all-master-materials-list"
+                    value={supplyForm.item_name}
+                    onChange={(e) => handleMaterialNameChange(e.target.value, supplyForm, setSupplyForm, 'item_name')}
+                    required
+                  />
+                  <UnitSelector
+                    label="Unit / इकाई"
+                    value={supplyForm.unit}
+                    onChange={(u) => setSupplyForm((prev) => ({ ...prev, unit: u }))}
+                    required
+                  />
+                  <Input
+                    label={`Quantity (${supplyForm.unit || 'units'})`}
+                    name="quantity"
+                    type="number"
+                    step="any"
+                    min="0.01"
+                    value={supplyForm.quantity}
+                    set={setSupplyForm}
+                    required
+                  />
+                  <Input
+                    label={`Rate (₹ per ${supplyForm.unit || 'unit'})`}
+                    name="rate"
+                    type="number"
+                    step="any"
+                    min="0"
+                    value={supplyForm.rate}
+                    set={setSupplyForm}
+                    required
+                  />
                   <Input label="Supply Date" name="supply_date" type="date" value={supplyForm.supply_date} set={setSupplyForm} required />
 
                   <Input label="Note" name="note" value={supplyForm.note} set={setSupplyForm} />
@@ -6529,8 +7181,21 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   Add Master Material
                 </h3>
                 <div className="grid">
-                  <Input label="Material Name" name="name" value={materialForm.name} set={setMaterialForm} required placeholder="e.g. Cement 53 Grade" />
-                  <Input label="Unit" name="unit" value={materialForm.unit} set={setMaterialForm} required placeholder="e.g. bags, tons, kg, cft" />
+                  <Input
+                    label="Material Name"
+                    name="name"
+                    list="all-master-materials-list"
+                    value={materialForm.name}
+                    onChange={(e) => handleMaterialNameChange(e.target.value, materialForm, setMaterialForm, 'name')}
+                    required
+                    placeholder="e.g. Cement 53 Grade"
+                  />
+                  <UnitSelector
+                    label="Unit / इकाई"
+                    value={materialForm.unit}
+                    onChange={(u) => setMaterialForm((prev) => ({ ...prev, unit: u }))}
+                    required
+                  />
                   <Input label="Category" name="category" value={materialForm.category} set={setMaterialForm} placeholder="e.g. Civil, Electrical, Plumbing" />
                   <Input label="Min Stock Alert Level" name="min_stock_level" type="number" step="any" min="0" value={materialForm.min_stock_level} set={setMaterialForm} />
                 </div>
@@ -6759,10 +7424,42 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </h3>
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <div className="grid">
-                  <Input label="Material Name" name="material_name" value={receivedForm.material_name} set={setReceivedForm} required placeholder="e.g. Cement 53 Grade" />
-                  <Input label="Quantity" name="quantity" type="number" step="any" min="0.001" value={receivedForm.quantity} set={setReceivedForm} required />
+                  <Input
+                    label="Material Name"
+                    name="material_name"
+                    list="all-master-materials-list"
+                    value={receivedForm.material_name}
+                    onChange={(e) => handleMaterialNameChange(e.target.value, receivedForm, setReceivedForm, 'material_name')}
+                    required
+                    placeholder="e.g. Cement 53 Grade"
+                  />
+                  <UnitSelector
+                    label="Unit / इकाई"
+                    value={receivedForm.unit}
+                    onChange={(u) => setReceivedForm((prev) => ({ ...prev, unit: u }))}
+                    required
+                  />
+                  <Input
+                    label={`Quantity (${receivedForm.unit || 'units'})`}
+                    name="quantity"
+                    type="number"
+                    step="any"
+                    min="0.001"
+                    value={receivedForm.quantity}
+                    set={setReceivedForm}
+                    required
+                  />
                   {!isSupervisor && (
-                    <Input label="Rate (₹ per unit)" name="rate" type="number" step="any" min="0" value={receivedForm.rate} set={setReceivedForm} required />
+                    <Input
+                      label={`Rate (₹ per ${receivedForm.unit || 'unit'})`}
+                      name="rate"
+                      type="number"
+                      step="any"
+                      min="0"
+                      value={receivedForm.rate}
+                      set={setReceivedForm}
+                      required
+                    />
                   )}
                   <Input label="Received Date" name="received_date" type="date" value={receivedForm.received_date} set={setReceivedForm} required />
                   <label>
@@ -6818,8 +7515,31 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   {editingUsedId ? 'Edit' : 'Record'} Material Usage
                 </h3>
                 <div className="grid">
-                  <Input label="Material Name" name="material_name" value={usedForm.material_name} set={setUsedForm} required placeholder="e.g. Cement 53 Grade" />
-                  <Input label="Quantity Used" name="quantity" type="number" step="any" min="0.001" value={usedForm.quantity} set={setUsedForm} required />
+                  <Input
+                    label="Material Name"
+                    name="material_name"
+                    list="all-master-materials-list"
+                    value={usedForm.material_name}
+                    onChange={(e) => handleMaterialNameChange(e.target.value, usedForm, setUsedForm, 'material_name')}
+                    required
+                    placeholder="e.g. Cement 53 Grade"
+                  />
+                  <UnitSelector
+                    label="Unit / इकाई"
+                    value={usedForm.unit}
+                    onChange={(u) => setUsedForm((prev) => ({ ...prev, unit: u }))}
+                    required
+                  />
+                  <Input
+                    label={`Quantity Used (${usedForm.unit || 'units'})`}
+                    name="quantity"
+                    type="number"
+                    step="any"
+                    min="0.001"
+                    value={usedForm.quantity}
+                    set={setUsedForm}
+                    required
+                  />
                   <Input label="Usage Date" name="used_date" type="date" value={usedForm.used_date} set={setUsedForm} required />
                   <Input label="Used For (e.g. Foundation, Slab, Plaster)" name="used_for" value={usedForm.used_for} set={setUsedForm} placeholder="e.g. 1st Floor Slab casting" />
                   <Input label="Note" name="note" value={usedForm.note} set={setUsedForm} />
@@ -6848,7 +7568,21 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   }
                 </h3>
                 <div className="grid">
-                  <Input label="Material Name" name="material_name" value={adjustmentForm.material_name} set={setAdjustmentForm} required placeholder="e.g. Cement, Steel, Bricks, Copper Wire" />
+                  <Input
+                    label="Material Name"
+                    name="material_name"
+                    list="all-master-materials-list"
+                    value={adjustmentForm.material_name}
+                    onChange={(e) => handleMaterialNameChange(e.target.value, adjustmentForm, setAdjustmentForm, 'material_name')}
+                    required
+                    placeholder="e.g. Cement, Steel, Bricks, Copper Wire"
+                  />
+                  <UnitSelector
+                    label="Unit / इकाई"
+                    value={adjustmentForm.unit}
+                    onChange={(u) => setAdjustmentForm((prev) => ({ ...prev, unit: u }))}
+                    required
+                  />
 
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -6866,7 +7600,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </select>
                   </label>
 
-                  <Input label="Quantity" name="quantity" type="number" step="any" min="0.001" value={adjustmentForm.quantity} set={setAdjustmentForm} required />
+                  <Input
+                    label={`Quantity (${adjustmentForm.unit || 'units'})`}
+                    name="quantity"
+                    type="number"
+                    step="any"
+                    min="0.001"
+                    value={adjustmentForm.quantity}
+                    set={setAdjustmentForm}
+                    required
+                  />
                   <Input label="Date" name="adjustment_date" type="date" value={adjustmentForm.adjustment_date} set={setAdjustmentForm} required />
 
                   {['return_material', 'return_to_supplier'].includes(adjustmentForm.adjustment_type) && (
@@ -6880,11 +7623,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           list="project-suppliers-list"
                           placeholder="Select or enter supplier name"
                           value={adjustmentForm.supplier_name || ''}
-                          onChange={(e) => setAdjustmentForm({ ...adjustmentForm, supplier_name: e.target.value })}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const matched = (projectSuppliers || []).find((s) => (s.supplier_name || s.name || '').toLowerCase() === val.trim().toLowerCase());
+                            setAdjustmentForm({
+                              ...adjustmentForm,
+                              supplier_name: val,
+                              supplier_id: matched ? (matched.supplier_id || matched.id || '') : adjustmentForm.supplier_id
+                            });
+                          }}
                         />
                         <datalist id="project-suppliers-list">
                           {projectSuppliers.map((s) => (
-                            <option key={s.id || s.supplier_id} value={s.supplier_name || s.name} />
+                            <option key={s.key || s.id || s.supplier_id} value={s.supplier_name || s.name} />
                           ))}
                         </datalist>
                       </label>
@@ -6995,6 +7746,21 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <option value="rent">Rent</option>
                     </select>
                   </label>
+                  <Input
+                    label={['tools', 'rent'].includes(expenseForm.category) ? 'Item / Tool name' : 'Item / Tool name (optional)'}
+                    name="item_name"
+                    value={expenseForm.item_name}
+                    set={setExpenseForm}
+                    required={['tools', 'rent'].includes(expenseForm.category)}
+                    placeholder="e.g. Shuttering plate, Centring props, Mixer machine"
+                    maxLength={120}
+                    list="other-expenses-items-list"
+                  />
+                  <datalist id="other-expenses-items-list">
+                    {expenseItemSuggestions.map((item) => (
+                      <option key={item} value={item} />
+                    ))}
+                  </datalist>
                   <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={expenseForm.amount} set={setExpenseForm} required />
                   <Input label="Expense Date" name="expense_date" type="date" value={expenseForm.expense_date} set={setExpenseForm} required />
                   <Input label="Note / Details" name="note" value={expenseForm.note} set={setExpenseForm} placeholder="e.g. Generator diesel 50L" />
@@ -7004,6 +7770,91 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     Cancel
                   </button>
                   <button type="submit" disabled={submitAction.isSubmitting('expense')}>{submitAction.isSubmitting('expense') ? 'Saving…' : 'Save Expense'}</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: COMMISSION ────────────────────────────────────────── */}
+          {commissionModal && (
+            <div className="modal-overlay">
+              <form
+                onSubmit={(e) =>
+                  submitAction.submit('commission', () => saveCommissionEntry(e), {
+                    successMessage: editingCommissionId ? 'Commission updated successfully' : 'Commission recorded successfully',
+                    onError: setModalError,
+                  })
+                }
+                className="modal-card"
+              >
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  {editingCommissionId ? 'Edit' : 'Record'} Commission
+                </h3>
+                {modalError && (
+                  <div
+                    role="alert"
+                    style={{
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      marginBottom: 12,
+                      fontSize: 13,
+                    }}
+                  >
+                    {modalError}
+                  </div>
+                )}
+                <div className="grid">
+                  <Input
+                    label="Date"
+                    name="commission_date"
+                    type="date"
+                    value={commissionForm.commission_date}
+                    set={setCommissionForm}
+                    required
+                  />
+                  <Input
+                    label="Person Name"
+                    name="person_name"
+                    value={commissionForm.person_name}
+                    set={setCommissionForm}
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                    maxLength={150}
+                  />
+                  <Input
+                    label="Amount (₹)"
+                    name="amount"
+                    type="number"
+                    step="any"
+                    min="1"
+                    value={commissionForm.amount}
+                    set={setCommissionForm}
+                    required
+                    placeholder="e.g. 5000"
+                  />
+                  <Input
+                    label="Note"
+                    name="note"
+                    value={commissionForm.note}
+                    set={setCommissionForm}
+                    placeholder="e.g. Client reference commission"
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    disabled={submitAction.isSubmitting('commission')}
+                    onClick={() => setCommissionModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('commission')}>
+                    {submitAction.isSubmitting('commission') ? 'Saving…' : 'Save Commission'}
+                  </button>
                 </div>
               </form>
             </div>
@@ -7245,6 +8096,39 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           </div>
         </div>
       )}
+
+      {/* Global Datalists for Materials and Units */}
+      <datalist id="all-master-materials-list">
+        {materialsMaster.map((m) => (
+          <option key={m.id} value={m.name} />
+        ))}
+        <option value="Cement" />
+        <option value="Ultratech Cement" />
+        <option value="Ambuja Cement" />
+        <option value="Steel (Sariya / Rebar)" />
+        <option value="TMT Sariya 12mm" />
+        <option value="Red Bricks (Eent)" />
+        <option value="Fly Ash Bricks" />
+        <option value="AAC Blocks" />
+        <option value="Sand (Reet / Balu)" />
+        <option value="Badarpur / Dust" />
+        <option value="Gitti (Aggregate 10mm / 20mm)" />
+        <option value="Binding Wire" />
+        <option value="Wall Putty" />
+        <option value="Tile Adhesive" />
+        <option value="Gypsum Powder" />
+        <option value="Paint / Primer" />
+        <option value="Tiles / Marble" />
+        <option value="Plumbing Pipes / Fittings" />
+      </datalist>
+
+      <datalist id="common-material-units-list">
+        {COMMON_MATERIAL_UNITS.map((u) => (
+          <option key={u.value} value={u.value}>
+            {u.label}
+          </option>
+        ))}
+      </datalist>
 
       {/* ── COMPONENT STYLES ──────────────────────────────────────────────── */}
       <style jsx>{`

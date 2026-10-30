@@ -13,9 +13,7 @@ const Content = () => {
 
           <div className="space-y-6 text-gray-700 leading-relaxed max-w-4xl">
             <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Quick Answer
-              </h3>
+            
               <p>
                 An architect firm in Bareilly is an organised design practice with
                 registered architects, supporting designers and set processes for

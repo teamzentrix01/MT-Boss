@@ -49,6 +49,7 @@ const PmDashboard = dynamicManager(() => import('../components/PmDashboard'));
 const PmAuditLog = dynamicManager(() => import('../components/PmAuditLog'));
 const OrdersHistoryManager = dynamicManager(() => import('../components/OrdersHistoryManager'));
 const CashbackManager = dynamicManager(() => import('../components/CashbackManager'));
+const AgentTasksManager = dynamicManager(() => import('../components/AgentTasksManager'));
 
 import {
   LayoutDashboard, UserCog, Calculator, FileText, Briefcase, BriefcaseBusiness,
@@ -2106,6 +2107,7 @@ function AdminDashboard() {
           {activeTab === 'jobs' && <JobsManager isDarkMode={isDarkMode} />}
           {activeTab === 'lead-management' && <LeadManagementAdmin isDarkMode={isDarkMode} />}
           {activeTab === 'office-locations' && <OfficeLocationsManager isDarkMode={isDarkMode} />}
+          {activeTab === 'agent-tasks' && <AgentTasksManager isDarkMode={isDarkMode} />}
 
         </div>
 

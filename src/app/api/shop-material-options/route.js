@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { createInitializationGuard, isDatabaseConnectionError } from '@/lib/api-utils';
 
-const productCache = new Map();
+const productCache = (globalThis.__shopProductCache = globalThis.__shopProductCache || new Map());
 const PRODUCT_CACHE_TTL_MS = 15000;
 
 const ensureTable = createInitializationGuard(async() => {

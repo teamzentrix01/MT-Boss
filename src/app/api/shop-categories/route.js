@@ -78,7 +78,7 @@ export async function GET(req) {
     const fields = searchParams.get('fields');
     const slim = fields === 'list' || fields === 'lite';
     const selectSql = slim
-      ? `SELECT id, name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order, is_active, shipping_charge`
+      ? `SELECT id, name, image, emoji, emoji_image, label, label_color, price_range, unit, sort_order, is_active, shipping_charge, subcategories, types`
       : `SELECT *`;
 
     const result = isAdmin

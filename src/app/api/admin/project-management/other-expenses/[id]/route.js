@@ -42,19 +42,85 @@ export async function PATCH(req, { params }) {
         return NextResponse.json({ success: false, error: 'Invalid expense parameters' }, { status: 400 });
       }
 
-      const r = await c.query(
-        `UPDATE pm_other_expenses
-         SET amount = $1, category = $2, expense_date = $3, note = $4
-         WHERE id = $5
-         RETURNING *`,
-        [amt, cat, b.expense_date, b.note || null, id]
-      );
+      // Validation: Item / Tool name is required when Category is tools or rent
+      let itemName = typeof b.item_name === 'string' ? b.item_name.trim() : '';
+      let noteText = typeof b.note === 'string' ? b.note.trim() : '';
+
+      const itemMatch = noteText.match(/^\[Item:\s*([^\]]+)\](?:\s*([\s\S]*))?$/);
+      if (itemMatch) {
+        if (!itemName) itemName = itemMatch[1].trim();
+        noteText = (itemMatch[2] || '').trim();
+      }
+
+      if (['tools', 'rent'].includes(cat) && !itemName) {
+        await c.query('ROLLBACK');
+        return NextResponse.json({
+          success: false,
+          error: `Item / Tool name is required when Category is ${cat === 'tools' ? 'Tools' : 'Rent'}`
+        }, { status: 400 });
+      }
+
+      if (itemName.length > 120) {
+        itemName = itemName.slice(0, 120).trim();
+      }
+
+      const storedNote = itemName ? (noteText ? `[Item: ${itemName}] ${noteText}` : `[Item: ${itemName}]`) : (noteText || null);
+
+      if (['tools', 'rent'].includes(cat)) {
+        try {
+          await pool.query(
+            `ALTER TABLE pm_other_expenses DROP CONSTRAINT IF EXISTS pm_other_expenses_category_check;
+             ALTER TABLE pm_other_expenses ADD CONSTRAINT pm_other_expenses_category_check CHECK(category IN ('transport','machine_rent','electricity_water','permit','misc','tools','rent'))`
+          );
+        } catch {}
+      }
+
+      let r;
+      await c.query('SAVEPOINT oe_update');
+      try {
+        r = await c.query(
+          `UPDATE pm_other_expenses
+           SET amount = $1, category = $2, expense_date = $3, note = $4
+           WHERE id = $5
+           RETURNING *`,
+          [amt, cat, b.expense_date, storedNote, id]
+        );
+        await c.query('RELEASE SAVEPOINT oe_update');
+      } catch (updateErr) {
+        if (
+          updateErr &&
+          (updateErr.code === '23514' ||
+            (updateErr.message && updateErr.message.includes('pm_other_expenses_category_check')))
+        ) {
+          await c.query('ROLLBACK TO SAVEPOINT oe_update');
+          const fallbackCat = cat === 'rent' ? 'machine_rent' : 'misc';
+          const fallbackNote = `[Category: ${cat}] ${storedNote || ''}`.trim();
+          r = await c.query(
+            `UPDATE pm_other_expenses
+             SET amount = $1, category = $2, expense_date = $3, note = $4
+             WHERE id = $5
+             RETURNING *`,
+            [amt, fallbackCat, b.expense_date, fallbackNote, id]
+          );
+        } else {
+          throw updateErr;
+        }
+      }
 
       const actor = actorFromAdmin(auth.user);
       await writePmPhase2Audit(c, 'pm_other_expenses', id, 'updated', actor, old, r.rows[0]);
       await c.query('COMMIT');
 
-      return NextResponse.json({ success: true, data: r.rows[0] });
+      const saved = r.rows[0];
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...saved,
+          category: cat,
+          item_name: itemName || null,
+          display_note: noteText || null,
+        }
+      });
     } catch (e) {
       await c.query('ROLLBACK');
       return NextResponse.json({ success: false, error: e.message }, { status: 400 });

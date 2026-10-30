@@ -236,39 +236,10 @@ const Content = () => {
                   easy-to-clean flooring and washable walls, with space for
                   murals and educational displays.
                 </li>
-                <li>
-                  <strong>Furniture and woodwork:</strong> Storage units,
-                  reception counters, library shelves and made-to-measure pieces.
-                </li>
-                <li>
-                  <strong>Services provisions:</strong> Electrical, data,
-                  plumbing, drainage, ventilation and fire-safety provisions
-                  planned from the start.
-                </li>
-                <li>
-                  <strong>Coordination with construction:</strong> Interior
-                  planning aligned with civil work, so wiring, plumbing and
-                  ceilings fit together.
-                </li>
-                <li>
-                  <strong>Material supply:</strong> Tiles, paints and
-                  construction materials available through MTBOSS&apos;s
-                  wholesale supply.
-                </li>
-                <li>
-                  <strong>Renovation and remodelling:</strong> Updating an
-                  existing school, including repairs, waterproofing and phased
-                  work.
-                </li>
+               
+               
               </ul>
 
-              <p className="mt-3">
-                Final scope for each project is discussed and confirmed with the
-                MTBOSS team before work begins. Lab equipment, smart boards,
-                security systems, lifts and similar items are typically supplied
-                by specialist vendors, and MTBOSS coordinates the interior and
-                civil work around them.
-              </p>
             </section>
 
             <section>

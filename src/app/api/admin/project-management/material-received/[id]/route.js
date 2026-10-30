@@ -50,13 +50,14 @@ export async function PATCH(req, { params }) {
       }
 
       const amount = q * rate;
+      const unit = b.unit !== undefined ? (b.unit ? String(b.unit).trim() : null) : old.unit;
       const r = await c.query(
         `UPDATE pm_material_received
          SET quantity = $1, rate = $2, amount = $3, supplier_name = $4,
-             received_date = $5, challan_no = $6, note = $7, updated_at = NOW()
-         WHERE id = $8
+             received_date = $5, challan_no = $6, note = $7, unit = $8, updated_at = NOW()
+         WHERE id = $9
          RETURNING *`,
-        [q, rate, amount, b.supplier_name || null, b.received_date, b.challan_no || null, b.note || null, id]
+        [q, rate, amount, b.supplier_name || null, b.received_date, b.challan_no || null, b.note || null, unit, id]
       );
 
       const actor = actorFromAdmin(auth.user);

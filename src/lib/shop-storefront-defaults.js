@@ -1,9 +1,18 @@
+export const defaultHeroImages = [
+  'https://res.cloudinary.com/kgrg3oe3/image/upload/v1793164625/Sunset_Construction_Materials_Yard.png',
+  'https://res.cloudinary.com/kgrg3oe3/image/upload/v1793164626/Construction_Materials_Loading_Yard.png',
+  'https://res.cloudinary.com/kgrg3oe3/image/upload/v1793164626/Loaded_Tata_Dump_Truck_at_a_Sandy_Worksite.png',
+  'https://res.cloudinary.com/kgrg3oe3/image/upload/v1793164626/Mahindra_Tractor_Hauling_Bricks.png',
+  'https://res.cloudinary.com/kgrg3oe3/image/upload/v1793164628/Steel_Loads_at_the_Industrial_Yard.png',
+];
+
 export const defaultShopStorefront = {
   hero_kicker: 'MTBOSS MATERIAL MARKETPLACE',
   hero_title: 'Everything you need to',
   hero_highlight: 'build better.',
   hero_description: 'Explore construction essentials from verified suppliers. Add to cart, buy now, or request a quote in a few taps.',
-  hero_image: '/images/banners/materials.jpg',
+  hero_image: defaultHeroImages[0],
+  hero_images: defaultHeroImages,
   hero_badge: 'Built for every project',
   hero_button: 'Explore materials',
   search_placeholder: 'Search "cement", "steel" and more',
@@ -51,6 +60,21 @@ export function normalizeShopStorefront(value = {}) {
   if (value?.mobile_banner_enabled !== undefined) {
     result.mobile_banner_enabled = Boolean(value.mobile_banner_enabled);
   }
+
+  const rawHeroImages = Array.isArray(value?.hero_images)
+    ? value.hero_images
+    : (typeof value?.hero_images === 'string' && value.hero_images.trim()
+      ? [value.hero_images.trim()]
+      : []);
+  const cleaned = rawHeroImages
+    .map((img) => (typeof img === 'string' ? img.trim() : ''))
+    .filter((img) => img.length > 0 && !img.includes('/images/banners/materials.jpg'));
+
+  result.hero_images = cleaned.length > 0 ? cleaned : defaultHeroImages;
+  if (!result.hero_image || result.hero_image === '/images/banners/materials.jpg') {
+    result.hero_image = result.hero_images[0] || defaultHeroImages[0];
+  }
+
   result.promos = defaultShopStorefront.promos.map((fallback, index) => ({
     title: String(value?.promos?.[index]?.title || fallback.title).trim().slice(0, 100),
     subtitle: String(value?.promos?.[index]?.subtitle || fallback.subtitle).trim().slice(0, 160),

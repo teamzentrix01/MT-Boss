@@ -223,25 +223,10 @@ const Content = () => {
                   planning aligned with civil work, so wiring, plumbing and
                   ceilings fit together.
                 </li>
-                <li>
-                  <strong>Material supply:</strong> Tiles, paints and
-                  construction materials available through MTBOSS&apos;s
-                  wholesale supply.
-                </li>
-                <li>
-                  <strong>Renovation and remodelling:</strong> Updating an
-                  existing hotel or guest house, including repairs,
-                  waterproofing and room-by-room refresh.
-                </li>
+               
               </ul>
 
-              <p className="mt-3">
-                Final scope for each project is discussed and confirmed with the
-                MTBOSS team before work begins. Specialist systems, such as
-                central air conditioning, lifts, fire alarm systems and branded
-                fittings, are typically supplied by specialist vendors, and
-                MTBOSS coordinates the interior and civil work around them.
-              </p>
+             
             </section>
 
             <section>
@@ -518,20 +503,7 @@ const Content = () => {
                   ceilings, beds, wardrobes, desks, counters and panels are made
                   and installed in sequence.
                 </li>
-                <li>
-                  <strong>Step 9 — Finishing:</strong> Flooring, paint, polish,
-                  lights, fittings and hardware are completed and checked.
-                </li>
-                <li>
-                  <strong>Step 10 — Model room and room-by-room rollout:</strong>{" "}
-                  A sample room is finished and approved first, then repeated
-                  across the property, with a quality check on each room.
-                </li>
-                <li>
-                  <strong>Step 11 — Inspection and handover:</strong> A final
-                  walk-through and snag correction precede handover, so you can
-                  open or reopen on schedule.
-                </li>
+                
               </ul>
             </section>
 

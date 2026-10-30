@@ -21,7 +21,7 @@ const ShopCouponsManager = dynamic(() => import('./ShopCouponsManager'), {
 });
 
 const units = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft', 'ton', 'meter', 'set', 'bucket'];
-const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: '', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
+const emptyProduct = { name: '', description: '', category: '', subcategory: '', quality_tier: 'all', quote_price_range: '', price: '', compare_at_price: '', is_featured_deal: false, brand: '', unit: '', quantity: 0, image_url: '', available_cities: [], is_available: true };
 const mobileHeaderFields = [
   ['delivery_tagline', 'Delivery Tagline (e.g. 60 Mins delivery)'],
   ['search_placeholder', 'Search Placeholder (e.g. Search for Cement, TMT Bars, Tiles...)'],
@@ -97,6 +97,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const [bulkText, setBulkText] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [showProductForm, setShowProductForm] = useState(initialShowForm);
+  const [isCustomSubcategory, setIsCustomSubcategory] = useState(false);
 
   useEffect(() => {
     if (initialShowForm) setShowProductForm(true);
@@ -123,7 +124,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const loadReferenceData = useCallback(async () => {
     try {
       const [categoryRes, cityRes] = await Promise.all([
-        fetch(isVendor ? '/api/shop-categories?fields=list' : '/api/shop-categories?admin=true&fields=list', { headers: shopHeaders(ownerRole) }),
+        fetch(isVendor ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
         fetch('/api/cities'),
       ]);
       const [categoryData, cityData] = await Promise.all([readApiJson(categoryRes), readApiJson(cityRes)]);
@@ -195,6 +196,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const reset = () => {
     setEditingId(null);
     setShowProductForm(false);
+    setIsCustomSubcategory(false);
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -204,21 +206,54 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setNotice('');
   };
 
+  const startAddProduct = () => {
+    setEditingId(null);
+    setIsCustomSubcategory(false);
+    setForm(emptyProduct);
+    setImagesList([]);
+    setNewImageUrl('');
+    setGalleryText('');
+    setSpecsText('');
+    setBulkText('');
+    setNotice('');
+    setShowProductForm(true);
+    requestAnimationFrame(() => {
+      document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   const save = async (event) => {
     event.preventDefault();
     setSaving(true);
     setNotice('');
     try {
-      const parseLines = (value) => value.split('\n').map((line) => line.trim()).filter(Boolean);
-      const specifications = Object.fromEntries(parseLines(specsText).map((line) => {
+      if (form.price === '' || form.price == null || Number(form.price) <= 0 || !Number.isFinite(Number(form.price))) {
+        throw new Error('Please enter a valid positive Buy Now fixed price.');
+      }
+
+      const parseLines = (value) => (value || '').split('\n').map((line) => line.trim()).filter(Boolean);
+      const specifications = {};
+      parseLines(specsText).forEach((line) => {
         const separator = line.indexOf(':');
-        if (separator < 1 || !line.slice(separator + 1).trim()) throw new Error('Specifications: use Name: Value on each line');
-        return [line.slice(0, separator).trim(), line.slice(separator + 1).trim()];
-      }));
-      const bulk_pricing = parseLines(bulkText).map((line) => {
-        const [minimum, price] = line.split(':').map((part) => part.trim());
-        if (!minimum || !price || !Number.isInteger(Number(minimum)) || Number(minimum) < 2 || Number(price) <= 0) throw new Error('Bulk prices: use Quantity: Price, for example 10: 415');
-        return { min_quantity: Number(minimum), price: Number(price) };
+        if (separator !== -1) {
+          const key = line.slice(0, separator).trim();
+          const val = line.slice(separator + 1).trim();
+          if (key && val) specifications[key] = val;
+        } else if (line.trim()) {
+          specifications[line.trim()] = 'Yes';
+        }
+      });
+
+      const bulk_pricing = [];
+      parseLines(bulkText).forEach((line) => {
+        const parts = line.split(/[:\s-]+/).map((part) => part.trim()).filter(Boolean);
+        if (parts.length >= 2) {
+          const minQty = Number(parts[0]);
+          const tierPrice = Number(parts[1]);
+          if (Number.isInteger(minQty) && minQty >= 1 && Number.isFinite(tierPrice) && tierPrice > 0) {
+            bulk_pricing.push({ min_quantity: minQty, price: tierPrice });
+          }
+        }
       });
 
       const allImgs = Array.from(new Set([
@@ -227,15 +262,17 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       ].filter(Boolean)));
       const mainCover = allImgs[0] || form.image_url || '';
 
+      const isEditing = Boolean(editingId);
       const response = await fetch(productEndpoint, {
-        method: editingId ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
+        method: isEditing ? 'PUT' : 'POST', headers: shopHeaders(ownerRole),
         body: JSON.stringify({
           ...form,
+          quote_price_range: form.quote_price_range || null,
           image_url: mainCover,
           images: allImgs,
           specifications,
           bulk_pricing,
-          ...(editingId ? { id: editingId } : {})
+          ...(isEditing ? { id: editingId } : {})
         }),
       });
       const data = await readApiJson(response);
@@ -244,12 +281,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       reset();
       if (isVendor) {
         setNotice(
-          editingId
+          isEditing
             ? (data?.resubmitted_for_approval ? 'Submitted for admin approval.' : 'Product updated.')
             : 'Submitted for admin approval.'
         );
       } else {
-        setNotice(editingId ? 'Product updated.' : 'Product added.');
+        setNotice(isEditing ? 'Product updated.' : 'Product added successfully.');
       }
       await load();
     } catch (error) { setNotice(error.message); }
@@ -383,7 +420,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             </button>
             <div>
               <h2>{editingId ? 'Edit product' : 'Add product'}</h2>
-              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Every product needs a Get Quote range and a fixed Buy Now price.'}</p>
+              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Enter product details and fixed Buy Now price.'}</p>
             </div>
           </div>
         </div>
@@ -392,14 +429,149 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
         <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
-        <label>Category *<select required value={form.category} onChange={(e) => { const cat = categories.find((item) => item.name === e.target.value); setForm({ ...form, category: e.target.value, subcategory: '', unit: cat?.unit || form.unit }); }}><option value="">Select category</option>{categories.map((cat) => <option key={cat.id} value={cat.name}>{cat.name}</option>)}</select></label>
-        <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })}><option value="">Select subcategory</option>{(categories.find((cat) => cat.name === form.category)?.subcategories || []).map((subcategory) => { const name = typeof subcategory === 'object' && subcategory !== null ? subcategory.name : subcategory; return <option key={name} value={name}>{name}</option>; })}</select></label>
+        <label>
+          Category *
+          <select
+            required
+            value={form.category}
+            onChange={(e) => {
+              const selectedVal = e.target.value;
+              const cat = categories.find((item) => (item.name || '').trim().toLowerCase() === selectedVal.trim().toLowerCase());
+              setForm({
+                ...form,
+                category: selectedVal,
+                subcategory: '',
+                unit: cat?.unit || form.unit,
+              });
+              setIsCustomSubcategory(false);
+            }}
+          >
+            <option value="">Select category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Subcategory
+          {!isCustomSubcategory ? (
+            <select
+              value={form.subcategory}
+              onChange={(e) => {
+                if (e.target.value === '__CUSTOM__') {
+                  setIsCustomSubcategory(true);
+                  setForm({ ...form, subcategory: '' });
+                } else {
+                  setForm({ ...form, subcategory: e.target.value });
+                }
+              }}
+            >
+              <option value="">Select subcategory (optional)</option>
+              {(() => {
+                const cat = categories.find(
+                  (item) => (item.name || '').trim().toLowerCase() === (form.category || '').trim().toLowerCase()
+                );
+                const list = [];
+
+                // 1. Category DB subcategories
+                let rawSubs = cat?.subcategories;
+                if (typeof rawSubs === 'string') {
+                  try { rawSubs = JSON.parse(rawSubs); } catch {}
+                }
+                if (Array.isArray(rawSubs)) {
+                  rawSubs.forEach((s) => {
+                    const name = typeof s === 'object' && s !== null ? s.name : s;
+                    if (name && typeof name === 'string' && name.trim() && !list.includes(name.trim())) {
+                      list.push(name.trim());
+                    }
+                  });
+                }
+
+                // 2. Category DB types
+                let rawTypes = cat?.types;
+                if (typeof rawTypes === 'string') {
+                  try { rawTypes = JSON.parse(rawTypes); } catch {}
+                }
+                if (Array.isArray(rawTypes)) {
+                  rawTypes.forEach((t) => {
+                    if (t && typeof t === 'string' && t.trim() && !list.includes(t.trim())) {
+                      list.push(t.trim());
+                    }
+                  });
+                }
+
+                // 3. Fallback tree lookup
+                const defaultTree = {
+                  'furniture & architectural hardware': ['Hinges, Channels & Handles', 'Kitchen Systems & Accessories', 'Wardrobe & Bed Fittings', 'Door Locks & Hardware', 'Cabinet Fittings', 'Glass Hardware'],
+                  'building materials': ['Cement', 'Iron', 'Steel', 'Aggregate (Barjri)', 'Coarse Sand', 'Fine Sand', 'Brick', 'Block', 'POP', 'Tiles', 'Marble', 'Glass', 'Waterproofing'],
+                  'carpentry': ['Timber', 'Plywood', 'HPL', 'Rough Carpentry', 'Veneer', 'Flush Doors', 'Laminates'],
+                  'plumbing': ['Sanitary', 'CPVC Pipes', 'Bath Fittings', 'Overhead Tanks', 'Pipes & Fittings', 'Drainage', 'Water Tanks', 'Taps & Showers'],
+                  'electrical': ['Sockets', 'Switches', 'MCB', 'Distribution Board (DB)', 'LED Lights', 'Electrical Cables', 'Wires & Conduits', 'Fans'],
+                  'timber ( lakdi)': ['Teak Wood', 'Imported Teak', 'Sal Wood', 'Pine Wood', 'Sheesham', 'Plywood', 'Board'],
+                  'timber': ['Teak Wood', 'Imported Teak', 'Sal Wood', 'Pine Wood', 'Sheesham', 'Plywood', 'Board'],
+                  'cement': ['OPC 43 & PPC', 'OPC 53', 'Waterproof & White Cement'],
+                  'brick': ['Laal eent', 'Grey eent', 'Concrete Bricks', 'AAC Blocks', 'Fly Ash Bricks'],
+                  'steel': ['TMT Bars', 'Mild Steel Plain Bars', 'Deformed Bars', 'TMX Bars', 'HYSD Bars', 'Binding Wire'],
+                  'sand': ['River Sand (Nadi ki Ret)', 'M-Sand (Manufactured Sand)', 'Coarse Sand', 'Fine Sand', 'Pit Sand'],
+                  'aggregate ( barjri)': ['Fine Aggregate', 'Coarse Aggregate'],
+                  'new launches': ['Cabinet Hardware', 'Kitchen Systems & Hardware', 'General Hardware & Tools', 'Bathroom Renovation Materials', 'Conduits & Piping', 'PVC Pipes', 'Kitchen Sinks & Faucets', 'Home Appliances & Power Backup'],
+                };
+
+                const normCatKey = (form.category || '').toLowerCase().trim();
+                const matchedKey = Object.keys(defaultTree).find((key) => {
+                  return normCatKey === key ||
+                         normCatKey.replace(/\s+/g, '') === key.replace(/\s+/g, '') ||
+                         normCatKey.includes(key) ||
+                         key.includes(normCatKey);
+                });
+
+                if (matchedKey && defaultTree[matchedKey]) {
+                  defaultTree[matchedKey].forEach((name) => {
+                    if (!list.includes(name)) list.push(name);
+                  });
+                }
+
+                if (form.subcategory && !list.includes(form.subcategory)) {
+                  list.unshift(form.subcategory);
+                }
+
+                return list.map((name) => <option key={name} value={name}>{name}</option>);
+              })()}
+              <option value="__CUSTOM__">✍️ + Type custom subcategory...</option>
+            </select>
+          ) : (
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="Enter subcategory name..."
+                value={form.subcategory}
+                onChange={(e) => setForm({ ...form, subcategory: e.target.value })}
+                style={{ flex: 1 }}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setIsCustomSubcategory(false)}
+                style={{
+                  fontSize: 12,
+                  padding: '6px 10px',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Choose from list
+              </button>
+            </div>
+          )}
+        </label>
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
-        <label>Get Quote price range (₹, optional)<input type="text" maxLength={100} value={form.quote_price_range} onChange={(e) => setForm({ ...form, quote_price_range: e.target.value })} placeholder="Example: 40-80 (optional)" /><small>Optional lump-sum range e.g. 40-80.</small></label>
-        <label>Buy Now fixed price (₹, optional)<input type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Leave empty for Price on request" /><small>Leave empty to show &quot;Price on request&quot;.</small></label>
+        <label>Buy Now fixed price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
         <label>Original price (₹, optional)<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>
         <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
-        <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
+        <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
         <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
         <label className="shop-admin-wide">Description<textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
 
@@ -510,11 +682,11 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           </details>
         </div>
 
-        <label className="shop-admin-wide">Specifications (one Name: Value per line)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Grade: PPC&#10;Pack size: 50 kg" /></label>
-        <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="10: 415&#10;30: 405" /></label>
+        <label className="shop-admin-wide">Specifications (one Name: Value per line, optional)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Optional: e.g. Grade: PPC&#10;Pack size: 50 kg" /><small>Optional: Leave blank if not applicable, or enter specifications one per line.</small></label>
+        <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line, optional)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="Optional: e.g. 10: 415&#10;30: 405" /><small>Optional: Leave blank if not offering bulk tier discounts.</small></label>
         <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button>{editingId && <button type="button" onClick={reset}>Cancel</button>}</div>
+      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button><button type="button" onClick={reset}>Cancel</button></div>
     </form>
       </>
     ) : (
@@ -522,12 +694,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
         <div className="shop-admin-heading">
           <div>
             <h2>{isVendor ? 'My products' : 'Products'}</h2>
-            <p>Every product needs a Get Quote range and a fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
+            <p>Enter product details and fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
               type="button"
-              onClick={() => { setShowProductForm(true); reset(); }}
+              onClick={startAddProduct}
               style={{
                 background: 'var(--brand-blue, #2563eb)',
                 color: '#fff',
@@ -614,6 +786,8 @@ function AppearanceManager() {
     finally { setSaving(false); }
   };
 
+  const [newHeroUrl, setNewHeroUrl] = useState('');
+
   const updatePromo = (index, field, value) => setContent((current) => ({ ...current, promos: current.promos.map((promo, i) => i === index ? { ...promo, [field]: value } : promo) }));
 
   const handleUpload = async (event) => {
@@ -622,10 +796,41 @@ function AppearanceManager() {
     setUploading(true);
     try {
       const imageUrl = await uploadImage(file);
-      setContent((current) => ({ ...current, hero_image: imageUrl }));
+      setContent((current) => {
+        const existing = Array.isArray(current.hero_images) ? current.hero_images : [current.hero_image].filter(Boolean);
+        return {
+          ...current,
+          hero_image: imageUrl,
+          hero_images: [...existing, imageUrl],
+        };
+      });
     }
     catch (error) { setNotice(error.message); }
     finally { setUploading(false); event.target.value = ''; }
+  };
+
+  const addHeroImageUrl = () => {
+    if (!newHeroUrl.trim()) return;
+    setContent((current) => {
+      const existing = Array.isArray(current.hero_images) ? current.hero_images : [current.hero_image].filter(Boolean);
+      return {
+        ...current,
+        hero_images: [...existing, newHeroUrl.trim()],
+      };
+    });
+    setNewHeroUrl('');
+  };
+
+  const removeHeroImage = (idx) => {
+    setContent((current) => {
+      const existing = Array.isArray(current.hero_images) ? current.hero_images : [];
+      const updated = existing.filter((_, i) => i !== idx);
+      return {
+        ...current,
+        hero_images: updated,
+        hero_image: updated[0] || '',
+      };
+    });
   };
 
   return <div className="shop-admin-panel">
@@ -705,18 +910,107 @@ function AppearanceManager() {
               </label>
             ))}
             <label className="shop-admin-wide">
-              Banner image URL
+              Banner primary image URL
               <input
                 value={content.hero_image ?? ''}
                 onChange={(e) => setContent({ ...content, hero_image: e.target.value })}
               />
             </label>
           </div>
-          <div className="shop-admin-form-footer">
-            <label className="shop-admin-upload">
-              {uploading ? 'Uploading...' : 'Upload banner image'}
-              <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
-            </label>
+
+          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+            <strong style={{ display: 'block', marginBottom: 10, fontSize: 13, color: '#1e293b' }}>
+              🔄 Auto-Scroll Banner Images ({Array.isArray(content.hero_images) ? content.hero_images.length : 0})
+            </strong>
+            <p style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
+              These images automatically scroll in the banner on the Shop Now page.
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+              {(Array.isArray(content.hero_images) ? content.hero_images : []).map((imgUrl, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    position: 'relative',
+                    width: 100,
+                    height: 70,
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    border: '2px solid #cbd5e1',
+                    background: '#f1f5f9',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={imgUrl}
+                    alt={`Banner ${idx + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeHeroImage(idx)}
+                    title="Remove image"
+                    style={{
+                      position: 'absolute',
+                      top: 4,
+                      right: 4,
+                      background: 'rgba(239, 68, 68, 0.9)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: 20,
+                      height: 20,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11,
+                      fontWeight: 'bold',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                    }}
+                  >
+                    ✕
+                  </button>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: 3,
+                      left: 4,
+                      background: 'rgba(15, 23, 42, 0.75)',
+                      color: '#fff',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      padding: '1px 5px',
+                      borderRadius: 4,
+                    }}
+                  >
+                    #{idx + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="url"
+                placeholder="Paste Cloudinary / image URL to add..."
+                value={newHeroUrl}
+                onChange={(e) => setNewHeroUrl(e.target.value)}
+                style={{ flex: '1 1 280px', minWidth: 200 }}
+              />
+              <button
+                type="button"
+                onClick={addHeroImageUrl}
+                className="shop-admin-button"
+                style={{ padding: '8px 16px', fontWeight: 700 }}
+              >
+                + Add Image URL
+              </button>
+              <label className="shop-admin-upload" style={{ margin: 0 }}>
+                {uploading ? 'Uploading...' : 'Upload Image'}
+                <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
+              </label>
+            </div>
           </div>
         </div>
 
@@ -765,7 +1059,7 @@ function OfferManager() {
   const [loading, setLoading] = useState(true);
   const loadCategories = useCallback(async () => {
     try {
-      const categoriesRes = await fetch('/api/shop-categories?admin=true&fields=list', { headers: shopHeaders() });
+      const categoriesRes = await fetch('/api/shop-categories?admin=true', { headers: shopHeaders() });
       const categoriesData = await readApiJson(categoriesRes);
       if (categoriesRes.ok) setCategories(categoriesData.data || []);
     } catch { /* optional for offer form */ }
@@ -910,13 +1204,8 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
 }
 
 export function VendorShopProductsManager({ isDarkMode = false }) {
-  const openAddProduct = () => {
-    requestAnimationFrame(() => document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-  };
-
   return <div className="shop-admin-root">
     <VendorCommissionSummary isDarkMode={isDarkMode} />
-    <div className="shop-admin-toolbar"><div><h2>Shop Products</h2><p>Add and manage the products customers can order from your shop.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" />
   </div>;
 }

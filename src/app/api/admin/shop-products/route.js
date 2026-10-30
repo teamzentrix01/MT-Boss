@@ -70,8 +70,8 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
   }
 
   const rawPrice = body.price === '' || body.price == null ? null : Number(body.price);
-  if (rawPrice !== null && (!Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99)) {
-    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
+  if (rawPrice === null || !Number.isFinite(rawPrice) || rawPrice <= 0 || rawPrice > 99999999.99) {
+    return { error: 'Buy Now fixed price is required and must be a positive number' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
@@ -196,6 +196,7 @@ export async function POST(req) {
       (supplier_id, name, description, quote_price_range, price, unit, quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing, available_cities, is_available, quality_tier)
       VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15::jsonb, $16::jsonb, $17, $18) RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, p.quality_tier]);
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
     console.error('POST admin shop-products error:', error);
@@ -227,6 +228,7 @@ export async function PUT(req) {
       bulk_pricing=$15::jsonb, available_cities=$16::jsonb, is_available=$17, quality_tier=$19, updated_at=NOW() WHERE id=$18 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, id, p.quality_tier]);
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0] });
   } catch (error) {
     console.error('PUT admin shop-products error:', error);
@@ -242,6 +244,7 @@ export async function DELETE(req) {
     if (!Number.isInteger(id) || id < 1) return NextResponse.json({ success: false, error: 'Valid product ID required' }, { status: 400 });
     const result = await pool.query('DELETE FROM supplier_materials WHERE id=$1 RETURNING id', [id]);
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE admin shop-products error:', error);

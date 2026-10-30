@@ -30,6 +30,21 @@ export default function RootLayout({ children }) {
   );
   const isHomePage = pathname === "/";
   const isAdminDashboard = pathname?.startsWith("/dashboard");
+  const isSoftwarePanel = Boolean(
+    pathname && (
+      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/agent/dashboard") ||
+      pathname.startsWith("/agent/login") ||
+      pathname.startsWith("/agent/forgot-password") ||
+      pathname.startsWith("/vendor") ||
+      pathname.startsWith("/supplier") ||
+      pathname.startsWith("/userdashboard") ||
+      pathname.startsWith("/material-orders") ||
+      pathname.startsWith("/contractor") ||
+      pathname.toLowerCase().includes("dashboard") ||
+      pathname.toLowerCase().includes("panel")
+    )
+  );
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [homePopupDismissed, setHomePopupDismissed] = useState(false);
@@ -147,23 +162,23 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-clip"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
-        {!isAdminDashboard && <FreeWhatsAppNotifier />}
+        {!isSoftwarePanel && <FreeWhatsAppNotifier />}
         {!isAdminDashboard && <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}
         {children}
         {/* Aise kar dein: */}
         {!isAdminDashboard && <Footer />}
 
 
-        {/* Floating Chatbot Assistant Widget */}
-        {!isAdminDashboard && deferredWidgetsReady && <ChatbotWidget isDarkMode={isDarkMode} />}
+        {/* Floating Chatbot Assistant Widget - ONLY on public website, NEVER on software panels */}
+        {!isSoftwarePanel && deferredWidgetsReady && <ChatbotWidget isDarkMode={isDarkMode} />}
 
         {/* On-arrival consultation popup is exclusive to the home page. */}
         {deferredWidgetsReady && isHomePage && !homePopupDismissed && (
           <LeadConsultationModal isDarkMode={isDarkMode} onDismiss={() => setHomePopupDismissed(true)} />
         )}
 
-        {/* Floating call support button */}
-        {!isAdminDashboard && COMPANY_CONTACT.telHref && <a
+        {/* Floating call support button - ONLY on public website, NEVER on software panels */}
+        {!isSoftwarePanel && COMPANY_CONTACT.telHref && <a
           href={COMPANY_CONTACT.telHref}
           aria-label={`Call MTBOSS at ${COMPANY_CONTACT.phone}`}
           title={`Call ${COMPANY_CONTACT.phone}`}
@@ -173,7 +188,7 @@ export default function RootLayout({ children }) {
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.09 5.18 2 2 0 0 1 5.08 3h3a2 2 0 0 1 2 1.72c.12.96.35 1.9.68 2.79a2 2 0 0 1-.45 2.11L9.04 10.9a16 16 0 0 0 4.06 4.06l1.28-1.27a2 2 0 0 1 2.11-.45c.89.33 1.83.56 2.79.68A2 2 0 0 1 22 16.92z" />
           </svg>
         </a>}
-        {!isAdminDashboard && <a
+        {!isSoftwarePanel && <a
           href={COMPANY_CONTACT.whatsappHref}
           target="_blank"
           rel="noopener noreferrer"

@@ -50,6 +50,7 @@ const menuStructure = [
   // Standalone top items
   { id: 'overview', label: 'Overview', icon: LayoutDashboard, tab: '' },
   { id: 'users', label: 'Users', icon: Users, tab: 'users' },
+  { id: 'agent-tasks', label: 'Tasks', icon: CalendarClock, tab: 'agent-tasks' },
 
   // Approvals
   {

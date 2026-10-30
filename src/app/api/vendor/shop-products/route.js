@@ -87,8 +87,8 @@ async function validProduct(body) {
   }
 
   const price = body.price === '' || body.price == null ? null : Number(body.price);
-  if (price !== null && (!Number.isFinite(price) || price <= 0 || price > 99999999.99)) {
-    return { error: 'Enter a valid positive Buy Now fixed price or leave empty for Price on request' };
+  if (price === null || !Number.isFinite(price) || price <= 0 || price > 99999999.99) {
+    return { error: 'Buy Now fixed price is required and must be a positive number' };
   }
   const quantity = Number(body.quantity ?? 0);
   if (!Number.isInteger(quantity) || quantity < 0 || quantity > 100000000) {
@@ -182,6 +182,7 @@ export async function POST(req) {
         JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
         JSON.stringify(p.available_cities), p.quality_tier]
     );
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0], pending_approval: true }, { status: 201 });
   } catch (error) {
     console.error('POST vendor shop-products error:', error);
@@ -283,6 +284,7 @@ export async function PUT(req) {
         JSON.stringify(p.available_cities), nextAvailable, id, vendor.id, p.quality_tier]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({
       success: true,
       data: result.rows[0],
@@ -306,6 +308,7 @@ export async function DELETE(req) {
       [id, vendor.id]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+    if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('DELETE vendor shop-products error:', error);

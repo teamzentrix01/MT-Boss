@@ -29,24 +29,53 @@ const ensureLeadManagementSchema = createInitializationGuard(async () => {
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS priority VARCHAR(30) DEFAULT 'Normal'`,
     `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS assigned_agent_ids JSONB DEFAULT '[]'::jsonb`,
     `ALTER TABLE agents ADD COLUMN IF NOT EXISTS specializations JSONB NOT NULL DEFAULT '[]'::jsonb`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS time_slot VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS meeting_date VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS address TEXT`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS state VARCHAR(120)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS gps_location VARCHAR(100)`,
+    `ALTER TABLE agent_leads ADD COLUMN IF NOT EXISTS alternate_phone VARCHAR(50)`,
+
     `CREATE INDEX IF NOT EXISTS idx_agent_leads_source_ref ON agent_leads (source_ref_table, source_ref_id)`,
     `CREATE INDEX IF NOT EXISTS idx_agent_leads_created_at ON agent_leads (created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_agent_leads_status ON agent_leads (status)`,
     `CREATE INDEX IF NOT EXISTS idx_agent_leads_agent_id ON agent_leads (agent_id)`,
   ];
   for (const sql of alters) await pool.query(sql);
+
+  try {
+    await pool.query(`
+      UPDATE agent_leads l
+      SET time_slot = COALESCE(l.time_slot, p.time_slot),
+          meeting_date = COALESCE(l.meeting_date, p.meeting_date::text),
+          address = COALESCE(l.address, p.address),
+          state = COALESCE(l.state, p.state),
+          gps_location = COALESCE(l.gps_location, p.gps_location),
+          alternate_phone = COALESCE(l.alternate_phone, p.alternate_phone)
+      FROM primary_service_enquiries p
+      WHERE l.source_ref_table = 'primary_service_enquiries'
+        AND l.source_ref_id = p.id
+        AND (l.time_slot IS NULL OR l.meeting_date IS NULL OR l.address IS NULL);
+    `);
+  } catch (err) {
+    console.warn('Backfill primary service leads error:', err.message);
+  }
 });
 
 async function syncExternalLeads({ force = false } = {}) {
   if (!force && lastLeadSyncAt && Date.now() - lastLeadSyncAt < SYNC_TTL_MS) return;
   const syncs = [
     `INSERT INTO agent_leads
-       (city, client_name, client_phone, client_email, service_type, lead_type, status,
-        notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role)
+       (city, state, address, client_name, client_phone, alternate_phone, client_email, service_type, lead_type, status,
+        notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role,
+        time_slot, meeting_date, gps_location)
      SELECT
        COALESCE(NULLIF(city, ''), 'Unassigned') AS city,
+       state,
+       address,
        name,
        phone,
+       alternate_phone,
        email,
        service_title,
        'Primary Service',
@@ -56,7 +85,10 @@ async function syncExternalLeads({ force = false } = {}) {
        'primary-service',
        'primary_service_enquiries',
        id,
-       'system'
+       'system',
+       time_slot,
+       meeting_date::text,
+       gps_location
      FROM primary_service_enquiries p
      WHERE NOT EXISTS (
        SELECT 1 FROM agent_leads l
@@ -64,21 +96,25 @@ async function syncExternalLeads({ force = false } = {}) {
      )`,
     `INSERT INTO agent_leads
        (city, client_name, client_phone, client_email, service_type, lead_type, status,
-        notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role)
+        notes, client_requirement, lead_source, source_ref_table, source_ref_id, assigned_by_role,
+        time_slot, meeting_date, address)
      SELECT
-       COALESCE(NULLIF(service_city, ''), NULLIF(city, ''), 'Unassigned'),
+       COALESCE(NULLIF(service_city, ''), 'Unassigned'),
        COALESCE(NULLIF(user_name, ''), 'Customer'),
        COALESCE(NULLIF(user_phone, ''), '-'),
        user_email,
-       COALESCE(NULLIF(service_name, ''), NULLIF(service_title, ''), 'Quick Service'),
+       COALESCE(NULLIF(service_subcategory, ''), 'Quick Service'),
        'Quick Service',
        'New',
        service_address,
-       COALESCE(NULLIF(description, ''), NULLIF(notes, '')),
+       service_description,
        'quick-service',
        'service_bookings',
        id,
-       'system'
+       'system',
+       booking_time,
+       booking_date::text,
+       service_address
      FROM service_bookings s
      WHERE NOT EXISTS (
        SELECT 1 FROM agent_leads l
@@ -205,19 +241,20 @@ async function getLeadRows({
   }
 
   const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
-  const orderSql = `
-     ORDER BY
-       CASE
-         WHEN l.status = 'Lost' OR l.lead_stage = 'Lost' THEN 2
-         WHEN l.status = 'New' OR l.lead_stage = 'New' THEN 0
-         ELSE 1
-       END ASC,
-       l.created_at DESC`;
+  const orderSql = ` ORDER BY l.created_at DESC, l.id DESC`;
 
   if (unbounded) {
     const result = await pool.query(
       `SELECT
          l.*,
+         COALESCE(l.time_slot, pse.time_slot, sb.booking_time, NULL) AS time_slot,
+         COALESCE(l.meeting_date::text, pse.meeting_date::text, sb.booking_date::text, NULL) AS meeting_date,
+         COALESCE(l.address, pse.address, sb.service_address, NULL) AS address,
+         COALESCE(l.state, pse.state, NULL) AS state,
+         COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
+         COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
+         CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id) ELSE NULL END AS converted_project_id,
+         op.id AS operational_project_id,
          a.name AS agent_name,
          a.email AS agent_email,
          a.phone AS agent_phone,
@@ -230,6 +267,10 @@ async function getLeadRows({
        LEFT JOIN agents a ON a.id = l.agent_id
        LEFT JOIN franchises f ON f.id = l.assigned_franchise_id
        LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
+       LEFT JOIN pm_projects pm ON (pm.id = l.converted_project_id OR pm.source_lead_id = l.id)
+       LEFT JOIN projects op ON (op.source_lead_id = l.id AND op.project_kind = 'operational')
+       LEFT JOIN primary_service_enquiries pse ON (l.source_ref_table = 'primary_service_enquiries' AND pse.id = l.source_ref_id)
+       LEFT JOIN service_bookings sb ON (l.source_ref_table = 'service_bookings' AND sb.id = l.source_ref_id)
        ${where}
        ${orderSql}`,
       params
@@ -246,7 +287,14 @@ async function getLeadRows({
   const result = await pool.query(
     `SELECT
        l.*,
-       CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id, op.id) ELSE NULL END AS converted_project_id,
+       COALESCE(l.time_slot, pse.time_slot, sb.booking_time, NULL) AS time_slot,
+       COALESCE(l.meeting_date::text, pse.meeting_date::text, sb.booking_date::text, NULL) AS meeting_date,
+       COALESCE(l.address, pse.address, sb.service_address, NULL) AS address,
+       COALESCE(l.state, pse.state, NULL) AS state,
+       COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
+       COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
+       CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, pm.id) ELSE NULL END AS converted_project_id,
+       op.id AS operational_project_id,
        a.name AS agent_name,
        a.email AS agent_email,
        a.phone AS agent_phone,
@@ -261,6 +309,8 @@ async function getLeadRows({
      LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
      LEFT JOIN pm_projects pm ON (pm.id = l.converted_project_id OR pm.source_lead_id = l.id)
      LEFT JOIN projects op ON (op.source_lead_id = l.id AND op.project_kind = 'operational')
+     LEFT JOIN primary_service_enquiries pse ON (l.source_ref_table = 'primary_service_enquiries' AND pse.id = l.source_ref_id)
+     LEFT JOIN service_bookings sb ON (l.source_ref_table = 'service_bookings' AND sb.id = l.source_ref_id)
      ${where}
      ${orderSql}
      LIMIT $${params.length - 1} OFFSET $${params.length}`,
@@ -282,6 +332,12 @@ export async function GET(req) {
       const leadRes = await pool.query(
         `SELECT
            l.*,
+           COALESCE(l.time_slot, pse.time_slot, sb.booking_time, NULL) AS time_slot,
+           COALESCE(l.meeting_date::text, pse.meeting_date::text, sb.booking_date::text, NULL) AS meeting_date,
+           COALESCE(l.address, pse.address, sb.service_address, NULL) AS address,
+           COALESCE(l.state, pse.state, NULL) AS state,
+           COALESCE(l.gps_location, pse.gps_location, NULL) AS gps_location,
+           COALESCE(l.alternate_phone, pse.alternate_phone, NULL) AS alternate_phone,
            a.name AS agent_name,
            a.email AS agent_email,
            a.phone AS agent_phone,
@@ -294,7 +350,8 @@ export async function GET(req) {
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.site_address, op.location) ELSE NULL END AS project_site_address,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.status, op.status, op.project_status) ELSE NULL END AS project_status,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.contract_value, op.deal_amount::numeric, 0) ELSE 0 END AS project_contract_value,
-           CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, p.id, op.id) ELSE NULL END AS converted_project_id,
+           CASE WHEN l.status = 'Converted' THEN COALESCE(l.converted_project_id, p.id) ELSE NULL END AS converted_project_id,
+           op.id AS operational_project_id,
            CASE WHEN l.status = 'Converted' THEN COALESCE(p.id, op.id) ELSE NULL END AS project_id
          FROM agent_leads l
          LEFT JOIN agents a ON a.id = l.agent_id
@@ -302,6 +359,8 @@ export async function GET(req) {
          LEFT JOIN vendors v ON v.id = l.assigned_vendor_id
          LEFT JOIN pm_projects p ON (p.id = l.converted_project_id OR p.source_lead_id = l.id)
          LEFT JOIN projects op ON (op.source_lead_id = l.id AND op.project_kind = 'operational')
+         LEFT JOIN primary_service_enquiries pse ON (l.source_ref_table = 'primary_service_enquiries' AND pse.id = l.source_ref_id)
+         LEFT JOIN service_bookings sb ON (l.source_ref_table = 'service_bookings' AND sb.id = l.source_ref_id)
          WHERE l.id = $1`,
         [singleLeadId]
       );

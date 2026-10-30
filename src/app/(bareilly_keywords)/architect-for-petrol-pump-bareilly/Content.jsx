@@ -23,7 +23,7 @@ const Content = () => {
 
             <section>
               <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Meaning of Petrol Pump Architecture
+                Petrol Pump Architecture
               </h3>
               <p className="mb-3">
                 A petrol pump is a small site with big responsibilities. It must
@@ -110,58 +110,6 @@ const Content = () => {
               <p className="mt-3">
                 A plot that fails these checks should be dropped before money goes
                 into drawings.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">
-                Forecourt Layout Zones
-              </h3>
-              <p className="mb-3">
-                A fuel outlet works in zones, each with its own job.
-              </p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>
-                  Entry and exit lanes: separate, clearly marked and wide enough
-                  for the vehicles served.
-                </li>
-                <li>
-                  Dispensing area under the canopy: the busiest zone, arranged by
-                  vehicle type.
-                </li>
-                <li>
-                  Truck and tanker route: safe entry, positioning and exit for fuel
-                  delivery vehicles.
-                </li>
-                <li>
-                  Service and air-water area: free-standing, out of the dispensing
-                  flow.
-                </li>
-                <li>
-                  Office and cash room: with clear view of the forecourt and secure
-                  construction.
-                </li>
-                <li>
-                  Customer toilets and drinking water: accessible and kept clean.
-                </li>
-                <li>
-                  Convenience store or services: if allowed by the OMC.
-                </li>
-                <li>
-                  Parking: short-stay space that does not block circulation.
-                </li>
-                <li>
-                  Staff and utility areas: rest, storage and equipment rooms.
-                </li>
-                <li>
-                  Signage and lighting: visible from the road, within OMC branding
-                  rules.
-                </li>
-              </ul>
-              <p className="mt-3">
-                The OMC&apos;s approved layout usually fixes the positions of the
-                safety-critical zones, so site-specific design fills in around
-                them.
               </p>
             </section>
 

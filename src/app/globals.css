@@ -559,3 +559,26 @@ button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboa
 
 .privacy-required { color: #dc2626; font-weight: 800; }
 .privacy-consent-help { display: block; margin: 5px 0 0 26px; font-size: 10px; opacity: .65; }
+
+/* ── Hide Website Floating Buttons (WhatsApp, Call, AI Chatbot) on all Software/Dashboard Panels ── */
+body:has(.panel-layout-root) a[href*="wa.me"],
+body:has(.panel-layout-root) a[href*="whatsapp"],
+body:has(.panel-layout-root) a[title*="WhatsApp"],
+body:has(.panel-layout-root) a[href^="tel:"],
+body:has(.panel-layout-root) a[aria-label*="Call MTBOSS"],
+body:has(.panel-layout-root) [aria-label*="MTBOSS Assistant Chat"],
+body:has(.panel-layout-root) div:has(> button[aria-label*="Open MTBOSS Assistant Chat"]),
+body:has(.admin-dashboard-root) a[href*="wa.me"],
+body:has(.admin-dashboard-root) a[href*="whatsapp"],
+body:has(.admin-dashboard-root) a[title*="WhatsApp"],
+body:has(.admin-dashboard-root) a[href^="tel:"],
+body:has(.admin-dashboard-root) a[aria-label*="Call MTBOSS"],
+body:has(.admin-dashboard-root) [aria-label*="MTBOSS Assistant Chat"],
+body:has(.admin-dashboard-root) div:has(> button[aria-label*="Open MTBOSS Assistant Chat"]),
+.panel-layout-root a[href*="wa.me"],
+.panel-layout-root a[href^="tel:"],
+.admin-dashboard-root a[href*="wa.me"],
+.admin-dashboard-root a[href^="tel:"] {
+  display: none !important;
+}
+

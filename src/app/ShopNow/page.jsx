@@ -109,6 +109,7 @@ export default function ShopPage() {
   const [storeContent, setStoreContent] = useState(defaultShopStorefront);
   const [cart, setCart] = useState([]);
   const [coupons, setCoupons] = useState([]);
+  const [promotions, setPromotions] = useState([]);
   const [manualCoupon, setManualCoupon] = useState(null);
   const [shippingQuote, setShippingQuote] = useState(null);
   const [shippingQuoteError, setShippingQuoteError] = useState('');
@@ -144,6 +145,29 @@ export default function ShopPage() {
         if (data?.success) setCoupons(data.data || []);
       })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const loadPromos = () => {
+      fetch('/api/shop-promotions?t=' + Date.now())
+        .then(parseJsonResponse)
+        .then((data) => {
+          if (data?.success) setPromotions(data.data || []);
+        })
+        .catch(() => {});
+    };
+    loadPromos();
+    const handleStorage = (e) => {
+      if (e.key === 'MTBOSS-promotions-updated') loadPromos();
+    };
+    window.addEventListener('promotionsUpdated', loadPromos);
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('focus', loadPromos);
+    return () => {
+      window.removeEventListener('promotionsUpdated', loadPromos);
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', loadPromos);
+    };
   }, []);
 
   useEffect(() => {
@@ -206,7 +230,7 @@ export default function ShopPage() {
     loadProducts();
 
     const refreshVisibleShop = () => {
-      if (document.visibilityState === "visible") loadProducts();
+      if (document.visibilityState === "visible") loadProducts(true);
     };
     const refreshFromProductChange = (event) => {
       if (event.type !== "storage" || event.key === "MTBOSS-shop-products-updated") loadProducts(true);
@@ -1000,7 +1024,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => { const pId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id); router.push('/ShopNow/' + pId + '/checkout?from=shop'); }} onCheckout={() => router.push('/ShopNow/checkout?mode=cart&from=shop')} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => { const pId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id); router.push('/ShopNow/' + pId + '/checkout?from=shop'); }} onCheckout={() => router.push('/ShopNow/checkout?mode=cart&from=shop')} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} promotions={promotions} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>

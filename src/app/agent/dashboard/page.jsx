@@ -3,6 +3,8 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PartyProjectManagement from '@/app/components/PartyProjectManagement';
+import AgentTasksView from '@/app/components/AgentTasksView';
+import AgentTeamTasksView from '@/app/components/AgentTeamTasksView';
 import PanelLayout from '@/app/components/PanelLayout';
 import {
   LayoutDashboard,
@@ -10,8 +12,10 @@ import {
   FolderKanban,
   Building2,
   CalendarDays,
+  CalendarClock,
   Clock,
   User,
+  Users,
   Plus,
   ArrowLeft,
 } from '@/app/components/ui/icons';
@@ -53,11 +57,14 @@ function AgentDashboardContent() {
   const [activityLoading, setActivityLoading] = useState(false);
   const [activityFilter, setActivityFilter] = useState('all');
   const [unreadActivityCount, setUnreadActivityCount] = useState(0);
+  const [agentTasks, setAgentTasks] = useState([]);
+  const [agentTaskStats, setAgentTaskStats] = useState({});
+  const [tasksLoading, setTasksLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectOps, setProjectOps] = useState({ payments: [], labour: [], contractors: [], materials: [], expenses: [], transport: [] });
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    return ['overview', 'leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'overview';
+    return ['overview', 'leads', 'projects', 'tasks', 'team-tasks', 'schedule', 'activity', 'profile', 'project-management'].includes(requestedTab) ? requestedTab : 'overview';
   });
   const loadedTabsRef = useRef(new Set());
   const [message, setMessage] = useState('');
@@ -102,7 +109,7 @@ function AgentDashboardContent() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (['overview', 'leads', 'projects', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
+    if (['overview', 'leads', 'projects', 'tasks', 'team-tasks', 'schedule', 'activity', 'profile', 'project-management'].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -190,12 +197,13 @@ function AgentDashboardContent() {
     setLoading(true);
     try {
       if (tab === 'overview') {
-        const [profileRes, leadsRes, schedRes, projRes, actRes] = await Promise.all([
+        const [profileRes, leadsRes, schedRes, projRes, actRes, tasksRes] = await Promise.all([
           authFetch('/api/agent/profile'),
           authFetch('/api/agent/leads'),
           authFetch('/api/agent/schedule'),
           authFetch('/api/agent/projects'),
           authFetch('/api/agent/activity'),
+          authFetch('/api/agent/tasks'),
         ]);
         if (!profileRes) return;
         const profileData = await profileRes.json();
@@ -208,11 +216,13 @@ function AgentDashboardContent() {
         if (schedRes) { const d = await schedRes.json(); if (d.success) setSchedule(d.data || []); }
         if (projRes) { const d = await projRes.json(); if (d.success) setProjects(d.data || []); }
         if (actRes) { const d = await actRes.json(); if (d.success) { setActivities(d.data || []); setUnreadActivityCount(d.unread_count || 0); } }
+        if (tasksRes) { const d = await tasksRes.json(); if (d.success) { setAgentTasks(d.data || []); setAgentTaskStats(d.stats || {}); } }
         loadedTabsRef.current.add('overview');
         loadedTabsRef.current.add('leads');
         loadedTabsRef.current.add('schedule');
         loadedTabsRef.current.add('projects');
         loadedTabsRef.current.add('activity');
+        loadedTabsRef.current.add('tasks');
         return;
       }
 
@@ -221,6 +231,7 @@ function AgentDashboardContent() {
         schedule: '/api/agent/schedule',
         activity: '/api/agent/activity',
         projects: '/api/agent/projects',
+        tasks: '/api/agent/tasks',
       }[tab];
       const [profileRes, tabRes] = await Promise.all([
         authFetch('/api/agent/profile'),
@@ -241,6 +252,10 @@ function AgentDashboardContent() {
       if (tab === 'activity' && tabData?.success) {
         setActivities(tabData.data || []);
         setUnreadActivityCount(tabData.unread_count || 0);
+      }
+      if (tab === 'tasks' && tabData?.success) {
+        setAgentTasks(tabData.data || []);
+        setAgentTaskStats(tabData.stats || {});
       }
     } finally {
       setLoading(false);
@@ -274,6 +289,38 @@ function AgentDashboardContent() {
     if (data.success) {
       setLeads(data.data || []);
       loadedTabsRef.current.add('leads');
+    }
+  }
+
+  async function loadTasks() {
+    setTasksLoading(true);
+    try {
+      const res = await authFetch('/api/agent/tasks');
+      if (!res) return;
+      const data = await res.json();
+      if (data.success) {
+        setAgentTasks(data.data || []);
+        setAgentTaskStats(data.stats || {});
+        loadedTabsRef.current.add('tasks');
+      }
+    } finally {
+      setTasksLoading(false);
+    }
+  }
+
+  async function updateAgentTaskStatus(id, status, agent_remark) {
+    const res = await authFetch('/api/agent/tasks', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status, agent_remark }),
+    });
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      setMessage(data.message || 'Task status updated.');
+      await loadTasks();
+    } else {
+      setMessage(data.error || 'Failed to update task.');
     }
   }
 
@@ -746,6 +793,10 @@ function AgentDashboardContent() {
     };
   }, [leads, schedule, projects]);
 
+  const pendingTasksCount = useMemo(() => {
+    return agentTasks.filter((t) => t.status === 'Pending' || t.status === 'In Progress' || t.status === 'Overdue').length;
+  }, [agentTasks]);
+
   const bg = dark ? 'bg-black text-white' : 'bg-zinc-50 text-zinc-950';
   const card = dark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-zinc-200';
   const muted = dark ? 'text-zinc-500' : 'text-zinc-500';
@@ -762,6 +813,21 @@ function AgentDashboardContent() {
     { key: 'overview', label: 'Overview', icon: LayoutDashboard },
     { key: 'leads', label: 'Leads', icon: ClipboardList },
     { key: 'projects', label: 'Projects', icon: FolderKanban },
+    {
+      key: 'tasks',
+      label: 'Tasks',
+      icon: CalendarClock,
+      badge: pendingTasksCount > 0 ? (pendingTasksCount > 99 ? '99+' : pendingTasksCount) : null,
+      badgeColor: 'bg-amber-500 text-white',
+    },
+    {
+      key: 'team-tasks',
+      label: 'Team Tasks',
+      icon: Users,
+      badge: 'Manager',
+      badgeColor: 'bg-sky-500 text-white',
+      hidden: !agent?.is_manager,
+    },
     {
       key: 'project-management',
       label: 'Project Management',
@@ -784,7 +850,7 @@ function AgentDashboardContent() {
       title="Agent Workspace"
       subtitle={`${agent?.name || 'Agent'} · ${agent?.city ? agent.city + ', ' : ''}${agent?.state || ''}`}
       user={agent || {}}
-      roleBadge="Agent"
+      roleBadge={agent?.is_manager ? 'Head Agent (Manager)' : 'Agent'}
       menuItems={menuItems}
       activeTab={activeTab}
       onTabChange={(tab) => {
@@ -820,7 +886,7 @@ function AgentDashboardContent() {
       {/* ── OVERVIEW TAB ── */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Total Leads</p>
@@ -830,6 +896,34 @@ function AgentDashboardContent() {
                 <ClipboardList size={22} />
               </div>
             </div>
+            <div
+              className={`border ${card} p-5 rounded-lg flex items-center justify-between cursor-pointer hover:border-[#0284c7] transition-colors`}
+              onClick={() => { setActiveTab('tasks'); router.push('/agent/dashboard?tab=tasks'); }}
+              title="Click to view assigned tasks"
+            >
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest text-amber-500`}>Assigned Tasks</p>
+                <p className="text-3xl font-black mt-1 text-amber-500">{pendingTasksCount}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                <CalendarClock size={22} />
+              </div>
+            </div>
+            {/* {agent?.is_manager && (
+              <div
+                className={`border ${card} p-5 rounded-lg flex items-center justify-between cursor-pointer hover:border-sky-500 transition-colors bg-gradient-to-tr from-sky-500/10 to-indigo-500/10 border-sky-500/30`}
+                onClick={() => { setActiveTab('team-tasks'); router.push('/agent/dashboard?tab=team-tasks'); }}
+                title="Click to manage team tasks"
+              >
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-sky-600 dark:text-sky-400">Team Tasks</p>
+                  <p className="text-sm font-black mt-1 text-zinc-900 dark:text-zinc-100">Manager Panel →</p>
+                </div>
+                <div className="w-10 h-10 rounded-lg bg-sky-500/15 text-sky-600 flex items-center justify-center">
+                  <Users size={22} />
+                </div>
+              </div>
+            )} */}
             <div className={`border ${card} p-5 rounded-lg flex items-center justify-between`}>
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest ${muted}`}>Today Follow-ups</p>
@@ -1553,6 +1647,25 @@ function AgentDashboardContent() {
           </section>
         )}
         
+        {activeTab === 'tasks' && (
+          <section className="animate-fade-in">
+            <AgentTasksView
+              tasks={agentTasks}
+              stats={agentTaskStats}
+              loading={tasksLoading}
+              onRefresh={loadTasks}
+              onUpdateStatus={updateAgentTaskStatus}
+              dark={dark}
+            />
+          </section>
+        )}
+
+        {activeTab === 'team-tasks' && agent?.is_manager && (
+          <section className="animate-fade-in">
+            <AgentTeamTasksView dark={dark} />
+          </section>
+        )}
+
         {activeTab === 'project-management' && agent?.has_project_management_access && (
           <section className="animate-fade-in">
             <PartyProjectManagement initialScreen="projects" isDarkMode={dark} isAgent={true} agent={agent} />
