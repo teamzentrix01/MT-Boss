@@ -749,3 +749,87 @@ export async function getVendorOwnCommissionSummary(vendorId) {
   };
 }
 
+/**
+ * Get a specific supplier's own commission summary and recent orders list.
+ * Scoped to orders/products associated with that supplier ID and/or linked vendor account.
+ */
+export async function getSupplierOwnCommissionSummary(supplierId, supplierEmail = '') {
+  await ensureShopVendorCommissionsSchema();
+
+  const sId = Number(supplierId);
+  if (!sId) {
+    throw new Error('Valid supplierId is required');
+  }
+
+  const cleanEmail = String(supplierEmail || '').trim().toLowerCase();
+
+  const whereConditions = [
+    `svc.product_id IN (SELECT id FROM supplier_materials WHERE supplier_id = $1)`,
+    `svc.order_id IN (SELECT id FROM material_enquiries WHERE accepted_by_supplier_id = $1)`,
+  ];
+  const params = [sId];
+
+  if (cleanEmail) {
+    params.push(cleanEmail);
+    whereConditions.push(`svc.vendor_id IN (SELECT id FROM vendors WHERE LOWER(email) = $2)`);
+  }
+
+  const filterClause = whereConditions.join(' OR ');
+
+  const [statsRes, ordersRes] = await Promise.all([
+    pool.query(`
+      SELECT
+        COALESCE(SUM(CASE WHEN svc.status = 'pending' THEN svc.commission_amount ELSE 0 END), 0)::numeric AS pending_commission,
+        COALESCE(SUM(CASE WHEN svc.status = 'paid' THEN svc.commission_amount ELSE 0 END), 0)::numeric AS paid_commission,
+        COALESCE(SUM(svc.commission_amount), 0)::numeric AS total_commission,
+        COUNT(*)::int AS total_orders_count,
+        COUNT(CASE WHEN svc.status = 'pending' THEN 1 END)::int AS pending_orders_count,
+        COUNT(CASE WHEN svc.status = 'paid' THEN 1 END)::int AS paid_orders_count
+      FROM shop_vendor_commissions svc
+      WHERE ${filterClause}
+    `, params),
+    pool.query(`
+      SELECT
+        svc.id,
+        svc.order_id,
+        svc.product_id,
+        COALESCE(NULLIF(TRIM(sm.name), ''), 'Shop Product #' || COALESCE(svc.product_id::text, svc.order_id::text)) AS product_name,
+        svc.order_amount,
+        svc.commission_percent_applied,
+        svc.commission_amount,
+        svc.status,
+        svc.created_at,
+        svc.paid_at,
+        svc.paid_note
+      FROM shop_vendor_commissions svc
+      LEFT JOIN supplier_materials sm ON sm.id = svc.product_id
+      WHERE ${filterClause}
+      ORDER BY svc.created_at DESC
+      LIMIT 50
+    `, params),
+  ]);
+
+  const row = statsRes.rows[0] || {};
+  return {
+    pending_commission: Number(row.pending_commission || 0),
+    paid_commission: Number(row.paid_commission || 0),
+    total_commission: Number(row.total_commission || 0),
+    total_orders_count: Number(row.total_orders_count || 0),
+    pending_orders_count: Number(row.pending_orders_count || 0),
+    paid_orders_count: Number(row.paid_orders_count || 0),
+    recent_orders: ordersRes.rows.map((r) => ({
+      id: r.id,
+      order_id: r.order_id,
+      product_id: r.product_id,
+      product_name: r.product_name,
+      order_amount: Number(r.order_amount || 0),
+      commission_percent_applied: Number(r.commission_percent_applied || 0),
+      commission_amount: Number(r.commission_amount || 0),
+      status: r.status,
+      created_at: r.created_at,
+      paid_at: r.paid_at,
+      paid_note: r.paid_note,
+    })),
+  };
+}
+
