@@ -52,12 +52,12 @@ export default function Footer() {
   const socialLinks = [
     {
       label: "Facebook",
-      href: "https://www.facebook.com/share/19QJ3uZKtq/",
+      href: "https://www.facebook.com/share/1ZUCWwWZZu/",
       icon: <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />,
     },
     {
       label: "Instagram",
-      href: "https://www.instagram.com/MTBOSS.in?stkn=NTQxMTczN2JrZGs4",
+      href: "https://www.instagram.com/mtboss.in_?stkn=NTQxMTczN2JrZGs4",
       icon: (
         <>
           <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7z" />
@@ -70,11 +70,6 @@ export default function Footer() {
       label: "LinkedIn",
       href: "https://in.linkedin.com/company/MTBOSS-construction-company",
       icon: <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />,
-    },
-    {
-      label: "Twitter",
-      href: "https://x.com/MTBOSS",
-      icon: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />,
     },
     {
       label: "YouTube",
@@ -108,8 +103,8 @@ export default function Footer() {
                   href={s.href}
                   aria-label={s.label}
                   className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${isDark
-                      ? "bg-zinc-900 text-zinc-400 hover:text-black hover:bg-[var(--brand-blue)]"
-                      : "bg-zinc-100 text-zinc-600 hover:text-black hover:bg-[var(--brand-blue)]"
+                    ? "bg-zinc-900 text-zinc-400 hover:text-black hover:bg-[var(--brand-blue)]"
+                    : "bg-zinc-100 text-zinc-600 hover:text-black hover:bg-[var(--brand-blue)]"
                     }`}
                 >
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -132,8 +127,8 @@ export default function Footer() {
                       type="button"
                       onClick={() => setIsReviewOpen(true)}
                       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all duration-200 border ${isDark
-                          ? "bg-amber-400/10 text-amber-300 border-amber-400/30 hover:bg-amber-400/20 hover:border-amber-400/50"
-                          : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100"
+                        ? "bg-amber-400/10 text-amber-300 border-amber-400/30 hover:bg-amber-400/20 hover:border-amber-400/50"
+                        : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100"
                         }`}
                     >
                       <span className="inline-flex items-center gap-1.5"><Star size={14} className="fill-amber-400 text-amber-400" aria-hidden="true" /> Review Us</span>
