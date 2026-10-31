@@ -14,15 +14,15 @@ You are the official Senior AI Project Advisor & Consultant for "MTBOSS Construc
 ### 🏢 COMPREHENSIVE MTBOSS KNOWLEDGE BASE (WHOLE SITE):
 
 #### 1. COMPANY & CONTACT DETAILS:
-- **Full Name**: MT-Boss Construction Private Limited (Est. 2016)
+- **Full Name**: MTBOSS Construction Private Limited (Est. 2016)
 - **Head Office**: Harthala Kanth Road Behind Kr Collection, near Domino's, Moradabad, Uttar Pradesh, India.
 - **Bareilly Regional Office**: Bareilly, UP (Exact GPS Location: 28°23'51.0"N 79°27'10.1"E).
 - **Service Zones**: Bareilly, Moradabad, Meerut, Noida, Greater Noida, Ghaziabad, Delhi NCR, Lucknow, Dehradun, Haridwar, Haldwani.
 - **Direct Phone & WhatsApp**: [+91 94584 10866](https://wa.me/919458410866)
 - **Official Email**: MTBOSS2016@gmail.com
 - **Social Media**:
-  * Instagram: [Instagram @MTBOSS.in](https://www.instagram.com/MTBOSS.in?stkn=NTQxMTczN2JrZGs4)
-  * Facebook: [Facebook MT-Boss](https://www.facebook.com/share/19QJ3uZKtq/)
+  * Instagram: [Instagram @MTBOSS.in](https://www.instagram.com/mtboss.in_?stkn=NTQxMTczN2JrZGs4)
+  * Facebook: [Facebook MTBOSS](https://www.facebook.com/share/1ZUCWwWZZu/)
   * YouTube: [YouTube Channel](https://youtube.com/@MTBOSSconstruction4906?si=slUfUlTDhtYa7Dve)
 
 #### 2. TURNKEY RESIDENTIAL & COMMERCIAL CONSTRUCTION PACKAGES ([Construction Calculator](/calculator)):
@@ -93,10 +93,10 @@ You are the official Senior AI Project Advisor & Consultant for "MTBOSS Construc
 
 function detectLanguage(text) {
   const hindiKeywords = [
-    'kya', 'hai', 'kaise', 'kitna', 'kitne', 'kharcha', 'makan', 'makaan', 'ghar', 'chahiye', 
-    'batao', 'bataiye', 'hoga', 'hogi', 'rate', 'karo', 'kare', 'namaste', 'shukriya', 'kahan', 
-    'banao', 'banana', 'sasta', 'achha', 'acha', 'krna', 'karna', 'h', 'me', 'mai', 'mein', 
-    'bhai', 'ji', 'kripya', 'dena', 'milega', 'milenge', 'lagao', 'lagega', 'bhi', 'mera', 
+    'kya', 'hai', 'kaise', 'kitna', 'kitne', 'kharcha', 'makan', 'makaan', 'ghar', 'chahiye',
+    'batao', 'bataiye', 'hoga', 'hogi', 'rate', 'karo', 'kare', 'namaste', 'shukriya', 'kahan',
+    'banao', 'banana', 'sasta', 'achha', 'acha', 'krna', 'karna', 'h', 'me', 'mai', 'mein',
+    'bhai', 'ji', 'kripya', 'dena', 'milega', 'milenge', 'lagao', 'lagega', 'bhi', 'mera',
     'meri', 'mere', 'aap', 'tum', 'kaun', 'kab', 'kyu', 'kyun', 'kese', 'dekho', 'dekhna',
     'plot', 'jameen', 'zameen', 'thekedar', 'mistri', 'majdoor', 'dokan', 'dukaan'
   ];
@@ -477,7 +477,7 @@ export async function POST(req) {
               Service: parsed.service || 'General Construction',
               Query: lastUserMessage.slice(0, 300),
             },
-          }).catch(() => {});
+          }).catch(() => { });
         }
       } catch (err) {
         // ignore parse error

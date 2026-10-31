@@ -538,7 +538,7 @@ export default function ShopCouponsManager() {
                 <div className="shop-promo-info-text">
                   <strong>⚡ How Automatic Promotions Work:</strong>
                   <p>
-                    Unlike coupons, promotions do not require entering a code. When a customer adds items totaling ₹50,000+ (or your configured spend threshold), MT-Boss automatically applies the 5% extra discount or makes shipping charges ₹0!
+                    Unlike coupons, promotions do not require entering a code. When a customer adds items totaling ₹50,000+ (or your configured spend threshold), MTBOSS automatically applies the 5% extra discount or makes shipping charges ₹0!
                   </p>
                 </div>
               </div>

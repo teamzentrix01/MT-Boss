@@ -1954,7 +1954,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                     <div>
                       <div style={{ fontSize: '1rem', fontWeight: 700 }}>Direct Platform Operations</div>
                       <div style={{ fontSize: '0.85rem', color: textMuted, marginTop: '4px' }}>
-                        Fulfilled via MT-Boss central logistics
+                        Fulfilled via MTBOSS central logistics
                       </div>
                     </div>
                   )}
@@ -2095,7 +2095,7 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                           <strong style={{ textTransform: 'capitalize' }}>{ev.title || ev.status}:</strong>{' '}
                           <span>{ev.note || 'Status updated'}</span>{' '}
                           <span style={{ color: textMuted, fontSize: '0.72rem' }}>
-                            ({ev.actor_role} - {ev.actor_name || 'MT-Boss'})
+                            ({ev.actor_role} - {ev.actor_name || 'MTBOSS'})
                           </span>
                         </div>
                       </div>

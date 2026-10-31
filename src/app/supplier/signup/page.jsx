@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCities } from '@/hooks/useCities';
 import { redirectToPayU } from '@/lib/payu-client';
 
 export default function SupplierSignupPage() {
+  const router = useRouter();
   const { cities, loading: citiesLoading, error: citiesError } = useCities();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -26,9 +28,9 @@ export default function SupplierSignupPage() {
   }, []);
 
   const [plans, setPlans] = useState([
-    { id: 'pkg_6m', name: '6 Months Plan', price: '₹100', desc: 'Perfect for getting started. Complete material enquiries access.' },
-    { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', desc: 'Most popular. Great value with a full year of enquiries.' },
-    { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
+    { id: 'pkg_6m', name: '6 Months Plan', price: '₹100', rawPrice: 100, desc: 'Perfect for getting started. Complete material enquiries access.' },
+    { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', rawPrice: 4999, desc: 'Most popular. Great value with a full year of enquiries.' },
+    { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', rawPrice: 7999, desc: 'Best deal. Long-term peace of mind and maximum savings.' },
   ]);
 
   useEffect(() => {
@@ -36,12 +38,15 @@ export default function SupplierSignupPage() {
       .then(r => r.json())
       .then(d => {
         if (Array.isArray(d?.packages) && d.packages.length > 0) {
-          setPlans(d.packages.map(pkg => ({
+          const mapped = d.packages.map(pkg => ({
             id: pkg.id,
             name: pkg.name,
             price: Number(pkg.price) === 0 ? 'Free' : `₹${Number(pkg.price).toLocaleString('en-IN')}`,
+            rawPrice: Number(pkg.price || 0),
             desc: pkg.description || `${pkg.name} subscription plan.`,
-          })));
+          }));
+          setPlans(mapped);
+          setFormData(prev => ({ ...prev, package_id: prev.package_id || mapped[0]?.id }));
         }
       })
       .catch(() => {});
@@ -53,6 +58,11 @@ export default function SupplierSignupPage() {
     city: '', state: '', country: 'India', postal_code: '',
     aadhaar_number: '', package_id: 'pkg_6m',
   });
+
+  const selectedPlan = plans.find(p => p.id === formData.package_id);
+  const isFreePlan = selectedPlan
+    ? (selectedPlan.rawPrice === 0 || selectedPlan.price === 'Free')
+    : false;
 
   useEffect(() => {
     const html = document.documentElement;
@@ -129,10 +139,20 @@ export default function SupplierSignupPage() {
         }),
       });
       const data = await res.json();
-      if (res.ok && data.success) redirectToPayU(data.payment);
-      else setError(data.error || 'Registration failed. Please try again.');
-    } catch { setError('An error occurred. Please try again.'); }
-    finally { setLoading(false); }
+      if (res.ok && data.success) {
+        if (data.payment) {
+          redirectToPayU(data.payment);
+        } else {
+          router.push(data.redirectTo || '/supplier/pending-approval');
+        }
+      } else {
+        setError(data.error || 'Registration failed. Please try again.');
+      }
+    } catch {
+      setError('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const TOTAL_STEPS = 6;
@@ -416,7 +436,11 @@ export default function SupplierSignupPage() {
                 <button type="button" onClick={() => { setError(''); setStep(step - 1); }} className="ss-btn">← Back</button>
               )}
               <button type="submit" className="ss-btn ss-btn-primary" disabled={loading}>
-                {step === TOTAL_STEPS ? (loading ? 'Opening PayU…' : 'Pay & Submit →') : 'Continue →'}
+                {step === TOTAL_STEPS
+                  ? (loading
+                      ? (isFreePlan ? 'Registering…' : 'Opening PayU…')
+                      : (isFreePlan ? 'Complete Registration →' : 'Pay & Submit →'))
+                  : 'Continue →'}
               </button>
             </div>
           </form>
