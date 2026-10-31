@@ -30,9 +30,9 @@ const UNIFIED_USERS_CTE = `
       u.blocked_at,
       CASE
         WHEN a.id IS NOT NULL THEN 'Agent'
-        WHEN v.id IS NOT NULL THEN (CASE WHEN LOWER(COALESCE(v.business_type, '')) LIKE '%contractor%' THEN 'Contractor' ELSE 'Vendor' END)
+        WHEN v.id IS NOT NULL THEN (CASE WHEN LOWER(COALESCE(v.business_type, '')) LIKE '%contractor%' THEN 'Contractor' ELSE 'Service Provider' END)
         WHEN s.id IS NOT NULL THEN 'Supplier'
-        WHEN NULLIF(u.role, '') IS NOT NULL AND LOWER(u.role) NOT IN ('customer', 'user') THEN u.role
+        WHEN NULLIF(u.role, '') IS NOT NULL AND LOWER(u.role) NOT IN ('customer', 'user') THEN (CASE WHEN LOWER(u.role) IN ('vendor', 'service provider') THEN 'Service Provider' ELSE u.role END)
         ELSE 'Customer'
       END AS role,
       'users' AS source_table
@@ -46,7 +46,7 @@ const UNIFIED_USERS_CTE = `
     SELECT
       1000000 + v.id AS id,
       NULL::int AS user_id,
-      COALESCE(v.vendor_name, v.business_name, v.shop_name, 'Vendor') AS name,
+      COALESCE(v.vendor_name, v.business_name, v.shop_name, 'Service Provider') AS name,
       v.email,
       v.phone,
       v.city AS delivery_city,
@@ -57,7 +57,7 @@ const UNIFIED_USERS_CTE = `
       NULL::timestamptz AS blocked_at,
       CASE
         WHEN LOWER(COALESCE(v.business_type, '')) LIKE '%contractor%' THEN 'Contractor'
-        ELSE 'Vendor'
+        ELSE 'Service Provider'
       END AS role,
       'vendors' AS source_table
     FROM vendors v
@@ -133,7 +133,7 @@ export async function GET(req) {
         AND ($3 = '' OR LOWER(COALESCE(u.delivery_city, '')) = LOWER($3))
         AND ($4::date IS NULL OR u.created_at::date >= $4::date)
         AND ($5::date IS NULL OR u.created_at::date <= $5::date)
-        AND ($6 = 'all' OR LOWER(u.role) = LOWER($6))
+        AND ($6 = 'all' OR (LOWER($6) IN ('service provider', 'vendor', 'service_provider') AND LOWER(u.role) IN ('service provider', 'vendor')) OR (LOWER($6) NOT IN ('service provider', 'vendor', 'service_provider') AND LOWER(u.role) = LOWER($6)))
     `;
     const baseParams = [search, status, city, from, to, role];
 
@@ -156,7 +156,7 @@ export async function GET(req) {
             SELECT
               COUNT(*)::int AS count_all,
               COUNT(*) FILTER (WHERE LOWER(role) = 'customer')::int AS count_customer,
-              COUNT(*) FILTER (WHERE LOWER(role) = 'vendor')::int AS count_vendor,
+              COUNT(*) FILTER (WHERE LOWER(role) IN ('service provider', 'vendor'))::int AS count_vendor,
               COUNT(*) FILTER (WHERE LOWER(role) = 'contractor')::int AS count_contractor,
               COUNT(*) FILTER (WHERE LOWER(role) = 'agent')::int AS count_agent,
               COUNT(*) FILTER (WHERE LOWER(role) = 'supplier')::int AS count_supplier
@@ -192,7 +192,7 @@ export async function GET(req) {
               WHERE user_id IS NOT NULL
               GROUP BY user_id
             ) m ON m.uid = u.user_id
-            WHERE ($1 = 'all' OR LOWER(u.role) = LOWER($1))
+            WHERE ($1 = 'all' OR (LOWER($1) IN ('service provider', 'vendor', 'service_provider') AND LOWER(u.role) IN ('service provider', 'vendor')) OR (LOWER($1) NOT IN ('service provider', 'vendor', 'service_provider') AND LOWER(u.role) = LOWER($1)))
           `, [role]),
         ]);
 
@@ -216,6 +216,7 @@ export async function GET(req) {
             all: Number(countsRow.count_all || 0),
             customer: Number(countsRow.count_customer || 0),
             vendor: Number(countsRow.count_vendor || 0),
+            service_provider: Number(countsRow.count_vendor || 0),
             contractor: Number(countsRow.count_contractor || 0),
             agent: Number(countsRow.count_agent || 0),
             supplier: Number(countsRow.count_supplier || 0),
@@ -385,7 +386,7 @@ export async function POST(req) {
       network,
       specializations = [],
       has_project_management_access = false,
-      // Vendor specific
+      // service provider specific
       shop_name,
       business_name,
       business_type,
@@ -468,17 +469,17 @@ export async function POST(req) {
         );
       }
 
-    } else if (normRole === 'vendor' || normRole === 'contractor') {
+    } else if (normRole === 'service provider' || normRole === 'contractor') {
       const vShop = shop_name || cleanName;
       const vBiz = business_name || vShop;
-      const vType = business_type || (normRole === 'contractor' ? 'contractor' : 'vendor');
+      const vType = business_type || (normRole === 'contractor' ? 'contractor' : 'service provider');
 
       const existingVendor = await queryWithConnectionRetry(
         'SELECT id FROM vendors WHERE LOWER(email) = $1 LIMIT 1',
         [cleanEmail]
       );
       if (existingVendor.rows.length > 0) {
-        return NextResponse.json({ success: false, error: 'A vendor with this email already exists' }, { status: 409 });
+        return NextResponse.json({ success: false, error: 'A service provider with this email already exists' }, { status: 409 });
       }
 
       const vendorRes = await queryWithConnectionRetry(
@@ -523,12 +524,12 @@ export async function POST(req) {
       if (existingUser.rows.length === 0) {
         await queryWithConnectionRetry(
           `INSERT INTO users (name, email, phone, delivery_city, password, role, is_blocked, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, 'Vendor', false, NOW(), NOW())`,
+           VALUES ($1, $2, $3, $4, $5, 'Service Provider', false, NOW(), NOW())`,
           [cleanName, cleanEmail, cleanPhone, cleanCity, passwordHash]
         );
       } else {
         await queryWithConnectionRetry(
-          `UPDATE users SET role = 'Vendor', phone = COALESCE(phone, $2), delivery_city = COALESCE(delivery_city, $3) WHERE id = $1`,
+          `UPDATE users SET role = 'Service Provider', phone = COALESCE(phone, $2), delivery_city = COALESCE(delivery_city, $3) WHERE id = $1`,
           [existingUser.rows[0].id, cleanPhone, cleanCity]
         );
       }

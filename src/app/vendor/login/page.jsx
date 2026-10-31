@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function VendorLoginPage() {
+export default function ServiceProviderLoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +44,11 @@ export default function VendorLoginPage() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('vendor-token', data.token);
-        localStorage.setItem('vendor', JSON.stringify(data.vendor));
+        localStorage.setItem('service provider-token', data.token);
+        localStorage.setItem('service-provider-token', data.token);
+        localStorage.setItem('vendor', JSON.stringify(data.vendor || data.user || data));
+        localStorage.setItem('service provider', JSON.stringify(data.vendor || data.user || data));
+        localStorage.setItem('service-provider', JSON.stringify(data.vendor || data.user || data));
         window.dispatchEvent(new Event('userLoggedIn'));
         router.push('/vendor/dashboard');
       } else {
@@ -65,24 +69,24 @@ export default function VendorLoginPage() {
   const inputBg = dark ? '#111' : '#f9f9fb';
 
   return (
-    <div className="vendor-login-page" style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
-      <style>{`
-        .vendor-login-page { width: 100%; box-sizing: border-box; }
-        .vendor-login-card, .vendor-login-form { min-width: 0; }
+    <div className="sp-login-page" suppressHydrationWarning style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
+      <style suppressHydrationWarning>{`
+        .sp-login-page { width: 100%; box-sizing: border-box; }
+        .sp-login-card, .sp-login-form { min-width: 0; }
 
         @media (max-width: 639px) {
-          .vendor-login-page {
+          .sp-login-page {
             min-height: calc(100svh - 64px) !important;
             padding: 1rem !important;
             align-items: flex-start !important;
           }
-          .vendor-login-card {
+          .sp-login-card {
             width: 100% !important;
             max-width: 420px !important;
             margin: auto;
           }
-          .vendor-login-brand { display: none !important; }
-          .vendor-login-form {
+          .sp-login-brand { display: none !important; }
+          .sp-login-form {
             width: 100% !important;
             padding: 1.75rem 1.25rem !important;
             box-sizing: border-box;
@@ -90,31 +94,31 @@ export default function VendorLoginPage() {
         }
 
         @media (max-width: 359px) {
-          .vendor-login-page { padding: 0.75rem !important; }
-          .vendor-login-form { padding: 1.5rem 1rem !important; }
+          .sp-login-page { padding: 0.75rem !important; }
+          .sp-login-form { padding: 1.5rem 1rem !important; }
         }
       `}</style>
-      <div className="vendor-login-card" style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
+      <div className="sp-login-card" style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
 
         {/* Brand Panel */}
-        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="vendor-login-brand">
+        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="sp-login-brand">
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
               MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
-              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: 'var(--brand-blue)', background: 'color-mix(in srgb, var(--brand-blue) 15%, transparent)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>VENDOR</span>
+              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: 'var(--brand-blue)', background: 'color-mix(in srgb, var(--brand-blue) 15%, transparent)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>SERVICE PROVIDER</span>
             </div>
             <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
               Grow your business with us.
             </div>
             <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7 }}>
-              Manage bookings, track earnings, and serve customers — all from your vendor dashboard.
+              Manage bookings, track earnings, and serve customers — all from your service provider dashboard.
             </p>
           </div>
           <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MTBOSS. All rights reserved.</div>
         </div>
 
         {/* Form Panel */}
-        <div className="vendor-login-form" style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
+        <div className="sp-login-form" style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
 
           {/* Back to user login */}
           <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', fontWeight: 600, color: muted, textDecoration: 'none', marginBottom: '1.5rem', transition: 'color 0.2s' }}
@@ -126,8 +130,8 @@ export default function VendorLoginPage() {
             Back to User Login
           </Link>
 
-          <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Vendor Sign In</div>
-          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.5rem' }}>Access your vendor dashboard</div>
+          <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Service Provider Sign In</div>
+          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.5rem' }}>Access your service provider dashboard</div>
 
           {error && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '1rem' }}>
@@ -144,7 +148,7 @@ export default function VendorLoginPage() {
                 <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="vendor@example.com" required
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="serviceprovider@example.com" required
                   style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
                   onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'}
                   onBlur={e => e.target.style.borderColor = border}
@@ -176,7 +180,7 @@ export default function VendorLoginPage() {
 
             {/* Forgot password */}
             <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.25rem' }}>
-              <Link href="/vendor/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--brand-blue)', textDecoration: 'none' }}>
+              <Link href="/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--brand-blue)', textDecoration: 'none' }}>
                 Forgot password?
               </Link>
             </div>
@@ -188,7 +192,7 @@ export default function VendorLoginPage() {
           </form>
 
           <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
-            No vendor account? <Link href="/vendor/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
+            No service provider account? <Link href="/vendor/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
           </div>
         </div>
       </div>

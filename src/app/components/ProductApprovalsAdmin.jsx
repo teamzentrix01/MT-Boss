@@ -68,7 +68,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           setStats(data.stats);
         }
       } else {
-        setError(data.error || 'Failed to load vendor products');
+        setError(data.error || 'Failed to load products');
       }
     } catch (err) {
       setError(err.message || 'Network error loading products');
@@ -126,7 +126,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
     if (!product) return;
     const trimmed = rejectionReason.trim();
     if (!trimmed || trimmed.length < 3) {
-      setError('Please provide a specific rejection reason (at least 3 characters) so the vendor can fix it.');
+      setError('Please provide a specific rejection reason (at least 3 characters) so the supplier can fix it.');
       return;
     }
 
@@ -167,7 +167,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
     { label: 'Pending Approvals', value: stats.pending, color: 'pending', filterKey: 'pending' },
     { label: 'Approved Products', value: stats.approved, color: 'verified', filterKey: 'approved' },
     { label: 'Rejected Products', value: stats.rejected, color: 'inactive', filterKey: 'rejected' },
-    { label: 'Total Vendor Products', value: stats.total, color: 'active', filterKey: 'all' },
+    { label: 'Total Products', value: stats.total, color: 'active', filterKey: 'all' },
   ];
 
   return (
@@ -433,13 +433,13 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           color: ${isDarkMode ? '#94a3b8' : '#64748b'};
         }
 
-        .vendor-cell strong {
+        .partner-cell strong {
           display: block;
           font-weight: 600;
           color: ${isDarkMode ? '#f8fafc' : '#0f172a'};
         }
 
-        .vendor-cell small {
+        .partner-cell small {
           display: block;
           font-size: 0.75rem;
           color: ${isDarkMode ? '#94a3b8' : '#64748b'};
@@ -644,7 +644,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           font-weight: 600;
         }
 
-        .vendor-box {
+        .partner-box {
           background: ${isDarkMode ? '#202024' : '#f8fafc'};
           border: 1px solid ${isDarkMode ? '#27272a' : '#e2e8f0'};
           border-radius: 8px;
@@ -652,14 +652,14 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           margin-bottom: 1.25rem;
         }
 
-        .vendor-box-head {
+        .partner-box-head {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 0.5rem;
         }
 
-        .vendor-box-head strong {
+        .partner-box-head strong {
           font-size: 0.875rem;
           color: ${isDarkMode ? '#f8fafc' : '#0f172a'};
         }
@@ -827,10 +827,10 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
         <div>
           <h1>
             <PackageCheck size={28} color="#0284c7" strokeWidth={2} />
-            Vendor Product Approvals
+            Product Approvals
           </h1>
           <p className="header-subtitle">
-            Review, approve or reject products submitted by registered vendors before they go live on Shop Now.
+            Review, approve or reject products submitted by registered suppliers before they go live on Shop Now.
           </p>
         </div>
       </div>
@@ -864,7 +864,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
                 setRejectionReason('');
               }}
             >
-              <ArrowLeft size={18} /> Back to Vendor Product Approvals
+              <ArrowLeft size={18} /> Back to service provider Product Approvals
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -879,13 +879,13 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
 
           {/* Detail Card Container */}
           <div className="detail-page-container">
-            {/* Vendor Unverified Warning */}
+            {/* service provider Unverified Warning */}
             {!(selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified') && (
               <div className="warning-box">
                 <AlertCircle size={22} style={{ flexShrink: 0, marginTop: 1 }} />
                 <div>
-                  <strong>Caution: Unverified Vendor</strong>
-                  This product is submitted by <strong>{selectedProduct.shop_name || selectedProduct.vendor_name || 'an unverified vendor'}</strong> who has not yet completed admin verification. Proceed with caution.
+                  <strong>Caution: Unverified Partner</strong>
+                  This product is submitted by <strong>{selectedProduct.shop_name || selectedProduct.vendor_name || 'an unverified partner'}</strong> who has not yet completed admin verification. Proceed with caution.
                 </div>
               </div>
             )}
@@ -1018,10 +1018,10 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
               );
             })()}
 
-            {/* Vendor Information Box */}
-            <div className="vendor-box">
-              <div className="vendor-box-head">
-                <strong>Vendor Information</strong>
+            {/* Service Provider Information Box */}
+            <div className="partner-box">
+              <div className="partner-box-head">
+                <strong>{selectedProduct.supplier_id ? 'Supplier Information' : 'Service Provider Information'}</strong>
                 <span className={`badge ${selectedProduct.vendor_is_approved === true || selectedProduct.vendor_verification_status === 'verified' ? 'badge-verified' : 'badge-unverified'}`}>
                   {selectedProduct.vendor_is_approved === true ? 'Verified' : 'Unverified'}
                 </span>
@@ -1032,7 +1032,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
                   <div className="detail-val">{selectedProduct.shop_name || 'Not provided'}</div>
                 </div>
                 <div className="detail-item">
-                  <div className="detail-label">Vendor Name</div>
+                  <div className="detail-label">{selectedProduct.supplier_id ? 'Supplier / Store' : 'Service Provider Name'}</div>
                   <div className="detail-val">{selectedProduct.vendor_name || 'Not provided'}</div>
                 </div>
                 <div className="detail-item">
@@ -1055,7 +1055,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
                   Specify Rejection Reason (Required)
                 </div>
                 <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: isDarkMode ? '#94a3b8' : '#64748b' }}>
-                  This reason will be visible to the vendor so they understand what corrections are needed before resubmitting.
+                  This reason will be visible to the supplier so they understand what corrections are needed before resubmitting.
                 </p>
                 <textarea
                   rows={3}
@@ -1151,7 +1151,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
 
             <input
               type="text"
-              placeholder="Search by product, category, vendor..."
+              placeholder="Search by product, category, supplier, store..."
               className="search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -1161,7 +1161,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
           {/* Table */}
           <div className="table-wrap">
             {loading ? (
-              <div className="loading-state">Loading vendor products...</div>
+              <div className="loading-state">Loading products...</div>
             ) : products.length === 0 ? (
               <div className="empty-state">
                 No products found matching filter &quot;{filter}&quot;{searchTerm ? ` and search "${searchTerm}"` : ''}.
@@ -1173,7 +1173,7 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
                     <th>Product</th>
                     <th>Category</th>
                     <th>Price / Quote</th>
-                    <th>Vendor</th>
+                    <th>Supplier / Store</th>
                     <th>Status</th>
                     <th>Submitted</th>
                     <th>Action</th>
@@ -1228,8 +1228,8 @@ export default function ProductApprovalsAdmin({ isDarkMode }) {
                           )}
                         </td>
                         <td>
-                          <div className="vendor-cell">
-                            <strong>{p.shop_name || p.vendor_name || `Vendor #${p.vendor_id}`}</strong>
+                          <div className="partner-cell">
+                            <strong>{p.shop_name || p.vendor_name || p.supplier_id ? `Supplier #${p.supplier_id}` : `Service Provider #${p.vendor_id}`}</strong>
                             <small>{p.vendor_city || 'City not specified'}</small>
                             <span className={`badge ${isVerified ? 'badge-verified' : 'badge-unverified'}`} style={{ marginTop: 3 }}>
                               {isVerified ? '✓ Verified' : '⚠️ Unverified'}

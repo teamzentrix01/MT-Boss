@@ -18,7 +18,7 @@ export async function GET(req) {
       const pendingCountRes = await pool.query(`
         SELECT COUNT(*)::int AS count
         FROM supplier_materials m
-        WHERE m.vendor_id IS NOT NULL
+        WHERE (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))
           AND COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'pending'
       `);
       return NextResponse.json({
@@ -33,8 +33,8 @@ export async function GET(req) {
     const limit = Math.max(1, Math.min(100, Number(searchParams.get('limit')) || 20));
     const offset = (page - 1) * limit;
 
-    // Base query conditions for vendor-sourced products
-    let whereClauses = ['m.vendor_id IS NOT NULL'];
+    // Base query conditions for supplier or vendor / service provider sourced products
+    let whereClauses = ['(m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))'];
     let queryParams = [];
 
     // Filter by approval status
@@ -46,7 +46,7 @@ export async function GET(req) {
       whereClauses.push("COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'rejected'");
     }
 
-    // Search by product name, category, or vendor details
+    // Search by product name, category, or vendor/supplier details
     if (search) {
       queryParams.push(`%${search}%`);
       const paramIdx = queryParams.length;
@@ -55,7 +55,10 @@ export async function GET(req) {
         LOWER(COALESCE(m.category, '')) LIKE $${paramIdx} OR
         LOWER(COALESCE(v.vendor_name, '')) LIKE $${paramIdx} OR
         LOWER(COALESCE(v.shop_name, '')) LIKE $${paramIdx} OR
-        LOWER(COALESCE(v.email, '')) LIKE $${paramIdx}
+        LOWER(COALESCE(v.email, '')) LIKE $${paramIdx} OR
+        LOWER(COALESCE(s.shop_name, '')) LIKE $${paramIdx} OR
+        LOWER(COALESCE(s.business_name, '')) LIKE $${paramIdx} OR
+        LOWER(COALESCE(s.email, '')) LIKE $${paramIdx}
       )`);
     }
 
@@ -69,7 +72,7 @@ export async function GET(req) {
         COUNT(*) FILTER (WHERE COALESCE(m.specifications->'__approval__'->>'status', 'rejected') = 'rejected')::int AS rejected,
         COUNT(*)::int AS total
       FROM supplier_materials m
-      WHERE m.vendor_id IS NOT NULL
+      WHERE (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))
     `);
     const stats = statsRes.rows[0] || { pending: 0, approved: 0, rejected: 0, total: 0 };
 
@@ -78,6 +81,7 @@ export async function GET(req) {
       `SELECT COUNT(*)::int AS total
        FROM supplier_materials m
        LEFT JOIN vendors v ON v.id = m.vendor_id
+       LEFT JOIN suppliers s ON s.id = m.supplier_id
        ${whereSql}`,
       queryParams
     );
@@ -92,6 +96,7 @@ export async function GET(req) {
       `SELECT
          m.id,
          m.vendor_id,
+         m.supplier_id,
          m.name,
          m.description,
          m.category,
@@ -117,17 +122,18 @@ export async function GET(req) {
          m.specifications->'__approval__'->>'approved_at' AS approved_at,
          m.specifications->'__approval__'->>'rejected_by' AS rejected_by,
          m.specifications->'__approval__'->>'rejected_at' AS rejected_at,
-         v.vendor_name,
-         v.shop_name,
-         v.email AS vendor_email,
-         v.phone AS vendor_phone,
-         v.city AS vendor_city,
-         v.state AS vendor_state,
-         v.is_approved AS vendor_is_approved,
-         v.verification_status AS vendor_verification_status,
-         v.status AS vendor_status
+         CASE WHEN m.supplier_id > 0 THEN COALESCE(s.shop_name, s.business_name, 'Supplier') ELSE v.vendor_name END AS vendor_name,
+         CASE WHEN m.supplier_id > 0 THEN COALESCE(s.shop_name, s.business_name, 'Supplier') ELSE v.shop_name END AS shop_name,
+         CASE WHEN m.supplier_id > 0 THEN s.email ELSE v.email END AS vendor_email,
+         CASE WHEN m.supplier_id > 0 THEN s.phone ELSE v.phone END AS vendor_phone,
+         CASE WHEN m.supplier_id > 0 THEN s.city ELSE v.city END AS vendor_city,
+         CASE WHEN m.supplier_id > 0 THEN s.state ELSE v.state END AS vendor_state,
+         CASE WHEN m.supplier_id > 0 THEN (s.status = 'approved' AND s.is_active = TRUE) ELSE COALESCE(v.is_approved, false) END AS vendor_is_approved,
+         CASE WHEN m.supplier_id > 0 THEN s.status ELSE v.verification_status END AS vendor_verification_status,
+         CASE WHEN m.supplier_id > 0 THEN s.status ELSE v.status END AS vendor_status
        FROM supplier_materials m
        LEFT JOIN vendors v ON v.id = m.vendor_id
+       LEFT JOIN suppliers s ON s.id = m.supplier_id
        ${whereSql}
        ORDER BY
          CASE WHEN COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'pending' THEN 0 ELSE 1 END ASC,
@@ -172,19 +178,21 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Action must be approve or reject' }, { status: 400 });
     }
 
-    // Verify product exists and is vendor-sourced
+    // Verify product exists and is supplier or vendor sourced
     const existing = await pool.query(
-      `SELECT m.id, m.name, m.vendor_id, m.specifications, m.is_available,
-              v.vendor_name, v.email AS vendor_email
+      `SELECT m.id, m.name, m.vendor_id, m.supplier_id, m.specifications, m.is_available,
+              CASE WHEN m.supplier_id > 0 THEN COALESCE(s.shop_name, s.business_name, 'Supplier') ELSE v.vendor_name END AS partner_name,
+              CASE WHEN m.supplier_id > 0 THEN s.email ELSE v.email END AS partner_email
        FROM supplier_materials m
        LEFT JOIN vendors v ON v.id = m.vendor_id
-       WHERE m.id = $1 AND m.vendor_id IS NOT NULL`,
+       LEFT JOIN suppliers s ON s.id = m.supplier_id
+       WHERE m.id = $1 AND (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))`,
       [id]
     );
 
     if (!existing.rows.length) {
       return NextResponse.json(
-        { success: false, error: 'Vendor product not found or not sourced from a vendor' },
+        { success: false, error: 'Product not found or not submitted for approval' },
         { status: 404 }
       );
     }
@@ -210,12 +218,12 @@ export async function POST(req) {
                TRUE
              ),
              updated_at = NOW()
-         WHERE id = $2 AND vendor_id IS NOT NULL
+         WHERE id = $2 AND (vendor_id IS NOT NULL OR (supplier_id IS NOT NULL AND supplier_id > 0))
          RETURNING id, name, is_available, specifications`,
         [JSON.stringify(approvalMetadata), id]
       );
 
-      // Audit log note: No dedicated shop products audit log exists in schema, so skipping as per spec.
+      if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
 
       return NextResponse.json({
         success: true,
@@ -249,12 +257,12 @@ export async function POST(req) {
                TRUE
              ),
              updated_at = NOW()
-         WHERE id = $2 AND vendor_id IS NOT NULL
+         WHERE id = $2 AND (vendor_id IS NOT NULL OR (supplier_id IS NOT NULL AND supplier_id > 0))
          RETURNING id, name, is_available, specifications`,
         [JSON.stringify(rejectionMetadata), id]
       );
 
-      // Audit log note: No dedicated shop products audit log exists in schema, so skipping as per spec.
+      if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
 
       return NextResponse.json({
         success: true,

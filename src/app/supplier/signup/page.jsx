@@ -213,7 +213,7 @@ export default function SupplierSignupPage() {
 
       <div className="ss-root">
         <div className="ss-box">
-          <div className="ss-logo">SUPPLIER<span>HUB</span></div>
+          <div className="ss-logo">VENDOR<span>HUB</span></div>
           <div className="ss-title">Create Your Store</div>
           <div className="ss-sub">Join our marketplace and start serving customers</div>
 

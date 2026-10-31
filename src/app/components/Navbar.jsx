@@ -97,7 +97,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   useEffect(() => {
     const checkUser = () => {
       const token = localStorage.getItem('token');
-      const vendorToken = localStorage.getItem('vendor-token');
+      const vendorToken = localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token');
       const adminToken = localStorage.getItem('admin-token');
       const supplierToken = localStorage.getItem('supplier-token');
       const franchiseToken = localStorage.getItem('franchise-token');
@@ -121,7 +121,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
           catch (e) { console.error('Error parsing franchise data:', e); }
         }
       } else if (vendorToken) {
-        const vendorData = localStorage.getItem('vendor');
+        const vendorData = localStorage.getItem('vendor') || localStorage.getItem('service-provider');
         if (vendorData) {
           try { setUser({ ...JSON.parse(vendorData), role: 'vendor' }); }
           catch (e) { console.error('Error parsing vendor data:', e); }
@@ -196,6 +196,8 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
       'admin',
       'vendor-token',
       'vendor',
+      'service-provider-token',
+      'service-provider',
       'supplier-token',
       'supplier',
       'franchise-token',
@@ -211,7 +213,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
 
   const handleDashboard = () => {
     closeMobileMenu();
-    if (user?.role === 'vendor') router.push('/vendor/dashboard');
+    if (user?.role === 'vendor' || user?.role === 'service provider') router.push('/vendor/dashboard');
     else if (user?.role === 'admin') router.push('/dashboard');
     else if (user?.role === 'supplier') router.push('/supplier/dashboard');
     else if (user?.role === 'franchise') router.push('/franchise/dashboard');
@@ -388,7 +390,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                   }`}>
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${user.role === 'admin' ? 'bg-red-500'
-                      : user.role === 'vendor' ? 'bg-green-500'
+                      : (user.role === 'vendor' || user.role === 'service provider') ? 'bg-green-500'
                         : user.role === 'supplier' ? 'bg-sky-500'
                           : user.role === 'franchise' ? 'bg-[var(--brand-blue-deep)]'
                             : 'bg-blue-500'
@@ -401,7 +403,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
                       {user.name || user.shop_name || user.email}
                     </span>
                     <span className={`text-[10px] capitalize ${isDarkMode ? 'text-zinc-500' : 'text-gray-500'}`}>
-                      {user.role}
+                      {(user.role === 'vendor' || user.role === 'service provider') ? 'Service Provider' : user.role === 'supplier' ? 'Vendor' : user.role}
                     </span>
                   </div>
                   <button
@@ -723,7 +725,7 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
             {user ? (
               <>
                 <div className={`px-3 py-2 text-sm text-center font-semibold ${isDarkMode ? 'text-zinc-300' : 'text-gray-600'}`}>
-                  Logged in as {user.role.toUpperCase()}
+                  Logged in as {(user.role === 'vendor' || user.role === 'service provider') ? 'SERVICE PROVIDER' : user.role.toUpperCase()}
                 </div>
                 <button
                   onClick={handleDashboard}

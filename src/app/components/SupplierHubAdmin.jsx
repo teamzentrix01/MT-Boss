@@ -286,7 +286,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
       {showRejectModal && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.55)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:70, padding:'1rem' }}>
           <div style={{ background:surface, border:`1px solid ${border}`, borderRadius:12, padding:'1.75rem', width:'100%', maxWidth:460 }}>
-            <h3 style={{ margin:'0 0 0.5rem', fontSize:'1rem', fontWeight:700, color:text }}>Reject Supplier</h3>
+            <h3 style={{ margin:'0 0 0.5rem', fontSize:'1rem', fontWeight:700, color:text }}>Reject Vendor</h3>
             <p style={{ margin:'0 0 1rem', fontSize:'0.8125rem', color:muted }}>Rejecting <strong style={{ color:text }}>{rejectTarget?.shop_name}</strong>. Reason (optional):</p>
             <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} rows={3} placeholder="e.g., Incomplete info, invalid documents…"
               style={{ width:'100%', padding:'0.7rem', border:`1px solid ${border}`, borderRadius:8, background:inputBg, color:text, fontFamily:'inherit', fontSize:'0.875rem', resize:'vertical', boxSizing:'border-box' }} />
@@ -324,7 +324,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                 fontSize: '0.875rem'
               }}
             >
-              ← Back to Suppliers
+              ← Back to Vendors
             </button>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <StatusBadge s={selectedSupplier} />
@@ -602,9 +602,9 @@ export default function SupplierHubAdmin({ isDarkMode }) {
       {/* Page Header */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1.25rem', flexWrap:'wrap', gap:'0.75rem' }}>
         <div>
-          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>Supplier hub</h2>
+          <h2 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:text }}>Vendor hub</h2>
           <p style={{ margin:'0.2rem 0 0', fontSize:'0.8125rem', color:muted }}>
-            {pendingCount} pending · {activeCount} active · {suppliers.length} total suppliers · {enquiries.length} enquiries
+            {pendingCount} pending · {activeCount} active · {suppliers.length} total vendors · {enquiries.length} enquiries
           </p>
         </div>
         <button onClick={() => { fetchSuppliers(); fetchEnquiries(); }}
@@ -619,7 +619,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
         {[
           { id:'overview',   label:'Overview'   },
           { id:'enquiries',  label:'Enquiries'  },
-          { id:'suppliers',  label:'Suppliers'  },
+          { id:'suppliers',  label:'Vendors'  },
           { id:'revenue',    label:'Revenue'    },
         ].map(t => (
           <button key={t.id} style={tabBtn(t.id)} onClick={() => setTab(t.id)}>{t.label}</button>
@@ -632,19 +632,19 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           {/* Stat cards */}
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(175px,1fr))', gap:'0.875rem', marginBottom:'1.5rem' }}>
             <StatCard label="Pending Approval"  value={pendingCount}                  sub="Awaiting review"           color="#f97316" bg={isDarkMode?'#2a1a0a':'#fff7ed'} border={isDarkMode?'#a3590033':'#fdba7433'} />
-            <StatCard label="Active Suppliers"  value={activeCount}                   sub="Currently serving"         color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
-            <StatCard label="Open Enquiries"    value={commission.open}               sub="Waiting for supplier"      color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
+            <StatCard label="Active Vendors"  value={activeCount}                   sub="Currently serving"         color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
+            <StatCard label="Open Enquiries"    value={commission.open}               sub="Waiting for vendor"      color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Orders Fulfilled"  value={commission.fulfilled}          sub="Completed deliveries"      color="#3b82f6" bg={isDarkMode?'#0a1a2a':'#eff6ff'} border={isDarkMode?'#1e40af33':'#bfdbfe'} />
             <StatCard label="Today's Commission" value={fmt(commission.today)}        sub="15% of today's fulfil."   color="var(--brand-blue-dark)" bg={isDarkMode?'#1a1a0a':'var(--brand-blue-faint)'} border={isDarkMode?'#92400e33':'#fde68a'} />
             <StatCard label="Total Commission"   value={fmt(commission.total)}        sub="All-time 15% earned"      color="#16a34a" bg={isDarkMode?'#0a2a14':'#f0fdf4'} border={isDarkMode?'#16a34a33':'#bbf7d0'} />
-            <StatCard label="Supplier Payments"  value={fmt(commission.subscriptionRevenue)} sub={`${commission.paidSupplierPayments} successful online payment${commission.paidSupplierPayments === 1 ? '' : 's'}`} color="#7c3aed" bg={isDarkMode?'#1f1536':'#f5f3ff'} border={isDarkMode?'#7c3aed55':'#ddd6fe'} />
+            <StatCard label="Vendor Payments"  value={fmt(commission.subscriptionRevenue)} sub={`${commission.paidSupplierPayments} successful online payment${commission.paidSupplierPayments === 1 ? '' : 's'}`} color="#7c3aed" bg={isDarkMode?'#1f1536':'#f5f3ff'} border={isDarkMode?'#7c3aed55':'#ddd6fe'} />
           </div>
 
           {/* Pending suppliers */}
           {pendingCount > 0 && (
             <div style={{ background:surface, border:`2px solid #f9731644`, borderRadius:10, marginBottom:'1.25rem', overflow:'hidden' }}>
               <div style={{ padding:'0.875rem 1.25rem', borderBottom:`1px solid ${border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <span style={{ fontWeight:700, fontSize:'0.875rem', color:'#f97316' }}>{pendingCount} Supplier{pendingCount > 1 ? 's' : ''} Awaiting Approval</span>
+                <span style={{ fontWeight:700, fontSize:'0.875rem', color:'#f97316' }}>{pendingCount} Vendor{pendingCount > 1 ? 's' : ''} Awaiting Approval</span>
                 <button onClick={() => setTab('suppliers')} style={{ background:'#f97316', border:'none', borderRadius:6, padding:'0.35rem 0.875rem', color:'#fff', fontSize:'0.78rem', fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
                   Review Now →
                 </button>
@@ -755,7 +755,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             <div style={{ overflowX:'auto' }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                 <thead>
-                  <tr>{['#','Customer','Category','Type / Brand','Qty','Delivery Date','Address','Status','Supplier','Amount','Commission','Date',''].map(c=><th key={c} style={th}>{c}</th>)}</tr>
+                  <tr>{['#','Customer','Category','Type / Brand','Qty','Delivery Date','Address','Status','Vendor','Amount','Commission','Date',''].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                 </thead>
                 <tbody>
                   {filteredEnqs.map(e => (
@@ -827,13 +827,13 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           </div>
 
           <div style={{ background:surface, border:`1px solid ${border}`, borderRadius:10, overflow:'hidden' }}>
-            {loadingSup ? <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>Loading suppliers…</div> : filteredSups.length === 0 ? (
-              <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>No suppliers found.</div>
+            {loadingSup ? <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>Loading vendors…</div> : filteredSups.length === 0 ? (
+              <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>No vendors found.</div>
             ) : (
               <div style={{ overflowX:'auto' }}>
                 <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
-                    <tr>{['Shop Name','Products','Phone','City','Status','Orders','Revenue','Commission','Joined','Actions'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
+                    <tr>{['Shop / Vendor Name','Products','Phone','City','Status','Orders','Revenue','Commission','Joined','Actions'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                   </thead>
                   <tbody>
                     {filteredSups.map(s => (

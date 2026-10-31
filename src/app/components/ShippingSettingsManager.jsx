@@ -26,8 +26,9 @@ const headers = { 'Content-Type': 'application/json' };
 const blankCore = { city_name: '', fixed_cost: 0, is_active: true };
 const blankDistance = { from_city: '', to_city: '', distance_km: 0, is_active: true };
 
-export default function ShippingSettingsManager({ vendor = false, city = '' }) {
-  const [activeTab, setActiveTab] = useState(vendor ? 'quantity_rules' : 'city_distance');
+export default function ShippingSettingsManager({ vendor = false, supplier = false, city = '' }) {
+  const isPartner = Boolean(vendor || supplier);
+  const [activeTab, setActiveTab] = useState(isPartner ? 'quantity_rules' : 'city_distance');
   const [settings, setSettings] = useState(null);
   const [shopCategories, setShopCategories] = useState([]);
   const [notice, setNotice] = useState('');
@@ -131,7 +132,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
 
     // Core cities validation
     if (
-      settings.coreCities.some(
+      (settings.coreCities || []).some(
         (row) =>
           !String(row.city_name || '').trim() ||
           !Number.isFinite(Number(row.fixed_cost)) ||
@@ -143,7 +144,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
 
     // Distances validation
     if (
-      settings.distances.some(
+      (settings.distances || []).some(
         (row) =>
           !String(row.from_city || '').trim() ||
           !String(row.to_city || '').trim() ||
@@ -369,7 +370,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
 
   return (
     <section className="shop-admin-root shop-admin-panel">
-      {vendor ? (
+      {isPartner ? (
         <>
           <div className="shop-admin-heading">
             <div>
@@ -548,7 +549,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
             <p className="card-subtext">
               Fixed shipping rates charged for same-city orders when items fall back to city delivery.
             </p>
-            {settings.coreCities.map((row, index) => (
+            {(settings.coreCities || []).map((row, index) => (
               <div className="shipping-row" key={`${row.city_name}-${index}`}>
                 <input
                   value={row.city_name}
@@ -556,7 +557,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                   onChange={(e) =>
                     update(
                       'coreCities',
-                      settings.coreCities.map((item, i) =>
+                      (settings.coreCities || []).map((item, i) =>
                         i === index ? { ...item, city_name: e.target.value } : item
                       )
                     )
@@ -570,7 +571,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                   onChange={(e) =>
                     update(
                       'coreCities',
-                      settings.coreCities.map((item, i) =>
+                      (settings.coreCities || []).map((item, i) =>
                         i === index ? { ...item, fixed_cost: e.target.value } : item
                       )
                     )
@@ -583,7 +584,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                     onChange={(e) =>
                       update(
                         'coreCities',
-                        settings.coreCities.map((item, i) =>
+                        (settings.coreCities || []).map((item, i) =>
                           i === index ? { ...item, is_active: e.target.checked } : item
                         )
                       )
@@ -642,7 +643,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
 
             <h3 style={{ marginTop: '22px' }}>City-to-city distance lookup</h3>
             <p className="card-subtext">Pre-configured highway distances between supplier and buyer cities.</p>
-            {settings.distances.map((row, index) => (
+            {(settings.distances || []).map((row, index) => (
               <div className="shipping-row" key={`${row.from_city}-${row.to_city}-${index}`}>
                 <input
                   value={row.from_city}
@@ -650,7 +651,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                   onChange={(e) =>
                     update(
                       'distances',
-                      settings.distances.map((item, i) =>
+                      (settings.distances || []).map((item, i) =>
                         i === index ? { ...item, from_city: e.target.value } : item
                       )
                     )
@@ -662,7 +663,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                   onChange={(e) =>
                     update(
                       'distances',
-                      settings.distances.map((item, i) =>
+                      (settings.distances || []).map((item, i) =>
                         i === index ? { ...item, to_city: e.target.value } : item
                       )
                     )
@@ -676,7 +677,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                   onChange={(e) =>
                     update(
                       'distances',
-                      settings.distances.map((item, i) =>
+                      (settings.distances || []).map((item, i) =>
                         i === index ? { ...item, distance_km: e.target.value } : item
                       )
                     )
@@ -689,7 +690,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                     onChange={(e) =>
                       update(
                         'distances',
-                        settings.distances.map((item, i) =>
+                        (settings.distances || []).map((item, i) =>
                           i === index ? { ...item, is_active: e.target.checked } : item
                         )
                       )
@@ -956,7 +957,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
                                         onChange={(e) => setNewCityName(e.target.value)}
                                       >
                                         <option value="">-- Choose city or type below --</option>
-                                        {settings.coreCities.map((c) => (
+                                        {(settings.coreCities || []).map((c) => (
                                           <option key={c.city_name} value={c.city_name}>
                                             {c.city_name}
                                           </option>
@@ -1210,7 +1211,7 @@ export default function ShippingSettingsManager({ vendor = false, city = '' }) {
               <label>
                 Delivery City:
                 <select value={calcCity} onChange={(e) => setCalcCity(e.target.value)}>
-                  {settings.coreCities.map((c) => (
+                  {(settings.coreCities || []).map((c) => (
                     <option key={c.city_name} value={c.city_name}>
                       {c.city_name}
                     </option>

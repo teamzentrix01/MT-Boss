@@ -1154,12 +1154,13 @@ export async function generateOrderInvoicePdf(order) {
           `City: ${order.supplier.city || '-'}`,
           order.supplier.email ? `Email: ${order.supplier.email}` : null,
         ];
-      } else if (order.vendor) {
+      } else if (order.vendor || order.service_provider) {
+        const prov = order.vendor || order.service_provider;
         fulfilledLines = [
-          order.vendor.vendor_name || order.vendor.shop_name || 'Verified Vendor',
-          `Phone: ${formatIndianPhone(order.vendor.phone)}`,
-          `City: ${order.vendor.city || '-'}`,
-          order.vendor.email ? `Email: ${order.vendor.email}` : null,
+          prov.vendor_name || prov.service_provider_name || prov.shop_name || 'Verified Service Provider',
+          `Phone: ${formatIndianPhone(prov.phone)}`,
+          `City: ${prov.city || '-'}`,
+          prov.email ? `Email: ${prov.email}` : null,
         ];
       } else {
         fulfilledLines = [

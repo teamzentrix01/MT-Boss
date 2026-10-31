@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════════
-// FILE: app/vendor/dashboard/page.jsx
-// VENDOR DASHBOARD - Notifications, Active Booking, Messages
+// FILE: app/service provider/dashboard/page.jsx
+// service provider DASHBOARD - Notifications, Active Booking, Messages
 // ════════════════════════════════════════════════════════════════════════════════
 'use client';
 
@@ -13,7 +13,6 @@ import PanelLayout from '@/app/components/PanelLayout';
 import {
   LayoutDashboard,
   ShoppingCart,
-  Truck,
   Layers,
   CalendarDays,
   BarChart3,
@@ -23,13 +22,7 @@ import {
 } from '@/app/components/ui/icons';
 
 const panelLoading = () => <div className="min-h-48 flex items-center justify-center text-sm opacity-60">Loading panel...</div>;
-const MaterialOrdersPanel = dynamic(() => import('@/app/components/MaterialOrdersPanel'), { loading: panelLoading });
-const VendorShopProductsManager = dynamic(
-  () => import('@/app/components/ShopNowManager').then((module) => module.VendorShopProductsManager),
-  { loading: panelLoading },
-);
-const ShippingSettingsManager = dynamic(() => import('@/app/components/ShippingSettingsManager'), { loading: panelLoading });
-const VENDOR_TABS = ['overview', 'products', 'shipping', 'materials', 'bookings', 'notifications', 'leads', 'history', 'packages', 'profile'];
+const VENDOR_TABS = ['overview', 'bookings', 'notifications', 'leads', 'packages', 'profile'];
 
 function ServiceIcon({ icon, className = "h-8 w-8" }) {
   const value = String(icon || "").trim();
@@ -55,15 +48,15 @@ function ServiceIcon({ icon, className = "h-8 w-8" }) {
   );
 }
  
-export default function VendorDashboard() {
+export default function ServiceProviderDashboard() {
   return (
     <Suspense fallback={<main className="min-h-screen flex items-center justify-center">Loading dashboard...</main>}>
-      <VendorDashboardContent />
+      <ServiceProviderDashboardContent />
     </Suspense>
   );
 }
 
-function VendorDashboardContent() {
+function ServiceProviderDashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [vendor, setVendor] = useState(null);
@@ -129,7 +122,7 @@ function VendorDashboardContent() {
   }, [editMode]);
  
   useEffect(() => {
-    const token = localStorage.getItem("vendor-token");
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     if (!token) {
       setLoading(false);
       router.replace("/vendor/login");
@@ -148,7 +141,7 @@ function VendorDashboardContent() {
       document.removeEventListener('visibilitychange', refresh);
     };
     // Each dashboard tab loads only the data it displays. Live tabs refresh at
-    // a modest interval instead of hitting every vendor endpoint every 5s.
+    // a modest interval instead of hitting every service provider endpoint every 5s.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, activeTab]);
 
@@ -177,14 +170,12 @@ function VendorDashboardContent() {
         addRequest('leads', '/api/vendor/leads');
       } else if (tab === 'leads') {
         addRequest('leads', '/api/vendor/leads');
-      } else if (tab === 'history') {
-        addRequest('completed', '/api/vendor/bookings?type=completed');
       }
       if (!profileLoadedRef.current || tab === 'profile') addRequest('profile', '/api/vendor/profile');
 
       const results = await Promise.all(requests);
       if (results.some(({ response }) => response.status === 401 || response.status === 403)) {
-        localStorage.removeItem('vendor-token');
+        localStorage.removeItem('service provider-token');
         setLoading(false);
         router.replace('/vendor/login');
         return;
@@ -236,13 +227,13 @@ function VendorDashboardContent() {
 
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching vendor data:", error);
+      console.error("Error fetching service provider data:", error);
       setLoading(false);
     }
   }
 
   async function loadPackages() {
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const [listRes, statusRes] = await Promise.all([
         fetch('/api/vendor/packages', { headers: { Authorization: `Bearer ${token}` } }),
@@ -258,7 +249,7 @@ function VendorDashboardContent() {
   async function selectPackage(pkgId) {
     setPkgLoading(true);
     setPkgMsg('');
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch('/api/vendor/packages', {
         method: 'POST',
@@ -277,7 +268,7 @@ function VendorDashboardContent() {
   async function verifyStartOtp(bookingId) {
     setOtpLoading(true);
     setOtpMsg('');
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${bookingId}/verify-start-otp`, {
         method: 'POST',
@@ -299,7 +290,7 @@ function VendorDashboardContent() {
   async function sendStartOtp(bookingId) {
     setOtpLoading(true);
     setOtpMsg('');
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${bookingId}/start-otp`, {
         method: 'POST',
@@ -317,7 +308,7 @@ function VendorDashboardContent() {
   async function verifyFinishOtp(bookingId) {
     setOtpLoading(true);
     setOtpMsg('');
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${bookingId}/verify-finish-otp`, {
         method: 'POST',
@@ -338,7 +329,7 @@ function VendorDashboardContent() {
   async function sendFinishOtp(bookingId) {
     setOtpLoading(true);
     setOtpMsg('');
-    const token = localStorage.getItem('vendor-token');
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${bookingId}/finish-otp`, {
         method: 'POST',
@@ -380,7 +371,7 @@ function VendorDashboardContent() {
   async function saveProfile() {
     setProfileLoading(true);
     setProfileMsg("");
-    const token = localStorage.getItem("vendor-token");
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch("/api/vendor/profile", {
         method: "PUT",
@@ -412,7 +403,7 @@ function VendorDashboardContent() {
   function openBookings() {
     setActiveTab("bookings");
 
-    // "Bookings" moves the vendor to the assigned booking/request details.
+    // "Bookings" moves the service provider to the assigned booking/request details.
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         const target = activeBooking ? activeBookingRef.current : incomingBookingsRef.current;
@@ -440,7 +431,7 @@ function VendorDashboardContent() {
       return;
     }
 
-    const token = localStorage.getItem("vendor-token");
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     setRequestMsg('');
     try {
       const res = await fetch(`/api/bookings/${bookingId}/accept`, {
@@ -486,7 +477,7 @@ function VendorDashboardContent() {
   }
  
   async function rejectBooking(bookingId) {
-    const token = localStorage.getItem("vendor-token");
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${bookingId}/reject`, {
         method: "POST",
@@ -506,7 +497,7 @@ function VendorDashboardContent() {
     if (!activeBooking) return;
     if (!isQuickJob && !extraAmount) return;
     setCompleteLoading(true);
-    const token = localStorage.getItem("vendor-token");
+    const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
     try {
       const res = await fetch(`/api/bookings/${activeBooking.id}/complete`, {
         method: "POST",
@@ -539,7 +530,7 @@ function VendorDashboardContent() {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude, accuracy } = position.coords;
-          const token = localStorage.getItem("vendor-token");
+          const token = (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token'));
 
           try {
             const res = await fetch("/api/vendor/location/update", {
@@ -588,15 +579,12 @@ function VendorDashboardContent() {
   }
  
   const handleLogout = () => {
-    localStorage.removeItem("vendor-token");
+    localStorage.removeItem("service provider-token");
     router.replace("/vendor/login");
   };
 
   const menuItems = [
     { key: 'overview', label: 'Overview', icon: LayoutDashboard },
-    { key: 'products', label: 'Products', icon: ShoppingCart },
-    { key: 'shipping', label: 'Shipping', icon: Truck },
-    { key: 'materials', label: 'Material Orders', icon: Layers },
     {
       key: 'bookings',
       label: 'Bookings',
@@ -611,21 +599,20 @@ function VendorDashboardContent() {
       badge: vendorLeadCounts.incoming > 0 ? vendorLeadCounts.incoming : null,
       badgeColor: 'bg-[var(--brand-blue)] text-black',
     },
-    { key: 'history', label: 'History', icon: History },
     { key: 'packages', label: 'Package', icon: Package },
     { key: 'profile', label: 'Profile', icon: User },
   ];
 
   return (
     <PanelLayout
-      title="Vendor Dashboard"
+      title="Service Provider Dashboard"
       subtitle={`${vendorProfile?.shop_name || 'My Shop'} · ${vendorProfile?.city || ''}`}
       user={{
-        name: vendorProfile?.shop_name || 'Vendor',
+        name: vendorProfile?.shop_name || 'Service Provider',
         city: vendorProfile?.city || '',
-        role: 'Vendor',
+        role: 'Service Provider',
       }}
-      roleBadge="Vendor"
+      roleBadge="Service Provider"
       menuItems={menuItems}
       activeTab={activeTab === 'notifications' ? 'bookings' : activeTab}
       onTabChange={(tab) => {
@@ -639,59 +626,28 @@ function VendorDashboardContent() {
       }}
       onLogout={handleLogout}
       actions={
-        activeTab === 'products' ? (
-          <button
-            type="button"
-            onClick={() => {
-              document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white dark:bg-white dark:text-black text-xs font-semibold rounded-md shadow-xs hover:opacity-90 transition-opacity"
-          >
-            + Add Product
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => fetchVendorData(localStorage.getItem('vendor-token'))}
-            className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
-          >
-            Refresh
-          </button>
-        )
+        <button
+          type="button"
+          onClick={() => fetchVendorData((localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token')))}
+          className="px-3 py-1.5 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-md hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+        >
+          Refresh
+        </button>
       }
     >
       <div className="space-y-6">
-        {activeTab === "products" ? (
-          <div className="space-y-4">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  document.getElementById('vendor-shop-product-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--brand-blue)] text-white text-xs font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity"
-              >
-                + Add Product
-              </button>
-            </div>
-            <VendorShopProductsManager isDarkMode={isDark} />
-          </div>
-        ) : activeTab === "shipping" ? (
-          <ShippingSettingsManager vendor city={vendorProfile?.city} />
-        ) : activeTab === "materials" ? (
-          <MaterialOrdersPanel role="vendor" embedded />
-        ) : activeTab === "leads" ? (
+        {activeTab === "leads" ? (
           <div className="space-y-5">
             <div className={`border ${card} p-5`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest">Lead Track</p>
-                  <h2 className="mt-1 text-xl font-black uppercase">Vendor Service Leads</h2>
+                  <h2 className="mt-1 text-xl font-black uppercase">Service Provider Leads</h2>
                   <p className={`mt-1 text-xs ${muted}`}>Incoming requests, active work, payment follow-up, and completed leads in one place.</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => fetchVendorData(localStorage.getItem("vendor-token"))}
+                  onClick={() => fetchVendorData((localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || localStorage.getItem('service provider-token')))}
                   className="px-4 py-2 border border-[var(--brand-blue)] text-[var(--brand-blue)] text-[9px] font-black uppercase tracking-widest"
                 >
                   Refresh
@@ -788,103 +744,6 @@ function VendorDashboardContent() {
                 );
               })}
             </div>
-          </div>
-        ) : activeTab === "history" ? (
-          /* ── History Tab ── */
-          <div className="space-y-4">
-            {/* Earnings Summary */}
-            <div className={`border ${card} p-5`}>
-              <p className="text-[10px] font-black uppercase text-[var(--brand-blue)] tracking-widest mb-4">Earnings Breakdown</p>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { label: "Your Net Earnings (85%)", value: `₹${totalEarning.toLocaleString('en-IN')}`, color: "text-green-500" },
-                  { label: "Admin Commission (15%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.admin_commission||0), 0)).toLocaleString('en-IN')}`, color: "text-[var(--brand-blue)]" },
-                  { label: "GST Collected (18%)", value: `₹${Math.round(completedBookings.reduce((s,b) => s + parseFloat(b.gst_amount||0), 0)).toLocaleString('en-IN')}`, color: "text-zinc-400" },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className={`p-4 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"}`}>
-                    <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>{label}</p>
-                    <p className={`text-2xl font-black mt-1 ${color}`}>{value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Completed Bookings List */}
-            {completedBookings.length === 0 ? (
-              <div className={`border ${card} p-10 text-center`}>
-                <p className={muted}>No completed bookings yet.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {completedBookings.map((b) => (
-                  <div key={b.id} className={`border ${card} p-5`}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        {/* Header */}
-                        <div className="flex items-center gap-3">
-                          <ServiceIcon icon={b.icon} className="h-9 w-9" />
-                          <div>
-                            <p className="font-black text-sm">{b.label}</p>
-                            <p className={`text-[10px] ${muted}`}>{b.booking_reference} · {b.service_city}</p>
-                          </div>
-                        </div>
-
-                        {/* Customer */}
-                        <div className="flex gap-6">
-                          <div>
-                            <p className={`text-[9px] font-black uppercase ${muted}`}>Customer</p>
-                            <p className="text-sm font-medium">{b.user_name}</p>
-                            <p className={`text-[10px] ${muted}`}>{b.user_phone}</p>
-                          </div>
-                          <div>
-                            <p className={`text-[9px] font-black uppercase ${muted}`}>Date</p>
-                            <p className="text-sm font-medium">{b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}</p>
-                          </div>
-                          <div>
-                            <p className={`text-[9px] font-black uppercase ${muted}`}>Completed</p>
-                            <p className="text-sm font-medium">{b.completed_at ? new Date(b.completed_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '—'}</p>
-                          </div>
-                        </div>
-
-                        {/* Rating */}
-                        {b.rating_stars ? (
-                          <div className={`p-3 border-l-2 border-[var(--brand-blue)] ${isDark ? "bg-zinc-900" : "bg-zinc-50"}`}>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[var(--brand-blue)] font-black">{"★".repeat(b.rating_stars)}{"☆".repeat(5 - b.rating_stars)}</span>
-                              <span className={`text-[10px] font-black ${muted}`}>{b.rating_stars}/5</span>
-                            </div>
-                            {b.review_text && <p className={`text-xs mt-1 ${muted}`}>{b.review_text}</p>}
-                          </div>
-                        ) : (
-                          <p className={`text-[10px] ${muted}`}>No rating yet</p>
-                        )}
-                      </div>
-
-                      {/* Earnings */}
-                      <div className={`min-w-35 p-4 border ${isDark ? "border-zinc-800 bg-zinc-900" : "border-zinc-100 bg-zinc-50"} space-y-2`}>
-                        <p className={`text-[9px] font-black uppercase tracking-widest ${muted}`}>Earnings</p>
-                        <div>
-                          <p className={`text-[9px] ${muted}`}>Total Charged</p>
-                          <p className="text-sm font-black">₹{b.final_amount || b.total_amount}</p>
-                        </div>
-                        <div>
-                          <p className={`text-[9px] ${muted}`}>− GST (18%)</p>
-                          <p className="text-xs text-red-400">− ₹{b.gst_amount}</p>
-                        </div>
-                        <div>
-                          <p className={`text-[9px] ${muted}`}>− Commission (15%)</p>
-                          <p className="text-xs text-red-400">− ₹{b.admin_commission}</p>
-                        </div>
-                        <div className={`border-t pt-2 ${isDark ? "border-zinc-700" : "border-zinc-200"}`}>
-                          <p className={`text-[9px] font-black uppercase ${muted}`}>Your Net</p>
-                          <p className="text-lg font-black text-green-500">₹{b.vendor_earning}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         ) : activeTab === "packages" ? (
           /* ── Packages Tab ── */
@@ -1248,7 +1107,7 @@ function VendorDashboardContent() {
                 {selectedNotification.contact_locked && (
                   <div className={`p-4 border ${isDark ? 'border-yellow-500/30 bg-yellow-500/10' : 'border-yellow-200 bg-yellow-50'}`}>
                     <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600">Package Required</p>
-                    <p className={`text-xs mt-1 ${muted}`}>Only paid vendors can accept this request and see customer phone, address, and map details.</p>
+                    <p className={`text-xs mt-1 ${muted}`}>Only paid service providers can accept this request and see customer phone, address, and map details.</p>
                     <button
                       onClick={() => { setActiveTab('packages'); loadPackages(); }}
                       className="mt-3 w-full py-2.5 bg-[var(--brand-blue)] text-black text-[9px] font-black uppercase hover:bg-[var(--brand-blue-light)] transition-all"
@@ -1332,7 +1191,7 @@ function VendorDashboardContent() {
 
                 {otpMsg && <p className={`text-xs font-bold ${otpMsg.includes('✓') ? 'text-green-500' : 'text-red-400'}`}>{otpMsg}</p>}
 
-                {/* OTP Start Flow - Vendor enters start OTP to begin */}
+                {/* OTP Start Flow - service provider enters start OTP to begin */}
                 {(activeBooking.status === 'VENDOR_ACCEPTED' || activeBooking.status === 'VENDOR_ON_WAY') && !activeBooking.start_otp_verified && (
                   <div className={`p-4 border ${isDark ? 'border-blue-500/30 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}>
                     <p className="text-[9px] font-black uppercase text-blue-400 tracking-widest mb-2">🔑 Enter Start OTP</p>
@@ -1363,7 +1222,7 @@ function VendorDashboardContent() {
                   </div>
                 )}
 
-                {/* Service In Progress - Vendor enters finish OTP */}
+                {/* Service In Progress - service provider enters finish OTP */}
                 {activeBooking.status === 'IN_PROGRESS' && (
                   <div className={`p-4 border ${isDark ? 'border-orange-500/30 bg-orange-500/10' : 'border-orange-200 bg-orange-50'}`}>
                     <p className="text-[9px] font-black uppercase text-orange-400 tracking-widest mb-2">🏁 Enter Finish OTP</p>

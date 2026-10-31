@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-export default function VendorPendingPage() {
+export default function ServiceProviderPendingPage() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function VendorPendingPage() {
             
             <h1 className="pending-title">Approval Pending</h1>
             <p className="pending-subtitle">
-              Your vendor account has been successfully registered. Our admin team is reviewing your details.
+              Your service provider account has been successfully registered. Our admin team is reviewing your details.
             </p>
 
             <div className="pending-checklist">
@@ -190,7 +190,7 @@ export default function VendorPendingPage() {
             </div>
 
             <p className="pending-subtitle">
-              We&apos;ll send you an email notification as soon as your account is approved. You can then log in and start using your vendor dashboard.
+              We&apos;ll send you an email notification as soon as your account is approved. You can then log in and start using your service provider dashboard.
             </p>
 
             <div className="pending-buttons">

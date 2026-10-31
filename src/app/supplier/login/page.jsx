@@ -484,7 +484,7 @@ export default function SupplierLoginPage() {
           {/* ── Left branding panel ── */}
           <div className="sl-left">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="sl-logo">SUPPLIER<span>HUB</span></div>
+              <div className="sl-logo">VENDOR<span>HUB</span></div>
               <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 600, color: '#666', textDecoration: 'none', padding: '0.35rem 0.75rem', border: '1px solid #333', borderRadius: 6, transition: 'all 0.2s', position: 'relative', zIndex: 1 }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#10b981'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = '#333'; }}>
@@ -497,21 +497,21 @@ export default function SupplierLoginPage() {
                 Grow your business<br />with us.
               </div>
               <div className="sl-left-desc">
-                Sign in to your supplier dashboard —<br />
+                Sign in to your vendor dashboard —<br />
                 manage products, orders, analytics and<br />
                 more, all in one place.
               </div>
             </div>
 
             <div className="sl-copyright">
-              © {new Date().getFullYear()} Supplier Hub. All rights reserved.
+              © {new Date().getFullYear()} Vendor Hub. All rights reserved.
             </div>
           </div>
 
           {/* ── Right form panel ── */}
           <div className="sl-right">
-            <div className="sl-form-title">Welcome back, Supplier</div>
-            <div className="sl-form-subtitle">Sign in to your supplier account to continue</div>
+            <div className="sl-form-title">Welcome back, Vendor</div>
+            <div className="sl-form-subtitle">Sign in to your vendor account to continue</div>
 
             {/* Generic error */}
             {error && (
@@ -540,7 +540,7 @@ export default function SupplierLoginPage() {
                 <div className="sl-banner-body">
                   <div className="sl-banner-title">Account Not Approved</div>
                   <div className="sl-banner-msg">
-                    Your supplier account was not approved. Please contact support for more information.
+                    Your vendor account was not approved. Please contact support for more information.
                   </div>
                 </div>
               </div>

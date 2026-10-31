@@ -1314,7 +1314,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         method: 'POST',
         body: JSON.stringify(payload),
       });
-      setMessage(res.is_advance ? `Supplier payment recorded as advance of ${INR(res.advance_amount)}` : 'Supplier payment recorded successfully');
+      setMessage(res.is_advance ? `Vendor payment recorded as advance of ${INR(res.advance_amount)}` : 'Vendor payment recorded successfully');
       setSupplierPaymentModal(false);
       setSupplierPaymentForm({
         supplier_id: '',
@@ -2725,11 +2725,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <b style={{ color: '#b45309' }}>{INR(project.total_expense)}</b>
                           </div>
                           <div className="stat">
-                            <small>Paid to Vendors</small>
+                            <small>Paid to Contractors</small>
                             <b style={{ color: '#ea580c' }}>{INR(project.total_paid_to_vendors)}</b>
                           </div>
                           <div className="stat">
-                            <small>Paid to Suppliers</small>
+                            <small>Paid to Vendors</small>
                             <b style={{ color: '#0284c7' }}>{INR(project.total_paid_to_suppliers ?? projectSuppliers.reduce((sum, s) => sum + (Number(s.total_paid) || 0), 0))}</b>
                           </div>
                           <div className="stat" style={{ background: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#f0fdf4' : '#fef2f2', border: `1px solid ${Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#bbf7d0' : '#fecaca'}` }}>
@@ -2795,7 +2795,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         className={projectTab === 'suppliers' ? 'active' : ''}
                         onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('suppliers'); }}
                       >
-                        🚚 Suppliers ({projectSuppliers.length})
+                        🚚 Vendors ({projectSuppliers.length})
                       </button>
                     )}
                     {allowedMainTabs.includes('commission') && (
@@ -4111,7 +4111,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             className={paymentsSubTab === 'supplier' ? 'active-btn' : 'muted'}
                             onClick={() => handlePaymentsSubChange('supplier')}
                           >
-                            Supplier Payment ({supplierPaymentsList.length})
+                            Vendor Payment ({supplierPaymentsList.length})
                           </button>
                         </div>
 
@@ -4622,10 +4622,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           }}>
                             <div>
                               <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>
-                                ℹ️ Supplier Payment Details (View Only)
+                                ℹ️ Vendor Payment Details (View Only)
                               </div>
                               <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
-                                Payment add, edit ya delete sirf <b>Suppliers</b> tab me jaakar kiya ja sakta hai.
+                                Payment add, edit ya delete sirf <b>Vendors</b> tab me jaakar kiya ja sakta hai.
                               </div>
                             </div>
                             <button
@@ -4634,7 +4634,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               onClick={() => setProjectTab('suppliers')}
                               style={{ fontSize: 12 }}
                             >
-                              Go to Suppliers Tab ➔
+                              Go to Vendors Tab ➔
                             </button>
                           </div>
 
@@ -4642,7 +4642,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <thead>
                               <tr>
                                 <th>Date</th>
-                                <th>Supplier Name</th>
+                                <th>Vendor Name</th>
                                 <th>Amount</th>
                                 <th>Payment Mode</th>
                                 <th>Reference / Cheque</th>
@@ -4653,7 +4653,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             </thead>
                             <tbody>
                               {supplierPaymentsList.map((p) => {
-                                const supplierName = p.supplier_display || p.supplier_name || (projectSuppliers.find(s => s.supplier_id === p.supplier_id)?.supplier_name) || `Supplier #${p.supplier_id || ''}`;
+                                const supplierName = p.supplier_display || p.supplier_name || (projectSuppliers.find(s => s.supplier_id === p.supplier_id)?.supplier_name) || `Vendor #${p.supplier_id || ''}`;
                                 return (
                                   <tr key={p.id}>
                                     <td>{p.payment_date ? String(p.payment_date).slice(0, 10) : '—'}</td>
@@ -4687,9 +4687,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             openSupplierLedger(matched);
                                           }
                                         }}
-                                        title="View ledger in Suppliers tab"
+                                        title="View ledger in Vendors tab"
                                       >
-                                        📒 View in Suppliers
+                                        📒 View in Vendors
                                       </button>
                                     </td>
                                   </tr>
@@ -4698,7 +4698,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               {supplierPaymentsList.length === 0 && (
                                 <tr>
                                   <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                    No supplier payments recorded yet. Payments can be recorded in the Suppliers tab.
+                                    No vendor payments recorded yet. Payments can be recorded in the Vendors tab.
                                   </td>
                                 </tr>
                               )}
@@ -4717,10 +4717,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                              <h4 style={{ margin: 0, fontSize: 16 }}>Project Suppliers ({projectSuppliers.length})</h4>
+                              <h4 style={{ margin: 0, fontSize: 16 }}>Project Vendors ({projectSuppliers.length})</h4>
                               <input
                                 type="text"
-                                placeholder="Search supplier by name or phone..."
+                                placeholder="Search vendor by name or phone..."
                                 value={supplierSearch}
                                 onChange={(e) => setSupplierSearch(e.target.value)}
                                 style={{ minWidth: 240, padding: '6px 12px', fontSize: 13 }}
@@ -4760,7 +4760,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     setSupplierPaymentModal(true);
                                   }}
                                 >
-                                  + Record Supplier Payment
+                                  + Record Vendor Payment
                                 </button>
                               )}
                             </div>
@@ -4769,7 +4769,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <table>
                             <thead>
                               <tr>
-                                <th>Supplier</th>
+                                <th>Vendor</th>
                                 <th>Total Supplied</th>
                                 <th>Total Returned</th>
                                 <th>Total Paid</th>
@@ -4794,7 +4794,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     key={s.key}
                                     className="clickable-row"
                                     onClick={() => openSupplierLedger(s)}
-                                    title="Click to open supplier ledger"
+                                    title="Click to open vendor ledger"
                                   >
                                     <td>
                                       <b>{s.supplier_name}</b>
@@ -4864,7 +4864,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             setModalError('');
                                             setSupplierPaymentModal(true);
                                           }}
-                                          title="Record payment to this supplier"
+                                          title="Record payment to this vendor"
                                         >
                                           + Pay
                                         </button>
@@ -4875,8 +4875,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               {projectSuppliers.length === 0 && (
                                 <tr>
                                   <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
-                                    No suppliers recorded for this project yet.<br />
-                                    Click <b>&ldquo;+ Record Material Delivered to Site&rdquo;</b> to record initial supplier deliveries.
+                                    No vendors recorded for this project yet.<br />
+                                    Click <b>&ldquo;+ Record Material Delivered to Site&rdquo;</b> to record initial vendor deliveries.
                                   </td>
                                 </tr>
                               )}
@@ -4893,7 +4893,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 onClick={() => setSelectedSupplier(null)}
                                 style={{ display: 'flex', alignItems: 'center', gap: 4 }}
                               >
-                                ← Back to Suppliers
+                                ← Back to Vendors
                               </button>
                               <div>
                                 <h4 style={{ margin: 0, fontSize: 18 }}>
@@ -5083,7 +5083,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {(supplierLedgerData.deliveries || []).length === 0 && (
                                   <tr>
                                     <td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                      No material deliveries recorded for this supplier.
+                                      No material deliveries recorded for this vendor.
                                     </td>
                                   </tr>
                                 )}
@@ -5135,7 +5135,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {(supplierLedgerData.returns || []).length === 0 && (
                                   <tr>
                                     <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                      No material returns recorded for this supplier.
+                                      No material returns recorded for this vendor.
                                     </td>
                                   </tr>
                                 )}
@@ -5175,7 +5175,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {(supplierLedgerData.payments || []).length === 0 && (
                                   <tr>
                                     <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                      No payments recorded for this supplier.
+                                      No payments recorded for this vendor.
                                     </td>
                                   </tr>
                                 )}
@@ -5379,7 +5379,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <tr>
                             <th>Date</th>
                             <th>Material</th>
-                            <th>Supplier / Source</th>
+                            <th>Vendor / Source</th>
                             <th>Quantity</th>
                             {!isSupervisor && <th>Rate</th>}
                             {!isSupervisor && <th>Total Amount</th>}
@@ -5661,7 +5661,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <th>Material</th>
                           <th>Type</th>
                           <th>Quantity</th>
-                          <th>Returned To / Supplier</th>
+                          <th>Returned To / Vendor</th>
                           <th>Refund / Credit Amount</th>
                           <th>Challan / Bill</th>
                           <th>Note</th>
@@ -5683,7 +5683,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <td><b>{r.material_name}</b></td>
                             <td>
                               <span className="badge badge-active" style={{ background: '#e0f2fe', color: '#0369a1', fontWeight: 600, textTransform: 'capitalize' }}>
-                                {r.adjustment_type === 'return_to_supplier' ? 'Return to Supplier' : 'Return Material'}
+                                {r.adjustment_type === 'return_to_supplier' ? 'Return to Vendor' : 'Return Material'}
                               </span>
                             </td>
                             <td style={{ fontWeight: 600 }}>{Number(r.quantity).toFixed(2)} {r.material_unit}</td>
@@ -6657,7 +6657,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <tr>
                       <th>Date</th>
                       <th>Type</th>
-                      <th>Details / Supplier / Destination</th>
+                      <th>Details / Vendor / Destination</th>
                       <th>Quantity</th>
                       <th>Running Stock</th>
                       {!isSupervisor && <th>Rate / Amount</th>}
@@ -7111,7 +7111,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: RECORD VENDOR MATERIAL SUPPLY ────────────────────────── */}
           {supplyModal && selectedVendor && (
             <div className="modal-overlay">
-              <form onSubmit={(e) => submitAction.submit('supply', () => saveMaterialSupply(e), { successMessage: 'Supplier delivery saved successfully', onError: setModalError })} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('supply', () => saveMaterialSupply(e), { successMessage: 'Vendor delivery saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
                   Record Vendor Material Supply
                 </h3>
@@ -7215,14 +7215,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               <form
                 onSubmit={(e) =>
                   submitAction.submit('supplierPayment', () => saveSupplierPayment(e), {
-                    successMessage: 'Supplier payment recorded successfully',
+                    successMessage: 'Vendor payment recorded successfully',
                     onError: setModalError,
                   })
                 }
                 className="modal-card"
               >
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  Record Payment to Supplier
+                  Record Payment to Vendor
                 </h3>
                 {modalError && (
                   <div
@@ -7244,7 +7244,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Supplier *
+                      Vendor *
                     </small>
                     <select
                       required
@@ -7275,9 +7275,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         }
                       }}
                     >
-                      <option value="">Select Supplier</option>
+                      <option value="">Select Vendor</option>
                       {projectSuppliers.length > 0 && (
-                        <optgroup label="Suppliers Used in Project">
+                        <optgroup label="Vendors Used in Project">
                           {projectSuppliers.map((s) => (
                             <option key={s.key} value={s.key}>
                               {s.supplier_name} • Balance: {s.balance > 0 ? `Due ${INR(s.balance)}` : s.balance < 0 ? `Advance ${INR(Math.abs(s.balance))}` : '₹0'}
@@ -7285,10 +7285,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           ))}
                         </optgroup>
                       )}
-                      <optgroup label="All Registered Suppliers">
+                      <optgroup label="All Registered Vendors">
                         {suppliersMaster.filter((m) => m.is_registered).map((s) => (
                           <option key={`reg_${s.id}`} value={`reg_${s.id}`}>
-                            {s.shop_name || s.business_name || `Supplier #${s.id}`} {s.phone ? `(${s.phone})` : ''} {s.city ? `• ${s.city}` : ''}
+                            {s.shop_name || s.business_name || `Vendor #${s.id}`} {s.phone ? `(${s.phone})` : ''} {s.city ? `• ${s.city}` : ''}
                           </option>
                         ))}
                       </optgroup>
@@ -7297,7 +7297,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                   {!supplierPaymentForm.supplier_id && (
                     <Input
-                      label="Supplier Name (if not registered)"
+                      label="Vendor Name (if not registered)"
                       name="supplier_name"
                       value={supplierPaymentForm.supplier_name}
                       set={setSupplierPaymentForm}
@@ -7386,7 +7386,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           ⚠️ <b>Notice: Advance Payment</b>
                           <div style={{ marginTop: 2 }}>
                             Payment of <b>{INR(enteredAmt)}</b> exceeds the current balance due ({INR(Math.max(0, curBalance))}).
-                            The excess <b>{INR(excess)}</b> will be recorded as an <b>Advance Payment</b> to this supplier.
+                            The excess <b>{INR(excess)}</b> will be recorded as an <b>Advance Payment</b> to this vendor.
                           </div>
                         </div>
                       );
@@ -7418,9 +7418,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {/* ── MODAL: MATERIAL RECEIVED ────────────────────────────────────── */}
           {receivedModal && (
             <div className="modal-overlay">
-              <form onSubmit={(e) => submitAction.submit('delivery', () => saveReceivedEntry(e), { successMessage: 'Supplier delivery saved successfully', onError: setModalError })} className="modal-card">
+              <form onSubmit={(e) => submitAction.submit('delivery', () => saveReceivedEntry(e), { successMessage: 'Vendor delivery saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingReceivedId ? 'Edit' : 'Record'} Supplier Material Delivery
+                  {editingReceivedId ? 'Edit' : 'Record'} Vendor Material Delivery
                 </h3>
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <div className="grid">
@@ -7463,7 +7463,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   )}
                   <Input label="Received Date" name="received_date" type="date" value={receivedForm.received_date} set={setReceivedForm} required />
                   <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Supplier</small>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Vendor</small>
                     <select
                       value={receivedForm.supplier_id || ''}
                       onChange={(e) => {
@@ -7476,15 +7476,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         });
                       }}
                     >
-                      <option value="">Select registered supplier (or type name below)</option>
+                      <option value="">Select registered vendor (or type name below)</option>
                       {suppliersMaster.filter((s) => s.is_registered).map((supplier) => (
                         <option key={supplier.id} value={supplier.id}>
-                          {supplier.shop_name || supplier.business_name || `Supplier #${supplier.id}`} {supplier.phone ? `(${supplier.phone})` : ''} {supplier.city ? `• ${supplier.city}` : ''}
+                          {supplier.shop_name || supplier.business_name || `Vendor #${supplier.id}`} {supplier.phone ? `(${supplier.phone})` : ''} {supplier.city ? `• ${supplier.city}` : ''}
                         </option>
                       ))}
                     </select>
                   </label>
-                  <Input label="Supplier Name (if not registered)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
+                  <Input label="Vendor Name (if not registered)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
                   <Input label="Challan / Invoice No." name="challan_no" value={receivedForm.challan_no} set={setReceivedForm} />
                   <Input label="Note" name="note" value={receivedForm.note} set={setReceivedForm} />
                   <label>
@@ -7501,7 +7501,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <button type="button" className="muted" disabled={submitAction.isSubmitting('delivery')} onClick={() => setReceivedModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('delivery')}>{submitAction.isSubmitting('delivery') ? 'Saving…' : 'Save Supplier Delivery'}</button>
+                  <button type="submit" disabled={submitAction.isSubmitting('delivery')}>{submitAction.isSubmitting('delivery') ? 'Saving…' : 'Save Vendor Delivery'}</button>
                 </div>
               </form>
             </div>
@@ -7594,7 +7594,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     >
                       <option value="wastage">Wastage</option>
                       <option value="damage">Damage</option>
-                      <option value="return_material">Return Material (Return to Supplier / Site)</option>
+                      <option value="return_material">Return Material (Return to Vendor / Site)</option>
                       <option value="scrap_material">Scrap Material</option>
                       <option value="transfer_out">Transfer to Another Project</option>
                     </select>
@@ -7616,12 +7616,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <>
                       <label>
                         <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                          Returned To / Supplier Name (Optional)
+                          Returned To / Vendor Name (Optional)
                         </small>
                         <input
                           type="text"
                           list="project-suppliers-list"
-                          placeholder="Select or enter supplier name"
+                          placeholder="Select or enter vendor name"
                           value={adjustmentForm.supplier_name || ''}
                           onChange={(e) => {
                             const val = e.target.value;
