@@ -864,7 +864,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // ── Phase 3: Reports State ────────────────────────────────────────────────
   const [reportType, setReportType] = useState('cost_summary');
   const [reportProjectFilter, setReportProjectFilter] = useState('');
-  const [reportData, setReportData] = useState({ title: '', headers: [], data: [] });
+  const [reportMaterialFilter, setReportMaterialFilter] = useState('');
+  const [reportProjectStatus, setReportProjectStatus] = useState('all');
+  const [reportEntityType, setReportEntityType] = useState('all');
+  const [reportFrequency, setReportFrequency] = useState('all');
+  const [reportSearch, setReportSearch] = useState('');
+  const [reportStartDate, setReportStartDate] = useState('');
+  const [reportEndDate, setReportEndDate] = useState('');
+  const [reportData, setReportData] = useState({ title: '', headers: [], data: [], summary: null });
   const [loadingReport, setLoadingReport] = useState(false);
   const [allProjectsList, setAllProjectsList] = useState([]);
 
@@ -1260,12 +1267,33 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   };
 
   // ── Load Reports Data ───────────────────────────────────────────────────────
-  const loadReportsData = useCallback(async (type, projFilter) => {
+  const loadReportsData = useCallback(async (
+    type,
+    projFilter,
+    matFilter,
+    statusFilter,
+    searchFilter,
+    entityFilter,
+    freqFilter,
+    sDate,
+    eDate
+  ) => {
     setLoadingReport(true);
     try {
-      const url = `/api/admin/project-management/reports?type=${type}${projFilter ? `&projectId=${projFilter}` : ''}`;
+      const params = new URLSearchParams();
+      params.set('type', type);
+      if (projFilter) params.set('projectId', projFilter);
+      if (matFilter) params.set('materialId', matFilter);
+      if (statusFilter && statusFilter !== 'all') params.set('projectStatus', statusFilter);
+      if (searchFilter && searchFilter.trim()) params.set('search', searchFilter.trim());
+      if (entityFilter && entityFilter !== 'all') params.set('entityType', entityFilter);
+      if (freqFilter && freqFilter !== 'all') params.set('frequency', freqFilter);
+      if (sDate) params.set('startDate', sDate);
+      if (eDate) params.set('endDate', eDate);
+
+      const url = `/api/admin/project-management/reports?${params.toString()}`;
       const res = await api(url);
-      setReportData(res);
+      setReportData(res || { title: '', headers: [], data: [], summary: null });
     } catch (e) {
       setMessage(e.message);
     } finally {
@@ -1278,15 +1306,68 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     try {
       const pRes = await api('/api/admin/project-management/projects?pageSize=100').catch(() => ({ data: [] }));
       setAllProjectsList(pRes.data || []);
+      if (!materialsMaster || materialsMaster.length === 0) {
+        const mRes = await api('/api/admin/project-management/materials').catch(() => ({ data: [] }));
+        if (mRes?.data) setMaterialsMaster(mRes.data);
+      }
     } catch {}
-    loadReportsData(reportType, reportProjectFilter);
   };
 
   useEffect(() => {
     if (screen === 'reports') {
-      loadReportsData(reportType, reportProjectFilter);
+      const timer = setTimeout(() => {
+        loadReportsData(
+          reportType,
+          reportProjectFilter,
+          reportMaterialFilter,
+          reportProjectStatus,
+          reportSearch,
+          reportEntityType,
+          reportFrequency,
+          reportStartDate,
+          reportEndDate
+        );
+      }, 250);
+      return () => clearTimeout(timer);
     }
-  }, [screen, reportType, reportProjectFilter, loadReportsData]);
+  }, [
+    screen,
+    reportType,
+    reportProjectFilter,
+    reportMaterialFilter,
+    reportProjectStatus,
+    reportSearch,
+    reportEntityType,
+    reportFrequency,
+    reportStartDate,
+    reportEndDate,
+    loadReportsData,
+  ]);
+
+  const reportCsvUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('type', reportType);
+    params.set('format', 'csv');
+    if (reportProjectFilter) params.set('projectId', reportProjectFilter);
+    if (reportMaterialFilter) params.set('materialId', reportMaterialFilter);
+    if (reportProjectStatus && reportProjectStatus !== 'all') params.set('projectStatus', reportProjectStatus);
+    if (reportSearch && reportSearch.trim()) params.set('search', reportSearch.trim());
+    if (reportEntityType && reportEntityType !== 'all') params.set('entityType', reportEntityType);
+    if (reportFrequency && reportFrequency !== 'all') params.set('frequency', reportFrequency);
+    if (reportStartDate) params.set('startDate', reportStartDate);
+    if (reportEndDate) params.set('endDate', reportEndDate);
+    return `/api/admin/project-management/reports?${params.toString()}`;
+  }, [
+    reportType,
+    reportProjectFilter,
+    reportMaterialFilter,
+    reportProjectStatus,
+    reportSearch,
+    reportEntityType,
+    reportFrequency,
+    reportStartDate,
+    reportEndDate,
+  ]);
 
   // ── Open Timeline Drawer ────────────────────────────────────────────────────
   const openMaterialTimeline = async (material) => {
@@ -9455,12 +9536,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               <div>
                 <h3 style={{ margin: 0, fontSize: 18 }}>Project Management &bull; Reports &amp; Analytics</h3>
                 <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 12 }}>
-                  Material consumption, site stock across running projects, cost summaries, and vendor balances with CSV export.
+                  Cross-project entity tracking, material consumption by period, site stock, cost summaries, and vendor balances with CSV export.
                 </p>
               </div>
 
               <a
-                href={`/api/admin/project-management/reports?type=${reportType}${reportProjectFilter ? `&projectId=${reportProjectFilter}` : ''}&format=csv`}
+                href={reportCsvUrl}
                 download
                 className="active-btn"
                 style={{
@@ -9480,7 +9561,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </div>
 
             {/* Report Type Selector Tabs */}
-            <div className="subtabs" style={{ marginTop: 14 }}>
+            <div className="subtabs" style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {[
                 { id: 'cost_summary', label: '1. Project Cost Summary' },
                 { id: 'material_consumption', label: '2. Material Consumption' },
@@ -9488,32 +9569,343 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 { id: 'vendor_balance', label: '4. Vendor Balance Summary' },
                 { id: 'labor_summary', label: '5. Labor & Worker Summary' },
                 { id: 'party_summary', label: '6. Party-wise Contract & Payment' },
+                { id: 'cross_project_entity', label: '7. Cross-Project Entity Ledger (Universal Search)' },
               ].map((tab) => (
                 <button
                   type="button"
                   key={tab.id}
                   className={reportType === tab.id ? 'active' : ''}
                   onClick={() => setReportType(tab.id)}
+                  style={{ fontSize: 12 }}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
 
-            {/* Optional Project Filter for consumption and labor report */}
-            {(reportType === 'material_consumption' || reportType === 'labor_summary') && (
-              <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 12, fontWeight: 600 }}>Filter Project:</span>
-                <select
-                  value={reportProjectFilter}
-                  onChange={(e) => setReportProjectFilter(e.target.value)}
-                  style={{ maxWidth: 260 }}
-                >
-                  <option value="">All Projects</option>
-                  {allProjectsList.map((p) => (
-                    <option value={p.id} key={p.id}>{p.name}</option>
-                  ))}
-                </select>
+            {/* ── Comprehensive Universal Filter Toolbar ── */}
+            <div
+              style={{
+                marginTop: 16,
+                padding: '12px 14px',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  🔍 Filter &amp; Search Reports
+                </span>
+                {(reportSearch || reportProjectFilter || reportMaterialFilter || reportProjectStatus !== 'all' || reportEntityType !== 'all' || reportFrequency !== 'all' || reportStartDate || reportEndDate) && (
+                  <button
+                    type="button"
+                    className="muted"
+                    onClick={() => {
+                      setReportSearch('');
+                      setReportProjectFilter('');
+                      setReportMaterialFilter('');
+                      setReportProjectStatus('all');
+                      setReportEntityType('all');
+                      setReportFrequency('all');
+                      setReportStartDate('');
+                      setReportEndDate('');
+                    }}
+                    style={{ fontSize: 11, padding: '3px 8px', borderRadius: 4, cursor: 'pointer' }}
+                  >
+                    ✕ Reset Filters
+                  </button>
+                )}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+                {/* 1. Name or Phone Number Universal Search */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                    Search Name or Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={reportSearch}
+                    onChange={(e) => setReportSearch(e.target.value)}
+                    placeholder="e.g. Ramesh, 9876..., Mason"
+                    style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* 2. Entity Type (All, Labor, Contractor, Vendor, Service Provider, Party) */}
+                {(reportType === 'cross_project_entity' || reportType === 'vendor_balance' || reportType === 'labor_summary') && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                      Entity Type
+                    </label>
+                    <select
+                      value={reportEntityType}
+                      onChange={(e) => setReportEntityType(e.target.value)}
+                      style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="all">All Entity Types</option>
+                      <option value="labor">Labor / Worker</option>
+                      <option value="contractor">Contractor</option>
+                      <option value="vendor">Vendor / Supplier</option>
+                      <option value="service_provider">Service Provider</option>
+                      <option value="party">Client / Party</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* 3. Project Status (All, Running, Completed / Finished, On Hold) */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                    Project Status
+                  </label>
+                  <select
+                    value={reportProjectStatus}
+                    onChange={(e) => setReportProjectStatus(e.target.value)}
+                    style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    <option value="all">All Statuses (Running + Finished)</option>
+                    <option value="running">Running Projects Only</option>
+                    <option value="completed">Finished / Completed Only</option>
+                    <option value="on_hold">On Hold Only</option>
+                  </select>
+                </div>
+
+                {/* 4. Project Filter */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                    Project
+                  </label>
+                  <select
+                    value={reportProjectFilter}
+                    onChange={(e) => setReportProjectFilter(e.target.value)}
+                    style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    <option value="">All Projects</option>
+                    {allProjectsList.map((p) => (
+                      <option value={p.id} key={p.id}>
+                        {p.name} {p.status ? `(${p.status})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 5. Material Filter (For Material Consumption & Stock tabs) */}
+                {(reportType === 'material_consumption' || reportType === 'stock_running') && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                      Material
+                    </label>
+                    <select
+                      value={reportMaterialFilter}
+                      onChange={(e) => setReportMaterialFilter(e.target.value)}
+                      style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="">All Materials</option>
+                      {materialsMaster.map((m) => (
+                        <option value={m.id} key={m.id}>
+                          {m.name} {m.unit ? `(${m.unit})` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* 6. Frequency Breakdown (Daily, Weekly, Monthly, Yearly) for Material Consumption */}
+                {reportType === 'material_consumption' && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                      Time Frequency
+                    </label>
+                    <select
+                      value={reportFrequency}
+                      onChange={(e) => setReportFrequency(e.target.value)}
+                      style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="all">Summary Total (All-Time)</option>
+                      <option value="daily">Per Day (Daily Breakdown)</option>
+                      <option value="weekly">Per Week (Weekly Breakdown)</option>
+                      <option value="monthly">Per Month (Monthly Breakdown)</option>
+                      <option value="yearly">Per Year (Yearly Breakdown)</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* 7. Date Range: Start Date & End Date */}
+                {reportType !== 'stock_running' && (
+                  <>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                        From Date
+                      </label>
+                      <input
+                        type="date"
+                        value={reportStartDate}
+                        onChange={(e) => setReportStartDate(e.target.value)}
+                        style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 3 }}>
+                        To Date
+                      </label>
+                      <input
+                        type="date"
+                        value={reportEndDate}
+                        onChange={(e) => setReportEndDate(e.target.value)}
+                        style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* ── Summary KPI Metric Cards ── */}
+            {reportData.summary && (
+              <div
+                style={{
+                  marginTop: 16,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                  gap: 12,
+                }}
+              >
+                {reportType === 'cross_project_entity' && (
+                  <>
+                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#166534', fontWeight: 600 }}>Total Billed / Earned</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#15803d', marginTop: 2 }}>
+                        {INR(reportData.summary.total_billed)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#1e40af', fontWeight: 600 }}>Total Paid</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>
+                        {INR(reportData.summary.total_paid)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Balance Due</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>
+                        {INR(reportData.summary.total_balance)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600 }}>Projects Involved</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>
+                        {reportData.summary.projects_count}
+                      </div>
+                    </div>
+                    <div style={{ background: '#fdf4ff', border: '1px solid #f5d0fe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#86198f', fontWeight: 600 }}>Entities Found</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#a21caf', marginTop: 2 }}>
+                        {reportData.summary.entities_count}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {reportType === 'cost_summary' && (
+                  <>
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#1e40af', fontWeight: 600 }}>Total Contract Value</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>
+                        {INR(reportData.summary.total_contract_value)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Total Expenses</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>
+                        {INR(reportData.summary.total_expense)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#166534', fontWeight: 600 }}>Total Received</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#15803d', marginTop: 2 }}>
+                        {INR(reportData.summary.total_received)}
+                      </div>
+                    </div>
+                    <div style={{ background: reportData.summary.total_profit_or_loss >= 0 ? '#f0fdf4' : '#fef2f2', border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600 }}>Net Profit / Loss</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: reportData.summary.total_profit_or_loss >= 0 ? '#15803d' : '#dc2626', marginTop: 2 }}>
+                        {INR(reportData.summary.total_profit_or_loss)}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {reportType === 'material_consumption' && (
+                  <>
+                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#92400e', fontWeight: 600 }}>Consumed Material Cost</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#b45309', marginTop: 2 }}>
+                        {INR(reportData.summary.total_consumed_cost)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600 }}>Total Quantity Used</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>
+                        {Number(reportData.summary.total_used_qty).toLocaleString()}
+                      </div>
+                    </div>
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#1e40af', fontWeight: 600 }}>Distinct Materials</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>
+                        {reportData.summary.materials_count}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {(reportType === 'vendor_balance' || reportType === 'labor_summary') && (
+                  <>
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#1e40af', fontWeight: 600 }}>Total Earned</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>
+                        {INR(reportData.summary.total_earned)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#166534', fontWeight: 600 }}>Total Paid</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#15803d', marginTop: 2 }}>
+                        {INR(reportData.summary.total_paid)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Total Balance Due</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>
+                        {INR(reportData.summary.total_balance_due)}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {reportType === 'party_summary' && (
+                  <>
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#1e40af', fontWeight: 600 }}>Contract Value</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>
+                        {INR(reportData.summary.total_contract_value)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#166534', fontWeight: 600 }}>Received</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#15803d', marginTop: 2 }}>
+                        {INR(reportData.summary.total_received)}
+                      </div>
+                    </div>
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 14px' }}>
+                      <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Pending</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#dc2626', marginTop: 2 }}>
+                        {INR(reportData.summary.total_pending)}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -9522,37 +9914,110 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {loadingReport ? (
             <p style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Loading report data...</p>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  {reportData.headers?.map((h) => (
-                    <th key={h.key}>{h.label}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {reportData.data?.map((row, rIdx) => (
-                  <tr key={rIdx}>
-                    {reportData.headers?.map((h) => {
-                      const val = row[h.key];
-                      const isMoney = String(h.label).includes('(₹)');
-                      return (
-                        <td key={h.key} style={isMoney ? { fontWeight: 600 } : {}}>
-                          {isMoney ? INR(val) : val ?? '—'}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-                {(!reportData.data || reportData.data.length === 0) && (
+            <div style={{ overflowX: 'auto', background: '#fff', borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={reportData.headers?.length || 5} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                      No data available for this report.
-                    </td>
+                    {reportData.headers?.map((h) => (
+                      <th key={h.key}>{h.label}</th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {reportData.data?.map((row, rIdx) => (
+                    <tr key={rIdx}>
+                      {reportData.headers?.map((h) => {
+                        const val = row[h.key];
+                        const isMoney = String(h.label).includes('(₹)');
+                        const isStatus = h.key === 'project_status' || h.key === 'status';
+                        const isType = h.key === 'entity_type';
+
+                        return (
+                          <td key={h.key} style={isMoney ? { fontWeight: 600 } : {}}>
+                            {isType ? (
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '2px 8px',
+                                  borderRadius: 4,
+                                  fontSize: 11,
+                                  fontWeight: 600,
+                                  background:
+                                    val === 'Labor / Worker'
+                                      ? '#eff6ff'
+                                      : val === 'Contractor'
+                                      ? '#fef3c7'
+                                      : val === 'Service Provider'
+                                      ? '#f3e8ff'
+                                      : val === 'Client / Party'
+                                      ? '#ecfdf5'
+                                      : '#f1f5f9',
+                                  color:
+                                    val === 'Labor / Worker'
+                                      ? '#1d4ed8'
+                                      : val === 'Contractor'
+                                      ? '#b45309'
+                                      : val === 'Service Provider'
+                                      ? '#7e22ce'
+                                      : val === 'Client / Party'
+                                      ? '#047857'
+                                      : '#475569',
+                                }}
+                              >
+                                {val}
+                              </span>
+                            ) : isStatus ? (
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '2px 6px',
+                                  borderRadius: 4,
+                                  fontSize: 11,
+                                  fontWeight: 600,
+                                  background:
+                                    val === 'running' || val === 'Active' || val === 'ADEQUATE'
+                                      ? '#dcfce7'
+                                      : val === 'completed'
+                                      ? '#e0e7ff'
+                                      : val === 'LOW_STOCK'
+                                      ? '#fef9c3'
+                                      : val === 'OVER_USED'
+                                      ? '#fee2e2'
+                                      : '#f1f5f9',
+                                  color:
+                                    val === 'running' || val === 'Active' || val === 'ADEQUATE'
+                                      ? '#15803d'
+                                      : val === 'completed'
+                                      ? '#4338ca'
+                                      : val === 'LOW_STOCK'
+                                      ? '#a16207'
+                                      : val === 'OVER_USED'
+                                      ? '#b91c1c'
+                                      : '#475569',
+                                }}
+                              >
+                                {val}
+                              </span>
+                            ) : isMoney ? (
+                              INR(val)
+                            ) : (
+                              val ?? '—'
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                  {(!reportData.data || reportData.data.length === 0) && (
+                    <tr>
+                      <td colSpan={reportData.headers?.length || 5} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                        No records match the selected filters. Try broadening your search or resetting filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}
