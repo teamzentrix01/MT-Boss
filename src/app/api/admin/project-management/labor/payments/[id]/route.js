@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -47,6 +47,12 @@ export async function PATCH(req, { params }) {
       if (!auth.allowed) {
         await client.query('ROLLBACK');
         return auth.response;
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, auth.user, Boolean(b.admin_override));
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const r = await client.query(
@@ -101,6 +107,12 @@ export async function DELETE(req, { params }) {
       if (!old || old.is_deleted) {
         await client.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const r = await client.query(

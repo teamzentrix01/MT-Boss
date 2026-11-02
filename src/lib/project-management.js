@@ -680,6 +680,41 @@ export const ensureProjectManagementPhase5Schema = createInitializationGuard(asy
   }
 });
 
+export function getTodayIST() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+}
+
+export function isCreatedTodayIST(createdAt) {
+  if (!createdAt) return false;
+  try {
+    const createdStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date(createdAt));
+    const todayStr = getTodayIST();
+    return createdStr === todayStr;
+  } catch {
+    return false;
+  }
+}
+
+export function assertSameDayEditable(createdAt, user = null, adminOverride = false) {
+  const isSuperAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  if (isSuperAdmin && adminOverride) {
+    return { allowed: true };
+  }
+  if (!isCreatedTodayIST(createdAt)) {
+    return {
+      allowed: false,
+      response: NextResponse.json(
+        {
+          success: false,
+          error: 'Locked: Entries can only be edited or deleted on the same day they were created (sirf same day edit/delete allowed hai).'
+        },
+        { status: 403 }
+      )
+    };
+  }
+  return { allowed: true };
+}
+
 // Formatting helpers (server-side, used by export routes)
 export function inr(v) {
   const n = Number(v || 0);

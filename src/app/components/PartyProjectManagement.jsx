@@ -320,6 +320,43 @@ export function packExpenseNote(itemName, noteText) {
   return cleanNote ? `[Item: ${cleanItem}] ${cleanNote}` : `[Item: ${cleanItem}]`;
 }
 
+export function formatDateIST(dateVal) {
+  if (!dateVal) return '—';
+  if (typeof dateVal === 'string') {
+    const trimmed = dateVal.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      return trimmed;
+    }
+    if (trimmed.includes('T')) {
+      try {
+        return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date(trimmed));
+      } catch {
+        return trimmed.slice(0, 10);
+      }
+    }
+    return trimmed.slice(0, 10);
+  }
+  if (dateVal instanceof Date) {
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(dateVal);
+    } catch {
+      return dateVal.toISOString().slice(0, 10);
+    }
+  }
+  return String(dateVal).slice(0, 10);
+}
+
+export function isSameDayIST(dateOrTimestamp) {
+  if (!dateOrTimestamp) return false;
+  try {
+    const formatted = formatDateIST(dateOrTimestamp);
+    const todayStr = today();
+    return formatted === todayStr;
+  } catch {
+    return false;
+  }
+}
+
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
   const submitAction = useSubmitAction();
   if (isAgent) {
@@ -599,6 +636,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // Phase 1: Party payments
   const [partyPayments, setPartyPayments] = useState([]);
   const [partyPaymentForm, setPartyPaymentForm] = useState({ amount: '', payment_date: today(), mode: 'bank', note: '', transaction_reference: '' });
+  const [partyPaymentModal, setPartyPaymentModal] = useState(false);
+  const [editingPartyPaymentId, setEditingPartyPaymentId] = useState(null);
+  const [vendorPaymentModal, setVendorPaymentModal] = useState(false);
+  const [editingVendorPaymentId, setEditingVendorPaymentId] = useState(null);
+  const [editingSupplierPaymentId, setEditingSupplierPaymentId] = useState(null);
+  const [modalReadOnly, setModalReadOnly] = useState(false);
 
   // Phase 2: Project Vendors
   const [projectVendors, setProjectVendors] = useState([]);
@@ -742,6 +785,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // checkbox UI is intentionally hidden in favor of per-worker marking.
   const [selectedLaborIds, setSelectedLaborIds] = useState([]);
   const [modalError, setModalError] = useState('');
+  const [attendanceDetailModal, setAttendanceDetailModal] = useState(null);
+  const [savingAttendanceDetail, setSavingAttendanceDetail] = useState(false);
 
   // ── Phase 3: Materials & Stock State ───────────────────────────────────────
   const [materialsMaster, setMaterialsMaster] = useState([]);
@@ -1369,19 +1414,35 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   // ── Save Supplier Payment ──────────────────────────────────────────────────
   const saveSupplierPayment = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!project?.id) return;
     try {
-      const payload = {
-        ...supplierPaymentForm,
-        project_id: project.id,
-      };
-      const res = await api('/api/admin/project-management/supplier-payments', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-      setMessage(res.is_advance ? `Vendor payment recorded as advance of ${INR(res.advance_amount)}` : 'Vendor payment recorded successfully');
-      setSupplierPaymentModal(false);
+      if (editingSupplierPaymentId) {
+        await api(`/api/admin/project-management/supplier-payments?id=${editingSupplierPaymentId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            amount: Number(supplierPaymentForm.amount),
+            payment_date: supplierPaymentForm.payment_date,
+            mode: supplierPaymentForm.mode,
+            transaction_reference: supplierPaymentForm.transaction_reference,
+            note: supplierPaymentForm.note,
+          }),
+        });
+        setMessage('Vendor payment updated successfully');
+        setSupplierPaymentModal(false);
+        setEditingSupplierPaymentId(null);
+      } else {
+        const payload = {
+          ...supplierPaymentForm,
+          project_id: project.id,
+        };
+        const res = await api('/api/admin/project-management/supplier-payments', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        setMessage(res.is_advance ? `Vendor payment recorded as advance of ${INR(res.advance_amount)}` : 'Vendor payment recorded successfully');
+        setSupplierPaymentModal(false);
+      }
       setSupplierPaymentForm({
         supplier_id: '',
         supplier_name: '',
@@ -1781,14 +1842,31 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   // ── Phase 1: Party Payment ───────────────────────────────────────────────────
   const savePartyPayment = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
-      await api('/api/admin/project-management/payments', {
-        method: 'POST',
-        body: JSON.stringify({ ...partyPaymentForm, project_id: project.id }),
-      });
-      setPartyPaymentForm({ amount: '', payment_date: today(), mode: 'bank', note: '', transaction_reference: '' });
-      setMessage('Party payment recorded');
+      if (editingPartyPaymentId) {
+        await api(`/api/admin/project-management/payments/${editingPartyPaymentId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            amount: Number(partyPaymentForm.amount),
+            payment_date: partyPaymentForm.payment_date,
+            mode: partyPaymentForm.mode,
+            transaction_reference: partyPaymentForm.transaction_reference,
+            note: partyPaymentForm.note,
+          }),
+        });
+        setMessage('Party payment updated successfully');
+        setPartyPaymentModal(false);
+        setEditingPartyPaymentId(null);
+      } else {
+        await api('/api/admin/project-management/payments', {
+          method: 'POST',
+          body: JSON.stringify({ ...partyPaymentForm, project_id: project.id }),
+        });
+        setPartyPaymentForm({ amount: '', payment_date: today(), mode: 'bank', note: '', transaction_reference: '' });
+        setMessage('Party payment recorded successfully');
+        setPartyPaymentModal(false);
+      }
       refreshProjectData();
     } catch (e) {
       setMessage(e.message);
@@ -2016,22 +2094,40 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   }, [projectTab, paymentsSubTab, attendanceSubTab, loadProjectLabors, project?.id]);
 
   const saveVendorPayment = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
-      await api('/api/admin/project-management/vendor-payments', {
-        method: 'POST',
-        body: JSON.stringify(vendorPaymentForm),
-      });
-      setMessage('Service provider payment recorded');
-      setVendorPaymentForm({
-        project_vendor_id: '',
-        amount: '',
-        payment_date: today(),
-        mode: 'bank',
-        payment_type: 'labour',
-        note: '',
-        transaction_reference: '',
-      });
+      if (editingVendorPaymentId) {
+        await api(`/api/admin/project-management/vendor-payments/${editingVendorPaymentId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            amount: Number(vendorPaymentForm.amount),
+            payment_date: vendorPaymentForm.payment_date,
+            mode: vendorPaymentForm.mode,
+            payment_type: vendorPaymentForm.payment_type,
+            transaction_reference: vendorPaymentForm.transaction_reference,
+            note: vendorPaymentForm.note,
+          }),
+        });
+        setMessage('Service provider payment updated successfully');
+        setVendorPaymentModal(false);
+        setEditingVendorPaymentId(null);
+      } else {
+        await api('/api/admin/project-management/vendor-payments', {
+          method: 'POST',
+          body: JSON.stringify(vendorPaymentForm),
+        });
+        setMessage('Service provider payment recorded successfully');
+        setVendorPaymentForm({
+          project_vendor_id: '',
+          amount: '',
+          payment_date: today(),
+          mode: 'bank',
+          payment_type: 'labour',
+          note: '',
+          transaction_reference: '',
+        });
+        setVendorPaymentModal(false);
+      }
       refreshProjectData();
       loadVendorPayments();
     } catch (e) {
@@ -2191,6 +2287,71 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setMessage(`❌ ${e.message || 'Could not save labor attendance'}`);
     } finally {
       setSavingLaborAttendance(false);
+    }
+  };
+
+  const saveAttendanceDetailModal = async (e) => {
+    if (e) e.preventDefault();
+    if (!attendanceDetailModal || !project?.id) return;
+    setSavingAttendanceDetail(true);
+    try {
+      if (attendanceDetailModal.type === 'labor') {
+        const payload = [{
+          labor_id: Number(attendanceDetailModal.labor_id),
+          attendance_date: attendanceDetailModal.attendance_date,
+          status: attendanceDetailModal.status || 'present',
+          shift_type: attendanceDetailModal.shift_type || 'day',
+          overtime_hours: Number(attendanceDetailModal.overtime_hours || 0),
+          wage_amount: Number(attendanceDetailModal.wage_amount || 0),
+          note: attendanceDetailModal.note || '',
+        }];
+
+        await api('/api/admin/project-management/labor/attendance', {
+          method: 'PUT',
+          body: JSON.stringify({
+            project_id: project.id,
+            attendance_date: attendanceDetailModal.attendance_date,
+            entries: payload,
+            records: payload,
+          }),
+        });
+        setMessage(`✅ Attendance updated successfully for ${attendanceDetailModal.labor_name}`);
+        setAttendanceDetailModal(null);
+        loadLaborAttendance(laborAttendanceDate, project.id);
+        loadProjectLabors(project.id);
+        refreshProjectData(project.id);
+        loadProjectLaborAttendanceHistory(project.id);
+      } else if (attendanceDetailModal.type === 'vendor') {
+        const payload = [{
+          project_vendor_id: Number(attendanceDetailModal.project_vendor_id),
+          attendance_date: attendanceDetailModal.attendance_date,
+          status: attendanceDetailModal.status || 'present',
+          shift_type: attendanceDetailModal.shift_type || 'day',
+          overtime_hours: Number(attendanceDetailModal.overtime_hours || 0),
+          workers_count: Number(attendanceDetailModal.workers_count || 1),
+          rate_per_worker: Number(attendanceDetailModal.rate_per_worker || 0),
+          wage_amount: Number(attendanceDetailModal.wage_amount || 0),
+          note: attendanceDetailModal.note || '',
+        }];
+
+        await api('/api/admin/project-management/attendance', {
+          method: 'POST',
+          body: JSON.stringify({
+            attendance_date: attendanceDetailModal.attendance_date,
+            entries: payload,
+            records: payload,
+          }),
+        });
+        setMessage(`✅ Attendance updated successfully for ${attendanceDetailModal.vendor_name}`);
+        setAttendanceDetailModal(null);
+        refreshProjectData();
+        loadDailyAttendance(attendanceDate);
+        loadProjectVendorAttendanceHistory(project?.id);
+      }
+    } catch (err) {
+      alert(`❌ ${err.message || 'Could not update attendance'}`);
+    } finally {
+      setSavingAttendanceDetail(false);
     }
   };
 
@@ -3626,11 +3787,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             </tr>
                           </thead>
                         <tbody>
-                          {projectVendorAttendanceHistory.map((h) => {
-                            const dateStr = typeof h.attendance_date === 'string' ? h.attendance_date.slice(0, 10) : new Date(h.attendance_date).toISOString().slice(0, 10);
+                          {projectVendorAttendanceHistory.map((h, i) => {
+                            const dateStr = formatDateIST(h.attendance_date);
+                            const isToday = isSameDayIST(h.attendance_date || h.created_at);
                             return (
                               <tr
-                                key={h.id}
+                                key={h.id || i}
                                 className="clickable-row"
                                 onClick={() => {
                                   const pv = projectVendors.find((v) => Number(v.id) === Number(h.project_vendor_id));
@@ -3659,17 +3821,59 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(h.wage_amount)}</td>
                                 <td style={{ fontSize: 12, color: '#64748b' }}>{h.created_by || '—'}</td>
                                 <td onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    type="button"
-                                    className="muted"
-                                    style={{ padding: '2px 8px', fontSize: 11 }}
-                                    onClick={() => {
-                                      setAttendanceDate(dateStr);
-                                      loadDailyAttendance(dateStr);
-                                    }}
-                                  >
-                                    View / Edit Date
-                                  </button>
+                                  {isToday ? (
+                                    <button
+                                      type="button"
+                                      className="active-btn"
+                                      style={{ padding: '4px 10px', fontSize: 12, background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                                      onClick={() => {
+                                        setAttendanceDetailModal({
+                                          type: 'vendor',
+                                          isToday: true,
+                                          project_vendor_id: h.project_vendor_id,
+                                          vendor_name: h.vendor_name || 'Vendor',
+                                          trade: h.trade || '—',
+                                          attendance_date: dateStr,
+                                          status: h.status || 'present',
+                                          shift_type: h.shift_type || 'day',
+                                          overtime_hours: Number(h.overtime_hours || 0),
+                                          workers_count: Number(h.workers_count || 1),
+                                          rate_per_worker: Number(h.rate_per_worker || 0),
+                                          wage_amount: Number(h.wage_amount || 0),
+                                          note: h.note || '',
+                                          marked_by: h.created_by || '—',
+                                        });
+                                      }}
+                                    >
+                                      ✏️ Edit Today
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      className="muted"
+                                      style={{ padding: '4px 10px', fontSize: 12, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                                      onClick={() => {
+                                        setAttendanceDetailModal({
+                                          type: 'vendor',
+                                          isToday: false,
+                                          project_vendor_id: h.project_vendor_id,
+                                          vendor_name: h.vendor_name || 'Vendor',
+                                          trade: h.trade || '—',
+                                          attendance_date: dateStr,
+                                          status: h.status || 'present',
+                                          shift_type: h.shift_type || 'day',
+                                          overtime_hours: Number(h.overtime_hours || 0),
+                                          workers_count: Number(h.workers_count || 1),
+                                          rate_per_worker: Number(h.rate_per_worker || 0),
+                                          wage_amount: Number(h.wage_amount || 0),
+                                          note: h.note || '',
+                                          marked_by: h.created_by || '—',
+                                        });
+                                      }}
+                                    >
+                                      👁️ View (Read Only)
+                                    </button>
+                                  )}
                                 </td>
                               </tr>
                             );
@@ -4304,12 +4508,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {projectLaborAttendanceHistory.map((h) => {
-                                    const dateStr = typeof h.attendance_date === 'string' ? h.attendance_date.slice(0, 10) : new Date(h.attendance_date).toISOString().slice(0, 10);
-                                    const isTodayEntry = dateStr === today();
+                                  {projectLaborAttendanceHistory.map((h, i) => {
+                                    const dateStr = formatDateIST(h.attendance_date);
+                                    const isTodayEntry = isSameDayIST(h.attendance_date || h.created_at);
                                     return (
                                       <tr
-                                        key={h.id}
+                                        key={h.id || i}
                                         className="clickable-row"
                                         onClick={() => {
                                           const lab = projectLabors.find((l) => Number(l.id) === Number(h.labor_id));
@@ -4340,10 +4544,25 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             <button
                                               type="button"
                                               className="active-btn"
-                                              style={{ padding: '2px 8px', fontSize: 11 }}
+                                              style={{ padding: '4px 10px', fontSize: 12, background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}
                                               onClick={() => {
-                                                setLaborAttendanceDate(dateStr);
-                                                loadLaborAttendance(dateStr, project.id);
+                                                const lab = projectLabors.find((l) => Number(l.id) === Number(h.labor_id));
+                                                const dailyRate = Number(lab?.daily_rate || h.daily_rate || 0);
+                                                setAttendanceDetailModal({
+                                                  type: 'labor',
+                                                  isToday: true,
+                                                  labor_id: h.labor_id,
+                                                  labor_name: h.labor_name || lab?.name || 'Worker',
+                                                  trade: h.trade || lab?.trade || 'Helper',
+                                                  daily_rate: dailyRate,
+                                                  attendance_date: dateStr,
+                                                  status: h.status || 'present',
+                                                  shift_type: h.shift_type || 'day',
+                                                  overtime_hours: Number(h.overtime_hours || 0),
+                                                  wage_amount: Number(h.wage_amount || 0),
+                                                  note: h.note || '',
+                                                  marked_by: h.created_by || '—',
+                                                });
                                               }}
                                             >
                                               ✏️ Edit Today
@@ -4352,10 +4571,24 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             <button
                                               type="button"
                                               className="muted"
-                                              style={{ padding: '2px 8px', fontSize: 11 }}
+                                              style={{ padding: '4px 10px', fontSize: 12, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                                               onClick={() => {
-                                                setLaborAttendanceDate(dateStr);
-                                                loadLaborAttendance(dateStr, project.id);
+                                                const lab = projectLabors.find((l) => Number(l.id) === Number(h.labor_id));
+                                                setAttendanceDetailModal({
+                                                  type: 'labor',
+                                                  isToday: false,
+                                                  labor_id: h.labor_id,
+                                                  labor_name: h.labor_name || lab?.name || 'Worker',
+                                                  trade: h.trade || lab?.trade || 'Helper',
+                                                  daily_rate: Number(lab?.daily_rate || h.daily_rate || 0),
+                                                  attendance_date: dateStr,
+                                                  status: h.status || 'present',
+                                                  shift_type: h.shift_type || 'day',
+                                                  overtime_hours: Number(h.overtime_hours || 0),
+                                                  wage_amount: Number(h.wage_amount || 0),
+                                                  note: h.note || '',
+                                                  marked_by: h.created_by || '—',
+                                                });
                                               }}
                                             >
                                               👁️ View (Read Only)
@@ -4647,11 +4880,65 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               {p.note || '—'}
                               {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                             </td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('vendorPayment', p.id)}>
-                                  Delete
-                                </button>
+                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                              {isSameDayIST(p.created_at || p.payment_date) ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingVendorPaymentId(p.id);
+                                      setVendorPaymentForm({
+                                        project_vendor_id: String(p.project_vendor_id || ''),
+                                        amount: p.amount,
+                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                        mode: p.mode || 'bank',
+                                        payment_type: p.payment_type || 'labour',
+                                        transaction_reference: p.transaction_reference || '',
+                                        note: p.note || '',
+                                      });
+                                      setModalReadOnly(false);
+                                      setModalError('');
+                                      setVendorPaymentModal(true);
+                                    }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('vendorPayment', p.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingVendorPaymentId(p.id);
+                                      setVendorPaymentForm({
+                                        project_vendor_id: String(p.project_vendor_id || ''),
+                                        amount: p.amount,
+                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                        mode: p.mode || 'bank',
+                                        payment_type: p.payment_type || 'labour',
+                                        transaction_reference: p.transaction_reference || '',
+                                        note: p.note || '',
+                                      });
+                                      setModalReadOnly(true);
+                                      setModalError('');
+                                      setVendorPaymentModal(true);
+                                    }}
+                                  >
+                                    👁️ View
+                                  </button>
+                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    🔒 Locked
+                                  </span>
+                                </>
                               )}
                             </td>
                           </tr>
@@ -4790,29 +5077,64 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   {p.note || '—'}
                                   {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                                 </td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setLaborPaymentForm({
-                                        labor_id: p.labor_id,
-                                        amount: p.amount,
-                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
-                                        mode: p.mode || 'cash',
-                                        payment_type: p.payment_type || 'wage',
-                                        note: p.note || '',
-                                        transaction_reference: p.transaction_reference || '',
-                                      });
-                                      setEditingLaborPaymentId(p.id);
-                                      setLaborPaymentModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('laborPayment', p.id)}>
-                                      Delete
-                                    </button>
+                                <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                                  {isSameDayIST(p.created_at || p.payment_date) ? (
+                                    <>
+                                      <button
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setLaborPaymentForm({
+                                            labor_id: p.labor_id,
+                                            amount: p.amount,
+                                            payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                            mode: p.mode || 'cash',
+                                            payment_type: p.payment_type || 'wage',
+                                            note: p.note || '',
+                                            transaction_reference: p.transaction_reference || '',
+                                          });
+                                          setEditingLaborPaymentId(p.id);
+                                          setModalReadOnly(false);
+                                          setModalError('');
+                                          setLaborPaymentModal(true);
+                                        }}
+                                      >
+                                        ✏️ Edit
+                                      </button>
+                                      {!isAgent && (
+                                        <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('laborPayment', p.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setLaborPaymentForm({
+                                            labor_id: p.labor_id,
+                                            amount: p.amount,
+                                            payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                            mode: p.mode || 'cash',
+                                            payment_type: p.payment_type || 'wage',
+                                            note: p.note || '',
+                                            transaction_reference: p.transaction_reference || '',
+                                          });
+                                          setEditingLaborPaymentId(p.id);
+                                          setModalReadOnly(true);
+                                          setModalError('');
+                                          setLaborPaymentModal(true);
+                                        }}
+                                      >
+                                        👁️ View
+                                      </button>
+                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                        🔒 Locked
+                                      </span>
+                                    </>
                                   )}
                                 </td>
                               </tr>
@@ -4879,11 +5201,61 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {p.note || '—'}
                             {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                           </td>
-                          <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                            {!isAgent && (
-                              <button className="danger" onClick={() => del('partyPayment', p.id)}>
-                                Delete
-                              </button>
+                          <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                            {isSameDayIST(p.created_at || p.payment_date) ? (
+                              <>
+                                <button
+                                  type="button"
+                                  className="muted"
+                                  style={{ padding: '4px 8px', fontSize: 12 }}
+                                  onClick={() => {
+                                    setEditingPartyPaymentId(p.id);
+                                    setPartyPaymentForm({
+                                      amount: p.amount,
+                                      payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                      mode: p.mode || 'bank',
+                                      transaction_reference: p.transaction_reference || '',
+                                      note: p.note || '',
+                                    });
+                                    setModalReadOnly(false);
+                                    setModalError('');
+                                    setPartyPaymentModal(true);
+                                  }}
+                                >
+                                  ✏️ Edit
+                                </button>
+                                {!isAgent && (
+                                  <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('partyPayment', p.id)}>
+                                    Delete
+                                  </button>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  className="muted"
+                                  style={{ padding: '4px 8px', fontSize: 12 }}
+                                  onClick={() => {
+                                    setEditingPartyPaymentId(p.id);
+                                    setPartyPaymentForm({
+                                      amount: p.amount,
+                                      payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                      mode: p.mode || 'bank',
+                                      transaction_reference: p.transaction_reference || '',
+                                      note: p.note || '',
+                                    });
+                                    setModalReadOnly(true);
+                                    setModalError('');
+                                    setPartyPaymentModal(true);
+                                  }}
+                                >
+                                  👁️ View
+                                </button>
+                                <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  🔒 Locked
+                                </span>
+                              </>
                             )}
                           </td>
                         </tr>
@@ -5410,11 +5782,68 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       ) : '—'}
                                     </td>
                                     <td>{d.note || '—'}</td>
-                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                      {!isAgent && (
-                                        <button className="danger" onClick={() => del('received', d.id)}>
-                                          Delete
-                                        </button>
+                                    <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                                      {isSameDayIST(d.created_at || d.received_date) ? (
+                                        <>
+                                          <button
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingReceivedId(d.id);
+                                              setReceivedForm({
+                                                material_id: String(d.material_id),
+                                                material_name: d.material_name || stockRows.find((m) => Number(m.id) === Number(d.material_id))?.name || '',
+                                                unit: d.material_unit || d.unit || 'bags',
+                                                quantity: d.quantity,
+                                                rate: d.rate,
+                                                received_date: formatDateIST(d.received_date),
+                                                supplier_name: d.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                challan_no: d.challan_no || '',
+                                                note: d.note || '',
+                                              });
+                                              setModalReadOnly(false);
+                                              setModalError('');
+                                              setReceivedModal(true);
+                                            }}
+                                          >
+                                            ✏️ Edit
+                                          </button>
+                                          {!isAgent && (
+                                            <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('received', d.id)}>
+                                              Delete
+                                            </button>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <button
+                                            type="button"
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingReceivedId(d.id);
+                                              setReceivedForm({
+                                                material_id: String(d.material_id),
+                                                material_name: d.material_name || stockRows.find((m) => Number(m.id) === Number(d.material_id))?.name || '',
+                                                unit: d.material_unit || d.unit || 'bags',
+                                                quantity: d.quantity,
+                                                rate: d.rate,
+                                                received_date: formatDateIST(d.received_date),
+                                                supplier_name: d.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                challan_no: d.challan_no || '',
+                                                note: d.note || '',
+                                              });
+                                              setModalReadOnly(true);
+                                              setModalError('');
+                                              setReceivedModal(true);
+                                            }}
+                                          >
+                                            👁️ View
+                                          </button>
+                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                            🔒 Locked
+                                          </span>
+                                        </>
                                       )}
                                     </td>
                                   </tr>
@@ -5462,11 +5891,74 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       ) : '—'}
                                     </td>
                                     <td>{ret.note || ret.reason || '—'}</td>
-                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                      {!isAgent && (
-                                        <button className="danger" onClick={() => del('adjustment', ret.id)}>
-                                          Delete
-                                        </button>
+                                    <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                                      {isSameDayIST(ret.created_at || ret.adjustment_date) ? (
+                                        <>
+                                          <button
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingAdjId(ret.id);
+                                              setAdjustmentForm({
+                                                material_id: String(ret.material_id),
+                                                material_name: ret.material_name || stockRows.find((m) => Number(m.id) === Number(ret.material_id))?.name || '',
+                                                unit: ret.material_unit || ret.unit || 'bags',
+                                                adjustment_type: ret.adjustment_type || 'return_to_supplier',
+                                                quantity: ret.quantity,
+                                                adjustment_date: formatDateIST(ret.adjustment_date),
+                                                to_project_id: ret.to_project_id ? String(ret.to_project_id) : '',
+                                                supplier_name: ret.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                amount: ret.amount || '',
+                                                note: ret.note || ret.reason || '',
+                                                bill_url: ret.bill_url || '',
+                                                bill_filename: ret.bill_filename || '',
+                                              });
+                                              setModalReadOnly(false);
+                                              setModalError('');
+                                              setAdjustmentModal(true);
+                                            }}
+                                          >
+                                            ✏️ Edit
+                                          </button>
+                                          {!isAgent && (
+                                            <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('adjustment', ret.id)}>
+                                              Delete
+                                            </button>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <button
+                                            type="button"
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingAdjId(ret.id);
+                                              setAdjustmentForm({
+                                                material_id: String(ret.material_id),
+                                                material_name: ret.material_name || stockRows.find((m) => Number(m.id) === Number(ret.material_id))?.name || '',
+                                                unit: ret.material_unit || ret.unit || 'bags',
+                                                adjustment_type: ret.adjustment_type || 'return_to_supplier',
+                                                quantity: ret.quantity,
+                                                adjustment_date: formatDateIST(ret.adjustment_date),
+                                                to_project_id: ret.to_project_id ? String(ret.to_project_id) : '',
+                                                supplier_name: ret.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                amount: ret.amount || '',
+                                                note: ret.note || ret.reason || '',
+                                                bill_url: ret.bill_url || '',
+                                                bill_filename: ret.bill_filename || '',
+                                              });
+                                              setModalReadOnly(true);
+                                              setModalError('');
+                                              setAdjustmentModal(true);
+                                            }}
+                                          >
+                                            👁️ View
+                                          </button>
+                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                            🔒 Locked
+                                          </span>
+                                        </>
                                       )}
                                     </td>
                                   </tr>
@@ -5502,11 +5994,65 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     <td>{p.transaction_reference || '—'}</td>
                                     <td>{p.note || '—'}</td>
                                     <td style={{ fontSize: 12, color: '#64748b' }}>{p.created_by || '—'}</td>
-                                    <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                                      {!isAgent && (
-                                        <button className="danger" onClick={() => del('supplierPayment', p.id)}>
-                                          Delete
-                                        </button>
+                                    <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                                      {isSameDayIST(p.created_at || p.payment_date) ? (
+                                        <>
+                                          <button
+                                            type="button"
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingSupplierPaymentId(p.id);
+                                              setSupplierPaymentForm({
+                                                supplier_id: p.supplier_id ? String(p.supplier_id) : '',
+                                                supplier_name: p.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                amount: p.amount,
+                                                payment_date: formatDateIST(p.payment_date),
+                                                mode: p.mode || 'bank',
+                                                transaction_reference: p.transaction_reference || '',
+                                                note: p.note || '',
+                                              });
+                                              setModalReadOnly(false);
+                                              setModalError('');
+                                              setSupplierPaymentModal(true);
+                                            }}
+                                          >
+                                            ✏️ Edit
+                                          </button>
+                                          {!isAgent && (
+                                            <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('supplierPayment', p.id)}>
+                                              Delete
+                                            </button>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <button
+                                            type="button"
+                                            className="muted"
+                                            style={{ padding: '4px 8px', fontSize: 12 }}
+                                            onClick={() => {
+                                              setEditingSupplierPaymentId(p.id);
+                                              setSupplierPaymentForm({
+                                                supplier_id: p.supplier_id ? String(p.supplier_id) : '',
+                                                supplier_name: p.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
+                                                amount: p.amount,
+                                                payment_date: formatDateIST(p.payment_date),
+                                                mode: p.mode || 'bank',
+                                                transaction_reference: p.transaction_reference || '',
+                                                note: p.note || '',
+                                              });
+                                              setModalReadOnly(true);
+                                              setModalError('');
+                                              setSupplierPaymentModal(true);
+                                            }}
+                                          >
+                                            👁️ View
+                                          </button>
+                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                            🔒 Locked
+                                          </span>
+                                        </>
                                       )}
                                     </td>
                                   </tr>
@@ -5761,31 +6307,68 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   ) : '—'}
                                 </td>
                                 <td>{r.note || '—'}</td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setEditingReceivedId(r.id);
-                                      setReceivedForm({
-                                        material_id: String(r.material_id),
-                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
-                                        unit: r.material_unit || r.unit || 'bags',
-                                        quantity: r.quantity,
-                                        rate: r.rate,
-                                        received_date: r.received_date,
-                                        supplier_name: r.supplier_name || '',
-                                        challan_no: r.challan_no || '',
-                                        note: r.note || '',
-                                      });
-                                      setReceivedModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('received', r.id)}>
-                                      Delete
-                                    </button>
+                                <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                                  {isSameDayIST(r.created_at || r.received_date) ? (
+                                    <>
+                                      <button
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingReceivedId(r.id);
+                                          setReceivedForm({
+                                            material_id: String(r.material_id),
+                                            material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                            unit: r.material_unit || r.unit || 'bags',
+                                            quantity: r.quantity,
+                                            rate: r.rate,
+                                            received_date: r.received_date,
+                                            supplier_name: r.supplier_name || '',
+                                            challan_no: r.challan_no || '',
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(false);
+                                          setModalError('');
+                                          setReceivedModal(true);
+                                        }}
+                                      >
+                                        ✏️ Edit
+                                      </button>
+                                      {!isAgent && (
+                                        <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('received', r.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingReceivedId(r.id);
+                                          setReceivedForm({
+                                            material_id: String(r.material_id),
+                                            material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                            unit: r.material_unit || r.unit || 'bags',
+                                            quantity: r.quantity,
+                                            rate: r.rate,
+                                            received_date: r.received_date,
+                                            supplier_name: r.supplier_name || '',
+                                            challan_no: r.challan_no || '',
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(true);
+                                          setModalError('');
+                                          setReceivedModal(true);
+                                        }}
+                                      >
+                                        👁️ View
+                                      </button>
+                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                        🔒 Locked
+                                      </span>
+                                    </>
                                   )}
                                 </td>
                               </tr>
@@ -5864,29 +6447,64 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 <td>
                                   {r.over_used && <span className="badge badge-overused">Over-used</span>}
                                 </td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setEditingUsedId(r.id);
-                                      setUsedForm({
-                                        material_id: String(r.material_id),
-                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
-                                        unit: r.material_unit || r.unit || 'bags',
-                                        quantity: r.quantity,
-                                        used_date: r.used_date,
-                                        used_for: r.used_for || '',
-                                        note: r.note || '',
-                                      });
-                                      setUsedModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('used', r.id)}>
-                                      Delete
-                                    </button>
+                                <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                                  {isSameDayIST(r.created_at || r.used_date) ? (
+                                    <>
+                                      <button
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingUsedId(r.id);
+                                          setUsedForm({
+                                            material_id: String(r.material_id),
+                                            material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                            unit: r.material_unit || r.unit || 'bags',
+                                            quantity: r.quantity,
+                                            used_date: r.used_date,
+                                            used_for: r.used_for || '',
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(false);
+                                          setModalError('');
+                                          setUsedModal(true);
+                                        }}
+                                      >
+                                        ✏️ Edit
+                                      </button>
+                                      {!isAgent && (
+                                        <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('used', r.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingUsedId(r.id);
+                                          setUsedForm({
+                                            material_id: String(r.material_id),
+                                            material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                            unit: r.material_unit || r.unit || 'bags',
+                                            quantity: r.quantity,
+                                            used_date: r.used_date,
+                                            used_for: r.used_for || '',
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(true);
+                                          setModalError('');
+                                          setUsedModal(true);
+                                        }}
+                                      >
+                                        👁️ View
+                                      </button>
+                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                        🔒 Locked
+                                      </span>
+                                    </>
                                   )}
                                 </td>
                               </tr>
@@ -5949,34 +6567,74 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             </td>
                             <td>{r.note || '—'}</td>
                             <td>{r.over_used && <span className="badge badge-overused">Over-used</span>}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingAdjId(r.id);
-                                  setAdjustmentForm({
-                                    material_id: String(r.material_id),
-                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
-                                    unit: r.material_unit || r.unit || 'bags',
-                                    adjustment_type: r.adjustment_type,
-                                    quantity: r.quantity,
-                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
-                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
-                                    supplier_name: r.supplier_name || '',
-                                    amount: r.amount || '',
-                                    note: r.note || '',
-                                    bill_url: r.bill_url || '',
-                                    bill_filename: r.bill_filename || '',
-                                  });
-                                  setAdjustmentModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('adjustment', r.id)}>
-                                  Delete
-                                </button>
+                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                              {isSameDayIST(r.created_at || r.adjustment_date) ? (
+                                <>
+                                  <button
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(false);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('adjustment', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(true);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    👁️ View
+                                  </button>
+                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    🔒 Locked
+                                  </span>
+                                </>
                               )}
                             </td>
                           </tr>
@@ -6038,35 +6696,76 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               ) : '—'}
                             </td>
                             <td>{r.note || '—'}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingAdjId(r.id);
-                                  setAdjustmentForm({
-                                    material_id: String(r.material_id),
-                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
-                                    unit: r.material_unit || r.unit || 'bags',
-                                    adjustment_type: r.adjustment_type,
-                                    quantity: r.quantity,
-                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
-                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
-                                    supplier_id: r.supplier_id ? String(r.supplier_id) : '',
-                                    supplier_name: r.supplier_name || '',
-                                    amount: r.amount || '',
-                                    note: r.note || '',
-                                    bill_url: r.bill_url || '',
-                                    bill_filename: r.bill_filename || '',
-                                  });
-                                  setAdjustmentModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('adjustment', r.id)}>
-                                  Delete
-                                </button>
+                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                              {isSameDayIST(r.created_at || r.adjustment_date) ? (
+                                <>
+                                  <button
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_id: r.supplier_id ? String(r.supplier_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(false);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('adjustment', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_id: r.supplier_id ? String(r.supplier_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(true);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    👁️ View
+                                  </button>
+                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    🔒 Locked
+                                  </span>
+                                </>
                               )}
                             </td>
                           </tr>
@@ -6128,34 +6827,74 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               ) : '—'}
                             </td>
                             <td>{r.note || '—'}</td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                              <button
-                                className="muted"
-                                onClick={() => {
-                                  setEditingAdjId(r.id);
-                                  setAdjustmentForm({
-                                    material_id: String(r.material_id),
-                                    material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
-                                    unit: r.material_unit || r.unit || 'bags',
-                                    adjustment_type: r.adjustment_type,
-                                    quantity: r.quantity,
-                                    adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
-                                    to_project_id: r.to_project_id ? String(r.to_project_id) : '',
-                                    supplier_name: r.supplier_name || '',
-                                    amount: r.amount || '',
-                                    note: r.note || '',
-                                    bill_url: r.bill_url || '',
-                                    bill_filename: r.bill_filename || '',
-                                  });
-                                  setAdjustmentModal(true);
-                                }}
-                              >
-                                Edit
-                              </button>
-                              {!isAgent && (
-                                <button className="danger" onClick={() => del('adjustment', r.id)}>
-                                  Delete
-                                </button>
+                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                              {isSameDayIST(r.created_at || r.adjustment_date) ? (
+                                <>
+                                  <button
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(false);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('adjustment', r.id)}>
+                                      Delete
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setEditingAdjId(r.id);
+                                      setAdjustmentForm({
+                                        material_id: String(r.material_id),
+                                        material_name: r.material_name || stockRows.find((m) => Number(m.id) === Number(r.material_id))?.name || '',
+                                        unit: r.material_unit || r.unit || 'bags',
+                                        adjustment_type: r.adjustment_type,
+                                        quantity: r.quantity,
+                                        adjustment_date: r.adjustment_date ? String(r.adjustment_date).slice(0, 10) : today(),
+                                        to_project_id: r.to_project_id ? String(r.to_project_id) : '',
+                                        supplier_name: r.supplier_name || '',
+                                        amount: r.amount || '',
+                                        note: r.note || '',
+                                        bill_url: r.bill_url || '',
+                                        bill_filename: r.bill_filename || '',
+                                      });
+                                      setModalReadOnly(true);
+                                      setModalError('');
+                                      setAdjustmentModal(true);
+                                    }}
+                                  >
+                                    👁️ View
+                                  </button>
+                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    🔒 Locked
+                                  </span>
+                                </>
                               )}
                             </td>
                           </tr>
@@ -6261,29 +7000,62 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
                               <td>{parsed.note || '—'}</td>
                               <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
-                              <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                <button
-                                  className="muted"
-                                  onClick={() => {
-                                    setEditingExpenseId(r.id);
-                                    const parsedItem = parseExpenseItem(r);
-                                    setExpenseForm({
-                                      category: parsedItem.category || r.category,
-                                      item_name: parsedItem.item_name,
-                                      amount: r.amount,
-                                      expense_date: r.expense_date,
-                                      note: parsedItem.note,
-                                    });
-                                    setModalError('');
-                                    setExpenseModal(true);
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                                {!isAgent && (
-                                  <button className="danger" onClick={() => del('expense', r.id)}>
-                                    Delete
-                                  </button>
+                              <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                                {isSameDayIST(r.created_at || r.expense_date) ? (
+                                  <>
+                                    <button
+                                      className="muted"
+                                      style={{ padding: '4px 8px', fontSize: 12 }}
+                                      onClick={() => {
+                                        setEditingExpenseId(r.id);
+                                        const parsedItem = parseExpenseItem(r);
+                                        setExpenseForm({
+                                          category: parsedItem.category || r.category,
+                                          item_name: parsedItem.item_name,
+                                          amount: r.amount,
+                                          expense_date: r.expense_date,
+                                          note: parsedItem.note,
+                                        });
+                                        setModalReadOnly(false);
+                                        setModalError('');
+                                        setExpenseModal(true);
+                                      }}
+                                    >
+                                      ✏️ Edit
+                                    </button>
+                                    {!isAgent && (
+                                      <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('expense', r.id)}>
+                                        Delete
+                                      </button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="muted"
+                                      style={{ padding: '4px 8px', fontSize: 12 }}
+                                      onClick={() => {
+                                        setEditingExpenseId(r.id);
+                                        const parsedItem = parseExpenseItem(r);
+                                        setExpenseForm({
+                                          category: parsedItem.category || r.category,
+                                          item_name: parsedItem.item_name,
+                                          amount: r.amount,
+                                          expense_date: r.expense_date,
+                                          note: parsedItem.note,
+                                        });
+                                        setModalReadOnly(true);
+                                        setModalError('');
+                                        setExpenseModal(true);
+                                      }}
+                                    >
+                                      👁️ View
+                                    </button>
+                                    <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      🔒 Locked
+                                    </span>
+                                  </>
                                 )}
                               </td>
                             </tr>
@@ -6378,27 +7150,58 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 <td style={{ fontWeight: 700, color: '#b45309' }}>{INR(r.amount)}</td>
                                 <td>{r.note || '—'}</td>
                                 <td style={{ fontSize: 11, color: '#64748b' }}>{r.created_by}</td>
-                                <td className="actions" style={{ justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
-                                  <button
-                                    className="muted"
-                                    onClick={() => {
-                                      setEditingCommissionId(r.id);
-                                      setCommissionForm({
-                                        person_name: r.person_name,
-                                        amount: r.amount,
-                                        commission_date: r.commission_date,
-                                        note: r.note || '',
-                                      });
-                                      setModalError('');
-                                      setCommissionModal(true);
-                                    }}
-                                  >
-                                    Edit
-                                  </button>
-                                  {!isAgent && (
-                                    <button className="danger" onClick={() => del('commission', r.id)}>
-                                      Delete
-                                    </button>
+                                <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }} onClick={(e) => e.stopPropagation()}>
+                                  {isSameDayIST(r.created_at || r.commission_date) ? (
+                                    <>
+                                      <button
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingCommissionId(r.id);
+                                          setCommissionForm({
+                                            person_name: r.person_name,
+                                            amount: r.amount,
+                                            commission_date: r.commission_date,
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(false);
+                                          setModalError('');
+                                          setCommissionModal(true);
+                                        }}
+                                      >
+                                        ✏️ Edit
+                                      </button>
+                                      {!isAgent && (
+                                        <button className="danger" style={{ padding: '4px 8px', fontSize: 12 }} onClick={() => del('commission', r.id)}>
+                                          Delete
+                                        </button>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        className="muted"
+                                        style={{ padding: '4px 8px', fontSize: 12 }}
+                                        onClick={() => {
+                                          setEditingCommissionId(r.id);
+                                          setCommissionForm({
+                                            person_name: r.person_name,
+                                            amount: r.amount,
+                                            commission_date: r.commission_date,
+                                            note: r.note || '',
+                                          });
+                                          setModalReadOnly(true);
+                                          setModalError('');
+                                          setCommissionModal(true);
+                                        }}
+                                      >
+                                        👁️ View
+                                      </button>
+                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                        🔒 Locked
+                                      </span>
+                                    </>
                                   )}
                                 </td>
                               </tr>
@@ -6934,14 +7737,69 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               {p.note || '—'}
                               {p.transaction_reference && <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Ref: {p.transaction_reference}</div>}
                             </td>
-                            <td className="actions" style={{ justifyContent: 'flex-end' }}>
-                              {!isAgent && (
-                                <button
-                                  className="danger"
-                                  onClick={() => del('laborPayment', p.id)}
-                                >
-                                  Delete
-                                </button>
+                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                              {isSameDayIST(p.created_at || p.payment_date) ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setLaborPaymentForm({
+                                        labor_id: p.labor_id,
+                                        amount: p.amount,
+                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                        mode: p.mode || 'cash',
+                                        payment_type: p.payment_type || 'wage',
+                                        note: p.note || '',
+                                        transaction_reference: p.transaction_reference || '',
+                                      });
+                                      setEditingLaborPaymentId(p.id);
+                                      setModalReadOnly(false);
+                                      setModalError('');
+                                      setLaborPaymentModal(true);
+                                    }}
+                                  >
+                                    ✏️ Edit
+                                  </button>
+                                  {!isAgent && (
+                                    <button
+                                      className="danger"
+                                      style={{ padding: '4px 8px', fontSize: 12 }}
+                                      onClick={() => del('laborPayment', p.id)}
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="muted"
+                                    style={{ padding: '4px 8px', fontSize: 12 }}
+                                    onClick={() => {
+                                      setLaborPaymentForm({
+                                        labor_id: p.labor_id,
+                                        amount: p.amount,
+                                        payment_date: p.payment_date ? String(p.payment_date).slice(0, 10) : today(),
+                                        mode: p.mode || 'cash',
+                                        payment_type: p.payment_type || 'wage',
+                                        note: p.note || '',
+                                        transaction_reference: p.transaction_reference || '',
+                                      });
+                                      setEditingLaborPaymentId(p.id);
+                                      setModalReadOnly(true);
+                                      setModalError('');
+                                      setLaborPaymentModal(true);
+                                    }}
+                                  >
+                                    👁️ View
+                                  </button>
+                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    🔒 Locked
+                                  </span>
+                                </>
                               )}
                             </td>
                           </tr>
@@ -7158,8 +8016,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('laborPayment', () => saveLaborPayment(e), { successMessage: 'Labor payment recorded successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
-                  {editingLaborPaymentId ? 'Edit Labor Payment' : 'Record Labor Payment'}
+                  {modalReadOnly ? '👁️ View Labor Payment' : (editingLaborPaymentId ? '✏️ Edit Labor Payment' : 'Record Labor Payment')}
                 </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
 
                 <div style={{ marginBottom: 12 }}>
                   <label>
@@ -7294,21 +8160,38 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     placeholder="e.g. Weekly wage, advance"
                   />
                 </div>
+                </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="muted"
-                    onClick={() => {
-                      setLaborPaymentModal(false);
-                      setEditingLaborPaymentId(null);
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('laborPayment')}>
-                    {submitAction.isSubmitting('laborPayment') ? 'Saving…' : (editingLaborPaymentId ? 'Update Payment' : 'Save Payment')}
-                  </button>
+                  {modalReadOnly ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setLaborPaymentModal(false);
+                        setEditingLaborPaymentId(null);
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="muted"
+                        onClick={() => {
+                          setLaborPaymentModal(false);
+                          setEditingLaborPaymentId(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('laborPayment')}>
+                        {submitAction.isSubmitting('laborPayment') ? 'Saving…' : (editingLaborPaymentId ? 'Update Payment' : 'Save Payment')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -7652,8 +8535,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 className="modal-card"
               >
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  Record Payment to Vendor
+                  {modalReadOnly ? '👁️ View Vendor Payment' : (editingSupplierPaymentId ? '✏️ Edit Vendor Payment' : 'Record Payment to Vendor')}
                 </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
                 {modalError && (
                   <div
                     role="alert"
@@ -7670,8 +8559,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {modalError}
                   </div>
                 )}
-
-                <div className="grid">
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
                       Vendor *
@@ -7824,22 +8713,41 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   }
                   return null;
                 })()}
+                </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="muted"
-                    disabled={submitAction.isSubmitting('supplierPayment')}
-                    onClick={() => {
-                      setSupplierPaymentModal(false);
-                      setModalError('');
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('supplierPayment')}>
-                    {submitAction.isSubmitting('supplierPayment') ? 'Saving…' : 'Record Payment'}
-                  </button>
+                  {modalReadOnly ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setSupplierPaymentModal(false);
+                        setEditingSupplierPaymentId(null);
+                        setModalError('');
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="muted"
+                        disabled={submitAction.isSubmitting('supplierPayment')}
+                        onClick={() => {
+                          setSupplierPaymentModal(false);
+                          setEditingSupplierPaymentId(null);
+                          setModalError('');
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('supplierPayment')}>
+                        {submitAction.isSubmitting('supplierPayment') ? 'Saving…' : (editingSupplierPaymentId ? 'Update Payment' : 'Record Payment')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -7850,10 +8758,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('delivery', () => saveReceivedEntry(e), { successMessage: 'Vendor delivery saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingReceivedId ? 'Edit' : 'Record'} Vendor Material Delivery
+                  {modalReadOnly ? '👁️ View Vendor Material Delivery' : (editingReceivedId ? '✏️ Edit Vendor Material Delivery' : 'Record Vendor Material Delivery')}
                 </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <div className="grid">
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <Input
                     label="Material Name"
                     name="material_name"
@@ -7954,11 +8869,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     Total Amount: {INR(Number(receivedForm.quantity || 0) * Number(receivedForm.rate || 0))}
                   </div>
                 )}
+                </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" disabled={submitAction.isSubmitting('delivery')} onClick={() => setReceivedModal(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('delivery')}>{submitAction.isSubmitting('delivery') ? 'Saving…' : 'Save Vendor Delivery'}</button>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setReceivedModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" disabled={submitAction.isSubmitting('delivery')} onClick={() => setReceivedModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('delivery')}>{submitAction.isSubmitting('delivery') ? 'Saving…' : (editingReceivedId ? 'Update Vendor Delivery' : 'Save Vendor Delivery')}</button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -7969,9 +8893,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('usage', () => saveUsedEntry(e), { successMessage: 'Material usage saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingUsedId ? 'Edit' : 'Record'} Material Usage
+                  {modalReadOnly ? '👁️ View Material Usage' : (editingUsedId ? '✏️ Edit Material Usage' : 'Record Material Usage')}
                 </h3>
-                <div className="grid">
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <Input
                     label="Material Name"
                     name="material_name"
@@ -8001,11 +8933,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Used For (e.g. Foundation, Slab, Plaster)" name="used_for" value={usedForm.used_for} set={setUsedForm} placeholder="e.g. 1st Floor Slab casting" />
                   <Input label="Note" name="note" value={usedForm.note} set={setUsedForm} />
                 </div>
+                </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" disabled={submitAction.isSubmitting('usage')} onClick={() => setUsedModal(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('usage')}>{submitAction.isSubmitting('usage') ? 'Saving…' : 'Record Usage'}</button>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setUsedModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" disabled={submitAction.isSubmitting('usage')} onClick={() => setUsedModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('usage')}>{submitAction.isSubmitting('usage') ? 'Saving…' : (editingUsedId ? 'Update Usage' : 'Record Usage')}</button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -8016,7 +8957,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('adjustment', () => saveAdjustmentEntry(e), { successMessage: 'Entry saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingAdjId ? 'Edit' : 'Record'} {
+                  {modalReadOnly ? '👁️ View' : (editingAdjId ? '✏️ Edit' : 'Record')} {
                     ['return_material', 'return_to_supplier'].includes(adjustmentForm.adjustment_type)
                       ? 'Return Material'
                       : ['scrap_material', 'scrap'].includes(adjustmentForm.adjustment_type)
@@ -8024,7 +8965,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       : 'Material Adjustment / Wastage'
                   }
                 </h3>
-                <div className="grid">
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <Input
                     label="Material Name"
                     name="material_name"
@@ -8164,14 +9113,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setBillFile(e.target.files[0] || null)} />
                   </label>
                 </div>
+                </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" disabled={submitAction.isSubmitting('adjustment')} onClick={() => setAdjustmentModal(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('adjustment')}>
-                    {submitAction.isSubmitting('adjustment') ? 'Saving…' : 'Save Entry'}
-                  </button>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setAdjustmentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" disabled={submitAction.isSubmitting('adjustment')} onClick={() => setAdjustmentModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('adjustment')}>
+                        {submitAction.isSubmitting('adjustment') ? 'Saving…' : (editingAdjId ? 'Update Entry' : 'Save Entry')}
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -8182,10 +9140,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('expense', () => saveExpenseEntry(e), { successMessage: 'Expense saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingExpenseId ? 'Edit' : 'Record'} Other Expense
+                  {modalReadOnly ? '👁️ View Other Expense' : (editingExpenseId ? '✏️ Edit Other Expense' : 'Record Other Expense')}
                 </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <div className="grid">
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
                       Category <span style={{ color: '#ef4444' }}>*</span>
@@ -8222,11 +9187,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <Input label="Expense Date" name="expense_date" type="date" value={expenseForm.expense_date} set={setExpenseForm} required />
                   <Input label="Note / Details" name="note" value={expenseForm.note} set={setExpenseForm} placeholder="e.g. Generator diesel 50L" />
                 </div>
+                </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button type="button" className="muted" disabled={submitAction.isSubmitting('expense')} onClick={() => setExpenseModal(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('expense')}>{submitAction.isSubmitting('expense') ? 'Saving…' : 'Save Expense'}</button>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setExpenseModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" disabled={submitAction.isSubmitting('expense')} onClick={() => setExpenseModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('expense')}>{submitAction.isSubmitting('expense') ? 'Saving…' : (editingExpenseId ? 'Update Expense' : 'Save Expense')}</button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -8245,8 +9219,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 className="modal-card"
               >
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {editingCommissionId ? 'Edit' : 'Record'} Commission
+                  {modalReadOnly ? '👁️ View Commission' : (editingCommissionId ? '✏️ Edit Commission' : 'Record Commission')}
                 </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
                 {modalError && (
                   <div
                     role="alert"
@@ -8263,7 +9243,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {modalError}
                   </div>
                 )}
-                <div className="grid">
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
                   <Input
                     label="Date"
                     name="commission_date"
@@ -8300,18 +9281,163 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     placeholder="e.g. Client reference commission"
                   />
                 </div>
+                </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  <button
-                    type="button"
-                    className="muted"
-                    disabled={submitAction.isSubmitting('commission')}
-                    onClick={() => setCommissionModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={submitAction.isSubmitting('commission')}>
-                    {submitAction.isSubmitting('commission') ? 'Saving…' : 'Save Commission'}
-                  </button>
+                  {modalReadOnly ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => setCommissionModal(false)}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="muted"
+                        disabled={submitAction.isSubmitting('commission')}
+                        onClick={() => setCommissionModal(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" disabled={submitAction.isSubmitting('commission')}>
+                        {submitAction.isSubmitting('commission') ? 'Saving…' : (editingCommissionId ? 'Update Commission' : 'Save Commission')}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: PARTY PAYMENT ────────────────────────────────────────── */}
+          {partyPaymentModal && (
+            <div className="modal-overlay">
+              <form onSubmit={savePartyPayment} className="modal-card">
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  {modalReadOnly ? '👁️ View Party Payment' : (editingPartyPaymentId ? '✏️ Edit Party Payment' : 'Record Party Payment')}
+                </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
+                    <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
+                    <Input label="Date" name="payment_date" type="date" value={partyPaymentForm.payment_date} set={setPartyPaymentForm} required />
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Mode</small>
+                      <select value={partyPaymentForm.mode} onChange={(e) => setPartyPaymentForm((f) => ({ ...f, mode: e.target.value }))}>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cash">Cash</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="upi">UPI / Online</option>
+                      </select>
+                    </label>
+                    {(partyPaymentForm.mode === 'upi' || partyPaymentForm.mode === 'bank') && (
+                      <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={partyPaymentForm.transaction_reference || ''} set={setPartyPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                    )}
+                    <Input label="Note / Reference" name="note" value={partyPaymentForm.note} set={setPartyPaymentForm} />
+                  </div>
+                </fieldset>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit">{editingPartyPaymentId ? 'Update Payment' : 'Save Payment'}</button>
+                    </>
+                  )}
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: SERVICE PROVIDER / VENDOR PAYMENT ───────────────────────── */}
+          {vendorPaymentModal && (
+            <div className="modal-overlay">
+              <form onSubmit={saveVendorPayment} className="modal-card">
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  {modalReadOnly ? '👁️ View Service Provider Payment' : (editingVendorPaymentId ? '✏️ Edit Service Provider Payment' : 'Record Service Provider Payment')}
+                </h3>
+                {modalReadOnly && (
+                  <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>🔒</span>
+                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                  </div>
+                )}
+                {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
+                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  <div className="grid">
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Service Provider</small>
+                      <select
+                        required
+                        value={vendorPaymentForm.project_vendor_id}
+                        disabled={modalReadOnly || Boolean(editingVendorPaymentId)}
+                        onChange={(e) => {
+                          const pvid = e.target.value;
+                          const pv = projectVendors.find((v) => String(v.id) === String(pvid));
+                          const defType = pv?.category === 'contractor' ? 'labour' : pv?.category === 'supplier' ? 'material' : 'both';
+                          setVendorPaymentForm({ ...vendorPaymentForm, project_vendor_id: pvid, payment_type: defType });
+                        }}
+                      >
+                        <option value="">-- Choose Service Provider --</option>
+                        {projectVendors.map((pv) => (
+                          <option key={pv.id} value={pv.id}>
+                            {pv.vendor_name} ({pv.trade || pv.category})
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={vendorPaymentForm.amount} set={setVendorPaymentForm} required />
+                    <Input label="Payment Date" name="payment_date" type="date" value={vendorPaymentForm.payment_date} set={setVendorPaymentForm} required />
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Mode</small>
+                      <select value={vendorPaymentForm.mode} onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, mode: e.target.value })}>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cash">Cash</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="upi">UPI / Online</option>
+                      </select>
+                    </label>
+                    {(vendorPaymentForm.mode === 'upi' || vendorPaymentForm.mode === 'bank') && (
+                      <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={vendorPaymentForm.transaction_reference || ''} set={setVendorPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
+                    )}
+                    <label>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment For</small>
+                      <select value={vendorPaymentForm.payment_type} onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, payment_type: e.target.value })}>
+                        <option value="labour">Labour / Service</option>
+                        <option value="material">Material</option>
+                        <option value="both">Both</option>
+                      </select>
+                    </label>
+                    <Input label="Note / Transaction Ref" name="note" value={vendorPaymentForm.note} set={setVendorPaymentForm} />
+                  </div>
+                </fieldset>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  {modalReadOnly ? (
+                    <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                      Close
+                    </button>
+                  ) : (
+                    <>
+                      <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit">{editingVendorPaymentId ? 'Update Payment' : 'Save Payment'}</button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -8428,6 +9554,440 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               </tbody>
             </table>
           )}
+        </div>
+      )}
+
+      {/* ── ATTENDANCE DETAIL & EDIT MODAL ─────────────────────────────── */}
+      {attendanceDetailModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2500,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+          }}
+          onClick={() => {
+            if (!savingAttendanceDetail) setAttendanceDetailModal(null);
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 14,
+              padding: '24px',
+              width: '100%',
+              maxWidth: 500,
+              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.2)',
+              border: attendanceDetailModal.isToday ? '1px solid #93c5fd' : '1px solid #e2e8f0',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 18, color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {attendanceDetailModal.isToday ? '✏️ Edit Attendance' : '👁️ View Attendance'}
+                </h3>
+                <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>
+                  Date: <strong style={{ color: '#0f172a' }}>{attendanceDetailModal.attendance_date}</strong>
+                  {attendanceDetailModal.marked_by && (
+                    <span style={{ marginLeft: 10 }}>• Marked by: {attendanceDetailModal.marked_by}</span>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAttendanceDetailModal(null)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: 20,
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: 4,
+                  lineHeight: 1,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Target Worker/Vendor Info */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '12px 14px', marginBottom: 16 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                {attendanceDetailModal.type === 'vendor' ? attendanceDetailModal.vendor_name : attendanceDetailModal.labor_name}
+              </div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                Trade / Role: <strong>{attendanceDetailModal.trade || 'Worker'}</strong>
+                {attendanceDetailModal.type === 'labor' && attendanceDetailModal.daily_rate > 0 && (
+                  <span style={{ marginLeft: 10 }}>• Daily Rate: {INR(attendanceDetailModal.daily_rate)}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Past Date Banner if not editable */}
+            {!attendanceDetailModal.isToday && (
+              <div
+                style={{
+                  background: '#fef3c7',
+                  border: '1px solid #fcd34d',
+                  borderRadius: 8,
+                  padding: '10px 14px',
+                  marginBottom: 16,
+                  color: '#92400e',
+                  fontSize: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <span style={{ fontSize: 16 }}>🔒</span>
+                <div>
+                  <strong>Read Only (Locked):</strong> Past date attendance records cannot be modified. They can only be edited on the day they were created.
+                </div>
+              </div>
+            )}
+
+            {/* Editable Form or Read-only Display */}
+            {attendanceDetailModal.isToday ? (
+              <form onSubmit={saveAttendanceDetailModal} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {/* Status Selection */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                    Status
+                  </label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {['present', 'half_day', 'absent'].map((st) => {
+                      const isActive = attendanceDetailModal.status === st;
+                      const activeBg = st === 'present' ? '#16a34a' : st === 'half_day' ? '#f59e0b' : '#ef4444';
+                      return (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => {
+                            let newWage = 0;
+                            if (attendanceDetailModal.type === 'labor') {
+                              newWage = computeLaborWage(
+                                attendanceDetailModal.daily_rate,
+                                st,
+                                attendanceDetailModal.shift_type || 'day',
+                                attendanceDetailModal.overtime_hours || 0
+                              );
+                            } else {
+                              newWage = computeVendorWage(
+                                attendanceDetailModal.workers_count || 1,
+                                attendanceDetailModal.rate_per_worker || 0,
+                                st,
+                                attendanceDetailModal.shift_type || 'day',
+                                attendanceDetailModal.overtime_hours || 0
+                              );
+                            }
+                            setAttendanceDetailModal((prev) => ({
+                              ...prev,
+                              status: st,
+                              wage_amount: newWage,
+                            }));
+                          }}
+                          style={{
+                            flex: 1,
+                            padding: '8px 12px',
+                            fontSize: 13,
+                            fontWeight: 600,
+                            borderRadius: 6,
+                            border: isActive ? `2px solid ${activeBg}` : '1px solid #cbd5e1',
+                            background: isActive ? activeBg : '#f8fafc',
+                            color: isActive ? '#ffffff' : '#475569',
+                            cursor: 'pointer',
+                            textTransform: 'capitalize',
+                          }}
+                        >
+                          {st === 'half_day' ? 'Half Day' : st}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Shift and Overtime */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                      Shift
+                    </label>
+                    <select
+                      value={attendanceDetailModal.shift_type || 'day'}
+                      disabled={attendanceDetailModal.status === 'absent'}
+                      onChange={(e) => {
+                        const nextShift = e.target.value;
+                        let newWage = 0;
+                        if (attendanceDetailModal.type === 'labor') {
+                          newWage = computeLaborWage(
+                            attendanceDetailModal.daily_rate,
+                            attendanceDetailModal.status,
+                            nextShift,
+                            attendanceDetailModal.overtime_hours || 0
+                          );
+                        } else {
+                          newWage = computeVendorWage(
+                            attendanceDetailModal.workers_count || 1,
+                            attendanceDetailModal.rate_per_worker || 0,
+                            attendanceDetailModal.status,
+                            nextShift,
+                            attendanceDetailModal.overtime_hours || 0
+                          );
+                        }
+                        setAttendanceDetailModal((prev) => ({
+                          ...prev,
+                          shift_type: nextShift,
+                          wage_amount: newWage,
+                        }));
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        fontSize: 13,
+                        borderRadius: 6,
+                        border: '1px solid #cbd5e1',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <option value="day">☀️ Day (1x)</option>
+                      <option value="night">🌙 Night (1x)</option>
+                      <option value="double">⚡ Double (2x)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                      Overtime (Hours)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="16"
+                      step="0.5"
+                      disabled={attendanceDetailModal.status === 'absent'}
+                      value={attendanceDetailModal.overtime_hours ?? 0}
+                      onChange={(e) => {
+                        const otVal = Math.max(0, Number(e.target.value || 0));
+                        let newWage = 0;
+                        if (attendanceDetailModal.type === 'labor') {
+                          newWage = computeLaborWage(
+                            attendanceDetailModal.daily_rate,
+                            attendanceDetailModal.status,
+                            attendanceDetailModal.shift_type || 'day',
+                            otVal
+                          );
+                        } else {
+                          newWage = computeVendorWage(
+                            attendanceDetailModal.workers_count || 1,
+                            attendanceDetailModal.rate_per_worker || 0,
+                            attendanceDetailModal.status,
+                            attendanceDetailModal.shift_type || 'day',
+                            otVal
+                          );
+                        }
+                        setAttendanceDetailModal((prev) => ({
+                          ...prev,
+                          overtime_hours: otVal,
+                          wage_amount: newWage,
+                        }));
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        fontSize: 13,
+                        borderRadius: 6,
+                        border: '1px solid #cbd5e1',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* If vendor: Workers Count & Rate per worker */}
+                {attendanceDetailModal.type === 'vendor' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                        Workers Count
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={attendanceDetailModal.workers_count ?? 1}
+                        onChange={(e) => {
+                          const count = Math.max(1, Number(e.target.value || 1));
+                          const newWage = computeVendorWage(
+                            count,
+                            attendanceDetailModal.rate_per_worker || 0,
+                            attendanceDetailModal.status,
+                            attendanceDetailModal.shift_type || 'day',
+                            attendanceDetailModal.overtime_hours || 0
+                          );
+                          setAttendanceDetailModal((prev) => ({
+                            ...prev,
+                            workers_count: count,
+                            wage_amount: newWage,
+                          }));
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          fontSize: 13,
+                          borderRadius: 6,
+                          border: '1px solid #cbd5e1',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                        Rate / Worker (₹)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={attendanceDetailModal.rate_per_worker ?? 0}
+                        onChange={(e) => {
+                          const rate = Math.max(0, Number(e.target.value || 0));
+                          const newWage = computeVendorWage(
+                            attendanceDetailModal.workers_count || 1,
+                            rate,
+                            attendanceDetailModal.status,
+                            attendanceDetailModal.shift_type || 'day',
+                            attendanceDetailModal.overtime_hours || 0
+                          );
+                          setAttendanceDetailModal((prev) => ({
+                            ...prev,
+                            rate_per_worker: rate,
+                            wage_amount: newWage,
+                          }));
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '8px 10px',
+                          fontSize: 13,
+                          borderRadius: 6,
+                          border: '1px solid #cbd5e1',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Total Calculated Wage */}
+                <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#166534' }}>Total Wage for this Day:</span>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: '#15803d' }}>
+                    {INR(attendanceDetailModal.wage_amount || 0)}
+                  </span>
+                </div>
+
+                {/* Note */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+                    Note / Remark
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Optional note..."
+                    value={attendanceDetailModal.note || ''}
+                    onChange={(e) => setAttendanceDetailModal((prev) => ({ ...prev, note: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '8px 10px',
+                      fontSize: 13,
+                      borderRadius: 6,
+                      border: '1px solid #cbd5e1',
+                    }}
+                  />
+                </div>
+
+                {/* Modal Footer Buttons */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    disabled={savingAttendanceDetail}
+                    onClick={() => setAttendanceDetailModal(null)}
+                    style={{ padding: '8px 16px', borderRadius: 6 }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="active-btn"
+                    disabled={savingAttendanceDetail}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: 6,
+                      background: '#2563eb',
+                      color: '#ffffff',
+                      fontWeight: 600,
+                      cursor: savingAttendanceDetail ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {savingAttendanceDetail ? 'Saving...' : '💾 Save Changes'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* Read Only View Details */
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: 6, border: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Status</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, textTransform: 'capitalize', color: attendanceDetailModal.status === 'present' ? '#16a34a' : attendanceDetailModal.status === 'half_day' ? '#f59e0b' : '#ef4444' }}>
+                      {attendanceDetailModal.status === 'half_day' ? 'Half Day' : (attendanceDetailModal.status || 'Present')}
+                    </div>
+                  </div>
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: 6, border: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Shift</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                      {attendanceDetailModal.shift_type === 'double' ? 'Double (2x)' : (attendanceDetailModal.shift_type === 'night' ? 'Night (1x)' : 'Day (1x)')}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: 6, border: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Overtime (OT)</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                      {attendanceDetailModal.overtime_hours > 0 ? `${attendanceDetailModal.overtime_hours} hrs` : 'None'}
+                    </div>
+                  </div>
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: 6, border: '1px solid #f1f5f9' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Total Wage</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: '#16a34a' }}>
+                      {INR(attendanceDetailModal.wage_amount || 0)}
+                    </div>
+                  </div>
+                </div>
+
+                {attendanceDetailModal.note && (
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: 6, border: '1px solid #f1f5f9', marginBottom: 16 }}>
+                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 2 }}>Note</div>
+                    <div style={{ fontSize: 13, color: '#334155' }}>{attendanceDetailModal.note}</div>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    onClick={() => setAttendanceDetailModal(null)}
+                    style={{ padding: '8px 20px', borderRadius: 6 }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

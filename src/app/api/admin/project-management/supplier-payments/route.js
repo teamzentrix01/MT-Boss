@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 const okDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(x || '') && !Number.isNaN(Date.parse(x));
 
@@ -163,6 +163,55 @@ export async function POST(req) {
   }
 }
 
+export async function PATCH(req) {
+  try {
+    await ensureProjectManagementSchema();
+    const s = new URL(req.url).searchParams;
+    const id = Number(s.get('id'));
+    if (!Number.isInteger(id)) {
+      return NextResponse.json({ success: false, error: 'Valid id is required' }, { status: 400 });
+    }
+
+    const existing = await pool.query('SELECT * FROM pm_supplier_payments WHERE id = $1 AND NOT is_deleted', [id]);
+    if (!existing.rows[0]) {
+      return NextResponse.json({ success: false, error: 'Supplier payment not found or already deleted' }, { status: 404 });
+    }
+
+    const oldRow = existing.rows[0];
+    const auth = await assertAgentAccess(req, oldRow.project_id, 'payments');
+    if (!auth.allowed) return auth.response;
+
+    const sameDay = assertSameDayEditable(oldRow.created_at, auth.user, false);
+    if (!sameDay.allowed) return sameDay.response;
+
+    const body = await req.json();
+    const amount = body.amount !== undefined ? Number(body.amount) : Number(oldRow.amount);
+    const paymentDate = body.payment_date || oldRow.payment_date;
+    const mode = body.mode || oldRow.mode || 'bank';
+    const txRef = body.transaction_reference !== undefined ? (body.transaction_reference || '').trim() : oldRow.transaction_reference;
+    const note = body.note !== undefined ? (body.note || '').trim() : oldRow.note;
+
+    if (amount <= 0) {
+      return NextResponse.json({ success: false, error: 'Amount must be greater than zero' }, { status: 400 });
+    }
+
+    const r = await pool.query(
+      `UPDATE pm_supplier_payments
+       SET amount = $1, payment_date = $2, mode = $3, transaction_reference = $4, note = $5, updated_at = NOW()
+       WHERE id = $6 RETURNING *`,
+      [amount, paymentDate, mode, txRef, note, id]
+    );
+
+    const actor = actorFromAdmin(auth.user || auth.agent);
+    await writePmPhase2Audit(pool, 'pm_supplier_payments', id, 'UPDATE', actor, oldRow, r.rows[0]);
+
+    return NextResponse.json({ success: true, payment: r.rows[0] });
+  } catch (e) {
+    console.error('Error updating supplier payment:', e);
+    return NextResponse.json({ success: false, error: e.message || 'Failed to update supplier payment' }, { status: 500 });
+  }
+}
+
 export async function DELETE(req) {
   try {
     await ensureProjectManagementSchema();
@@ -181,6 +230,9 @@ export async function DELETE(req) {
     const oldRow = existing.rows[0];
     const auth = await assertAgentAccess(req, oldRow.project_id, 'payments');
     if (!auth.allowed) return auth.response;
+
+    const sameDay = assertSameDayEditable(oldRow.created_at, auth.user, false);
+    if (!sameDay.allowed) return sameDay.response;
 
     const actor = actorFromAdmin(auth.user || auth.agent);
 

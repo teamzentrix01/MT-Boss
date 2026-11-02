@@ -1,5 +1,8 @@
 import dotenv from 'dotenv';
-import { Pool } from 'pg';
+import { Pool, types } from 'pg';
+
+// Parse PostgreSQL DATE (OID 1082) as exact YYYY-MM-DD string to prevent UTC date shift
+types.setTypeParser(1082, (val) => val);
 
 dotenv.config({ path: '.env', override: false, quiet: true });
 dotenv.config({ path: 'src/.env', override: false, quiet: true });
