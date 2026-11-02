@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowLeft,
+  Home,
   BadgePercent,
   Check,
   CheckCircle2,
@@ -22,12 +23,25 @@ import {
   Wallet,
   X,
   Zap,
+  Banknote,
+  CreditCard,
+  Smartphone,
 } from "lucide-react";
 import { useCities } from "@/hooks/useCities";
 import { displayUnit, getProductImage, ShopImage } from "./Storefront";
 import { getCartStep } from "@/lib/cart-step";
 import { evaluateCartPromotions } from "@/lib/promotion-calculations";
+import { redirectToPayU } from "@/lib/payu-client";
 import "./shop.css";
+
+function getNextDayDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -89,7 +103,10 @@ export default function CheckoutView({ productId: initialProductId }) {
   // Form fields
   const [selectedCity, setSelectedCity] = useState("");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", address: "", message: "" });
-  const [deliveryDate, setDeliveryDate] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState(() => getNextDayDate());
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [activePaymentMethod, setActivePaymentMethod] = useState("COD");
+  const [paymentMethod, setPaymentMethod] = useState("COD"); // "COD" | "ONLINE"
 
   // Address selector
   const [savedAddresses, setSavedAddresses] = useState([]);
@@ -399,9 +416,9 @@ export default function CheckoutView({ productId: initialProductId }) {
     );
   };
 
-  // ── Order submit ────────────────────────────────────────────────────────────
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    // ── Open Payment Modal on clicking Complete Payment ─────────────────────────
+  const handleOpenPaymentModal = (e) => {
+    if (e) e.preventDefault();
     if (!selectedCity) {
       setSubmitError("Please select your delivery city.");
       return;
@@ -410,7 +427,22 @@ export default function CheckoutView({ productId: initialProductId }) {
       setSubmitError("Please enter your complete delivery address.");
       return;
     }
+    if (!formData.phone?.trim()) {
+      setSubmitError("Please enter your 10-digit phone number.");
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setSubmitError("Please login to place an order so you can track it.");
+      return;
+    }
+    setSubmitError("");
+    setShowPaymentModal(true);
+  };
 
+  // ── Execute Order with chosen payment method (COD or ONLINE) ───────────────
+  const handleExecuteOrder = async (chosenMethod) => {
+    setActivePaymentMethod(chosenMethod);
     setSubmitting(true);
     setSubmitError("");
     try {
@@ -422,7 +454,7 @@ export default function CheckoutView({ productId: initialProductId }) {
         user_name: formData.name,
         user_phone: formData.phone,
         user_email: formData.email,
-        delivery_date: deliveryDate || null,
+        delivery_date: deliveryDate || getNextDayDate(),
         delivery_address: formData.address,
         latitude: locationCoords?.latitude || null,
         longitude: locationCoords?.longitude || null,
@@ -433,6 +465,7 @@ export default function CheckoutView({ productId: initialProductId }) {
         promotion_id: promoDiscount?.promotion?.id || null,
         promotion_name: promoDiscount?.promotion?.name || null,
         promotion_discount: promoDiscountAmount,
+        payment_method: chosenMethod,
       };
 
       if (product) {
@@ -462,14 +495,7 @@ export default function CheckoutView({ productId: initialProductId }) {
       const d = await r.json();
       if (!r.ok || !d.success) throw new Error(d.error || "Failed to place order");
 
-      setSubmittedOrder(d.data);
-      if (!product) {
-        localStorage.removeItem("MTBOSS-shop-cart");
-        window.dispatchEvent(new Event("storage"));
-      }
-      setSubmitted(true);
-
-      // Save address
+      // Save address in background
       if (addressMode === "new" && saveAddressToProfile && formData.address?.trim()) {
         const label = newAddressLabel === "Other" ? customAddressLabel.trim() || "Other" : newAddressLabel;
         fetch("/api/user/addresses", {
@@ -486,6 +512,24 @@ export default function CheckoutView({ productId: initialProductId }) {
           }),
         }).catch(() => {});
       }
+
+      // If online payment is returned from PayU, forward user to hosted payment page
+      if (d.payment) {
+        if (!product) {
+          localStorage.removeItem("MTBOSS-shop-cart");
+          window.dispatchEvent(new Event("storage"));
+        }
+        redirectToPayU(d.payment);
+        return;
+      }
+
+      setSubmittedOrder(d.data);
+      if (!product) {
+        localStorage.removeItem("MTBOSS-shop-cart");
+        window.dispatchEvent(new Event("storage"));
+      }
+      setShowPaymentModal(false);
+      setSubmitted(true);
     } catch (err) {
       setSubmitError(err.message);
     } finally {
@@ -564,13 +608,14 @@ export default function CheckoutView({ productId: initialProductId }) {
             </div>
           )}
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
             <Link
               href="/material-orders?role=user"
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[var(--brand-blue)] text-slate-950 font-black text-xs uppercase tracking-wider shadow-md hover:bg-sky-400 transition-all"
             >
               <ClipboardList size={16} /> Track Order Status →
             </Link>
+
             <Link
               href="/ShopNow"
               className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border-2 font-black text-xs uppercase tracking-wider transition-all ${
@@ -653,7 +698,7 @@ export default function CheckoutView({ productId: initialProductId }) {
               LEFT: FORM INPUTS
              ────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-7">
-            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-6">
+            <form id="checkout-form" onSubmit={handleOpenPaymentModal} className="space-y-6">
 
               {/* 1. DELIVERY CITY */}
               <div className={`p-6 rounded-3xl border ${card}`}>
@@ -878,12 +923,17 @@ export default function CheckoutView({ productId: initialProductId }) {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Required Delivery Date (optional)</label>
+                    <div className="flex items-center justify-between mb-1.5">
+                    <label className={`block text-[10px] font-black uppercase tracking-wider ${muted}`}>Required Delivery Date</label>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                      ✓ Next-Day Delivery Auto-Confirmed
+                    </span>
+                  </div>
                     <input
                       type="date"
                       value={deliveryDate}
                       onChange={(e) => setDeliveryDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={getNextDayDate()}
                       max="9999-12-31"
                       suppressHydrationWarning
                       className={inpClass}
@@ -950,21 +1000,21 @@ export default function CheckoutView({ productId: initialProductId }) {
                 </div>
               )}
 
-              {/* SUBMIT ERROR */}
+                            {/* SUBMIT ERROR */}
               {submitError && (
                 <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold">
                   ⚠️ {submitError}
                 </div>
               )}
 
-              {/* CONFIRM ORDER BUTTON */}
+              {/* COMPLETE PAYMENT BUTTON */}
               <button
                 type="submit"
                 disabled={submitting}
                 className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[var(--brand-blue)] to-sky-400 hover:from-sky-400 hover:to-[var(--brand-blue)] text-slate-950 font-black text-sm uppercase tracking-wider shadow-xl shadow-sky-500/20 active:scale-[0.98] disabled:opacity-60 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Zap size={18} className="fill-slate-950" />
-                {submitting ? "Placing Order…" : "Confirm & Place Order →"}
+                {submitting ? "Processing…" : "Complete Payment →"}
               </button>
               <p className={`text-xs text-center ${muted}`}>
                 Orders are verified by official MTBOSS suppliers. Official GST invoice provided upon site delivery.
@@ -1102,6 +1152,120 @@ export default function CheckoutView({ productId: initialProductId }) {
           </div>
         </div>
       </div>
+    
+      {/* ──────────────────────────────────────────────────────────
+          PAYMENT METHOD POPUP MODAL (Images 2 & 3 matching)
+         ────────────────────────────────────────────────────────── */}
+      {showPaymentModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => !submitting && setShowPaymentModal(false)}
+        >
+          <div
+            className={`relative w-full max-w-md rounded-2xl shadow-2xl p-6 transition-all animate-in zoom-in-95 duration-150 ${
+              isDark ? "bg-zinc-900 border border-zinc-800 text-white" : "bg-white text-slate-900"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-4">
+              <h3 className="text-lg font-black tracking-tight">Delivering To</h3>
+              <button
+                type="button"
+                onClick={() => !submitting && setShowPaymentModal(false)}
+                disabled={submitting}
+                className={`p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer ${muted}`}
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Address Card (Matching Image 3) */}
+            <div className={`p-4 rounded-xl flex items-start gap-3.5 mb-5 ${
+              isDark ? "bg-zinc-800/80 border border-zinc-700/60" : "bg-amber-50/70 border border-amber-100"
+            }`}>
+              <div className="w-10 h-10 rounded-xl bg-amber-100/90 dark:bg-zinc-700 flex items-center justify-center text-amber-900 dark:text-amber-300 flex-shrink-0">
+                <Home size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-black text-sm text-slate-900 dark:text-white leading-tight">
+                  {formData.name || "Customer"}
+                </p>
+                <p className={`text-xs mt-1 leading-relaxed ${isDark ? "text-zinc-300" : "text-slate-600"}`}>
+                  {formData.address}
+                  {selectedCity ? `, ${selectedCity}` : ""}
+                  {newAddressPincode ? ` - ${newAddressPincode}` : ""}
+                </p>
+                <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
+                  <span>🚚</span> Expected delivery by tomorrow ({(deliveryDate || getNextDayDate()).split("-").reverse().join("-")})
+                </p>
+              </div>
+            </div>
+
+            <div className={`border-t my-4 ${border}`} />
+
+            {/* Total Amount & Prompt */}
+            <div className="text-center py-2">
+              <p className="text-2xl font-black text-slate-900 dark:text-white">
+                Total: ₹{grandTotal > 0 ? grandTotal.toLocaleString("en-IN") : 0}
+              </p>
+              <p className={`text-xs mt-1 ${muted}`}>
+                Select payment method and place order
+              </p>
+            </div>
+
+            {/* Action Error if any */}
+            {submitError && (
+              <div className="p-3 my-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-bold text-center">
+                ⚠️ {submitError}
+              </div>
+            )}
+
+            {/* Two Action Buttons Side by Side (Image 3) */}
+            <div className="grid grid-cols-2 gap-3 mt-5">
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => handleExecuteOrder("COD")}
+                className={`py-3.5 px-4 rounded-xl border-2 border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold text-sm text-center hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer ${
+                  isDark ? "bg-transparent" : "bg-white"
+                }`}
+              >
+                {submitting && activePaymentMethod === "COD" ? (
+                  <span className="flex items-center justify-center gap-1.5">
+                    <span className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                    Placing…
+                  </span>
+                ) : (
+                  "Pay On Delivery"
+                )}
+              </button>
+
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => handleExecuteOrder("ONLINE")}
+                className="py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-sm text-center shadow-lg shadow-emerald-600/20 transition-all disabled:opacity-50 cursor-pointer"
+              >
+                {submitting && activePaymentMethod === "ONLINE" ? (
+                  <span className="flex items-center justify-center gap-1.5">
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Connecting…
+                  </span>
+                ) : (
+                  "Pay Online"
+                )}
+              </button>
+            </div>
+
+            <p className={`text-[10px] text-center mt-4 ${muted}`}>
+              UPI (Google Pay, PhonePe, Paytm), NetBanking & Cards supported
+            </p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

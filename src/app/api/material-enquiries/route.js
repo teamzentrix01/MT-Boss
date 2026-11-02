@@ -13,6 +13,8 @@ import { evaluateCartPromotions } from '@/lib/promotion-calculations';
 import { getShopVendorCommissionPercent, recordShopVendorCommission, resolveCommissionRate } from '@/lib/shop-commissions';
 import { snapshotOrderCashback, ensureCashbackSchema } from '@/lib/cashback/service';
 import { computeRedeemLimit, reserveWalletRedeem } from '@/lib/wallet/redeem';
+import { createPayURequest } from '@/lib/payu';
+import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
 const ensureTable = createInitializationGuard(async () => {
   await pool.query(`
@@ -71,6 +73,11 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS cashback_status VARCHAR(30) DEFAULT 'NONE'`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_used NUMERIC(12,2) NOT NULL DEFAULT 0.00`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS wallet_redeem_status VARCHAR(30) NOT NULL DEFAULT 'NONE'`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'COD'`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50) DEFAULT 'PENDING'`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_gateway VARCHAR(50)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_gateway_id VARCHAR(255)`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_completed_at TIMESTAMP`,
     `CREATE INDEX IF NOT EXISTS idx_me_status_created ON material_enquiries (status, created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_me_created_at ON material_enquiries (created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_me_user_id ON material_enquiries (user_id)`,
@@ -113,8 +120,9 @@ export async function POST(req) {
       quantity_text, order_unit, delivery_date,
       delivery_address, latitude, longitude,
       message, selected_city,
-      use_wallet, wallet_amount,
+      use_wallet, wallet_amount, payment_method,
     } = body;
+    const requestedPaymentMethod = cleanText(payment_method)?.toUpperCase() === 'ONLINE' ? 'ONLINE' : 'COD';
     const isCart = Array.isArray(body.items);
     const couponId = Number(body.coupon_id);
     const useWallet = Boolean(use_wallet);
@@ -417,6 +425,8 @@ export async function POST(req) {
         }
 
         const grandTotal = Math.max(0, itemBaseGrandTotal - itemWalletUsed);
+        const itemPaymentMethod = orderIntent === 'quote' ? 'QUOTE' : (grandTotal === 0 ? 'WALLET' : requestedPaymentMethod);
+        const itemPaymentStatus = orderIntent === 'quote' ? 'NOT_APPLICABLE' : (grandTotal === 0 ? 'PAID' : 'PENDING');
 
         const result = await client.query(
         `INSERT INTO material_enquiries
@@ -540,7 +550,49 @@ export async function POST(req) {
           order_unit: item.order_unit,
           cashback_amount: cashbackSnap.cashbackAmount,
           cashback_status: cashbackSnap.cashbackStatus,
+          payment_method: itemPaymentMethod,
+          payment_status: itemPaymentStatus,
         });
+      }
+      const totalPayable = orders.reduce((sum, o) => sum + Number(o.grand_total || 0), 0);
+      let payuPayment = null;
+      if (orderIntent !== 'quote' && requestedPaymentMethod === 'ONLINE' && totalPayable > 0) {
+        try {
+          const txnid = newPayUTxnId('MTSHOP');
+          const primaryOrder = orders[0];
+          const callbackUrl = getPayUCallbackUrl(req);
+          const allOrderIds = orders.map((o) => o.id).join(',');
+
+          await createPayUIntent({
+            txnid,
+            purpose: 'shop_order',
+            entityId: primaryOrder.id,
+            packageId: allOrderIds,
+            amount: totalPayable,
+            client,
+          });
+
+          payuPayment = createPayURequest({
+            txnid,
+            amount: totalPayable,
+            productinfo: orders.length === 1
+              ? `${orders[0].material_type || 'Material Order'}`.slice(0, 80)
+              : `MTBOSS Material Order (${orders.length} items)`.slice(0, 80),
+            firstname: cleanName.split(' ')[0] || 'Customer',
+            email: cleanEmail || user.email || 'customer@mtboss.in',
+            phone: cleanPhone,
+            surl: callbackUrl,
+            furl: callbackUrl,
+            udf1: String(primaryOrder.id),
+            udf2: primaryOrder.order_reference,
+            udf3: 'shop_order',
+            udf4: allOrderIds,
+            udf5: '',
+          });
+        } catch (payuErr) {
+          console.error('[material-enquiries] Failed to initiate PayU payment:', payuErr);
+          throw new Error(`Unable to initialize online payment: ${payuErr.message}`);
+        }
       }
       await client.query('COMMIT');
       const totals = orders.reduce((summary, order) => ({
@@ -557,7 +609,21 @@ export async function POST(req) {
       // Respond immediately so mobile clients are not blocked by SMTP/admin notifications.
       const notificationJobs = orders.flatMap((order) => [
         notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),
-        deliverMaterialOrderReceipt({ email: targetEmail, customerName: cleanName, phone: cleanPhone, category: order.category_name, material: order.material_type, quantity: order.quantity_text, unit: order.order_unit, city: canonicalCity, orderReference: order.order_reference, deliveryAddress: delivery_address }),
+        deliverMaterialOrderReceipt({
+          email: targetEmail,
+          customerName: cleanName,
+          phone: cleanPhone,
+          category: order.category_name,
+          material: order.material_type,
+          quantity: order.quantity_text,
+          unit: order.order_unit,
+          city: canonicalCity,
+          orderReference: order.order_reference,
+          deliveryAddress: delivery_address,
+          amount: order.grand_total,
+          paymentMethod: order.payment_method === 'ONLINE' ? 'Online Payment (PayU)' : (order.payment_method === 'WALLET' ? 'Wallet' : 'Cash on Delivery'),
+          deliveryDate: delivery_date,
+        }),
       ]);
       after(async () => {
         const results = await Promise.allSettled(notificationJobs);
@@ -567,7 +633,7 @@ export async function POST(req) {
         }
       });
 
-      return NextResponse.json({ success: true, data: isCart ? { orders, totals } : { ...orders[0], totals } }, { status: 201 });
+      return NextResponse.json({ success: true, data: isCart ? { orders, totals } : { ...orders[0], totals }, payment: payuPayment }, { status: 201 });
 
     } catch (error) {
       await client.query('ROLLBACK');

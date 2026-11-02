@@ -87,6 +87,102 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
     return () => clearInterval(interval);
   }, [loadOrders]);
 
+  const handleOpenReturnModal = (order) => {
+    setReturnModalOrder(order);
+    setReturnReason('Damaged or broken material');
+    setReturnDescription('');
+    setReturnActionType('REPLACEMENT');
+    setReturnRefundPref('WALLET');
+    setReturnUpiId('');
+    setReturnProofImages([]);
+    setReturnError('');
+    setReturnSuccess('');
+  };
+
+  const handleProofUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setReturnUploading(true);
+    setReturnError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/returns/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: fd,
+      });
+      const d = await res.json();
+      if (!res.ok || !d.success) throw new Error(d.error || 'Upload failed');
+      setReturnProofImages((prev) => [...prev, d.url]);
+    } catch (err) {
+      setReturnError(err.message);
+    } finally {
+      setReturnUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleReturnSubmit = async (e) => {
+    e.preventDefault();
+    if (!returnModalOrder) return;
+    setReturnSubmitting(true);
+    setReturnError('');
+    try {
+      const token = getToken();
+      const res = await fetch(`/api/material-orders/${returnModalOrder.id}/return`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          reason: returnReason,
+          description: returnDescription,
+          proof_images: returnProofImages,
+          action_type: returnActionType,
+          refund_preference: returnRefundPref,
+          upi_id: returnUpiId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Return request failed');
+      setReturnSuccess('Return request submitted successfully! Our team will review it shortly.');
+      setTimeout(() => {
+        setReturnModalOrder(null);
+        setReturnSuccess('');
+        loadOrders(true);
+      }, 1500);
+    } catch (err) {
+      setReturnError(err.message);
+    } finally {
+      setReturnSubmitting(false);
+    }
+  };
+
+  const handleUpdateReturnStatus = async (orderId, newStatus) => {
+    setSaving(orderId);
+    setError('');
+    try {
+      const notes = adminReturnNotes[orderId] || '';
+      const res = await fetch(`/api/material-orders/${orderId}/return`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ status: newStatus, admin_notes: notes }),
+      });
+      const d = await res.json();
+      if (!res.ok || !d.success) throw new Error(d.error || 'Failed to update return');
+      await loadOrders(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const updateOrder = async (order) => {
     const draft = drafts[order.id] || {};
     const status = draft.status || order.status;
@@ -226,6 +322,18 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                         <div><span className="block text-[9px] font-black uppercase text-emerald-600">Paid from wallet</span><strong className="text-emerald-700">₹{Number(order.wallet_used).toLocaleString('en-IN')}</strong></div>
                       )}
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Grand Total</span>{Number(order.grand_total) > 0 ? `₹${Number(order.grand_total).toLocaleString('en-IN')}` : (order.amount_received ? `₹${Number(order.amount_received).toLocaleString('en-IN')}` : 'Final amount pending')}</div>
+                      <div>
+                        <span className="block text-[9px] font-black uppercase text-zinc-400">Payment</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold ${
+                          order.payment_status === 'PAID'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : (order.payment_method === 'COD' || !order.payment_method)
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-zinc-100 text-zinc-800'
+                        }`}>
+                          {order.payment_method === 'ONLINE' ? 'Online (UPI/Cards)' : (order.payment_method === 'WALLET' ? 'Wallet' : 'Cash on Delivery')} · {order.payment_status || 'PENDING'}
+                        </span>
+                      </div>
                       <div className="sm:col-span-2"><span className="block text-[9px] font-black uppercase text-zinc-400">Delivery Address</span>{order.delivery_address || '—'}</div>
                       <div><span className="block text-[9px] font-black uppercase text-zinc-400">Contact</span>{order.user_phone || '—'}</div>
                       {order.message && <div className="sm:col-span-2 lg:col-span-3"><span className="block text-[9px] font-black uppercase text-zinc-400">Order Requirements</span>{order.message}</div>}
