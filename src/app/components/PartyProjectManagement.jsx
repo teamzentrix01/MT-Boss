@@ -168,6 +168,31 @@ async function api(path, opts = {}) {
 }
 
 async function uploadFile(file) {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+  if (cloudName && uploadPreset) {
+    try {
+      const cldBody = new FormData();
+      cldBody.append('file', file);
+      cldBody.append('upload_preset', uploadPreset);
+      cldBody.append('folder', 'MTBOSS/bills');
+      const cldRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+        method: 'POST',
+        body: cldBody,
+      });
+      const cldData = await cldRes.json();
+      if (cldRes.ok && cldData.secure_url) {
+        return {
+          success: true,
+          url: cldData.secure_url,
+          filename: file.name || 'bill',
+        };
+      }
+    } catch (cldErr) {
+      console.warn('Direct Cloudinary client upload failed, falling back to /api/upload:', cldErr);
+    }
+  }
+
   const isAgentContext =
     _globalIsAgent ||
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/agent'));
