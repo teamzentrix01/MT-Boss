@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -11,6 +11,7 @@ function getTodayIST() {
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const s = new URL(req.url).searchParams;
     const laborId = Number(s.get('laborId'));
 
@@ -121,6 +122,7 @@ export async function GET(req) {
 export async function PUT(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const b = await req.json();
     const rawList = Array.isArray(b.entries) ? b.entries : Array.isArray(b.records) ? b.records : [];
     const globalDate = b.attendance_date || '';
@@ -239,6 +241,19 @@ export async function PUT(req) {
     }
   } catch (e) {
     console.error("LABOR ATTENDANCE ERROR:", e);
+    // If undefined_column (e.g. shift_type missing on production DB), auto-patch and notify
+    if (e.code === '42703') {
+      try {
+        await pool.query(`
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) DEFAULT 0;
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+        `);
+        console.log("Self-healed pm_labor_attendance columns after 42703 error.");
+      } catch (patchErr) {
+        console.error("Failed to self-heal columns:", patchErr);
+      }
+    }
     return NextResponse.json({ success: false, error: e.message || 'Could not save labor attendance' }, { status: 500 });
   }
 }

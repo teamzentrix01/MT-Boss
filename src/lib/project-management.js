@@ -285,7 +285,21 @@ async function pmSchemaLooksReady() {
            AND pg_get_constraintdef(c.oid) LIKE '%rent%'
       ) AS has_oe_tools_rent_constraint,
       to_regclass('public.pm_commissions') IS NOT NULL AS has_commissions,
-      to_regclass('public.pm_project_local_vendors') IS NOT NULL AS has_local_vendors
+      to_regclass('public.pm_project_local_vendors') IS NOT NULL AS has_local_vendors,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_labor_attendance'
+           AND column_name = 'shift_type'
+      ) AS has_labor_att_shift,
+      EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = 'public'
+           AND table_name = 'pm_attendance'
+           AND column_name = 'shift_type'
+      ) AS has_att_shift
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -307,8 +321,21 @@ async function pmSchemaLooksReady() {
     && row.has_oe_tools_rent_constraint
     && row.has_commissions
     && row.has_local_vendors
+    && row.has_labor_att_shift
+    && row.has_att_shift
   );
 }
+
+export const ensureAttendanceShiftsAndOvertimeSchema = createInitializationGuard(async () => {
+  await pool.query(`
+    ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) DEFAULT 0;
+    ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+    ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+    ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+    ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) NOT NULL DEFAULT 0;
+    ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+  `);
+});
 
 // Migrations are the source of truth. This guarded bootstrap makes fresh Neon
 // previews usable before the deployment migration runner has executed.

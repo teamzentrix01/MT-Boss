@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -12,6 +12,7 @@ function getTodayIST() {
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const s = new URL(req.url).searchParams;
     const projectVendorId = Number(s.get('projectVendorId'));
 
@@ -108,6 +109,17 @@ export async function GET(req) {
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
     });
   } catch (e) {
+    if (e.code === '42703') {
+      try {
+        await pool.query(`
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) NOT NULL DEFAULT 0;
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+        `);
+      } catch (patchErr) {
+        console.error('Self-heal pm_attendance error:', patchErr);
+      }
+    }
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }
 }
@@ -115,6 +127,7 @@ export async function GET(req) {
 export async function PUT(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const b = await req.json();
     const rawList = Array.isArray(b.entries) ? b.entries : Array.isArray(b.records) ? b.records : [];
     const globalDate = b.attendance_date || '';
