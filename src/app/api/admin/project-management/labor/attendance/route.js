@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -11,6 +11,7 @@ function getTodayIST() {
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const s = new URL(req.url).searchParams;
     const laborId = Number(s.get('laborId'));
 
@@ -25,7 +26,10 @@ export async function GET(req) {
 
       const month = s.get('month') || ''; // 'YYYY-MM'
       const r = await pool.query(
-        `SELECT la.*, l.name AS labor_name, l.trade, l.daily_rate, v.name AS vendor_name
+        `SELECT la.*, l.name AS labor_name, l.trade, l.daily_rate, v.name AS vendor_name,
+                 COALESCE(la.shift_type, 'day') AS shift_type,
+                 COALESCE(la.overtime_hours, 0) AS overtime_hours,
+                 COALESCE(la.overtime_amount, 0) AS overtime_amount
          FROM pm_labor_attendance la
          JOIN pm_labor l ON l.id = la.labor_id
          LEFT JOIN pm_vendors v ON v.id = l.vendor_id
@@ -118,6 +122,7 @@ export async function GET(req) {
 export async function PUT(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const b = await req.json();
     const rawList = Array.isArray(b.entries) ? b.entries : Array.isArray(b.records) ? b.records : [];
     const globalDate = b.attendance_date || '';
@@ -183,10 +188,20 @@ export async function PUT(req) {
         const projId = Number(laborRow?.project_id || firstLabor.rows[0].project_id);
         const pvId = laborRow?.project_vendor_id ? Number(laborRow.project_vendor_id) : (laborRow?.contractor_id ? Number(laborRow.contractor_id) : null);
 
-        let wage = 0;
-        if (status === 'present') wage = dailyRate * 1.0;
-        else if (status === 'half_day') wage = Math.round(dailyRate * 0.5 * 100) / 100;
-        else wage = 0;
+        const shiftType = ['day', 'night', 'double'].includes(String(e.shift_type || '')) ? String(e.shift_type) : 'day';
+        const hourlyRate = dailyRate > 0 ? (dailyRate / 8) : 0;
+        const overtimeAmount = Math.round(overtime * hourlyRate * 100) / 100;
+
+        let baseWage = 0;
+        if (status === 'present') {
+          baseWage = shiftType === 'double' ? (dailyRate * 2) : dailyRate;
+        } else if (status === 'half_day') {
+          baseWage = Math.round(dailyRate * 0.5 * 100) / 100;
+        } else {
+          baseWage = 0;
+        }
+
+        const wage = status !== 'absent' ? Math.round((baseWage + overtimeAmount) * 100) / 100 : 0;
 
         const old = (
           await client.query(
@@ -196,12 +211,12 @@ export async function PUT(req) {
         ).rows[0];
 
         const r = await client.query(
-          `INSERT INTO pm_labor_attendance(labor_id, attendance_date, status, wage_amount, note, created_by, project_id, project_vendor_id, contractor_id, overtime_hours)
-           VALUES($1, $2, $3, $4, $5, $6, $7, $8, $8, $9)
+          `INSERT INTO pm_labor_attendance(labor_id, attendance_date, status, wage_amount, note, created_by, project_id, project_vendor_id, contractor_id, overtime_hours, shift_type, overtime_amount)
+           VALUES($1, $2, $3, $4, $5, $6, $7, $8, $8, $9, $10, $11)
            ON CONFLICT (labor_id, attendance_date)
-           DO UPDATE SET status = EXCLUDED.status, wage_amount = EXCLUDED.wage_amount, note = EXCLUDED.note, overtime_hours = EXCLUDED.overtime_hours, project_vendor_id = EXCLUDED.project_vendor_id, contractor_id = EXCLUDED.contractor_id
+           DO UPDATE SET status = EXCLUDED.status, shift_type = EXCLUDED.shift_type, overtime_hours = EXCLUDED.overtime_hours, overtime_amount = EXCLUDED.overtime_amount, wage_amount = EXCLUDED.wage_amount, note = EXCLUDED.note, project_vendor_id = EXCLUDED.project_vendor_id, contractor_id = EXCLUDED.contractor_id
            RETURNING *`,
-          [laborId, attDate, status, wage, note, actor, projId, pvId, overtime]
+          [laborId, attDate, status, wage, note, actor, projId, pvId, overtime, shiftType, overtimeAmount]
         );
 
         await writePmPhase2Audit(
@@ -226,6 +241,19 @@ export async function PUT(req) {
     }
   } catch (e) {
     console.error("LABOR ATTENDANCE ERROR:", e);
+    // If undefined_column (e.g. shift_type missing on production DB), auto-patch and notify
+    if (e.code === '42703') {
+      try {
+        await pool.query(`
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) DEFAULT 0;
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+          ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+        `);
+        console.log("Self-healed pm_labor_attendance columns after 42703 error.");
+      } catch (patchErr) {
+        console.error("Failed to self-heal columns:", patchErr);
+      }
+    }
     return NextResponse.json({ success: false, error: e.message || 'Could not save labor attendance' }, { status: 500 });
   }
 }

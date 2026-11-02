@@ -75,7 +75,18 @@ export const ensureMaterialOrderSchema = createInitializationGuard(async () => {
       ,ADD COLUMN IF NOT EXISTS shipping_cost NUMERIC(12,2) DEFAULT 0
       ,ADD COLUMN IF NOT EXISTS shipping_breakdown JSONB DEFAULT '[]'::jsonb
       ,ADD COLUMN IF NOT EXISTS product_total NUMERIC(12,2) DEFAULT 0
-      ,ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0
+      ,
+      ADD COLUMN IF NOT EXISTS grand_total NUMERIC(12,2) DEFAULT 0,
+      ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) DEFAULT 'COD',
+      ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50) DEFAULT 'PENDING',
+      ADD COLUMN IF NOT EXISTS payment_gateway VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS payment_gateway_id VARCHAR(255),
+      ADD COLUMN IF NOT EXISTS payment_completed_at TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS return_status VARCHAR(40) DEFAULT 'NONE',
+      ADD COLUMN IF NOT EXISTS return_reason VARCHAR(100),
+      ADD COLUMN IF NOT EXISTS return_action VARCHAR(30),
+      ADD COLUMN IF NOT EXISTS return_requested_at TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS return_details JSONB DEFAULT '{}'::jsonb
   `);
   await pool.query(`
     UPDATE material_enquiries

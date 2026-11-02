@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -12,6 +12,7 @@ function getTodayIST() {
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const s = new URL(req.url).searchParams;
     const projectVendorId = Number(s.get('projectVendorId'));
 
@@ -26,7 +27,10 @@ export async function GET(req) {
 
       const month = s.get('month') || ''; // 'YYYY-MM'
       const r = await pool.query(
-        `SELECT a.*, pv.daily_rate, v.name AS vendor_name, v.trade
+        `SELECT a.*, pv.daily_rate, v.name AS vendor_name, v.trade,
+                COALESCE(a.shift_type, 'day') AS shift_type,
+                COALESCE(a.overtime_hours, 0) AS overtime_hours,
+                COALESCE(a.overtime_amount, 0) AS overtime_amount
          FROM pm_attendance a
          JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id
          JOIN pm_vendors v ON v.id = pv.vendor_id
@@ -54,7 +58,10 @@ export async function GET(req) {
     if (history || !validDate(date)) {
       const month = s.get('month') || '';
       const r = await pool.query(
-        `SELECT a.*, pv.daily_rate, pv.pay_type, v.name AS vendor_name, v.trade
+        `SELECT a.*, pv.daily_rate, pv.pay_type, v.name AS vendor_name, v.trade,
+                COALESCE(a.shift_type, 'day') AS shift_type,
+                COALESCE(a.overtime_hours, 0) AS overtime_hours,
+                COALESCE(a.overtime_amount, 0) AS overtime_amount
          FROM pm_attendance a
          JOIN pm_project_vendors pv ON pv.id = a.project_vendor_id
          JOIN pm_vendors v ON v.id = pv.vendor_id
@@ -102,6 +109,17 @@ export async function GET(req) {
       pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
     });
   } catch (e) {
+    if (e.code === '42703') {
+      try {
+        await pool.query(`
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day';
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) NOT NULL DEFAULT 0;
+          ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0;
+        `);
+      } catch (patchErr) {
+        console.error('Self-heal pm_attendance error:', patchErr);
+      }
+    }
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }
 }
@@ -109,6 +127,7 @@ export async function GET(req) {
 export async function PUT(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureAttendanceShiftsAndOvertimeSchema();
     const b = await req.json();
     const rawList = Array.isArray(b.entries) ? b.entries : Array.isArray(b.records) ? b.records : [];
     const globalDate = b.attendance_date || '';
@@ -179,7 +198,21 @@ export async function PUT(req) {
         if (!pv) throw new Error('Daily-wage vendor assignment not found');
 
         const snapshot = rate ?? Number(pv.daily_rate);
-        const wage = status === 'present' ? workers * snapshot : status === 'half_day' ? workers * snapshot * 0.5 : 0;
+        const shiftType = ['day', 'night', 'double'].includes(String(e.shift_type || '')) ? String(e.shift_type) : 'day';
+        const overtime = Math.max(0, Number(e.overtime_hours || 0));
+        const hourlyRate = snapshot > 0 ? (snapshot / 8) : 0;
+        const overtimeAmount = Math.round(workers * overtime * hourlyRate * 100) / 100;
+
+        let baseWage = 0;
+        if (status === 'present') {
+          baseWage = shiftType === 'double' ? (workers * snapshot * 2) : (workers * snapshot);
+        } else if (status === 'half_day') {
+          baseWage = Math.round(workers * snapshot * 0.5 * 100) / 100;
+        } else {
+          baseWage = 0;
+        }
+
+        const wage = status !== 'absent' ? Math.round((baseWage + overtimeAmount) * 100) / 100 : 0;
         const old = (
           await client.query(`SELECT * FROM pm_attendance WHERE project_vendor_id = $1 AND attendance_date = $2 FOR UPDATE`, [
             id,
@@ -188,12 +221,12 @@ export async function PUT(req) {
         ).rows[0];
 
         const r = await client.query(
-          `INSERT INTO pm_attendance(project_vendor_id, attendance_date, status, workers_count, rate_per_worker, wage_amount, note, created_by)
-           VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+          `INSERT INTO pm_attendance(project_vendor_id, attendance_date, status, workers_count, rate_per_worker, wage_amount, note, created_by, shift_type, overtime_hours, overtime_amount)
+           VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
            ON CONFLICT(project_vendor_id, attendance_date)
-           DO UPDATE SET status = EXCLUDED.status, workers_count = EXCLUDED.workers_count, rate_per_worker = EXCLUDED.rate_per_worker, wage_amount = EXCLUDED.wage_amount, note = EXCLUDED.note
+           DO UPDATE SET status = EXCLUDED.status, shift_type = EXCLUDED.shift_type, overtime_hours = EXCLUDED.overtime_hours, overtime_amount = EXCLUDED.overtime_amount, workers_count = EXCLUDED.workers_count, rate_per_worker = EXCLUDED.rate_per_worker, wage_amount = EXCLUDED.wage_amount, note = EXCLUDED.note
            RETURNING *`,
-          [id, e.attendance_date, status, workers, snapshot, wage, e.note || null, actor]
+          [id, e.attendance_date, status, workers, snapshot, wage, e.note || null, actor, shiftType, overtime, overtimeAmount]
         );
 
         await writePmPhase2Audit(

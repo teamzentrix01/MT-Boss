@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmAudit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmAudit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 function values(b) {
   const amount = Number(b.amount);
@@ -14,7 +14,8 @@ export async function PATCH(req, { params }) {
   try {
     await ensureProjectManagementSchema();
     const id = Number((await params).id);
-    const v = values(await req.json());
+    const body = await req.json();
+    const v = values(body);
     if (!Number.isInteger(id) || !v) {
       return NextResponse.json({ success: false, error: 'Provide valid payment details' }, { status: 400 });
     }
@@ -32,6 +33,12 @@ export async function PATCH(req, { params }) {
       if (!auth.allowed) {
         await client.query('ROLLBACK');
         return auth.response;
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, auth.user, Boolean(body.admin_override));
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const actor = actorFromAdmin(auth.user);
@@ -74,6 +81,12 @@ export async function DELETE(req, { params }) {
       if (!old || old.is_deleted) {
         await client.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Payment not found' }, { status: 404 });
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
       }
       const actor = actorFromAdmin(admin);
       const result = await client.query(

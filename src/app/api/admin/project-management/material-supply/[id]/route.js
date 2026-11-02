@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
   try {
@@ -24,6 +24,8 @@ export async function PATCH(req, { params }) {
     if (!auth.allowed) return auth.response;
 
     const b = await req.json();
+    const sameDay = assertSameDayEditable(old.created_at, auth.user, Boolean(b.admin_override));
+    if (!sameDay.allowed) return sameDay.response;
     const q = Number(b.quantity);
     const rate = Number(b.rate);
     const matId = b.material_id ? Number(b.material_id) : null;
@@ -126,6 +128,12 @@ export async function DELETE(req, { params }) {
       await c.query('BEGIN');
       const old = (await c.query(`SELECT * FROM pm_vendor_material_supply WHERE id = $1 FOR UPDATE`, [id])).rows[0];
       if (!old || old.is_deleted) throw new Error('Supply not found');
+
+      const sameDay = assertSameDayEditable(old.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await c.query('ROLLBACK');
+        return sameDay.response;
+      }
 
       const r = await c.query(
         `UPDATE pm_vendor_material_supply SET is_deleted = TRUE WHERE id = $1 RETURNING *`,

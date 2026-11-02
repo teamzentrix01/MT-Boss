@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
   try {
@@ -24,6 +24,12 @@ export async function PATCH(req, { params }) {
       if (!auth.allowed) {
         await c.query('ROLLBACK');
         return auth.response;
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, auth.user, Boolean(b.admin_override));
+      if (!sameDay.allowed) {
+        await c.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const b = await req.json();
@@ -89,6 +95,12 @@ export async function DELETE(req, { params }) {
       if (!old || old.is_deleted) {
         await c.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Commission record not found' }, { status: 404 });
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await c.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const r = await c.query(

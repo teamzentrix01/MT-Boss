@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc', 'tools', 'rent'];
 
@@ -29,6 +29,11 @@ export async function PATCH(req, { params }) {
       }
 
       const b = await req.json();
+      const sameDay = assertSameDayEditable(old.created_at, auth.user, Boolean(b.admin_override));
+      if (!sameDay.allowed) {
+        await c.query('ROLLBACK');
+        return sameDay.response;
+      }
       const amt = Number(b.amount);
       const cat = String(b.category || '').trim();
 
@@ -156,6 +161,12 @@ export async function DELETE(req, { params }) {
       if (!old || old.is_deleted) {
         await c.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Expense not found' }, { status: 404 });
+      }
+
+      const sameDay = assertSameDayEditable(old.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await c.query('ROLLBACK');
+        return sameDay.response;
       }
 
       const r = await c.query(

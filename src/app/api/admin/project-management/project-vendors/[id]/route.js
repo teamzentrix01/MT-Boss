@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, assertSameDayEditable } from '@/lib/project-management';
 
 export async function PATCH(req, { params }) {
   try {
@@ -34,6 +34,11 @@ export async function PATCH(req, { params }) {
     try {
       await client.query('BEGIN');
       const old = (await client.query(`SELECT * FROM pm_project_vendors WHERE id = $1 FOR UPDATE`, [id])).rows[0];
+      const sameDay = assertSameDayEditable(old?.created_at, auth.user, Boolean(b.admin_override));
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
+      }
       const r = await client.query(
         `UPDATE pm_project_vendors
          SET work_description = $1, pay_type = $2, daily_rate = $3, contract_amount = $4, status = $5
@@ -91,6 +96,11 @@ export async function DELETE(req, { params }) {
     try {
       await client.query('BEGIN');
       const old = (await client.query(`SELECT * FROM pm_project_vendors WHERE id = $1 FOR UPDATE`, [id])).rows[0];
+      const sameDay = assertSameDayEditable(old?.created_at, admin, false);
+      if (!sameDay.allowed) {
+        await client.query('ROLLBACK');
+        return sameDay.response;
+      }
       await client.query(`DELETE FROM pm_project_vendors WHERE id = $1`, [id]);
       const actor = actorFromAdmin(admin);
       await writePmPhase2Audit(client, 'pm_project_vendors', id, 'deleted', actor, old, null);
