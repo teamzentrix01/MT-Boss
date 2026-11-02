@@ -72,11 +72,11 @@ export async function GET(req, { params }) {
       const sRes = await pool.query('SELECT * FROM suppliers WHERE id = $1', [sId]);
       if (sRes.rows[0]) {
         supplierData = sRes.rows[0];
-        userRole = 'Supplier';
+        userRole = 'Vendor';
         user = {
           id: userId,
           real_id: sId,
-          name: supplierData.contact_person || supplierData.business_name || supplierData.shop_name || 'Supplier',
+          name: supplierData.contact_person || supplierData.business_name || supplierData.shop_name || 'Vendor',
           email: supplierData.email,
           phone: supplierData.phone,
           delivery_city: supplierData.city,
@@ -85,7 +85,7 @@ export async function GET(req, { params }) {
           is_blocked: !supplierData.is_active || supplierData.status === 'rejected',
           blocked_reason: supplierData.rejection_reason,
           blocked_at: null,
-          role: 'Supplier',
+          role: 'Vendor',
           source_table: 'suppliers',
         };
       }
@@ -118,7 +118,7 @@ export async function GET(req, { params }) {
                 CASE
                   WHEN a.id IS NOT NULL THEN 'Agent'
                   WHEN v.id IS NOT NULL THEN (CASE WHEN LOWER(COALESCE(v.business_type, '')) LIKE '%contractor%' THEN 'Contractor' ELSE 'Vendor' END)
-                  WHEN s.id IS NOT NULL THEN 'Supplier'
+                  WHEN s.id IS NOT NULL THEN 'Vendor'
                   WHEN NULLIF(u.role, '') IS NOT NULL AND LOWER(u.role) NOT IN ('customer', 'user') THEN u.role
                   ELSE 'Customer'
                 END AS role
@@ -140,7 +140,7 @@ export async function GET(req, { params }) {
           const v = await pool.query('SELECT * FROM vendors WHERE LOWER(email) = LOWER($1)', [user.email]);
           if (v.rows[0]) vendorData = v.rows[0];
         }
-        if (userRole === 'Supplier' || !supplierData) {
+        if (userRole === 'Supplier' || userRole === 'Vendor' || !supplierData) {
           const s = await pool.query('SELECT * FROM suppliers WHERE LOWER(email) = LOWER($1)', [user.email]);
           if (s.rows[0]) supplierData = s.rows[0];
         }

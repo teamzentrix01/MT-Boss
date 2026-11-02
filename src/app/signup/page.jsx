@@ -217,7 +217,7 @@ export default function SignupPage() {
             <Link href="/vendor/signup" style={{ fontSize: '0.78rem', color: muted, textDecoration: 'none', transition: 'color 0.2s' }}
               onMouseEnter={e => e.currentTarget.style.color = text}
               onMouseLeave={e => e.currentTarget.style.color = muted}>
-              Register as a Vendor instead →
+              Register as a Service Provider instead →
             </Link>
           </div>
         </div>

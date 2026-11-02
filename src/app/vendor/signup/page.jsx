@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useServiceCities } from '@/hooks/useServiceCities';
 import { redirectToPayU } from '@/lib/payu-client';
 
-export default function VendorSignupPage() {
+export default function ServiceProviderSignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function VendorSignupPage() {
   const profileRef = useRef();
   const aadharRef = useRef();
   const [plans, setPlans] = useState([
-    { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
+    { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your service provider profile for admin approval without a paid package.' },
     { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹100', desc: 'Perfect for getting started. Complete booking access.' },
     { id: 'pkg_1y', name: '1 Year Plan', duration: '12 Months', price: '₹4,999', desc: 'Most popular. Great value with a full year of leads.' },
     { id: 'pkg_2y', name: '2 Years Plan', duration: '24 Months', price: '₹7,999', desc: 'Best deal. Long-term peace of mind and maximum savings.' },
@@ -33,7 +33,7 @@ export default function VendorSignupPage() {
       .then((d) => {
         if (Array.isArray(d?.packages) && d.packages.length > 0) {
           setPlans([
-            { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your vendor profile for admin approval without a paid package.' },
+            { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your service provider profile for admin approval without a paid package.' },
             ...d.packages.map((pkg) => ({
               id: pkg.id,
               name: pkg.name,
@@ -209,7 +209,7 @@ const handleSubmit = async (e) => {
     try {
       // Build FormData for file uploads
       const payload = new FormData();
-      payload.append('vendor_name', formData.vendor_name);
+      payload.append('service provider_name', formData.vendor_name);
       payload.append('email', formData.email);
       payload.append('password', formData.password);
       payload.append('phone', formData.phone);
@@ -236,9 +236,9 @@ const handleSubmit = async (e) => {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ FIX: Don't store token - vendor is pending approval
+        // ✅ FIX: Don't store token - service provider is pending approval
         // Just save email for reference and redirect to pending page
-        localStorage.setItem('vendor-signup-email', formData.email);
+        localStorage.setItem('service provider-signup-email', formData.email);
         if (data.payment) {
           redirectToPayU(data.payment);
           return;
@@ -581,7 +581,7 @@ const handleSubmit = async (e) => {
           {/* Brand */}
           <div className="vs-brand">
             <div className="vs-brand-dot"></div>
-            <div className="vs-brand-name">VENDOR<span>HUB</span></div>
+            <div className="vs-brand-name">SERVICE PROVIDER<span>HUB</span></div>
           </div>
 
           {/* Step tabs */}
@@ -618,11 +618,11 @@ const handleSubmit = async (e) => {
               {step === 1 && (
                 <>
                   <div className="vs-field">
-                    <label className="vs-label">Vendor Name *</label>
+                    <label className="vs-label">Service Provider Name *</label>
                     <input
                       className="vs-input"
                       type="text"
-                      name="vendor_name"
+                      name="service provider_name"
                       value={formData.vendor_name}
                       onChange={handleChange}
                       placeholder="Your full name"
@@ -935,7 +935,7 @@ const handleSubmit = async (e) => {
             </form>
 
             <div className="vs-footer">
-              Already a vendor? <Link href="/vendor/login">Sign in</Link>
+              Already a service provider? <Link href="/vendor/login">Sign in</Link>
             </div>
           </div>
 

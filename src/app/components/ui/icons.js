@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-// Re-export all Lucide React icons used across MT-Boss
+// Re-export all Lucide React icons used across MTBOSS
 export {
   LayoutDashboard,
   UserCog,

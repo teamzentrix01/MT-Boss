@@ -1069,7 +1069,7 @@ export default function ShopCommissionSettingsManager({ isDarkMode = false }) {
           {/* Platform Fee Amount */}
           <div style={{ padding: '14px', background: 'var(--bg, #f8fafc)', border: '1px solid var(--shop-admin-border)', borderRadius: '8px' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--shop-admin-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
-              Platform Fee (MT-Boss)
+              Platform Fee (MTBOSS)
             </div>
             <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#16a34a' }}>
               ₹{resolvedPreview.fee.toLocaleString('en-IN', { minimumFractionDigits: 2 })}

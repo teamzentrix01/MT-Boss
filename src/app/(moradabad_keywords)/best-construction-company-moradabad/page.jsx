@@ -1,4 +1,4 @@
-// app/(moradabad_keywords)/best-construction-company-moradabad-mt-boss/page.jsx
+// app/(moradabad_keywords)/best-construction-company-moradabad/page.jsx
 import Banner from './Banner';
 import Content from './Content';
 import QuickServices from '../../components/QuickServices';
@@ -13,13 +13,13 @@ export const metadata = {
   keywords:
     'best construction company Moradabad, best construction company in Moradabad, construction company Moradabad, builders in Moradabad, building contractor Moradabad, civil contractor Moradabad, home construction Moradabad, commercial construction Moradabad, factory construction Moradabad, MTBOSS Moradabad',
   alternates: {
-    canonical: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
+    canonical: 'https://www.MTBOSS.in/best-construction-company-moradabad',
   },
   openGraph: {
     title: 'Best Construction Company Moradabad | MTBOSS Builders & Contractors',
     description:
       'MTBOSS is the best construction company in Moradabad for homes, shops, hotels and factories. Get clear pricing, strong build quality and on-time delivery.',
-    url: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
+    url: 'https://www.MTBOSS.in/best-construction-company-moradabad',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
@@ -50,7 +50,7 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'GeneralContractor',
   name: 'MTBOSS Construction Private Limited',
-  url: 'https://www.MTBOSS.in/best-construction-company-moradabad-mt-boss',
+  url: 'https://www.MTBOSS.in/best-construction-company-moradabad',
   telephone: '+91-9458410866',
   email: 'MTBOSS2016@gmail.com',
   address: {

@@ -738,7 +738,7 @@ export default function MobileStorefront({
                   ? "Track status & delivery"
                   : user?.name
                     ? `Logged in as ${user.name}`
-                    : "MT-Boss Customer Profile"}
+                    : "MTBOSS Customer Profile"}
               </span>
             </div>
 
@@ -1169,7 +1169,7 @@ export default function MobileStorefront({
             <div className="mt-4 p-3.5 bg-sky-50 dark:bg-sky-950/40 rounded-xl border border-sky-100 dark:border-sky-900/40 flex items-center justify-between text-xs">
               <div>
                 <p className="font-bold text-[#12283F] dark:text-sky-200">Need order or dispatch help?</p>
-                <p className="text-gray-500 dark:text-gray-400">MT-Boss Dispatch Desk is available 24x7</p>
+                <p className="text-gray-500 dark:text-gray-400">MTBOSS Dispatch Desk is available 24x7</p>
               </div>
               <a
                 href="tel:+919458410866"
@@ -1194,7 +1194,7 @@ export default function MobileStorefront({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-extrabold text-sm text-[#12283F] dark:text-white truncate">
-                        {user.name || 'MT-Boss Customer'}
+                        {user.name || 'MTBOSS Customer'}
                       </h3>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                         {user.role || 'Customer'}
@@ -1213,7 +1213,7 @@ export default function MobileStorefront({
                   <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 mx-auto flex items-center justify-center mb-2">
                     <User size={22} />
                   </div>
-                  <h3 className="font-extrabold text-sm text-[#12283F] dark:text-white">Welcome to MT-Boss</h3>
+                  <h3 className="font-extrabold text-sm text-[#12283F] dark:text-white">Welcome to MTBOSS</h3>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
                     Sign in to track orders, manage site deliveries and unlock exclusive wholesale cashback.
                   </p>
@@ -1242,7 +1242,7 @@ export default function MobileStorefront({
                   <Wallet size={20} />
                 </div>
                 <div>
-                  <span className="text-[11px] text-white/70 block uppercase tracking-wider font-semibold">MT-Boss Wallet</span>
+                  <span className="text-[11px] text-white/70 block uppercase tracking-wider font-semibold">MTBOSS Wallet</span>
                   <strong className="text-base font-black">₹0.00 <span className="text-xs font-normal text-white/80">Cashback</span></strong>
                 </div>
               </div>

@@ -314,7 +314,7 @@ export default function ProductDetailPage({ params }) {
               <ArrowLeft size={18} />
             </Link>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="MT-Boss" width={110} height={32} className="h-7 w-auto object-contain" priority />
+              <Image src="/logo.png" alt="MTBOSS" width={110} height={32} className="h-7 w-auto object-contain" priority />
               <span className="hidden sm:inline-block text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-[var(--brand-blue)] text-slate-950 uppercase">
                 SHOP
               </span>
@@ -494,7 +494,7 @@ export default function ProductDetailPage({ params }) {
                 <div className="flex flex-col items-center">
                   <BadgePercent size={22} className="text-amber-500 mb-1" />
                   <span className="text-[11px] font-extrabold">2% Cashback</span>
-                  <span className={`text-[9px] ${textMuted}`}>In MT-Boss Wallet</span>
+                  <span className={`text-[9px] ${textMuted}`}>In MTBOSS Wallet</span>
                 </div>
               </div>
             </div>
@@ -831,11 +831,11 @@ export default function ProductDetailPage({ params }) {
               <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4">
                 <p>
                   {product.description ||
-                    `${product.name} is a high-grade construction material supplied through MT-Boss verified vendor and supplier network. Specially chosen for durability, high load capacity, and compliance with Indian building and construction norms.`}
+                    `${product.name} is a high-grade construction material supplied through MTBOSS verified vendor and supplier network. Specially chosen for durability, high load capacity, and compliance with Indian building and construction norms.`}
                 </p>
                 <div className={`p-4 rounded-2xl border ${isDarkMode ? "bg-zinc-800/40 border-zinc-800" : "bg-slate-50 border-slate-200"}`}>
                   <h4 className="text-xs font-black uppercase tracking-wider mb-2 text-[var(--brand-blue)]">
-                    Quality Guarantee by MT-Boss
+                    Quality Guarantee by MTBOSS
                   </h4>
                   <p className={`text-xs ${textMuted}`}>
                     Every lot is verified for weight, batch code, and brand authenticity prior to dispatch to your construction site. In case of any transit damage or specification discrepancy, our site logistics support is available for replacement.

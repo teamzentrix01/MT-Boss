@@ -541,11 +541,11 @@ export default function LoginPage() {
             <div style={{ marginTop: '1rem', paddingTop: '0.875rem', borderTop: '1px solid var(--lp-border)', display: 'flex', gap: '0.5rem' }}>
               <Link href="/vendor/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #10b981', color: '#10b981', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-                🏪 Vendor Login
+                🏪 Service Provider Login
               </Link>
               <Link href="/supplier/login" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, padding: '0.45rem', border: '1px solid #6366f1', color: '#6366f1', borderRadius: 7, fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none', transition: 'opacity 0.15s' }}
                 onMouseEnter={e => e.currentTarget.style.opacity = '0.8'} onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
-                📦 Supplier Login
+                📦 Vendor Login
               </Link>
             </div>
 

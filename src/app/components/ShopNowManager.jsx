@@ -51,9 +51,13 @@ const desktopBannerFields = [
 
 const shopHeaders = (ownerRole = 'admin') => ({
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${ownerRole === 'vendor'
-    ? localStorage.getItem('vendor-token') || ''
-    : localStorage.getItem('admin-token') || localStorage.getItem('token') || ''}`,
+  Authorization: `Bearer ${
+    ownerRole === 'vendor'
+      ? localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token') || ''
+      : ownerRole === 'supplier'
+      ? localStorage.getItem('supplier-token') || ''
+      : localStorage.getItem('admin-token') || localStorage.getItem('token') || ''
+  }`,
 });
 
 async function readApiJson(response) {
@@ -85,7 +89,13 @@ async function uploadImage(file) {
 
 function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', initialShowForm = false }) {
   const isVendor = ownerRole === 'vendor';
-  const productEndpoint = isVendor ? '/api/vendor/shop-products' : '/api/admin/shop-products';
+  const isSupplier = ownerRole === 'supplier';
+  const isSeller = isVendor || isSupplier;
+  const productEndpoint = isSupplier
+    ? '/api/supplier/shop-products'
+    : isVendor
+    ? '/api/vendor/shop-products'
+    : '/api/admin/shop-products';
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
@@ -102,6 +112,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   useEffect(() => {
     if (initialShowForm) setShowProductForm(true);
   }, [initialShowForm]);
+
+  useEffect(() => {
+    const handleOpen = () => setShowProductForm(true);
+    window.addEventListener('openSupplierAddProduct', handleOpen);
+    return () => window.removeEventListener('openSupplierAddProduct', handleOpen);
+  }, []);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -124,7 +140,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const loadReferenceData = useCallback(async () => {
     try {
       const [categoryRes, cityRes] = await Promise.all([
-        fetch(isVendor ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
+        fetch(isSeller ? '/api/shop-categories' : '/api/shop-categories?admin=true', { headers: shopHeaders(ownerRole) }),
         fetch('/api/cities'),
       ]);
       const [categoryData, cityData] = await Promise.all([readApiJson(categoryRes), readApiJson(cityRes)]);
@@ -134,12 +150,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     } catch (error) {
       setNotice(error.message);
     }
-  }, [isVendor, ownerRole]);
+  }, [isSeller, ownerRole]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const productUrl = isVendor
+      const productUrl = isSeller
         ? productEndpoint
         : (() => {
             const params = new URLSearchParams({
@@ -160,14 +176,14 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       setProductPagination(productData.pagination || { page: 1, limit: 25, total: (productData.data || []).length, pages: 1 });
     } catch (error) { setNotice(error.message); }
     finally { setLoading(false); }
-  }, [isVendor, ownerRole, productEndpoint, productPage, debouncedProductSearch, tierFilter]);
+  }, [isSeller, ownerRole, productEndpoint, productPage, debouncedProductSearch, tierFilter]);
 
   useEffect(() => { loadReferenceData(); }, [loadReferenceData]);
   useEffect(() => { load(); }, [load]);
 
   const edit = async (product) => {
     let full = product;
-    if (!isVendor && (!Array.isArray(product.images) || product.specifications == null)) {
+    if (!isSeller && (!Array.isArray(product.images) || product.specifications == null)) {
       try {
         const res = await fetch(`${productEndpoint}?id=${product.id}`, { headers: shopHeaders(ownerRole) });
         const data = await readApiJson(res);
@@ -279,7 +295,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       if (!response.ok) throw new Error(data.error || 'Could not save product');
       notifyShopProductsUpdated();
       reset();
-      if (isVendor) {
+      if (isSeller) {
         setNotice(
           isEditing
             ? (data?.resubmitted_for_approval ? 'Submitted for admin approval.' : 'Product updated.')
@@ -420,7 +436,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             </button>
             <div>
               <h2>{editingId ? 'Edit product' : 'Add product'}</h2>
-              <p>{isVendor ? 'Fill out product details for admin approval.' : 'Enter product details and fixed Buy Now price.'}</p>
+              <p>{isSeller ? 'Fill out product details for admin approval.' : 'Enter product details and fixed Buy Now price.'}</p>
             </div>
           </div>
         </div>
@@ -693,8 +709,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       <>
         <div className="shop-admin-heading">
           <div>
-            <h2>{isVendor ? 'My products' : 'Products'}</h2>
-            <p>Enter product details and fixed Buy Now price.{!isVendor && ' Supplier and vendor uploads appear here too.'}</p>
+            <h2>{isSeller ? 'My products' : 'Products'}</h2>
+            <p>Enter product details and fixed Buy Now price.{!isSeller && ' Supplier and vendor uploads appear here too.'}</p>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <button
@@ -720,7 +736,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           </div>
         </div>
         {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
-        <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isVendor ? 'My products' : 'All products'} ({isVendor ? products.length : productPagination.total})</h3><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>{!isVendor && <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder="Search products…" style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', minWidth: 180 }} />}<label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isVendor && <th>Discount</th>}{!isVendor && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isVendor && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isVendor && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isVendor ? (() => {
+        <div className="shop-admin-card"><div className="shop-admin-list-head"><h3>{isSeller ? 'My products' : 'All products'} ({isSeller ? products.length : productPagination.total})</h3><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>{!isSeller && <input value={productSearch} onChange={(e) => setProductSearch(e.target.value)} placeholder="Search products…" style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)', minWidth: 180 }} />}<label className="shop-admin-tier-filter">Quality Tier<select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}><option value="any">All products</option><option value="none">No Quality Tier set</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.value === 'all' ? 'All tiers' : tier.label}</option>)}</select></label></div></div>{loading ? <p>Loading products...</p> : !products.length ? <p>No products yet. Add the first product above.</p> : !visibleProducts.length ? <p>No products match this Quality Tier filter.</p> : <div className="shop-admin-table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Quality</th><th>Get Quote range</th><th>Buy Now price / unit</th>{!isSeller && <th>Discount</th>}{!isSeller && <th>Source</th>}<th>Status</th><th>Actions</th></tr></thead><tbody>{visibleProducts.map((product) => { const price = Number(product.price); const originalPrice = Number(product.compare_at_price); const discountPercent = originalPrice > price && price > 0 ? Math.round(((originalPrice - price) / originalPrice) * 100) : null; return <tr key={product.id}><td><strong>{product.name}</strong>{product.description && <small>{product.description}</small>}</td><td>{product.category || 'Unassigned'}</td><td>{qualityTierLabel(product.quality_tier) || <span className="shop-admin-tier-missing">Not set</span>}</td><td>{product.quote_price_range ? `₹${product.quote_price_range}` : '—'}</td><td>{price > 0 ? `₹${price.toLocaleString('en-IN')} / ${product.unit || 'unit'}` : <span style={{ color: '#d97706', fontWeight: 600 }}>Price on request</span>}</td>{!isSeller && <td>{discountPercent === null ? '—' : `${discountPercent}% OFF`}</td>}{!isSeller && <td>{product.vendor_id ? `Vendor #${product.vendor_id}` : product.supplier_id === 0 ? 'Admin' : `Supplier #${product.supplier_id}`}</td>}<td>{isSeller ? (() => {
   const approval = product.specifications?.__approval__;
   const status = approval?.status || 'approved';
   if (status === 'pending') {
@@ -739,8 +755,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     );
   }
   return <span className="shop-approval-badge badge-approved" title="Approved by admin">✓ Approved {product.is_available ? '' : '(Hidden)'}</span>;
-})() : (product.is_available ? 'Visible' : 'Hidden')}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button>{(!isVendor || !product.specifications?.__approval__?.status || product.specifications.__approval__.status === 'approved') && <button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button>}<button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}
-    {!isVendor && !loading && productPagination.pages > 1 ? (
+})() : (product.is_available ? 'Visible' : 'Hidden')}</td><td><div className="shop-admin-actions"><button type="button" onClick={() => edit(product)}>Edit</button>{(!isSeller || !product.specifications?.__approval__?.status || product.specifications.__approval__.status === 'approved') && <button type="button" onClick={() => toggle(product)}>{product.is_available ? 'Hide' : 'Show'}</button>}<button type="button" onClick={() => remove(product)}>Delete</button></div></td></tr>; })}</tbody></table></div>}
+    {!isSeller && !loading && productPagination.pages > 1 ? (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, gap: 8, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 12, color: 'var(--muted)' }}>Page {productPagination.page} of {productPagination.pages}</span>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -1217,6 +1233,17 @@ export function ShopProductsManager({ isDarkMode = false }) {
   return (
     <div className="shop-admin-root">
       <ProductManager ownerRole="admin" formId="shop-product-form" initialShowForm={showForm} />
+    </div>
+  );
+}
+
+export function SupplierShopProductsManager({ isDarkMode = false }) {
+  const searchParams = useSearchParams();
+  const showForm = searchParams ? searchParams.get('action') === 'add' : false;
+
+  return (
+    <div className="shop-admin-root">
+      <ProductManager ownerRole="supplier" formId="supplier-shop-product-form" initialShowForm={showForm} />
     </div>
   );
 }

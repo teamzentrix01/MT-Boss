@@ -149,7 +149,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
                 <span className="text-xs font-bold text-white">4.6 ★★★★☆</span>
                 <span className="text-[10px] text-zinc-400">(170+ Google Reviews)</span>
               </div>
-              <p className="text-[10px] text-zinc-300">Verified MT-Boss Google Business Profile</p>
+              <p className="text-[10px] text-zinc-300">Verified MTBOSS Google Business Profile</p>
             </div>
           </div>
           <a
@@ -173,7 +173,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
               Thank You for Your Feedback!
             </h4>
             <p className={`text-xs ${textSecondary} max-w-sm mx-auto leading-relaxed`}>
-              Your review has been submitted to MT-Boss and sent to our team.
+              Your review has been submitted to MTBOSS and sent to our team.
             </p>
 
             {/* Direct Google Post Prompt on Success */}

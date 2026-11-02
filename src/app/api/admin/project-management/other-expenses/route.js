@@ -4,7 +4,7 @@ import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase
 
 const VALID_CATEGORIES = ['transport', 'machine_rent', 'electricity_water', 'permit', 'misc', 'tools', 'rent'];
 
-export function parseExpenseData(row) {
+function parseExpenseData(row) {
   if (!row) return { category: '', item_name: '', note: '' };
   let cat = row.category || '';
   let note = row.note || '';

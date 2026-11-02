@@ -48,6 +48,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Select a valid subscription plan' }, { status: 400 });
     }
 
+    const isFreePlan = Number(pkg.price || 0) <= 0;
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
@@ -73,7 +75,9 @@ export async function POST(request) {
         await client.query(
           `UPDATE suppliers
            SET package_id = $1, package_name = $2, package_price = $3,
-               package_duration_months = $4, package_status = 'unpaid'
+               package_duration_months = $4,
+               package_purchased_at = ${isFreePlan ? 'NOW()' : 'NULL'},
+               package_status = ${isFreePlan ? "'pending'" : "'unpaid'"}
            WHERE id = $5`,
           [pkg.id, pkg.name, pkg.price, pkg.duration_months, supplier.id]
         );
@@ -92,7 +96,7 @@ export async function POST(request) {
             $6, $7, $8, $9,
             $10, $11, 'pending',
             $12, $13, $14, $15,
-            NULL, 'unpaid'
+            $16, $17
           )
           RETURNING id, email, shop_name, phone, status, created_at`,
           [
@@ -102,39 +106,47 @@ export async function POST(request) {
             aadhaar_number.replace(/\s/g, ''),
             product_categories,
             pkg.id, pkg.name, pkg.price, pkg.duration_months,
+            isFreePlan ? new Date() : null,
+            isFreePlan ? 'pending' : 'unpaid',
           ]
         );
         supplier = result.rows[0];
       }
 
-      const txnid = newPayUTxnId('SRG');
-      await createPayUIntent({
-        txnid,
-        purpose: 'supplier_registration',
-        entityId: supplier.id,
-        packageId: pkg.id,
-        amount: pkg.price,
-        client,
-      });
-      const callbackUrl = getPayUCallbackUrl(request);
-      const payment = createPayURequest({
-        txnid,
-        amount: pkg.price,
-        productinfo: `MTBOSS supplier registration - ${pkg.label}`,
-        firstname: String(shop_name).trim().split(/\s+/)[0],
-        email,
-        phone,
-        surl: callbackUrl,
-        furl: callbackUrl,
-        udf1: String(supplier.id),
-        udf2: pkg.id,
-        udf3: 'supplier_registration',
-      });
+      let payment = null;
+      if (!isFreePlan) {
+        const txnid = newPayUTxnId('SRG');
+        await createPayUIntent({
+          txnid,
+          purpose: 'supplier_registration',
+          entityId: supplier.id,
+          packageId: pkg.id,
+          amount: pkg.price,
+          client,
+        });
+        const callbackUrl = getPayUCallbackUrl(request);
+        payment = createPayURequest({
+          txnid,
+          amount: pkg.price,
+          productinfo: `MTBOSS supplier registration - ${pkg.label}`,
+          firstname: String(shop_name).trim().split(/\s+/)[0],
+          email,
+          phone,
+          surl: callbackUrl,
+          furl: callbackUrl,
+          udf1: String(supplier.id),
+          udf2: pkg.id,
+          udf3: 'supplier_registration',
+        });
+      }
 
       await client.query('COMMIT');
       return NextResponse.json({
         success: true,
-        message: 'Registration saved. Redirecting to PayU for subscription payment.',
+        message: isFreePlan
+          ? 'Registration submitted successfully. Waiting for admin approval.'
+          : 'Registration saved. Redirecting to PayU for subscription payment.',
+        redirectTo: '/supplier/pending-approval',
         supplier: {
           id: supplier.id,
           email: supplier.email,

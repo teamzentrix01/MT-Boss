@@ -282,7 +282,7 @@ export default function CartView() {
               <ArrowLeft size={18} />
             </button>
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.png" alt="MT-Boss" width={100} height={28} className="h-7 w-auto object-contain" priority />
+              <Image src="/logo.png" alt="MTBOSS" width={100} height={28} className="h-7 w-auto object-contain" priority />
               <span className="hidden sm:inline text-[10px] font-black tracking-widest px-1.5 py-0.5 rounded bg-[var(--brand-blue)] text-slate-950 uppercase">
                 CART
               </span>
