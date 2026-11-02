@@ -486,6 +486,11 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS project_vendor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
   await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS contractor_id BIGINT REFERENCES pm_project_vendors(id) ON DELETE SET NULL`);
   await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) DEFAULT 0`);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day'`);
+  await pool.query(`ALTER TABLE pm_labor_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0`);
+  await pool.query(`ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS shift_type VARCHAR(20) NOT NULL DEFAULT 'day'`);
+  await pool.query(`ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_hours NUMERIC(6,2) NOT NULL DEFAULT 0`);
+  await pool.query(`ALTER TABLE pm_attendance ADD COLUMN IF NOT EXISTS overtime_amount NUMERIC(14,2) NOT NULL DEFAULT 0`);
   await pool.query(`
     CREATE TABLE IF NOT EXISTS pm_labor_payments (
       id BIGSERIAL PRIMARY KEY,
