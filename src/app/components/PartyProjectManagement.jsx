@@ -568,6 +568,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     note: '',
   });
   const [vendorTypeFilter, setVendorTypeFilter] = useState('all');
+  const [localVendorModal, setLocalVendorModal] = useState(false);
+  const [localVendorForm, setLocalVendorForm] = useState({
+    name: '',
+    phone: '',
+    city: '',
+    material_type: '',
+    address: '',
+  });
   const [contractorMenuOpen, setContractorMenuOpen] = useState(false);
   const [supplierView, setSupplierView] = useState(false);
   const [addVendorModal, setAddVendorModal] = useState(false);
@@ -1337,6 +1345,34 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   };
 
+  // ── Save Local Vendor ────────────────────────────────────────────────────────
+  const saveLocalVendor = async (e) => {
+    e.preventDefault();
+    if (!project?.id) return;
+    try {
+      const res = await api('/api/admin/project-management/local-vendors', {
+        method: 'POST',
+        body: JSON.stringify({
+          projectId: project.id,
+          ...localVendorForm,
+        }),
+      });
+      setMessage(res.message || 'Local vendor saved successfully');
+      setLocalVendorModal(false);
+      setLocalVendorForm({
+        name: '',
+        phone: '',
+        city: '',
+        material_type: '',
+        address: '',
+      });
+      await loadProjectSuppliers(project.id);
+    } catch (err) {
+      setModalError(err.message || 'Failed to save local vendor');
+      throw err;
+    }
+  };
+
   // ── Save Used Entry ─────────────────────────────────────────────────────────
   const saveUsedEntry = async (e) => {
     e.preventDefault();
@@ -1922,7 +1958,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         method: 'POST',
         body: JSON.stringify(vendorPaymentForm),
       });
-      setMessage('Vendor payment recorded');
+      setMessage('Service provider payment recorded');
       setVendorPaymentForm({
         project_vendor_id: '',
         amount: '',
@@ -2699,7 +2735,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <small>Total Labour Cost</small>
                           <b>{INR(project.total_labour_cost)}</b>
                           <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
-                            Vendor: {INR(project.vendor_labour_cost ?? (Number(project.daily_labour_cost || 0) + Number(project.contract_labour_cost || 0)))} | Labor: {INR(project.individual_labour_cost || 0)}
+                            Service Provider: {INR(project.vendor_labour_cost ?? (Number(project.daily_labour_cost || 0) + Number(project.contract_labour_cost || 0)))} | Labor: {INR(project.individual_labour_cost || 0)}
                           </span>
                         </div>
                       )}
@@ -2810,7 +2846,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                   {contractorMenuOpen && projectTab === 'vendors' && (
                     <div className="card" style={{ margin: '-8px 0 16px', padding: 12, border: '1px solid #bfdbfe', background: '#f8fbff' }}>
-                      <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8, color: '#1e3a8a' }}>Select contractor / vendor type</div>
+                      <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8, color: '#1e3a8a' }}>Select contractor / service provider type</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                         <button className={vendorTypeFilter === 'all' ? 'active-btn' : 'muted'} onClick={() => setVendorTypeFilter('all')}>All Contractors</button>
                         {contractorTrades.map((trade) => (
@@ -3305,7 +3341,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <table>
                     <thead>
                       <tr>
-                        <th>Vendor (Daily Wage)</th>
+                        <th>Service Provider (Daily Wage)</th>
                         <th>Trade</th>
                         <th>Status</th>
                         <th>Workers Count</th>
@@ -4093,7 +4129,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             className={paymentsSubTab === 'vendor' ? 'active-btn' : 'muted'}
                             onClick={() => handlePaymentsSubChange('vendor')}
                           >
-                            Vendor Payment ({vendorPaymentsList.length})
+                            Service Provider Payment ({vendorPaymentsList.length})
                           </button>
                           <button
                             className={paymentsSubTab === 'labor' ? 'active-btn' : 'muted'}
@@ -4136,11 +4172,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                       {paymentsSubTab === 'vendor' && (
                         <div>
-                          <form onSubmit={(e) => submitAction.submit('vendorPayment', () => saveVendorPayment(e), { successMessage: 'Vendor payment recorded successfully', onError: setMessage })} className="card" style={{ marginBottom: 16 }}>
-                    <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Vendor Payment</h4>
+                          <form onSubmit={(e) => submitAction.submit('vendorPayment', () => saveVendorPayment(e), { successMessage: 'Service provider payment recorded successfully', onError: setMessage })} className="card" style={{ marginBottom: 16 }}>
+                    <h4 style={{ margin: '0 0 12px', fontSize: 15 }}>Record Service Provider Payment</h4>
                     <div className="grid">
                       <label>
-                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Vendor</small>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Service Provider</small>
                         <select
                           required
                           value={vendorPaymentForm.project_vendor_id}
@@ -4154,7 +4190,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             setVendorPaymentForm({ ...vendorPaymentForm, project_vendor_id: pvid, payment_type: defType });
                           }}
                         >
-                          <option value="">Select Vendor</option>
+                          <option value="">Select Service Provider</option>
                           {projectVendors.map((pv) => {
                             const earned = Number(pv.total_earned ?? pv.earned ?? 0);
                             const paid = Number(pv.total_paid ?? pv.paid ?? 0);
@@ -4179,7 +4215,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         return (
                           <div style={{ gridColumn: '1 / -1', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
                             <div>
-                              <small style={{ color: '#64748b', display: 'block' }}>Contractor / Vendor</small>
+                              <small style={{ color: '#64748b', display: 'block' }}>Contractor / Service Provider</small>
                               <b>{sel.vendor_name}</b> <span style={{ fontSize: 12, color: '#64748b' }}>({sel.trade || 'General'})</span>
                             </div>
                             <div>
@@ -4187,7 +4223,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <span style={{ fontWeight: 600, color: '#0f172a' }}>{rateLabel}</span>
                             </div>
                             <div>
-                              <small style={{ color: '#64748b', display: 'block' }}>Vendor Earned</small>
+                              <small style={{ color: '#64748b', display: 'block' }}>Service Provider Earned</small>
                               <span style={{ fontWeight: 600, color: '#0f172a' }}>{INR(earned)}</span>
                             </div>
                             <div>
@@ -4252,7 +4288,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       onChange={(e) => setVPayFilterVendor(e.target.value)}
                       style={{ maxWidth: 200 }}
                     >
-                      <option value="">All Vendors</option>
+                      <option value="">All Service Providers</option>
                       {projectVendors.map((pv) => (
                         <option value={pv.id} key={pv.id}>{pv.vendor_name}</option>
                       ))}
@@ -4286,7 +4322,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <thead>
                       <tr>
                         <th>Date</th>
-                        <th>Vendor</th>
+                        <th>Service Provider</th>
                         <th>Type</th>
                         <th>Amount</th>
                         <th>Advance Payment</th>
@@ -4366,7 +4402,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       {vendorPaymentsList.length === 0 && (
                         <tr>
                           <td colSpan={9} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            No vendor payments recorded yet.
+                            No service provider payments recorded yet.
                           </td>
                         </tr>
                       )}
@@ -4729,6 +4765,25 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                               {hasAgentConstruction && (
                                 <button
+                                  className="btn-secondary"
+                                  onClick={() => {
+                                    setLocalVendorForm({
+                                      name: '',
+                                      phone: '',
+                                      city: '',
+                                      material_type: '',
+                                      address: '',
+                                    });
+                                    setModalError('');
+                                    setLocalVendorModal(true);
+                                  }}
+                                  title="Add local / unregistered vendor to this project"
+                                >
+                                  + Add Local Vendor
+                                </button>
+                              )}
+                              {hasAgentConstruction && (
+                                <button
                                   onClick={() => {
                                     setReceivedForm({
                                       ...receivedBlank,
@@ -4801,7 +4856,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       {s.is_registered ? (
                                         <span className="badge badge-active" style={{ marginLeft: 6, fontSize: 10 }}>Registered</span>
                                       ) : (
-                                        <span className="badge" style={{ marginLeft: 6, fontSize: 10, background: '#f1f5f9', color: '#64748b' }}>Unregistered</span>
+                                        <span className="badge" style={{ marginLeft: 6, fontSize: 10, background: '#f1f5f9', color: '#475569' }}>
+                                          {s.is_local ? 'Local Vendor' : 'Unregistered'}
+                                        </span>
+                                      )}
+                                      {s.material_type && (
+                                        <span style={{ fontSize: 10, color: '#0369a1', background: '#e0f2fe', padding: '1px 6px', borderRadius: 4, marginLeft: 6 }}>
+                                          {s.material_type}
+                                        </span>
                                       )}
                                       {s.phone && (
                                         <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginTop: 2 }}>
@@ -4912,6 +4974,25 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               </div>
                             </div>
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              {hasAgentConstruction && (
+                                <button
+                                  className="btn-secondary"
+                                  onClick={() => {
+                                    setLocalVendorForm({
+                                      name: '',
+                                      phone: '',
+                                      city: '',
+                                      material_type: '',
+                                      address: '',
+                                    });
+                                    setModalError('');
+                                    setLocalVendorModal(true);
+                                  }}
+                                  title="Add local / unregistered vendor to this project"
+                                >
+                                  + Add Local Vendor
+                                </button>
+                              )}
                               {hasAgentConstruction && (
                                 <button
                                   onClick={() => {
@@ -7209,6 +7290,97 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </div>
           )}
 
+          {/* ── MODAL: ADD LOCAL VENDOR ────────────────────────────────────── */}
+          {localVendorModal && (
+            <div className="modal-overlay">
+              <form
+                onSubmit={(e) =>
+                  submitAction.submit('localVendor', () => saveLocalVendor(e), {
+                    successMessage: 'Local vendor added successfully',
+                    onError: setModalError,
+                  })
+                }
+                className="modal-card"
+              >
+                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                  Add Local / Site Vendor
+                </h3>
+                {modalError && (
+                  <div
+                    role="alert"
+                    style={{
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#b91c1c',
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      marginBottom: 12,
+                      fontSize: 13,
+                    }}
+                  >
+                    {modalError}
+                  </div>
+                )}
+
+                <div className="grid">
+                  <Input
+                    label="Vendor / Shop Name *"
+                    name="name"
+                    value={localVendorForm.name}
+                    set={setLocalVendorForm}
+                    required
+                    placeholder="e.g. Gupta Reti & Rodi Supplier"
+                  />
+                  <Input
+                    label="Mobile / Phone Number"
+                    name="phone"
+                    value={localVendorForm.phone}
+                    set={setLocalVendorForm}
+                    placeholder="e.g. 9876543210"
+                  />
+                  <Input
+                    label="City / Area"
+                    name="city"
+                    value={localVendorForm.city}
+                    set={setLocalVendorForm}
+                    placeholder="e.g. Moradabad Local"
+                  />
+                  <Input
+                    label="Material Category / Supply Item"
+                    name="material_type"
+                    value={localVendorForm.material_type}
+                    set={setLocalVendorForm}
+                    placeholder="e.g. Sand / Rodi / Bricks / Hardware"
+                  />
+                  <Input
+                    label="Address / Landmark"
+                    name="address"
+                    value={localVendorForm.address}
+                    set={setLocalVendorForm}
+                    placeholder="e.g. Near Bypass Chowk"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="muted"
+                    disabled={submitAction.isSubmitting('localVendor')}
+                    onClick={() => {
+                      setLocalVendorModal(false);
+                      setModalError('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('localVendor')}>
+                    {submitAction.isSubmitting('localVendor') ? 'Saving…' : 'Save Local Vendor'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           {/* ── MODAL: RECORD SUPPLIER PAYMENT ─────────────────────────────── */}
           {supplierPaymentModal && (
             <div className="modal-overlay">
@@ -7465,26 +7637,53 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Vendor</small>
                     <select
-                      value={receivedForm.supplier_id || ''}
+                      value={receivedForm.supplier_id ? `reg_${receivedForm.supplier_id}` : (receivedForm.supplier_name ? `local_${receivedForm.supplier_name}` : '')}
                       onChange={(e) => {
-                        const sId = e.target.value;
-                        const supplier = suppliersMaster.find((item) => String(item.id) === String(sId));
-                        setReceivedForm({
-                          ...receivedForm,
-                          supplier_id: sId,
-                          supplier_name: supplier ? (supplier.shop_name || supplier.business_name || '') : receivedForm.supplier_name,
-                        });
+                        const val = e.target.value;
+                        if (val.startsWith('reg_')) {
+                          const sId = Number(val.replace('reg_', ''));
+                          const supplier = suppliersMaster.find((item) => Number(item.id) === sId);
+                          setReceivedForm({
+                            ...receivedForm,
+                            supplier_id: sId,
+                            supplier_name: supplier ? (supplier.shop_name || supplier.business_name || '') : receivedForm.supplier_name,
+                          });
+                        } else if (val.startsWith('local_')) {
+                          const localName = val.replace('local_', '');
+                          setReceivedForm({
+                            ...receivedForm,
+                            supplier_id: '',
+                            supplier_name: localName,
+                          });
+                        } else {
+                          setReceivedForm({
+                            ...receivedForm,
+                            supplier_id: '',
+                            supplier_name: '',
+                          });
+                        }
                       }}
                     >
-                      <option value="">Select registered vendor (or type name below)</option>
-                      {suppliersMaster.filter((s) => s.is_registered).map((supplier) => (
-                        <option key={supplier.id} value={supplier.id}>
-                          {supplier.shop_name || supplier.business_name || `Vendor #${supplier.id}`} {supplier.phone ? `(${supplier.phone})` : ''} {supplier.city ? `• ${supplier.city}` : ''}
-                        </option>
-                      ))}
+                      <option value="">Select Vendor (or type name below)</option>
+                      {suppliersMaster.filter((s) => s.is_local).length > 0 && (
+                        <optgroup label="📍 Project Local Vendors">
+                          {suppliersMaster.filter((s) => s.is_local).map((local) => (
+                            <option key={`local_${local.shop_name}`} value={`local_${local.shop_name}`}>
+                              {local.shop_name} {local.phone ? `(${local.phone})` : ''} {local.city ? `• ${local.city}` : ''}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      <optgroup label="🏢 Registered System Vendors">
+                        {suppliersMaster.filter((s) => s.is_registered).map((supplier) => (
+                          <option key={`reg_${supplier.id}`} value={`reg_${supplier.id}`}>
+                            {supplier.shop_name || supplier.business_name || `Vendor #${supplier.id}`} {supplier.phone ? `(${supplier.phone})` : ''} {supplier.city ? `• ${supplier.city}` : ''}
+                          </option>
+                        ))}
+                      </optgroup>
                     </select>
                   </label>
-                  <Input label="Vendor Name (if not registered)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Ultratech Distributor" />
+                  <Input label="Vendor Name (if typing new local vendor)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Local Bhatta / Hardware" />
                   <Input label="Challan / Invoice No." name="challan_no" value={receivedForm.challan_no} set={setReceivedForm} />
                   <Input label="Note" name="note" value={receivedForm.note} set={setReceivedForm} />
                   <label>

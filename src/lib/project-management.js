@@ -284,7 +284,8 @@ async function pmSchemaLooksReady() {
            AND pg_get_constraintdef(c.oid) LIKE '%tools%'
            AND pg_get_constraintdef(c.oid) LIKE '%rent%'
       ) AS has_oe_tools_rent_constraint,
-      to_regclass('public.pm_commissions') IS NOT NULL AS has_commissions
+      to_regclass('public.pm_commissions') IS NOT NULL AS has_commissions,
+      to_regclass('public.pm_project_local_vendors') IS NOT NULL AS has_local_vendors
   `);
   const row = result.rows[0] || {};
   return Boolean(
@@ -305,6 +306,7 @@ async function pmSchemaLooksReady() {
     && row.has_ma_bill_url
     && row.has_oe_tools_rent_constraint
     && row.has_commissions
+    && row.has_local_vendors
   );
 }
 
@@ -376,6 +378,24 @@ export const ensureProjectManagementSchema = createInitializationGuard(async () 
   `);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_project_agents_project_id_idx ON pm_project_agents(project_id)`);
   await pool.query(`CREATE INDEX IF NOT EXISTS pm_project_agents_agent_id_idx ON pm_project_agents(agent_id)`);
+
+  // Local / Unregistered Project Vendors
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS pm_project_local_vendors (
+      id BIGSERIAL PRIMARY KEY,
+      project_id BIGINT NOT NULL REFERENCES pm_projects(id) ON DELETE CASCADE,
+      name VARCHAR(200) NOT NULL,
+      phone VARCHAR(30),
+      city VARCHAR(100),
+      address TEXT,
+      material_type VARCHAR(100),
+      is_active BOOLEAN NOT NULL DEFAULT TRUE,
+      created_by TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(project_id, name)
+    )
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS pm_project_local_vendors_proj_idx ON pm_project_local_vendors(project_id)`);
 
   // Phase 5: Lead to Project Conversion Link
   await pool.query(`

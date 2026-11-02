@@ -47,6 +47,7 @@ const getRoleBadgeStyle = (role) => {
     case 'agent':
       return { bg: '#fef3c7', text: '#b45309', border: '#fcd34d', icon: '🤝' };
     case 'supplier':
+    case 'vendor':
       return { bg: '#dcfce7', text: '#15803d', border: '#86efac', icon: '🏭' };
     case 'customer':
     default:
@@ -113,7 +114,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
   const [roleFilter, setRoleFilter] = useState(
     initialRoleView === 'contractors' ? 'Contractor' :
     initialRoleView === 'service providers' || initialRoleView === 'service-providers' ? 'Service Provider' :
-    initialRoleView === 'suppliers' ? 'Supplier' :
+    initialRoleView === 'suppliers' || initialRoleView === 'vendors' ? 'Vendor' :
     initialRoleView === 'agents' ? 'Agent' :
     initialRoleView === 'users' ? 'Customer' : 'all'
   );
@@ -126,7 +127,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
   useEffect(() => {
     if (initialRoleView) {
       if (initialRoleView === 'service providers' || initialRoleView === 'service-providers') setRoleFilter('Service Provider');
-      else if (initialRoleView === 'suppliers') setRoleFilter('Supplier');
+      else if (initialRoleView === 'suppliers' || initialRoleView === 'vendors') setRoleFilter('Vendor');
       else if (initialRoleView === 'agents') setRoleFilter('Agent');
       else if (initialRoleView === 'contractors') setRoleFilter('Contractor');
       else if (initialRoleView === 'users') setRoleFilter('Customer');
@@ -950,7 +951,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 Create New Account
               </h3>
               <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted, #64748b)' }}>
-                Select an account section below and fill out the form to register a new user, service provider, agent, or supplier.
+                Select an account section below and fill out the form to register a new user, service provider, agent, or vendor.
               </p>
             </div>
 
@@ -964,7 +965,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                   { id: 'Customer', label: 'Customer / User', icon: '👤', desc: 'Place material orders, enquiry & book home services' },
                   { id: 'Agent', label: 'Agent', icon: '🤝', desc: 'Manage project leads, client schedule & site supervision' },
                   { id: 'service provider', label: 'Service Provider / Contractor', icon: '🧑‍💼', desc: 'Accept construction tasks, service orders & quick services' },
-                  { id: 'Supplier', label: 'Supplier', icon: '🏭', desc: 'Fulfill material enquiries, supply orders & shop products' },
+                  { id: 'Vendor', label: 'Vendor', icon: '🏭', desc: 'Fulfill material enquiries, supply orders & shop products' },
                 ].map((sec) => {
                   const isSelected = createRole === sec.id;
                   return (
@@ -1006,7 +1007,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>
-                    {createRole === 'Supplier' || createRole === 'service provider' ? 'Owner / Contact Full Name *' : 'Full Name *'}
+                    {createRole === 'Supplier' || createRole === 'Vendor' || createRole === 'service provider' ? 'Owner / Contact Full Name *' : 'Full Name *'}
                   </label>
                   <input
                     type="text"
@@ -1088,7 +1089,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
               </div>
 
               {/* service provider & Supplier Business Details */}
-              {(createRole === 'service provider' || createRole === 'Supplier') && (
+              {(createRole === 'service provider' || createRole === 'Supplier' || createRole === 'Vendor') && (
                 <div style={{ background: '#f8fafc', border: '1px solid var(--border, #e2e8f0)', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
                   <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
                     Shop &amp; Business Information
@@ -1115,7 +1116,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                         style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border, #cbd5e1)', fontSize: '13px', background: '#fff', boxSizing: 'border-box' }}
                       />
                     </div>
-                    {createRole === 'Supplier' && (
+                    {(createRole === 'Supplier' || createRole === 'Vendor') && (
                       <div>
                         <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>Aadhaar Number (12 Digits)</label>
                         <input
@@ -1314,8 +1315,8 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                 </div>
               )}
 
-              {/* Supplier Product Categories */}
-              {createRole === 'Supplier' && (
+              {/* Vendor Product Categories */}
+              {(createRole === 'Supplier' || createRole === 'Vendor') && (
                 <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '16px', marginBottom: '20px' }}>
                   <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#15803d', marginBottom: '8px' }}>
                     Select Material Categories Supplied
@@ -1441,7 +1442,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
               const r = String(roleFilter || '').toLowerCase();
               if (r === 'agent') setCreateRole('Agent');
               else if (r === 'service provider' || r === 'contractor') setCreateRole('service provider');
-              else if (r === 'supplier') setCreateRole('Supplier');
+              else if (r === 'supplier' || r === 'vendor') setCreateRole('Vendor');
               else setCreateRole('Customer');
             }}
             style={{
@@ -1710,7 +1711,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
               <option value="Service Provider">Service Provider</option>
               <option value="Contractor">Contractor</option>
               <option value="Agent">Agent</option>
-              <option value="Supplier">Vendor</option>
+              <option value="Vendor">Vendor</option>
             </select>
           </div>
 
@@ -1856,8 +1857,8 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         </div>
       </div>
 
-      {/* If Supplier is selected as role, render the Supplier Hub (Overview, Enquiries, Suppliers, Revenue) */}
-      {String(roleFilter || '').toLowerCase() === 'supplier' ? (
+      {/* If Vendor is selected as role, render the Supplier Hub (Overview, Enquiries, Suppliers, Revenue) */}
+      {(String(roleFilter || '').toLowerCase() === 'supplier' || String(roleFilter || '').toLowerCase() === 'vendor') ? (
         <SupplierHubAdmin isDarkMode={isDarkMode} />
       ) : (
         <>
@@ -1991,7 +1992,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                           }}
                         >
                           <span>{getRoleBadgeStyle(u.role).icon}</span>
-                          <span>{u.role === 'service provider' ? 'Service Provider' : u.role === 'Supplier' ? 'Vendor' : (u.role || 'Customer')}</span>
+                          <span>{u.role === 'service provider' ? 'Service Provider' : (u.role === 'Supplier' || u.role === 'Vendor') ? 'Vendor' : (u.role || 'Customer')}</span>
                         </span>
                       </td>
 
@@ -2309,9 +2310,9 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
         ) : (() => {
             const currentRole = userDetails?.role || selectedUser?.role || 'Customer';
             const isAgent = currentRole === 'Agent';
-            const isVendor = currentRole === 'vendor' || currentRole === 'Vendor' || currentRole === 'Contractor' || currentRole === 'Service Provider';
-            const isSupplier = currentRole === 'Supplier';
-            const isCustomer = currentRole === 'Customer';
+            const isSupplier = currentRole === 'Supplier' || currentRole === 'Vendor' || Boolean(userDetails?.supplier) || selectedUser?.source_table === 'suppliers';
+            const isVendor = !isSupplier && (currentRole === 'vendor' || currentRole === 'Contractor' || currentRole === 'Service Provider' || currentRole === 'service provider');
+            const isCustomer = !isAgent && !isSupplier && !isVendor;
 
             const agentData = userDetails?.agent;
             const vendorData = userDetails?.vendor;
@@ -3160,7 +3161,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                   {/* SUPPLIER WORKSPACE & STATS */}
                   <div style={{ marginBottom: '24px' }}>
                     <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted, #475569)', marginBottom: '12px' }}>
-                      SUPPLIER WORKSPACE & STATS
+                      VENDOR WORKSPACE & STATS
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '14px' }}>
                       <div style={{ padding: '14px', borderRadius: '8px', border: '1px solid var(--border, #e2e8f0)', background: 'var(--bg, #fff)' }}>
@@ -3218,7 +3219,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                       }}
                     >
                       <ShieldCheck size={16} />
-                      Approve Supplier
+                      Approve Vendor
                     </button>
                     <button
                       type="button"
