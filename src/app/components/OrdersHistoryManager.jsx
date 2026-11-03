@@ -1382,6 +1382,28 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                         )}
                         {o.type_label || (o.type === 'shop_order' ? 'Shop Material' : 'Service Booking')}
                       </span>
+                      {o.is_free_tier_order && (
+                        <div style={{ marginTop: '4px' }}>
+                          <span
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '3px',
+                              fontSize: '0.66rem',
+                              fontWeight: 800,
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              backgroundColor: isDarkMode ? '#451a03' : '#fef3c7',
+                              color: isDarkMode ? '#fde68a' : '#b45309',
+                              border: `1px solid ${isDarkMode ? '#78350f' : '#fde047'}`,
+                              whiteSpace: 'nowrap',
+                            }}
+                            title="Vendor is on 1-Month Free Trial"
+                          >
+                            🟡 Free Vendor
+                          </span>
+                        </div>
+                      )}
                     </td>
 
                     {/* Customer Name (Clickable independently to open customer drawer) */}
@@ -1457,6 +1479,30 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
                       {o.category_name && (
                         <div style={{ fontSize: '0.72rem', color: textMuted }}>
                           {o.category_name} {o.brand_company ? `· ${o.brand_company}` : ''}
+                        </div>
+                      )}
+                      {o.is_free_tier_order && (
+                        <div
+                          style={{
+                            marginTop: '5px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '2px 8px',
+                            borderRadius: '5px',
+                            fontSize: '0.68rem',
+                            backgroundColor: isDarkMode ? '#7f1d1d33' : '#fef2f2',
+                            color: isDarkMode ? '#fca5a5' : '#991b1b',
+                            border: `1px solid ${isDarkMode ? '#991b1b55' : '#fecaca'}`,
+                            whiteSpace: 'nowrap',
+                          }}
+                          title={`Vendor: ${o.free_vendor_shop_name || 'Free Vendor'} (${o.free_vendor_phone || 'No phone'}). Call vendor to buy Paid Plan before payout!`}
+                        >
+                          <span style={{ fontWeight: 800, color: '#dc2626' }}>⛔ Hold Payout:</span>
+                          <span style={{ fontWeight: 700 }}>{o.free_vendor_shop_name || 'Free Vendor'}</span>
+                          {o.free_vendor_phone && (
+                            <span style={{ opacity: 0.85, fontSize: '0.66rem' }}>({o.free_vendor_phone})</span>
+                          )}
                         </div>
                       )}
                     </td>
@@ -1774,6 +1820,49 @@ export default function OrdersHistoryManager({ isDarkMode = false }) {
 
             {/* Modal Body */}
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {selectedOrder.is_free_tier_order && (
+                <div
+                  style={{
+                    backgroundColor: isDarkMode ? '#451a03' : '#fffbeb',
+                    border: '2px solid #f59e0b',
+                    borderRadius: '10px',
+                    padding: '14px 18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: isDarkMode ? '#fde68a' : '#92400e' }}>
+                        Free Tier Vendor Product — Payout On Hold!
+                      </div>
+                      <div style={{ fontSize: '0.85rem', marginTop: '3px', color: isDarkMode ? '#fcd34d' : '#78350f' }}>
+                        Vendor: <strong>{selectedOrder.free_vendor_shop_name || 'Vendor #' + selectedOrder.free_tier_vendor_id}</strong>
+                        {selectedOrder.free_vendor_phone && (
+                          <span> · Phone: <a href={`tel:${selectedOrder.free_vendor_phone}`} style={{ fontWeight: 800, textDecoration: 'underline', color: 'inherit' }}>{selectedOrder.free_vendor_phone}</a></span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: '#dc2626',
+                      color: '#ffffff',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    Call Vendor to buy Paid Plan before payout!
+                  </div>
+                </div>
+              )}
               {/* Status Update Banner */}
               <div
                 style={{

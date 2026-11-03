@@ -32,8 +32,14 @@ function orderScope(actor, startAt = 1) {
   }
   if (actor.role === 'supplier') {
     return {
-      sql: `((me.assigned_role = 'supplier' AND me.assigned_entity_id = $${startAt})
-             OR me.accepted_by_supplier_id = $${startAt})`,
+      sql: `(((me.assigned_role = 'supplier' AND me.assigned_entity_id = $${startAt})
+              OR me.accepted_by_supplier_id = $${startAt})
+             AND EXISTS (
+               SELECT 1 FROM suppliers s_chk
+               WHERE s_chk.id = $${startAt}
+                 AND COALESCE(s_chk.package_price, 0) > 0
+                 AND s_chk.package_status = 'active'
+             ))`,
       params: [actor.id],
     };
   }
@@ -46,6 +52,14 @@ function orderScope(actor, startAt = 1) {
 const ORDER_SELECT = `
   SELECT me.*,
          s.shop_name AS accepted_by_shop,
+         COALESCE(ps.shop_name, '') AS free_vendor_shop_name,
+         COALESCE(ps.phone, '') AS free_vendor_phone,
+         COALESCE(ps.email, '') AS free_vendor_email,
+         sm.supplier_id AS free_tier_vendor_id,
+         CASE 
+           WHEN sm.supplier_id > 0 AND (COALESCE(ps.package_price, 0) <= 0 OR ps.package_id = 'pkg_free_1m') THEN TRUE
+           ELSE FALSE
+         END AS is_free_tier_order,
          CASE me.assigned_role
            WHEN 'supplier' THEN (SELECT COALESCE(shop_name, business_name, email) FROM suppliers WHERE id = me.assigned_entity_id)
            WHEN 'vendor' THEN (SELECT COALESCE(shop_name, business_name, email) FROM vendors WHERE id = me.assigned_entity_id)
@@ -68,6 +82,8 @@ const ORDER_SELECT = `
          ), '[]'::json) AS history
     FROM material_enquiries me
     LEFT JOIN suppliers s ON s.id = me.accepted_by_supplier_id
+    LEFT JOIN supplier_materials sm ON sm.id = me.product_id
+    LEFT JOIN suppliers ps ON ps.id = sm.supplier_id
 `;
 
 export async function GET(req) {
@@ -120,9 +136,22 @@ export async function GET(req) {
       `${ORDER_SELECT} WHERE ${scope.sql} ORDER BY me.created_at DESC`,
       scope.params
     );
+    const sanitizedRows = actor.role === 'admin'
+      ? result.rows
+      : result.rows.map((row) => {
+          const {
+            is_free_tier_order,
+            free_vendor_shop_name,
+            free_vendor_phone,
+            free_vendor_email,
+            free_tier_vendor_id,
+            ...safeRow
+          } = row;
+          return safeRow;
+        });
     return NextResponse.json({
       success: true,
-      data: result.rows,
+      data: sanitizedRows,
       actor: { role: actor.role, id: actor.id },
       statuses: MATERIAL_ORDER_STATUSES,
     });

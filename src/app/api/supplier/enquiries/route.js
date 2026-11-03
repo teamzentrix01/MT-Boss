@@ -22,7 +22,7 @@ export async function GET(req) {
 
     // Fetch this supplier's registered product categories and city from DB
     const supplierRes = await pool.query(
-      `SELECT product_categories, is_active, city, package_status, package_duration_months,
+      `SELECT product_categories, is_active, city, package_id, package_price, package_status, package_duration_months,
               package_purchased_at, package_starts_at, package_expires_at, created_at
        FROM suppliers WHERE id = $1`,
       [decoded.id]
@@ -35,6 +35,8 @@ export async function GET(req) {
       product_categories,
       is_active,
       city: supplierCity,
+      package_id,
+      package_price,
       package_status,
       package_duration_months,
       package_purchased_at,
@@ -42,6 +44,19 @@ export async function GET(req) {
       package_expires_at,
       created_at,
     } = supplierRes.rows[0];
+
+    const isFreePlan = Number(package_price || 0) <= 0 || package_id === 'pkg_free_1m';
+
+    // ── Free trial suppliers do NOT receive any open market leads or enquiries ──
+    if (isFreePlan) {
+      return NextResponse.json({
+        success: true,
+        data: { open: [], mine: [], taken: [] },
+        is_free_plan: true,
+        message: 'You are on the 1-Month Free Trial. Upgrade to a Paid Subscription Plan to view customer leads, accept orders, and receive payouts.',
+      });
+    }
+
     const packageActive = package_status === 'active'
       && (!package_expires_at || new Date(package_expires_at) > new Date());
     const leadStartAt = materialLeadStartAt({
@@ -78,6 +93,7 @@ export async function GET(req) {
        FROM material_enquiries me
        LEFT JOIN suppliers s ON s.id = me.accepted_by_supplier_id
        WHERE me.created_at >= $1
+         AND (me.is_free_tier_order IS NOT TRUE)
        ORDER BY me.created_at DESC`,
       [leadStartAt]
     );

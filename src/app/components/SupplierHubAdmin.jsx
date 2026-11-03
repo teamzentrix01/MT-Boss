@@ -26,6 +26,22 @@ function StatusBadge({ s }) {
   return null;
 }
 
+function SubscriptionBadge({ s }) {
+  const isFree = s.is_free_tier || Number(s.package_price || 0) <= 0 || s.package_id === 'pkg_free_1m';
+  if (isFree) {
+    return (
+      <span style={{ display:'inline-flex', alignItems:'center', gap:'0.2rem', background:'#fffbeb', color:'#b45309', border:'1px solid #fcd34d', padding:'0.2rem 0.55rem', borderRadius:20, fontSize:'0.68rem', fontWeight:800, textTransform:'uppercase', whiteSpace:'nowrap' }}>
+        🟡 Free Trial (₹0)
+      </span>
+    );
+  }
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', gap:'0.2rem', background:'#f0fdf4', color:'#15803d', border:'1px solid #86efac', padding:'0.2rem 0.55rem', borderRadius:20, fontSize:'0.68rem', fontWeight:800, textTransform:'uppercase', whiteSpace:'nowrap' }}>
+      🟢 Paid ({s.package_name || 'Paid'} · ₹{Number(s.package_price || 0).toLocaleString('en-IN')})
+    </span>
+  );
+}
+
 function EnqStatusBadge({ status }) {
   const map = {
     open:      { bg:'var(--brand-blue-soft)', color:'#92400e', label:'Open'      },
@@ -234,7 +250,10 @@ export default function SupplierHubAdmin({ isDarkMode }) {
   const activeCount  = suppliers.filter(s => s.status === 'approved' && s.is_active).length;
 
   const filteredSups = suppliers.filter(s => {
+    const isFree = s.is_free_tier || Number(s.package_price || 0) <= 0 || s.package_id === 'pkg_free_1m';
     const mf = supFilter === 'all' ? true
+      : supFilter === 'paid'     ? !isFree
+      : supFilter === 'free'     ? isFree
       : supFilter === 'active'   ? s.status === 'approved' && s.is_active
       : supFilter === 'inactive' ? s.is_active === false
       : s.status === supFilter;
@@ -378,6 +397,54 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                 </div>
               </div>
             )}
+
+            {/* Subscription Tier & Plan Card */}
+            {(() => {
+              const isFree = selectedSupplier.is_free_tier || Number(selectedSupplier.package_price || 0) <= 0 || selectedSupplier.package_id === 'pkg_free_1m';
+              return (
+                <div style={{
+                  background: isFree ? (isDarkMode ? '#2a1a05' : '#fffbeb') : (isDarkMode ? '#052a15' : '#f0fdf4'),
+                  border: `2px solid ${isFree ? '#f59e0b' : '#22c55e'}`,
+                  borderRadius: 10,
+                  padding: '1.15rem 1.25rem',
+                  marginBottom: '1.25rem'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: isFree ? '#b45309' : '#15803d', marginBottom: '0.25rem' }}>
+                        SUBSCRIPTION TIER
+                      </div>
+                      <div style={{ fontSize: '1.15rem', fontWeight: 800, color: text }}>
+                        {isFree ? '🟡 1-Month Free Trial Vendor' : `🟢 Paid Vendor — ${selectedSupplier.package_name || 'Active Plan'}`}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: isFree ? (isDarkMode ? '#fde68a' : '#92400e') : (isDarkMode ? '#bbf7d0' : '#166534'), marginTop: '0.35rem', lineHeight: 1.5 }}>
+                        {isFree
+                          ? '⚠️ Free Trial: Customer leads are locked & buy product payouts held until vendor purchases a Paid Plan.'
+                          : `✓ Paid Plan Active (₹${Number(selectedSupplier.package_price || 0).toLocaleString('en-IN')}) — All customer leads unlocked & payouts enabled.`
+                        }
+                      </div>
+                    </div>
+                    <span style={{
+                      background: isFree ? '#b45309' : '#16a34a',
+                      color: '#fff',
+                      padding: '0.35rem 0.85rem',
+                      borderRadius: 20,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      {isFree ? 'FREE TIER (₹0)' : 'PAID PLAN'}
+                    </span>
+                  </div>
+                  {selectedSupplier.package_expires_at && (
+                    <div style={{ marginTop: '0.75rem', paddingTop: '0.6rem', borderTop: `1px solid ${isFree ? '#fde68a44' : '#86efac44'}`, fontSize: '0.78rem', color: muted }}>
+                      Plan Expiry: <strong style={{ color: text }}>{fmtD(selectedSupplier.package_expires_at)}</strong> (Status: {selectedSupplier.package_status || 'active'})
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Registration / Package Payment */}
             <div style={{ background: isDarkMode?'#102019':'#f0fdf4', border: '1px solid #16a34a55', borderRadius: 8, padding: '1rem', marginBottom: '1.25rem' }}>
@@ -653,7 +720,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                 <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
                     <tr>
-                      {['Shop Name', 'Phone', 'City', 'Registered', 'Action'].map(c => <th key={c} style={th}>{c}</th>)}
+                      {['Shop Name', 'Plan / Tier', 'Phone', 'City', 'Registered', 'Action'].map(c => <th key={c} style={th}>{c}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -663,6 +730,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                           <div style={{ fontWeight:600, color:text }}>{s.shop_name}</div>
                           <div style={{ fontSize:'0.72rem', color:muted }}>{s.email}</div>
                         </td>
+                        <td style={td()}><SubscriptionBadge s={s} /></td>
                         <td style={td({ color:muted })}>{s.phone}</td>
                         <td style={td({ color:muted })}>{s.city || '—'}</td>
                         <td style={td({ color:muted })}>{fmtD(s.created_at)}</td>
@@ -811,17 +879,30 @@ export default function SupplierHubAdmin({ isDarkMode }) {
           <div style={{ display:'flex', gap:'0.75rem', marginBottom:'1rem', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between' }}>
             <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
               {[
-                { key:'all',      label:'All'      },
-                { key:'pending',  label:'Pending'  },
-                { key:'active',   label:'Active'   },
+                { key:'all',      label:'All' },
+                { key:'paid',     label:'⭐ Paid Vendors' },
+                { key:'free',     label:'🟡 Free Trial' },
+                { key:'pending',  label:'Pending' },
+                { key:'active',   label:'Active' },
                 { key:'inactive', label:'Inactive' },
                 { key:'rejected', label:'Rejected' },
-              ].map(f => (
-                <button key={f.key} onClick={() => setSupFilter(f.key)}
-                  style={{ padding:'0.35rem 0.875rem', border:`1px solid ${supFilter===f.key ? accent : border}`, borderRadius:20, background: supFilter===f.key ? accent : 'transparent', color: supFilter===f.key ? '#fff' : muted, fontSize:'0.78rem', fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>
-                  {f.label} ({suppliers.filter(s=>f.key==='all'?true:f.key==='active'?s.status==='approved'&&s.is_active:f.key==='inactive'?s.is_active===false:s.status===f.key).length})
-                </button>
-              ))}
+              ].map(f => {
+                const count = suppliers.filter(s => {
+                  const isFree = s.is_free_tier || Number(s.package_price || 0) <= 0 || s.package_id === 'pkg_free_1m';
+                  if (f.key === 'all') return true;
+                  if (f.key === 'paid') return !isFree;
+                  if (f.key === 'free') return isFree;
+                  if (f.key === 'active') return s.status === 'approved' && s.is_active;
+                  if (f.key === 'inactive') return s.is_active === false;
+                  return s.status === f.key;
+                }).length;
+                return (
+                  <button key={f.key} onClick={() => setSupFilter(f.key)}
+                    style={{ padding:'0.35rem 0.875rem', border:`1px solid ${supFilter===f.key ? accent : border}`, borderRadius:20, background: supFilter===f.key ? accent : 'transparent', color: supFilter===f.key ? '#fff' : muted, fontSize:'0.78rem', fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>
+                    {f.label} ({count})
+                  </button>
+                );
+              })}
             </div>
             <input value={supSearch} onChange={e => setSupSearch(e.target.value)} placeholder="Search…" style={{ ...inpStyle, width:200 }} />
           </div>
@@ -833,7 +914,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               <div style={{ overflowX:'auto' }}>
                 <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
-                    <tr>{['Shop / Vendor Name','Products','Phone','City','Status','Orders','Revenue','Commission','Joined','Actions'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
+                    <tr>{['Shop / Vendor Name','Plan / Tier','Products','Phone','City','Status','Orders','Revenue','Commission','Joined','Actions'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                   </thead>
                   <tbody>
                     {filteredSups.map(s => (
@@ -842,6 +923,7 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                           <div style={{ fontWeight:600, color:text, whiteSpace:'nowrap' }}>{s.shop_name}</div>
                           <div style={{ fontSize:'0.72rem', color:muted }}>{s.email}</div>
                         </td>
+                        <td style={td()}><SubscriptionBadge s={s} /></td>
                         <td style={td({ maxWidth:180 })}>
                           {(s.product_categories||[]).length > 0 ? (
                             <div style={{ display:'flex', flexWrap:'wrap', gap:'0.2rem' }}>

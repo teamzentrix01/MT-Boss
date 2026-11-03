@@ -47,6 +47,9 @@ export async function GET(req) {
         s.is_active,
         TRUE AS is_registered
       FROM suppliers s
+      WHERE s.status = 'approved' AND s.is_active = TRUE
+        AND COALESCE(s.package_price, 0) > 0
+        AND s.package_status = 'active'
       ORDER BY s.shop_name ASC, s.id ASC
     `);
 

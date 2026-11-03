@@ -2,6 +2,8 @@
 @config "../../tailwind.config.mjs";
 
 :root {
+  --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-plus-jakarta-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --brand-blue: #2196F3;
   --brand-blue-dark: color-mix(in srgb, var(--brand-blue) 86%, black);
   --brand-blue-deep: color-mix(in srgb, var(--brand-blue) 78%, black);

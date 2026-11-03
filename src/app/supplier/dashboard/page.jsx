@@ -100,6 +100,25 @@ function SupplierDashboardContent() {
       setSupplier(parsed);
       setSelectedCats(parsed.product_categories || []);
       setLoading(false);
+
+      // Fetch package status on initial dashboard mount
+      fetch('/api/supplier/packages?action=status', { headers: { Authorization: `Bearer ${tok}` } })
+        .then(r => r.json())
+        .then(d => {
+          if (d.success && d.package) {
+            setPkgStatus(d.package);
+            setSupplier(prev => ({
+              ...prev,
+              package_id: d.package.package_id,
+              package_name: d.package.package_name,
+              package_price: d.package.package_price,
+              package_status: d.package.package_status,
+              package_expires_at: d.package.package_expires_at,
+              is_free_tier: d.package.is_free_plan,
+            }));
+          }
+        })
+        .catch(() => {});
     } catch { router.push('/supplier/login'); }
   }, [router]);
 
@@ -282,6 +301,11 @@ function SupplierDashboardContent() {
   const fmt = (n) => `₹${parseFloat(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const statusLabel = (s) => ({ open: 'Open', accepted: 'Accepted', fulfilled: 'Fulfilled', cancelled: 'Cancelled' }[s] || s);
   const noCats = (supplier?.product_categories || []).length === 0;
+  const isFreeVendor = pkgStatus ? pkgStatus.is_free_plan : (
+    supplier?.is_free_tier !== undefined
+      ? supplier.is_free_tier
+      : (Number(supplier?.package_price || 0) <= 0 || supplier?.package_id === 'pkg_free_1m')
+  );
 
   // Format date nicely
   const fmtDate = (d) => {
@@ -485,14 +509,29 @@ function SupplierDashboardContent() {
 
       <PanelLayout
         title="Vendor Hub"
-        subtitle={`${supplier?.shop_name || 'Vendor'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'}`}
+        subtitle={`${supplier?.shop_name || 'Vendor'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'} · ${isFreeVendor ? '🟡 Free Trial (1 Month)' : '🟢 Paid Vendor'}`}
         user={{
           name: supplier?.shop_name || 'Supplier',
           email: supplier?.email || '',
           city: supplier?.city || '',
-          role: 'Vendor',
+          role: isFreeVendor ? 'Free Vendor' : 'Paid Vendor',
         }}
-        roleBadge="Vendor"
+        roleBadge={isFreeVendor ? 'Free Vendor' : 'Paid Vendor'}
+        actions={
+          isFreeVendor ? (
+            <button
+              type="button"
+              onClick={() => { setActiveTab('packages'); router.push('/supplier/dashboard?tab=packages'); }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer"
+            >
+              ⭐ Upgrade to Paid Plan
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-lg text-xs font-bold">
+              ✓ Paid Plan Active
+            </span>
+          )
+        }
         menuItems={[
           {
             key: 'orders',
@@ -538,6 +577,23 @@ function SupplierDashboardContent() {
         // }
       >
         <div className="space-y-6">
+          {/* ══════════════════════ TRIAL BANNER ══════════════════════ */}
+          {isFreeVendor && (
+            <div style={{ background: 'linear-gradient(90deg, #059669 0%, #10b981 100%)', color: '#fff', padding: '0.85rem 1.25rem', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', boxShadow: '0 4px 12px rgba(16,185,129,0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '0.875rem' }}>
+                <span style={{ fontSize: '1.25rem' }}>🎉</span>
+                <span><strong>1-Month Free Trial Active:</strong> Store setup & product listing enabled! Customer leads and product buy payouts unlock when you upgrade to a Paid Plan.</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('packages'); router.push('/supplier/dashboard?tab=packages'); }}
+                style={{ background: '#fff', color: '#065f46', border: 'none', padding: '0.5rem 1rem', borderRadius: 8, fontWeight: 800, fontSize: '0.75rem', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }}
+              >
+                Upgrade to Paid Plan →
+              </button>
+            </div>
+          )}
+
           {/* ══════════════════════ ORDERS ══════════════════════ */}
           {activeTab === 'orders' && (
             fulfillModal ? (
@@ -610,6 +666,26 @@ function SupplierDashboardContent() {
                 </div>
                 <button onClick={() => fetchOrders()} style={{ padding: '0.5rem 1rem', background: 'transparent', border: `1px solid ${border}`, borderRadius: 8, color: muted, cursor: 'pointer', fontSize: '0.78rem' }}>↺ Refresh</button>
               </div>
+
+              {/* Free Trial Locked State */}
+              {isFreeVendor && (
+                <div style={{ background: dark ? '#2a1f0a' : '#fffbeb', border: '1.5px solid #f59e0b', borderRadius: 12, padding: '1.25rem 1.5rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '1.5rem' }}>🔒</span>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#b45309', margin: 0 }}>Customer Leads & Direct Orders are Locked</h3>
+                  </div>
+                  <p style={{ fontSize: '0.82rem', color: dark ? '#fde68a' : '#78350f', margin: '0 0 0.85rem 0', lineHeight: 1.5 }}>
+                    You are currently enjoying the <strong>1-Month Free Trial</strong>. Your store is live and you can add products under the Products tab. Once a customer purchases your item, our Admin team will contact you to upgrade your subscription plan so your payment can be released and market leads unlocked.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab('packages'); router.push('/supplier/dashboard?tab=packages'); }}
+                    style={{ padding: '0.5rem 1.25rem', background: '#b45309', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}
+                  >
+                    View Paid Plans & Upgrade →
+                  </button>
+                </div>
+              )}
 
               {/* No categories warning */}
               {!loadingOrders && noCats && (
@@ -855,7 +931,7 @@ function SupplierDashboardContent() {
               {/* Package options list */}
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem' }}>Available Plans</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {pkgList.map(pkg => (
+                {pkgList.filter(pkg => Number(pkg.price) > 0).map(pkg => (
                   <div
                     key={pkg.id}
                     style={{

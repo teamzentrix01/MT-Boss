@@ -43,14 +43,11 @@ export default function DashboardNotifications() {
         fetch("/api/primary-service-enquiries", { headers, cache: "no-store" }),
         fetch("/api/contact", { headers, cache: "no-store" }),
         fetch("/api/admin/lead-management?lite=1&limit=100", { headers, cache: "no-store" }),
+        fetch("/api/admin/orders?type=shop_order&limit=25", { headers, cache: "no-store" }),
       ]);
-      const [enquiries, submissions, leads] = await Promise.all(
-        responses.map((response) => response.json()),
+      const [enquiries, submissions, leads, orders] = await Promise.all(
+        responses.map((response) => response.json().catch(() => ({}))),
       );
-      if (!responses.every((response) => response.ok) || ![enquiries, submissions, leads].every((result) => result?.success)) {
-        setLoading(false);
-        return;
-      }
 
       const currentItems = [
         ...(enquiries?.success ? (enquiries.data || []).map((item) => ({
@@ -67,6 +64,20 @@ export default function DashboardNotifications() {
           kind: "lead", id: item.id, status: item.status || item.lead_stage, updated_at: item.updated_at,
           created_at: item.created_at, name: item.client_name || "A customer", detail: item.service_type || item.lead_source || "Lead",
           href: "/dashboard?tab=lead-management", label: "Lead update",
+        })) : []),
+        ...(orders?.success && Array.isArray(orders.orders) ? orders.orders.map((order) => ({
+          kind: "shop-order",
+          id: order.id,
+          status: order.status,
+          updated_at: order.created_at,
+          created_at: order.created_at,
+          name: order.customer_name || "Customer",
+          detail: order.is_free_tier_order
+            ? `⚠️ Free Vendor Product (${order.product_name}) · Vendor: ${order.free_vendor_shop_name || 'Vendor'} (${order.free_vendor_phone || 'No phone'}) - Call Vendor to buy Paid Plan before payout!`
+            : `${order.product_name || 'Material Order'} · ₹${Number(order.grand_total || 0).toLocaleString('en-IN')}`,
+          href: "/dashboard?tab=orders-history",
+          label: order.is_free_tier_order ? "⚠️ Free Vendor Product Order" : "Shop Order",
+          isFreeTier: Boolean(order.is_free_tier_order),
         })) : []),
       ].filter((item) => item.id != null);
 
@@ -231,7 +242,7 @@ export default function DashboardNotifications() {
                   onClick={() => handleItemClick(item.key)}
                   title="View information and dismiss notification"
                 >
-                  <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${item.read ? "bg-gray-300 dark:bg-zinc-600" : "bg-[#1258d4]"}`} />
+                  <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${item.isFreeTier ? "bg-amber-500 ring-2 ring-amber-300 animate-pulse" : item.read ? "bg-gray-300 dark:bg-zinc-600" : "bg-[#1258d4]"}`} />
                   <span className="flex-1 min-w-0">
                     <strong className="block text-xs font-bold text-gray-900 dark:text-gray-100 truncate mb-0.5">{item.title}</strong>
                     <span className="block text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">{item.message}</span>
