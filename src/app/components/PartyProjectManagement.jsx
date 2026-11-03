@@ -875,6 +875,242 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [loadingReport, setLoadingReport] = useState(false);
   const [allProjectsList, setAllProjectsList] = useState([]);
 
+  // ── Omni-Search & Cross-Project Quick Action State ──────────────────────────
+  const [omniSearchQuery, setOmniSearchQuery] = useState('');
+  const [omniSearchResults, setOmniSearchResults] = useState(null);
+  const [omniSearchLoading, setOmniSearchLoading] = useState(false);
+  const [omniSearchOpen, setOmniSearchOpen] = useState(false);
+  const [omniActiveTab, setOmniActiveTab] = useState('all');
+
+  // Quick Attendance Modal state
+  const [quickAttendanceModal, setQuickAttendanceModal] = useState(false);
+  const [quickAttendanceForm, setQuickAttendanceForm] = useState({
+    labor_id: '',
+    labor_name: '',
+    project_id: '',
+    project_name: '',
+    attendance_date: new Date().toISOString().slice(0, 10),
+    status: 'present',
+    shift_type: 'day',
+    overtime_hours: 0,
+    daily_rate: 0,
+    wage_amount: 0,
+    note: '',
+    available_projects: [],
+  });
+  const [savingQuickAttendance, setSavingQuickAttendance] = useState(false);
+
+  // Quick Payment Modal state
+  const [quickPaymentModal, setQuickPaymentModal] = useState(false);
+  const [quickPaymentForm, setQuickPaymentForm] = useState({
+    type: 'labor', // 'labor' | 'vendor'
+    id: '', // labor_id or project_vendor_id
+    name: '',
+    project_id: '',
+    project_name: '',
+    amount: '',
+    payment_date: new Date().toISOString().slice(0, 10),
+    mode: 'cash',
+    note: '',
+    transaction_reference: '',
+    balance_due: 0,
+    available_projects: [],
+  });
+  const [savingQuickPayment, setSavingQuickPayment] = useState(false);
+
+  // Omni Search Debounce
+  useEffect(() => {
+    const q = omniSearchQuery.trim();
+    if (!q) {
+      setOmniSearchResults(null);
+      setOmniSearchLoading(false);
+      return;
+    }
+    setOmniSearchLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(q)}`);
+        if (res.success) {
+          setOmniSearchResults(res);
+          setOmniSearchOpen(true);
+        }
+      } catch (err) {
+        console.error('Omni-search error:', err);
+      } finally {
+        setOmniSearchLoading(false);
+      }
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [omniSearchQuery]);
+
+  // Open Quick Attendance Modal
+  const openQuickAttendance = (worker, proj = null) => {
+    const defaultProj = proj || (worker.projects && worker.projects[0]) || {
+      labor_id: worker.labor_id || worker.id,
+      project_id: worker.project_id,
+      project_name: worker.project_name,
+      daily_rate: worker.daily_rate,
+    };
+    const rate = Number(defaultProj?.daily_rate || worker.daily_rate || 0);
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+
+    setQuickAttendanceForm({
+      labor_id: defaultProj?.labor_id || worker.labor_id || worker.id || '',
+      labor_name: worker.name || worker.labor_name || worker.entity_name || '',
+      project_id: defaultProj?.project_id || '',
+      project_name: defaultProj?.project_name || '',
+      attendance_date: today,
+      status: 'present',
+      shift_type: 'day',
+      overtime_hours: 0,
+      daily_rate: rate,
+      wage_amount: rate,
+      note: '',
+      available_projects: worker.projects && worker.projects.length > 0 ? worker.projects : [defaultProj],
+    });
+    setQuickAttendanceModal(true);
+  };
+
+  // Save Quick Attendance
+  const handleSaveQuickAttendance = async (e) => {
+    e?.preventDefault?.();
+    if (!quickAttendanceForm.labor_id || !quickAttendanceForm.project_id) {
+      setMessage('Labor and Project are required');
+      return;
+    }
+    setSavingQuickAttendance(true);
+    try {
+      const body = {
+        entries: [{
+          labor_id: Number(quickAttendanceForm.labor_id),
+          attendance_date: quickAttendanceForm.attendance_date,
+          status: quickAttendanceForm.status,
+          shift_type: quickAttendanceForm.shift_type,
+          overtime_hours: Number(quickAttendanceForm.overtime_hours || 0),
+          note: quickAttendanceForm.note,
+        }],
+        admin_override: true,
+      };
+      const res = await api('/api/admin/project-management/labor/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (res.success) {
+        setMessage(`✓ Attendance recorded for ${quickAttendanceForm.labor_name} in ${quickAttendanceForm.project_name || 'project'}`);
+        setQuickAttendanceModal(false);
+        if (omniSearchQuery.trim()) {
+          const updated = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(omniSearchQuery.trim())}`);
+          if (updated.success) setOmniSearchResults(updated);
+        }
+        if (screen === 'reports') {
+          loadReportsData(reportType, reportProjectFilter, reportMaterialFilter, reportProjectStatus, reportSearch, reportEntityType, reportFrequency, reportStartDate, reportEndDate);
+        }
+      } else {
+        setMessage(res.error || 'Failed to record attendance');
+      }
+    } catch (err) {
+      setMessage(err.message || 'Error recording attendance');
+    } finally {
+      setSavingQuickAttendance(false);
+    }
+  };
+
+  // Open Quick Payment Modal
+  const openQuickPayment = (entity, type = 'labor', proj = null) => {
+    const defaultProj = proj || (entity.projects && entity.projects[0]) || {
+      id: type === 'labor' ? (entity.labor_id || entity.id) : (entity.project_vendor_id || entity.id),
+      labor_id: entity.labor_id || entity.id,
+      project_vendor_id: entity.project_vendor_id || entity.id,
+      project_id: entity.project_id,
+      project_name: entity.project_name,
+      balance: entity.balance_due ?? entity.total_balance ?? 0,
+    };
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+
+    setQuickPaymentForm({
+      type,
+      id: type === 'labor' ? (defaultProj?.labor_id || entity.labor_id || entity.id || '') : (defaultProj?.project_vendor_id || entity.project_vendor_id || entity.id || ''),
+      name: entity.name || entity.labor_name || entity.vendor_name || entity.entity_name || '',
+      project_id: defaultProj?.project_id || entity.project_id || '',
+      project_name: defaultProj?.project_name || entity.project_name || '',
+      amount: '',
+      payment_date: today,
+      mode: 'cash',
+      note: '',
+      transaction_reference: '',
+      balance_due: defaultProj?.balance ?? entity.total_balance ?? entity.balance_due ?? 0,
+      available_projects: entity.projects && entity.projects.length > 0 ? entity.projects : [defaultProj],
+    });
+    setQuickPaymentModal(true);
+  };
+
+  // Save Quick Payment
+  const handleSaveQuickPayment = async (e) => {
+    e?.preventDefault?.();
+    if (!quickPaymentForm.id || !quickPaymentForm.amount || Number(quickPaymentForm.amount) <= 0) {
+      setMessage('Please enter a valid payment amount');
+      return;
+    }
+    setSavingQuickPayment(true);
+    try {
+      if (quickPaymentForm.type === 'labor') {
+        const body = {
+          labor_id: Number(quickPaymentForm.id),
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/labor/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      } else {
+        const body = {
+          project_vendor_id: Number(quickPaymentForm.id),
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          payment_type: 'labour',
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/vendor-payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      }
+
+      if (omniSearchQuery.trim()) {
+        const updated = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(omniSearchQuery.trim())}`);
+        if (updated.success) setOmniSearchResults(updated);
+      }
+      if (screen === 'reports') {
+        loadReportsData(reportType, reportProjectFilter, reportMaterialFilter, reportProjectStatus, reportSearch, reportEntityType, reportFrequency, reportStartDate, reportEndDate);
+      }
+    } catch (err) {
+      setMessage(err.message || 'Error recording payment');
+    } finally {
+      setSavingQuickPayment(false);
+    }
+  };
+
   // ── Agent Assignment State ────────────────────────────────────────────────
   const [projectAgents, setProjectAgents] = useState([]);
   const [allAgentsList, setAllAgentsList] = useState([]);
@@ -2508,6 +2744,60 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               {role.toUpperCase()}
             </span>
           )}
+        </div>
+
+        {/* ── Global Omni-Search Bar ── */}
+        <div style={{ position: 'relative', flex: '1 1 320px', maxWidth: 460, minWidth: 200, margin: '0 8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: '#fff',
+              border: omniSearchOpen ? '1.5px solid #0284c7' : '1.5px solid #cbd5e1',
+              borderRadius: 8,
+              padding: '6px 12px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            }}
+          >
+            <span style={{ marginRight: 8, color: '#64748b', fontSize: 13 }}>🔍</span>
+            <input
+              type="text"
+              value={omniSearchQuery}
+              onChange={(e) => setOmniSearchQuery(e.target.value)}
+              onFocus={() => { if (omniSearchResults) setOmniSearchOpen(true); }}
+              placeholder="Search Labor, Vendor, Material, Project (Name/Phone)..."
+              style={{
+                border: 'none',
+                outline: 'none',
+                width: '100%',
+                fontSize: 13,
+                background: 'transparent',
+                color: '#0f172a',
+              }}
+            />
+            {omniSearchLoading && <span style={{ fontSize: 11, color: '#0ea5e9', marginRight: 4 }}>⏳</span>}
+            {omniSearchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOmniSearchQuery('');
+                  setOmniSearchResults(null);
+                  setOmniSearchOpen(false);
+                }}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  fontSize: 14,
+                  padding: '0 4px',
+                  fontWeight: 'bold',
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -9921,6 +10211,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {reportData.headers?.map((h) => (
                       <th key={h.key}>{h.label}</th>
                     ))}
+                    {(reportType === 'cross_project_entity' || reportType === 'labor_summary') && (
+                      <th style={{ textAlign: 'center', minWidth: 150 }}>Quick Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -10006,11 +10299,119 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </td>
                         );
                       })}
+                      {(reportType === 'cross_project_entity' || reportType === 'labor_summary') && (
+                        <td style={{ textAlign: 'center' }}>
+                          <div style={{ display: 'inline-flex', gap: 6 }}>
+                            {(row.entity_type === 'Labor / Worker' || reportType === 'labor_summary') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickAttendance({
+                                  labor_id: row.entity_record_id || row.labor_id,
+                                  name: row.entity_name || row.labor_name,
+                                  daily_rate: row.daily_rate,
+                                  projects: [{
+                                    labor_id: row.entity_record_id || row.labor_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    daily_rate: row.daily_rate,
+                                  }],
+                                })}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0f9ff',
+                                  color: '#0284c7',
+                                  border: '1px solid #bae6fd',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>📅</span>
+                                <span>Attendance</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Labor / Worker' || reportType === 'labor_summary') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  labor_id: row.entity_record_id || row.labor_id,
+                                  name: row.entity_name || row.labor_name,
+                                  balance_due: row.balance_due,
+                                  projects: [{
+                                    labor_id: row.entity_record_id || row.labor_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'labor')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0fdf4',
+                                  color: '#16a34a',
+                                  border: '1px solid #bbf7d0',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Contractor' || row.entity_type === 'Vendor / Supplier' || row.entity_type === 'Service Provider') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  project_vendor_id: row.entity_record_id,
+                                  name: row.entity_name,
+                                  balance_due: row.balance_due,
+                                  projects: [{
+                                    project_vendor_id: row.entity_record_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'vendor')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#fef3c7',
+                                  color: '#b45309',
+                                  border: '1px solid #fde68a',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                   {(!reportData.data || reportData.data.length === 0) && (
                     <tr>
-                      <td colSpan={reportData.headers?.length || 5} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                      <td colSpan={(reportData.headers?.length || 5) + ((reportType === 'cross_project_entity' || reportType === 'labor_summary') ? 1 : 0)} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
                         No records match the selected filters. Try broadening your search or resetting filters.
                       </td>
                     </tr>
@@ -10575,6 +10976,1093 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 {deletingProject ? 'Deleting…' : 'Delete Project'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 7. OMNI-SEARCH RESULTS MODAL / DRAWER ────────────────────────── */}
+      {omniSearchOpen && omniSearchResults && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setOmniSearchOpen(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 14,
+              maxWidth: 960,
+              width: '100%',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid #cbd5e1',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px 22px',
+                borderBottom: '1px solid #e2e8f0',
+                background: '#f8fafc',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 18, color: '#0284c7' }}>🔍</span>
+                  <h3 style={{ margin: 0, fontSize: 18, color: '#0f172a', fontWeight: 700 }}>
+                    Omni-Search Results
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      background: '#e0f2fe',
+                      color: '#0369a1',
+                      padding: '3px 10px',
+                      borderRadius: 12,
+                      fontWeight: 600,
+                      border: '1px solid #bae6fd',
+                    }}
+                  >
+                    {omniSearchResults.query}
+                  </span>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#64748b' }}>
+                  Found {((omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0))} match(es) across all project records
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOmniSearchOpen(false)}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  border: '1px solid #e2e8f0',
+                  background: '#ffffff',
+                  color: '#64748b',
+                  fontSize: 14,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  transition: 'all 0.15s ease',
+                }}
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Category Navigation Pills */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                padding: '10px 20px',
+                background: '#ffffff',
+                borderBottom: '1px solid #f1f5f9',
+                overflowX: 'auto',
+                alignItems: 'center',
+              }}
+            >
+              {[
+                { id: 'all', label: 'All Matches', count: (omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0) },
+                { id: 'labor', label: 'Workers', count: omniSearchResults.counts?.labor || 0, icon: '👷' },
+                { id: 'projects', label: 'Projects', count: omniSearchResults.counts?.projects || 0, icon: '🏗️' },
+                { id: 'vendors', label: 'Vendors & Contractors', count: omniSearchResults.counts?.vendors || 0, icon: '🏢' },
+                { id: 'materials', label: 'Materials', count: omniSearchResults.counts?.materials || 0, icon: '🧱' },
+                { id: 'parties', label: 'Clients', count: omniSearchResults.counts?.parties || 0, icon: '👥' },
+                { id: 'agents', label: 'Agents', count: omniSearchResults.counts?.agents || 0, icon: '🛡️' },
+              ].map((tab) => {
+                const isActive = omniActiveTab === tab.id;
+                const isZero = tab.count === 0 && tab.id !== 'all';
+
+                return (
+                  <button
+                    type="button"
+                    key={tab.id}
+                    onClick={() => setOmniActiveTab(tab.id)}
+                    style={{
+                      border: isActive ? '1px solid #0284c7' : '1px solid #e2e8f0',
+                      background: isActive ? '#0284c7' : '#ffffff',
+                      color: isActive ? '#ffffff' : isZero ? '#94a3b8' : '#334155',
+                      padding: '6px 12px',
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: isActive ? 600 : 500,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      whiteSpace: 'nowrap',
+                      boxShadow: isActive ? '0 2px 6px rgba(2, 132, 199, 0.25)' : 'none',
+                      transition: 'all 0.15s ease',
+                      opacity: isZero && !isActive ? 0.65 : 1,
+                    }}
+                  >
+                    {tab.icon && <span>{tab.icon}</span>}
+                    <span>{tab.label}</span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        padding: '1px 6px',
+                        borderRadius: 10,
+                        fontWeight: 700,
+                        background: isActive ? 'rgba(255, 255, 255, 0.25)' : '#f1f5f9',
+                        color: isActive ? '#ffffff' : isZero ? '#94a3b8' : '#64748b',
+                      }}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Scrollable Results Body */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: 20, background: '#f8fafc' }}>
+              {/* 1. Labor / Workers Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'labor') && (omniSearchResults.results?.labor?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>👷</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Labor &amp; Workers ({omniSearchResults.results.labor.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {omniSearchResults.results.labor.map((w, wIdx) => (
+                      <div
+                        key={wIdx}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        {/* Worker Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 16, fontWeight: 700, color: '#0f172a' }}>{w.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#f0f9ff',
+                                color: '#0284c7',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #bae6fd',
+                              }}
+                            >
+                              {w.trade}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                              📞 {w.phone}
+                            </span>
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 600,
+                              background: '#f8fafc',
+                              color: '#475569',
+                              padding: '3px 10px',
+                              borderRadius: 12,
+                              border: '1px solid #e2e8f0',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                            }}
+                          >
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a' }}></span>
+                            Active across {w.projects.length} project(s)
+                          </div>
+                        </div>
+
+                        {/* Modern KPI Cards Strip */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, margin: '14px 0' }}>
+                          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Days Present</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{w.total_days_present} Days</div>
+                          </div>
+                          <div style={{ background: '#eff6ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Earned</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>{INR(w.total_earned)}</div>
+                          </div>
+                          <div style={{ background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Paid</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#16a34a', marginTop: 2 }}>{INR(w.total_paid)}</div>
+                          </div>
+                          <div style={{ background: w.total_balance > 0 ? '#fff1f2' : '#f0fdf4', border: w.total_balance > 0 ? '1px solid #ffe4e6' : '1px solid #dcfce7', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: w.total_balance > 0 ? '#991b1b' : '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Balance Due</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: w.total_balance > 0 ? '#e11d48' : '#16a34a', marginTop: 2 }}>
+                              {INR(w.total_balance)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Projects Breakdown Table */}
+                        <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9' }}>
+                          <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                            <thead>
+                              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>STATUS</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>DAILY RATE</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>DAYS PRESENT</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>QUICK ACTIONS</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {w.projects.map((p, pIdx) => (
+                                <tr key={pIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                  <td style={{ padding: '10px 12px', fontWeight: 600, color: '#0f172a' }}>{p.project_name}</td>
+                                  <td style={{ padding: '10px 12px' }}>
+                                    <span
+                                      style={{
+                                        fontSize: 10,
+                                        padding: '2px 7px',
+                                        borderRadius: 4,
+                                        fontWeight: 600,
+                                        textTransform: 'uppercase',
+                                        background: p.project_status === 'running' ? '#dcfce7' : '#e0e7ff',
+                                        color: p.project_status === 'running' ? '#15803d' : '#4338ca',
+                                      }}
+                                    >
+                                      {p.project_status}
+                                    </span>
+                                  </td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.daily_rate)}</td>
+                                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>{p.days_present}</td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.earned)}</td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.paid)}</td>
+                                  <td style={{ padding: '10px 12px', fontWeight: 700, color: p.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                    {INR(p.balance)}
+                                  </td>
+                                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickAttendance(w, p)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0f9ff',
+                                          color: '#0284c7',
+                                          border: '1px solid #bae6fd',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>📅</span>
+                                        <span>Attendance</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(w, 'labor', p)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0fdf4',
+                                          color: '#16a34a',
+                                          border: '1px solid #bbf7d0',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay</span>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Projects Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'projects') && (omniSearchResults.results?.projects?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🏗️</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Projects ({omniSearchResults.results.projects.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.projects.map((proj) => (
+                      <div
+                        key={proj.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          {/* Top Row: Name and Status */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>{proj.name}</span>
+                            <span
+                              style={{
+                                fontSize: 10,
+                                padding: '2px 7px',
+                                borderRadius: 4,
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                background: proj.status === 'running' ? '#dcfce7' : '#e0e7ff',
+                                color: proj.status === 'running' ? '#15803d' : '#4338ca',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {proj.status}
+                            </span>
+                          </div>
+
+                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                            Client: <strong style={{ color: '#334155' }}>{proj.party_name}</strong> {proj.party_phone !== '—' && <span style={{ color: '#94a3b8' }}>({proj.party_phone})</span>}
+                          </div>
+
+                          {/* Financial Mini Pills */}
+                          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+                              <span style={{ color: '#64748b' }}>Contract: </span>
+                              <strong style={{ color: '#0f172a' }}>{INR(proj.contract_value)}</strong>
+                            </div>
+                            <div style={{ background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+                              <span style={{ color: '#166534' }}>Received: </span>
+                              <strong style={{ color: '#16a34a' }}>{INR(proj.received)}</strong>
+                            </div>
+                          </div>
+
+                          <div style={{ fontSize: 11, color: '#64748b', marginTop: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <span>👷 <strong>{proj.workers_count}</strong> Active Worker(s)</span>
+                            <span>🏢 <strong>{proj.vendors_count}</strong> Vendor(s)</span>
+                          </div>
+                        </div>
+
+                        {/* Action Link Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOmniSearchOpen(false);
+                            showProject(proj.id);
+                          }}
+                          style={{
+                            marginTop: 14,
+                            padding: '8px 14px',
+                            fontSize: 12,
+                            borderRadius: 6,
+                            background: '#f0f9ff',
+                            color: '#0284c7',
+                            border: '1px solid #bae6fd',
+                            fontWeight: 600,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            cursor: 'pointer',
+                            width: '100%',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <span>Open Workspace</span>
+                          <span>&rarr;</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Vendors & Contractors Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'vendors') && (omniSearchResults.results?.vendors?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🏢</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Vendors &amp; Contractors ({omniSearchResults.results.vendors.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {omniSearchResults.results.vendors.map((v) => (
+                      <div
+                        key={v.vendor_id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{v.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#fef3c7',
+                                color: '#b45309',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #fde68a',
+                              }}
+                            >
+                              {v.trade}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b' }}>📞 {v.phone}</span>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 10, fontSize: 12 }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6 }}>Earned: <strong>{INR(v.total_earned)}</strong></div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>Paid: <strong style={{ color: '#16a34a' }}>{INR(v.total_paid)}</strong></div>
+                            <div style={{ background: v.total_balance > 0 ? '#fff1f2' : '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>
+                              Due: <strong style={{ color: v.total_balance > 0 ? '#e11d48' : '#16a34a' }}>{INR(v.total_balance)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        {v.projects?.length > 0 && (
+                          <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9', marginTop: 12 }}>
+                            <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                              <thead>
+                                <tr style={{ background: '#f8fafc' }}>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>TYPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>ACTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {v.projects.map((vp, vpIdx) => (
+                                  <tr key={vpIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                    <td style={{ padding: '9px 12px', fontWeight: 600, color: '#0f172a' }}>{vp.project_name}</td>
+                                    <td style={{ padding: '9px 12px', color: '#475569' }}>{vp.work_description || '—'}</td>
+                                    <td style={{ padding: '9px 12px' }}>
+                                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#475569', fontWeight: 600 }}>
+                                        {vp.pay_type}
+                                      </span>
+                                    </td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(vp.earned)}</td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(vp.paid)}</td>
+                                    <td style={{ padding: '9px 12px', fontWeight: 700, color: vp.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                      {INR(vp.balance)}
+                                    </td>
+                                    <td style={{ padding: '9px 12px', textAlign: 'center' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(v, 'vendor', vp)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0fdf4',
+                                          color: '#16a34a',
+                                          border: '1px solid #bbf7d0',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay Vendor</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Materials Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'materials') && (omniSearchResults.results?.materials?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🧱</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Materials ({omniSearchResults.results.materials.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.materials.map((m) => (
+                      <div
+                        key={m.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{m.name}</span>
+                            <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#64748b', fontWeight: 600 }}>
+                              Unit: {m.unit || '—'}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, margin: '12px 0' }}>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Stock</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: m.current_stock < 0 ? '#e11d48' : '#16a34a', marginTop: 2 }}>
+                                {m.current_stock}
+                              </div>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Used</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{m.total_used}</div>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Avg Rate</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{INR(m.avg_rate)}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReportType('material_consumption');
+                            setReportMaterialFilter(m.id);
+                            setOmniSearchOpen(false);
+                            openReportsScreen();
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 11,
+                            borderRadius: 6,
+                            background: '#f8fafc',
+                            color: '#475569',
+                            border: '1px solid #cbd5e1',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            width: '100%',
+                          }}
+                        >
+                          <span>📊 View Consumption Report</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Clients / Parties Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'parties') && (omniSearchResults.results?.parties?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>👥</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Clients / Parties ({omniSearchResults.results.parties.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.parties.map((pa) => (
+                      <div
+                        key={pa.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{pa.name}</div>
+                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                            📞 {pa.phone} {pa.address && <span>&bull; {pa.address}</span>}
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 8, margin: '10px 0', flexWrap: 'wrap' }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6, fontSize: 11 }}>
+                              Projects: <strong>{pa.projects_count}</strong>
+                            </div>
+                            <div style={{ background: '#eff6ff', padding: '4px 8px', borderRadius: 6, fontSize: 11, color: '#1e40af' }}>
+                              Contract: <strong>{INR(pa.total_contract_value)}</strong>
+                            </div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6, fontSize: 11, color: '#166534' }}>
+                              Received: <strong>{INR(pa.total_received)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOmniSearchOpen(false);
+                            showParty(pa.id);
+                          }}
+                          style={{
+                            marginTop: 10,
+                            padding: '6px 12px',
+                            fontSize: 11,
+                            borderRadius: 6,
+                            background: '#f8fafc',
+                            color: '#475569',
+                            border: '1px solid #cbd5e1',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            width: '100%',
+                          }}
+                        >
+                          📂 Open Client Projects
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {(!omniSearchResults.results || Object.values(omniSearchResults.results).every((arr) => !arr || arr.length === 0)) && (
+                <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: '#64748b' }}>
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+                  <p style={{ fontSize: 16, margin: 0, fontWeight: 700, color: '#1e293b' }}>
+                    No records matched {omniSearchResults.query}
+                  </p>
+                  <p style={{ fontSize: 13, margin: '6px 0 0', color: '#64748b' }}>
+                    Try searching by worker name, phone number, project title, or contractor trade.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 8. QUICK ATTENDANCE MODAL ─────────────────────────────────────── */}
+      {quickAttendanceModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => { if (!savingQuickAttendance) setQuickAttendanceModal(false); }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 480,
+              width: '100%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+              border: '1px solid #cbd5e1',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#0f172a' }}>
+                  📅 Mark Attendance
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: 13, color: '#64748b' }}>
+                  Worker: <strong style={{ color: '#0f172a' }}>{quickAttendanceForm.labor_name}</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                className="muted"
+                onClick={() => setQuickAttendanceModal(false)}
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveQuickAttendance}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Select Project */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Select Project *
+                  </label>
+                  <select
+                    value={quickAttendanceForm.project_id}
+                    onChange={(e) => {
+                      const pid = Number(e.target.value);
+                      const matched = quickAttendanceForm.available_projects?.find((p) => p.project_id === pid);
+                      setQuickAttendanceForm((prev) => ({
+                        ...prev,
+                        project_id: pid,
+                        project_name: matched?.project_name || prev.project_name,
+                        labor_id: matched?.labor_id || prev.labor_id,
+                        daily_rate: matched?.daily_rate ?? prev.daily_rate,
+                      }));
+                    }}
+                    required
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    {quickAttendanceForm.available_projects?.map((p, idx) => (
+                      <option key={idx} value={p.project_id}>
+                        {p.project_name} (Rate: ₹{p.daily_rate || 0})
+                      </option>
+                    ))}
+                    {(!quickAttendanceForm.available_projects || quickAttendanceForm.available_projects.length === 0) && (
+                      <option value="">No projects assigned</option>
+                    )}
+                  </select>
+                </div>
+
+                {/* Attendance Date */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Attendance Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={quickAttendanceForm.attendance_date}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, attendance_date: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Status */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Status
+                    </label>
+                    <select
+                      value={quickAttendanceForm.status}
+                      onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, status: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="present">Present (Full Day)</option>
+                      <option value="half_day">Half Day</option>
+                      <option value="absent">Absent</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Shift Type
+                    </label>
+                    <select
+                      value={quickAttendanceForm.shift_type}
+                      onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, shift_type: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="day">Day Shift</option>
+                      <option value="night">Night Shift</option>
+                      <option value="double">Double (2x)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Overtime Hours */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Overtime Hours
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="12"
+                    value={quickAttendanceForm.overtime_hours}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, overtime_hours: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Note */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Work Note / Remarks
+                  </label>
+                  <input
+                    type="text"
+                    value={quickAttendanceForm.note}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, note: e.target.value }))}
+                    placeholder="e.g. Mason work on second floor"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+                <button
+                  type="button"
+                  className="muted"
+                  disabled={savingQuickAttendance}
+                  onClick={() => setQuickAttendanceModal(false)}
+                  style={{ padding: '7px 16px', borderRadius: 6 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingQuickAttendance}
+                  style={{ padding: '7px 18px', borderRadius: 6, fontWeight: 600 }}
+                >
+                  {savingQuickAttendance ? 'Saving…' : '✓ Save Attendance'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 9. QUICK PAYMENT MODAL ────────────────────────────────────────── */}
+      {quickPaymentModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => { if (!savingQuickPayment) setQuickPaymentModal(false); }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 480,
+              width: '100%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+              border: '1px solid #cbd5e1',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#0f172a' }}>
+                  💳 Record Quick Payment
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: 13, color: '#64748b' }}>
+                  Payee: <strong style={{ color: '#0f172a' }}>{quickPaymentForm.name}</strong> ({quickPaymentForm.type === 'labor' ? 'Worker' : 'Vendor/Contractor'})
+                </p>
+              </div>
+              <button
+                type="button"
+                className="muted"
+                onClick={() => setQuickPaymentModal(false)}
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveQuickPayment}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Current Balance Notice */}
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, color: '#991b1b', fontWeight: 600 }}>Current Balance Due:</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#dc2626' }}>{INR(quickPaymentForm.balance_due)}</span>
+                </div>
+
+                {/* Select Project */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Select Project *
+                  </label>
+                  <select
+                    value={quickPaymentForm.project_id}
+                    onChange={(e) => {
+                      const pid = Number(e.target.value);
+                      const matched = quickPaymentForm.available_projects?.find((p) => p.project_id === pid);
+                      setQuickPaymentForm((prev) => ({
+                        ...prev,
+                        project_id: pid,
+                        project_name: matched?.project_name || prev.project_name,
+                        id: prev.type === 'labor' ? (matched?.labor_id || prev.id) : (matched?.project_vendor_id || prev.id),
+                        balance_due: matched?.balance ?? prev.balance_due,
+                      }));
+                    }}
+                    required
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    {quickPaymentForm.available_projects?.map((p, idx) => (
+                      <option key={idx} value={p.project_id}>
+                        {p.project_name} (Due: ₹{p.balance || 0})
+                      </option>
+                    ))}
+                    {(!quickPaymentForm.available_projects || quickPaymentForm.available_projects.length === 0) && (
+                      <option value="">No projects found</option>
+                    )}
+                  </select>
+                </div>
+
+                {/* Payment Amount */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Payment Amount (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    required
+                    placeholder="Enter amount in ₹"
+                    value={quickPaymentForm.amount}
+                    onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, amount: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 14, fontWeight: 600, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Date & Mode */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Payment Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={quickPaymentForm.payment_date}
+                      onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, payment_date: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Payment Mode
+                    </label>
+                    <select
+                      value={quickPaymentForm.mode}
+                      onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, mode: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="upi">UPI / Online</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="cheque">Cheque</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Note / Ref */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Note / Reference (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={quickPaymentForm.note}
+                    onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, note: e.target.value }))}
+                    placeholder="e.g. UPI Ref / Cash voucher #42"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+                <button
+                  type="button"
+                  className="muted"
+                  disabled={savingQuickPayment}
+                  onClick={() => setQuickPaymentModal(false)}
+                  style={{ padding: '7px 16px', borderRadius: 6 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingQuickPayment}
+                  style={{ padding: '7px 18px', borderRadius: 6, fontWeight: 600 }}
+                >
+                  {savingQuickPayment ? 'Recording…' : '✓ Record Payment'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

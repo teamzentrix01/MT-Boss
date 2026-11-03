@@ -79,6 +79,8 @@ export async function GET(req) {
            -- 1. Labor & Workers
            SELECT
              'Labor / Worker' AS entity_type,
+             l.id AS entity_record_id,
+             l.daily_rate,
              l.name AS entity_name,
              COALESCE(l.phone, '—') AS phone,
              COALESCE(l.trade, 'Labor') AS trade_or_role,
@@ -120,6 +122,8 @@ export async function GET(req) {
                WHEN v.trade ILIKE '%service%' THEN 'Service Provider'
                ELSE 'Vendor / Supplier'
              END AS entity_type,
+             pv.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
              v.name AS entity_name,
              COALESCE(v.phone, '—') AS phone,
              COALESCE(v.trade, pv.work_description, 'Vendor') AS trade_or_role,
@@ -168,6 +172,8 @@ export async function GET(req) {
            -- 3. Party / Clients
            SELECT
              'Client / Party' AS entity_type,
+             p.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
              pa.name AS entity_name,
              COALESCE(pa.phone, '—') AS phone,
              'Client' AS trade_or_role,
@@ -541,6 +547,7 @@ export async function GET(req) {
            GROUP BY lp.labor_id
          )
          SELECT
+           l.id AS labor_id, l.project_id,
            l.name AS labor_name, COALESCE(l.phone, '—') AS phone, COALESCE(l.trade, '—') AS trade,
            COALESCE(v.name, 'Independent') AS vendor_name,
            p.name AS project_name, p.status AS project_status,
