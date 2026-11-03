@@ -24,6 +24,12 @@ export async function GET(req) {
     }
     await ensureServiceCitiesSchema();
     await ensurePackageSchema();
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_number VARCHAR(20)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_image BYTEA`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_image_mime VARCHAR(100)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_number VARCHAR(30)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_image BYTEA`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_image_mime VARCHAR(100)`);
 
     const { searchParams } = new URL(req.url);
     const status = String(searchParams.get('status') || '').trim();
@@ -75,6 +81,10 @@ export async function GET(req) {
             v.aadhar_number,
             (v.profile_photo IS NOT NULL) AS profile_photo,
             (v.aadhar_image  IS NOT NULL) AS aadhar_image,
+            v.pan_number,
+            (v.pan_image IS NOT NULL) AS pan_image,
+            v.gst_number,
+            (v.gst_image IS NOT NULL) AS gst_image,
             v.status, v.verification_status, v.is_approved,
             v.package_id, v.package_name, v.package_price, v.package_status,
             v.created_at, v.updated_at,

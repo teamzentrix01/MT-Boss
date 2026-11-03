@@ -756,7 +756,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
 
               {/* Aadhaar Card Image */}
               {selectedVendor.aadhar_image ? (
-                <div>
+                <div style={{ marginBottom: '1rem' }}>
                   <div className="modal-label" style={{ marginBottom:'0.5rem' }}>Aadhaar Card Image</div>
                   <a href={`/api/vendor/image/${selectedVendor.id}?type=aadhaar`} target="_blank" rel="noopener noreferrer">
                     <img src={`/api/vendor/image/${selectedVendor.id}?type=aadhaar`} alt="Aadhaar Card"
@@ -767,10 +767,62 @@ export default function VendorManagementAdmin({ isDarkMode }) {
                   </div>
                 </div>
               ) : (
-                <div style={{ padding:'0.75rem', background: isDarkMode?'#2a1a0a':'#fff7ed', borderRadius:8, fontSize:'0.8125rem', color:'#f97316' }}>
+                <div style={{ padding:'0.75rem', background: isDarkMode?'#2a1a0a':'#fff7ed', borderRadius:8, fontSize:'0.8125rem', color:'#f97316', marginBottom: '1rem' }}>
                   ⚠️ No Aadhaar image uploaded
                 </div>
               )}
+
+              {/* PAN Number & Document */}
+              <div style={{ background: selectedVendor.pan_number ? (isDarkMode?'#0a1f1a':'#f0fdf9') : (isDarkMode?'#222':'#f9f9f9'), border:`1px solid ${selectedVendor.pan_number ? (isDarkMode?'#0d948844':'#99f6e4') : (isDarkMode?'#333':'#e5e7eb')}`, borderRadius:10, padding:'0.875rem 1rem', marginBottom:'1rem' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'0.875rem', marginBottom: selectedVendor.pan_image ? '0.75rem' : 0 }}>
+                  <span style={{ fontSize:'1.5rem' }}>💳</span>
+                  <div>
+                    <div style={{ fontSize:'0.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: selectedVendor.pan_number ? (isDarkMode?'#2dd4bf':'#0f766e') : (isDarkMode?'#888':'#666'), marginBottom:'0.2rem' }}>
+                      PAN Card Number
+                    </div>
+                    <div style={{ fontSize:'1.1rem', fontWeight:800, letterSpacing:'0.12em', fontFamily:'monospace', color: isDarkMode?'#fff':'#111' }}>
+                      {selectedVendor.pan_number || 'Not provided'}
+                    </div>
+                  </div>
+                </div>
+                {selectedVendor.pan_image ? (
+                  <div style={{ marginTop:'0.5rem', borderTop: `1px dashed ${isDarkMode?'#333':'#ddd'}`, paddingTop:'0.5rem' }}>
+                    <div className="modal-label" style={{ marginBottom:'0.4rem' }}>PAN Card Document</div>
+                    <a href={`/api/vendor/image/${selectedVendor.id}?type=pan`} target="_blank" rel="noopener noreferrer">
+                      <img src={`/api/vendor/image/${selectedVendor.id}?type=pan`} alt="PAN Card"
+                        style={{ width:'100%', maxHeight:180, objectFit:'contain', borderRadius:6, border:`1px solid ${isDarkMode?'#333':'#e2e2e7'}`, cursor:'pointer', background: isDarkMode?'#111':'#fff' }} />
+                    </a>
+                  </div>
+                ) : (
+                  <div style={{ fontSize:'0.75rem', color: isDarkMode?'#777':'#888', marginTop:'0.3rem' }}>No PAN document uploaded</div>
+                )}
+              </div>
+
+              {/* GST Number & Certificate */}
+              <div style={{ background: selectedVendor.gst_number ? (isDarkMode?'#0a1829':'#eff6ff') : (isDarkMode?'#222':'#f9f9f9'), border:`1px solid ${selectedVendor.gst_number ? (isDarkMode?'#1e40af44':'#bfdbfe') : (isDarkMode?'#333':'#e5e7eb')}`, borderRadius:10, padding:'0.875rem 1rem', marginBottom:'1rem' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'0.875rem', marginBottom: selectedVendor.gst_image ? '0.75rem' : 0 }}>
+                  <span style={{ fontSize:'1.5rem' }}>🏢</span>
+                  <div>
+                    <div style={{ fontSize:'0.68rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color: selectedVendor.gst_number ? (isDarkMode?'#60a5fa':'#1d4ed8') : (isDarkMode?'#888':'#666'), marginBottom:'0.2rem' }}>
+                      GSTIN Number (Optional)
+                    </div>
+                    <div style={{ fontSize:'1.1rem', fontWeight:800, letterSpacing:'0.12em', fontFamily:'monospace', color: isDarkMode?'#fff':'#111' }}>
+                      {selectedVendor.gst_number || 'Not provided'}
+                    </div>
+                  </div>
+                </div>
+                {selectedVendor.gst_image ? (
+                  <div style={{ marginTop:'0.5rem', borderTop: `1px dashed ${isDarkMode?'#333':'#ddd'}`, paddingTop:'0.5rem' }}>
+                    <div className="modal-label" style={{ marginBottom:'0.4rem' }}>GST Registration Document</div>
+                    <a href={`/api/vendor/image/${selectedVendor.id}?type=gst`} target="_blank" rel="noopener noreferrer">
+                      <img src={`/api/vendor/image/${selectedVendor.id}?type=gst`} alt="GST Document"
+                        style={{ width:'100%', maxHeight:180, objectFit:'contain', borderRadius:6, border:`1px solid ${isDarkMode?'#333':'#e2e2e7'}`, cursor:'pointer', background: isDarkMode?'#111':'#fff' }} />
+                    </a>
+                  </div>
+                ) : (
+                  <div style={{ fontSize:'0.75rem', color: isDarkMode?'#777':'#888', marginTop:'0.3rem' }}>No GST document uploaded</div>
+                )}
+              </div>
             </div>
 
             <div className="modal-section">

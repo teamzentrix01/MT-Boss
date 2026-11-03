@@ -15,7 +15,10 @@ export async function POST(req) {
   try {
     let vendor_name, email, password, phone, city, state, country, postal_code,
         aadhar_number, services, profilePhotoBuffer, profilePhotoMime,
-        aadharImageBuffer, aadharImageMime, package_id, registration_otp,
+        aadharImageBuffer, aadharImageMime,
+        pan_number, panImageBuffer, panImageMime,
+        gst_number, gstImageBuffer, gstImageMime,
+        package_id, registration_otp,
         is_contractor, contractor_trade, labor_roles, labor_team_size;
 
     const contentType = req.headers.get('content-type') || '';
@@ -40,6 +43,8 @@ export async function POST(req) {
       country       = fd.get('country') || 'India';
       postal_code   = fd.get('postal_code');
       aadhar_number = (fd.get('aadhar_number') || '').replace(/\s/g, '');
+      pan_number    = (fd.get('pan_number') || '').replace(/\s/g, '').toUpperCase();
+      gst_number    = (fd.get('gst_number') || '').replace(/\s/g, '').toUpperCase();
       services      = JSON.parse(fd.get('services') || '[]');
       package_id    = fd.get('package_id');
       registration_otp = fd.get('registration_otp');
@@ -50,6 +55,8 @@ export async function POST(req) {
 
       const profileFile = fd.get('profile_photo');
       const aadharFile  = fd.get('aadhar_image');
+      const panFile     = fd.get('pan_image');
+      const gstFile     = fd.get('gst_image');
 
       if (profileFile?.size > 0) {
         profilePhotoBuffer = Buffer.from(await profileFile.arrayBuffer());
@@ -60,6 +67,16 @@ export async function POST(req) {
         aadharImageBuffer = Buffer.from(await aadharFile.arrayBuffer());
         aadharImageMime   = aadharFile.type;
         console.log('🪪 [SIGNUP] Aadhaar image received:', aadharImageMime);
+      }
+      if (panFile?.size > 0) {
+        panImageBuffer = Buffer.from(await panFile.arrayBuffer());
+        panImageMime   = panFile.type;
+        console.log('💳 [SIGNUP] PAN image received:', panImageMime);
+      }
+      if (gstFile?.size > 0) {
+        gstImageBuffer = Buffer.from(await gstFile.arrayBuffer());
+        gstImageMime   = gstFile.type;
+        console.log('🏢 [SIGNUP] GST image received:', gstImageMime);
       }
     } else {
       console.log('📨 [SIGNUP] Parsing JSON request...');
@@ -73,6 +90,8 @@ export async function POST(req) {
       country       = body.country || 'India';
       postal_code   = body.postal_code;
       aadhar_number = (body.aadhar_number || '').replace(/\s/g, '');
+      pan_number    = (body.pan_number || '').replace(/\s/g, '').toUpperCase();
+      gst_number    = (body.gst_number || '').replace(/\s/g, '').toUpperCase();
       services      = body.services || [];
       package_id    = body.package_id;
       registration_otp = body.registration_otp;
@@ -238,6 +257,12 @@ export async function POST(req) {
     await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS contractor_trade VARCHAR(120)`);
     await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS labor_roles JSONB NOT NULL DEFAULT '[]'::jsonb`);
     await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS labor_team_size VARCHAR(50)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_number VARCHAR(20)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_image BYTEA`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS pan_image_mime VARCHAR(100)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_number VARCHAR(30)`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_image BYTEA`);
+    await pool.query(`ALTER TABLE vendors ADD COLUMN IF NOT EXISTS gst_image_mime VARCHAR(100)`);
 
     console.log('💾 [SIGNUP] Getting database connection...');
     client = await pool.connect();
@@ -311,6 +336,24 @@ export async function POST(req) {
     
     if (cols.has('aadhar_image_mime') && aadharImageMime)
       fields.aadhar_image_mime = aadharImageMime;
+
+    if (cols.has('pan_number') && pan_number)
+      fields.pan_number = pan_number;
+
+    if (cols.has('pan_image') && panImageBuffer)
+      fields.pan_image = panImageBuffer;
+
+    if (cols.has('pan_image_mime') && panImageMime)
+      fields.pan_image_mime = panImageMime;
+
+    if (cols.has('gst_number') && gst_number)
+      fields.gst_number = gst_number;
+
+    if (cols.has('gst_image') && gstImageBuffer)
+      fields.gst_image = gstImageBuffer;
+
+    if (cols.has('gst_image_mime') && gstImageMime)
+      fields.gst_image_mime = gstImageMime;
 
     console.log('✅ [SIGNUP] Fields prepared:', Object.keys(fields).join(', '));
 

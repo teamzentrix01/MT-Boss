@@ -18,8 +18,12 @@ export default function ServiceProviderSignupPage() {
   const [otpMessage, setOtpMessage] = useState('');
   const [profilePreview, setProfilePreview] = useState(null);
   const [aadharPreview, setAadharPreview] = useState(null);
+  const [panPreview, setPanPreview] = useState(null);
+  const [gstPreview, setGstPreview] = useState(null);
   const profileRef = useRef();
   const aadharRef = useRef();
+  const panRef = useRef();
+  const gstRef = useRef();
   const [plans, setPlans] = useState([
     { id: 'free', name: 'Free Registration', duration: 'Free', price: 'Free', desc: 'Submit your service provider profile for admin approval without a paid package.' },
     { id: 'pkg_6m', name: '6 Months Plan', duration: '6 Months', price: '₹100', desc: 'Perfect for getting started. Complete booking access.' },
@@ -59,6 +63,10 @@ export default function ServiceProviderSignupPage() {
     postal_code: '',
     aadhar_number: '',
     aadhar_image: null,
+    pan_number: '',
+    pan_image: null,
+    gst_number: '',
+    gst_image: null,
     profile_photo: null,
     services: [],
     is_contractor: false,
@@ -105,6 +113,8 @@ export default function ServiceProviderSignupPage() {
     reader.onloadend = () => {
       if (field === 'profile_photo') setProfilePreview(reader.result);
       if (field === 'aadhar_image') setAadharPreview(reader.result);
+      if (field === 'pan_image') setPanPreview(reader.result);
+      if (field === 'gst_image') setGstPreview(reader.result);
     };
     reader.readAsDataURL(file);
     setFormData(prev => ({ ...prev, [field]: file }));
@@ -176,6 +186,12 @@ export default function ServiceProviderSignupPage() {
         if (!formData.aadhar_number || formData.aadhar_number.replace(/\s/g, '').length !== 12) {
           setError('Enter a valid 12-digit Aadhaar number'); return false;
         }
+        if (formData.pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(formData.pan_number.trim())) {
+          setError('Enter a valid 10-character PAN number (e.g., ABCDE1234F)'); return false;
+        }
+        if (formData.gst_number && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(formData.gst_number.trim())) {
+          setError('Enter a valid 15-character GST number (e.g., 07AAAAA0000A1Z5)'); return false;
+        }
         return true;
 
       case 3:
@@ -225,8 +241,12 @@ const handleSubmit = async (e) => {
       payload.append('labor_team_size', formData.labor_team_size);
       payload.append('package_id', formData.package_id);
       payload.append('registration_otp', registrationOtp);
+      if (formData.pan_number) payload.append('pan_number', formData.pan_number.trim().toUpperCase());
+      if (formData.gst_number) payload.append('gst_number', formData.gst_number.trim().toUpperCase());
       if (formData.profile_photo) payload.append('profile_photo', formData.profile_photo);
       if (formData.aadhar_image) payload.append('aadhar_image', formData.aadhar_image);
+      if (formData.pan_image) payload.append('pan_image', formData.pan_image);
+      if (formData.gst_image) payload.append('gst_image', formData.gst_image);
 
       const res = await fetch('/api/vendor/signup', {
         method: 'POST',
@@ -819,6 +839,90 @@ const handleSubmit = async (e) => {
                           <>
                             <div className="vs-upload-icon">🪪</div>
                             <div className="vs-upload-text"><strong>Click to upload</strong><br />Aadhaar front</div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="vs-row">
+                    <div className="vs-field">
+                      <label className="vs-label">PAN Number (Optional)</label>
+                      <input
+                        className="vs-input"
+                        type="text"
+                        name="pan_number"
+                        value={formData.pan_number}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase().slice(0, 10);
+                          setFormData(prev => ({ ...prev, pan_number: val }));
+                          if (error) setError('');
+                        }}
+                        placeholder="ABCDE1234F"
+                        maxLength={10}
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                      />
+                    </div>
+
+                    <div className="vs-field">
+                      <label className="vs-label">PAN Card Image (Optional)</label>
+                      <div className={`vs-upload-area ${panPreview ? 'has-file' : ''}`}>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={(e) => handleFileChange(e, 'pan_image')}
+                        />
+                        {panPreview ? (
+                          <>
+                            <img src={panPreview} alt="PAN" className="vs-upload-preview" />
+                            <div className="vs-file-name">✓ PAN Card uploaded</div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="vs-upload-icon">💳</div>
+                            <div className="vs-upload-text"><strong>Click to upload</strong><br />PAN Card</div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="vs-row">
+                    <div className="vs-field">
+                      <label className="vs-label">GST Number (Optional)</label>
+                      <input
+                        className="vs-input"
+                        type="text"
+                        name="gst_number"
+                        value={formData.gst_number}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase().slice(0, 15);
+                          setFormData(prev => ({ ...prev, gst_number: val }));
+                          if (error) setError('');
+                        }}
+                        placeholder="07AAAAA0000A1Z5"
+                        maxLength={15}
+                        style={{ textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                      />
+                    </div>
+
+                    <div className="vs-field">
+                      <label className="vs-label">GST Certificate (Optional)</label>
+                      <div className={`vs-upload-area ${gstPreview ? 'has-file' : ''}`}>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={(e) => handleFileChange(e, 'gst_image')}
+                        />
+                        {gstPreview ? (
+                          <>
+                            <img src={gstPreview} alt="GST" className="vs-upload-preview" />
+                            <div className="vs-file-name">✓ GST Certificate uploaded</div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="vs-upload-icon">🏢</div>
+                            <div className="vs-upload-text"><strong>Click to upload</strong><br />GST Document</div>
                           </>
                         )}
                       </div>

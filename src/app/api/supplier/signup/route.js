@@ -11,11 +11,16 @@ export async function POST(request) {
     const body = await request.json();
     let {
       email, password, shop_name, phone, city, state, country, postal_code,
-      aadhaar_number, product_categories, package_id,
+      aadhaar_number, aadhaar_document,
+      pan_number, pan_document,
+      gst_number, gst_document,
+      product_categories, package_id,
     } = body;
     email = cleanText(email).toLowerCase();
     phone = normalizePhone(phone);
     postal_code = cleanText(postal_code);
+    pan_number = cleanText(pan_number || '').toUpperCase();
+    gst_number = cleanText(gst_number || '').toUpperCase();
     const canonicalCity = await resolveManagedCity(city);
 
     if (!email || !password || !shop_name || !phone || !canonicalCity) {
@@ -36,12 +41,23 @@ export async function POST(request) {
     if (!aadhaar_number || !/^\d{12}$/.test(aadhaar_number.replace(/\s/g, ''))) {
       return NextResponse.json({ error: 'Valid 12-digit Aadhaar number is required' }, { status: 400 });
     }
+    if (pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan_number)) {
+      return NextResponse.json({ error: 'Valid 10-character PAN number is required (e.g., ABCDE1234F)' }, { status: 400 });
+    }
+    if (gst_number && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gst_number)) {
+      return NextResponse.json({ error: 'Invalid GST number format' }, { status: 400 });
+    }
     if (!Array.isArray(product_categories) || product_categories.length === 0) {
       return NextResponse.json({ error: 'Select at least one product category' }, { status: 400 });
     }
 
     await ensurePackageSchema();
     await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
+    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS aadhaar_document TEXT`);
+    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS pan_number VARCHAR(20)`);
+    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS pan_document TEXT`);
+    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS gst_number VARCHAR(30)`);
+    await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS gst_document TEXT`);
 
     const pkg = await getPackageById(package_id || 'pkg_6m');
     if (!pkg) {
@@ -77,9 +93,22 @@ export async function POST(request) {
            SET package_id = $1, package_name = $2, package_price = $3,
                package_duration_months = $4,
                package_purchased_at = ${isFreePlan ? 'NOW()' : 'NULL'},
-               package_status = ${isFreePlan ? "'pending'" : "'unpaid'"}
-           WHERE id = $5`,
-          [pkg.id, pkg.name, pkg.price, pkg.duration_months, supplier.id]
+               package_status = ${isFreePlan ? "'pending'" : "'unpaid'"},
+               aadhaar_document = COALESCE($5, aadhaar_document),
+               pan_number = COALESCE($6, pan_number),
+               pan_document = COALESCE($7, pan_document),
+               gst_number = COALESCE($8, gst_number),
+               gst_document = COALESCE($9, gst_document)
+           WHERE id = $10`,
+          [
+            pkg.id, pkg.name, pkg.price, pkg.duration_months,
+            aadhaar_document || null,
+            pan_number || null,
+            pan_document || null,
+            gst_number || null,
+            gst_document || null,
+            supplier.id
+          ]
         );
       } else {
         const result = await client.query(
@@ -87,16 +116,22 @@ export async function POST(request) {
             email, password_hash,
             shop_name, business_name, phone,
             city, state, country, postal_code,
-            aadhaar_number, product_categories, status,
+            aadhaar_number, aadhaar_document,
+            pan_number, pan_document,
+            gst_number, gst_document,
+            product_categories, status,
             package_id, package_name, package_price, package_duration_months,
             package_purchased_at, package_status
           ) VALUES (
             $1, crypt($2, gen_salt('bf')),
             $3, $4, $5,
             $6, $7, $8, $9,
-            $10, $11, 'pending',
-            $12, $13, $14, $15,
-            $16, $17
+            $10, $11,
+            $12, $13,
+            $14, $15,
+            $16, 'pending',
+            $17, $18, $19, $20,
+            $21, $22
           )
           RETURNING id, email, shop_name, phone, status, created_at`,
           [
@@ -104,6 +139,11 @@ export async function POST(request) {
             shop_name, shop_name, phone,
             canonicalCity, state || null, country || 'India', postal_code || null,
             aadhaar_number.replace(/\s/g, ''),
+            aadhaar_document || null,
+            pan_number || null,
+            pan_document || null,
+            gst_number || null,
+            gst_document || null,
             product_categories,
             pkg.id, pkg.name, pkg.price, pkg.duration_months,
             isFreePlan ? new Date() : null,

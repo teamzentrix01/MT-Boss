@@ -14,8 +14,18 @@ export async function GET(req, { params }) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type') || 'profile';
 
-    const col      = type === 'aadhaar' ? 'aadhar_image'      : 'profile_photo';
-    const mimeCol  = type === 'aadhaar' ? 'aadhar_image_mime'  : 'profile_photo_mime';
+    let col = 'profile_photo';
+    let mimeCol = 'profile_photo_mime';
+    if (type === 'aadhaar') {
+      col = 'aadhar_image';
+      mimeCol = 'aadhar_image_mime';
+    } else if (type === 'pan') {
+      col = 'pan_image';
+      mimeCol = 'pan_image_mime';
+    } else if (type === 'gst') {
+      col = 'gst_image';
+      mimeCol = 'gst_image_mime';
+    }
 
     // Check if mime column exists
     const colCheck = await pool.query(

@@ -57,8 +57,40 @@ export default function SupplierSignupPage() {
     email: '', password: '', confirmPassword: '',
     shop_name: '', phone: '',
     city: '', state: '', country: 'India', postal_code: '',
-    aadhaar_number: '', package_id: 'pkg_free_1m',
+    aadhaar_number: '', aadhaar_document: '',
+    pan_number: '', pan_document: '',
+    gst_number: '', gst_document: '',
+    package_id: 'pkg_free_1m',
   });
+
+  const [fileNames, setFileNames] = useState({
+    aadhaar_document: '',
+    pan_document: '',
+    gst_document: '',
+  });
+
+  const handleFileUpload = (field, file) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be under 5MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData(prev => ({ ...prev, [field]: reader.result }));
+      setFileNames(prev => ({ ...prev, [field]: file.name }));
+      if (error) setError('');
+    };
+    reader.onerror = () => {
+      setError('Failed to read file');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeFile = (field) => {
+    setFormData(prev => ({ ...prev, [field]: '' }));
+    setFileNames(prev => ({ ...prev, [field]: '' }));
+  };
 
   const selectedPlan = plans.find(p => p.id === formData.package_id);
   const isFreePlan = selectedPlan
@@ -114,6 +146,14 @@ export default function SupplierSignupPage() {
     if (s === 5) {
       if (!formData.aadhaar_number) { setError('Aadhaar number is required'); return false; }
       if (!/^\d{12}$/.test(formData.aadhaar_number.replace(/\s/g, ''))) { setError('Aadhaar must be exactly 12 digits'); return false; }
+      if (!formData.aadhaar_document) { setError('Please upload Aadhaar card document (Photo or PDF)'); return false; }
+      if (!formData.pan_number) { setError('PAN number is required'); return false; }
+      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(formData.pan_number.trim())) { setError('Valid 10-character PAN number is required (e.g., ABCDE1234F)'); return false; }
+      if (!formData.pan_document) { setError('Please upload PAN card document (Photo or PDF)'); return false; }
+      if (formData.gst_number && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(formData.gst_number.trim())) {
+        setError('Invalid GST number format (15 characters, e.g., 07AAAAA0000A1Z5)');
+        return false;
+      }
     }
     if (s === 6) {
       if (!formData.package_id) { setError('Select a subscription plan'); return false; }
@@ -136,6 +176,8 @@ export default function SupplierSignupPage() {
         body: JSON.stringify({
           ...formData,
           aadhaar_number: formData.aadhaar_number.replace(/\s/g, ''),
+          pan_number: (formData.pan_number || '').trim().toUpperCase(),
+          gst_number: (formData.gst_number || '').trim().toUpperCase(),
           product_categories: selectedCategories, // already names from DB
         }),
       });
@@ -157,7 +199,7 @@ export default function SupplierSignupPage() {
   };
 
   const TOTAL_STEPS = 6;
-  const stepTitles = ['Login Credentials', 'Shop Details', 'Address', 'Products You Sell', 'Identity Verification', 'Subscription Plan'];
+  const stepTitles = ['Login Credentials', 'Shop Details', 'Address', 'Products You Sell', 'Identity & Tax Details', 'Subscription Plan'];
 
   const c = {
     bg: dark ? '#000' : '#f5f5f7',
@@ -230,7 +272,7 @@ export default function SupplierSignupPage() {
 
           {step === 5 && (
             <div className="ss-notice">
-              🔒 Your Aadhaar is used only for identity verification by the admin team. After approval you can log in and start adding products.
+              🔒 Aadhaar, PAN card, and business verification documents are reviewed confidentially by the admin team before store approval.
             </div>
           )}
 
@@ -348,28 +390,200 @@ export default function SupplierSignupPage() {
               </>
             )}
 
-            {/* STEP 5 — Aadhaar */}
+            {/* STEP 5 — Identity & Tax Details (Aadhaar, PAN, GST) */}
             {step === 5 && (
               <>
-                <div className="ss-field">
-                  <label className="ss-label">Aadhaar Number * (12 digits)</label>
-                  <input
-                    className="ss-input"
-                    type="text"
-                    name="aadhaar_number"
-                    value={formData.aadhaar_number}
-                    onChange={e => {
-                      const val = e.target.value.replace(/\D/g, '').slice(0, 12);
-                      setFormData(prev => ({ ...prev, aadhaar_number: val }));
-                      if (error) setError('');
-                    }}
-                    placeholder="Enter 12-digit Aadhaar number"
-                    maxLength={12}
-                    inputMode="numeric"
-                    required
-                  />
-                  <div style={{ fontSize: '.75rem', color: c.muted, marginTop: '.4rem' }}>
-                    Required for identity verification. Admin reviews this before approving your account.
+                {/* Aadhaar Section */}
+                <div style={{ background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: 10, padding: '1.25rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🪪</span>
+                    <div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>Aadhaar Card Details *</div>
+                      <div style={{ fontSize: '0.72rem', color: c.muted }}>Mandatory for identity verification</div>
+                    </div>
+                  </div>
+
+                  <div className="ss-field">
+                    <label className="ss-label">Aadhaar Number * (12 digits)</label>
+                    <input
+                      className="ss-input"
+                      type="text"
+                      name="aadhaar_number"
+                      value={formData.aadhaar_number}
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 12);
+                        setFormData(prev => ({ ...prev, aadhaar_number: val }));
+                        if (error) setError('');
+                      }}
+                      placeholder="Enter 12-digit Aadhaar number"
+                      maxLength={12}
+                      inputMode="numeric"
+                      required
+                    />
+                  </div>
+
+                  <div className="ss-field" style={{ marginBottom: 0 }}>
+                    <label className="ss-label">Upload Aadhaar Card (Photo / PDF) *</label>
+                    <input
+                      type="file"
+                      id="upload-aadhaar"
+                      accept="image/*,application/pdf"
+                      style={{ display: 'none' }}
+                      onChange={e => handleFileUpload('aadhaar_document', e.target.files?.[0])}
+                    />
+                    {!formData.aadhaar_document ? (
+                      <label htmlFor="upload-aadhaar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', padding: '0.85rem', border: `1.5px dashed ${c.border}`, borderRadius: 8, background: dark ? '#151515' : '#fafafa', cursor: 'pointer', transition: 'border-color 0.2s' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📎</span>
+                        <span style={{ fontSize: '0.8rem', color: c.muted, fontWeight: 600 }}>Click to select Aadhaar document (Max 5MB)</span>
+                      </label>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: dark ? '#0a2a1a' : '#f0fdf4', border: '1.5px solid #10b981', borderRadius: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflow: 'hidden' }}>
+                          <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                          {formData.aadhaar_document.startsWith('data:image') ? (
+                            <img src={formData.aadhaar_document} alt="Aadhaar" style={{ width: 34, height: 26, objectFit: 'cover', borderRadius: 4, border: '1px solid #10b981' }} />
+                          ) : (
+                            <span style={{ fontSize: '1.1rem' }}>📄</span>
+                          )}
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: c.text, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            {fileNames.aadhaar_document || 'Aadhaar document attached'}
+                          </span>
+                        </div>
+                        <button type="button" onClick={() => removeFile('aadhaar_document')} style={{ background: 'transparent', border: 'none', color: '#dc2626', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                          ✕ Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* PAN Card Section */}
+                <div style={{ background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: 10, padding: '1.25rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                    <span style={{ fontSize: '1.2rem' }}>💳</span>
+                    <div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>PAN Card Details *</div>
+                      <div style={{ fontSize: '0.72rem', color: c.muted }}>Mandatory for business & financial verification</div>
+                    </div>
+                  </div>
+
+                  <div className="ss-field">
+                    <label className="ss-label">PAN Number * (10 characters)</label>
+                    <input
+                      className="ss-input"
+                      type="text"
+                      name="pan_number"
+                      value={formData.pan_number}
+                      onChange={e => {
+                        const val = e.target.value.toUpperCase().slice(0, 10);
+                        setFormData(prev => ({ ...prev, pan_number: val }));
+                        if (error) setError('');
+                      }}
+                      placeholder="e.g. ABCDE1234F"
+                      maxLength={10}
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}
+                      required
+                    />
+                  </div>
+
+                  <div className="ss-field" style={{ marginBottom: 0 }}>
+                    <label className="ss-label">Upload PAN Card (Photo / PDF) *</label>
+                    <input
+                      type="file"
+                      id="upload-pan"
+                      accept="image/*,application/pdf"
+                      style={{ display: 'none' }}
+                      onChange={e => handleFileUpload('pan_document', e.target.files?.[0])}
+                    />
+                    {!formData.pan_document ? (
+                      <label htmlFor="upload-pan" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', padding: '0.85rem', border: `1.5px dashed ${c.border}`, borderRadius: 8, background: dark ? '#151515' : '#fafafa', cursor: 'pointer', transition: 'border-color 0.2s' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📎</span>
+                        <span style={{ fontSize: '0.8rem', color: c.muted, fontWeight: 600 }}>Click to select PAN Card document (Max 5MB)</span>
+                      </label>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: dark ? '#0a2a1a' : '#f0fdf4', border: '1.5px solid #10b981', borderRadius: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflow: 'hidden' }}>
+                          <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                          {formData.pan_document.startsWith('data:image') ? (
+                            <img src={formData.pan_document} alt="PAN" style={{ width: 34, height: 26, objectFit: 'cover', borderRadius: 4, border: '1px solid #10b981' }} />
+                          ) : (
+                            <span style={{ fontSize: '1.1rem' }}>📄</span>
+                          )}
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: c.text, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            {fileNames.pan_document || 'PAN document attached'}
+                          </span>
+                        </div>
+                        <button type="button" onClick={() => removeFile('pan_document')} style={{ background: 'transparent', border: 'none', color: '#dc2626', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                          ✕ Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* GST Section */}
+                <div style={{ background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: 10, padding: '1.25rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '1.2rem' }}>🏢</span>
+                      <div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>GST Details</div>
+                        <div style={{ fontSize: '0.72rem', color: c.muted }}>Provide GST if your business is GST registered</div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: 6, background: dark ? '#222' : '#e5e7eb', color: c.muted, fontWeight: 700 }}>OPTIONAL</span>
+                  </div>
+
+                  <div className="ss-field">
+                    <label className="ss-label">GSTIN / GST Number (15 characters)</label>
+                    <input
+                      className="ss-input"
+                      type="text"
+                      name="gst_number"
+                      value={formData.gst_number}
+                      onChange={e => {
+                        const val = e.target.value.toUpperCase().slice(0, 15);
+                        setFormData(prev => ({ ...prev, gst_number: val }));
+                        if (error) setError('');
+                      }}
+                      placeholder="e.g. 07AAAAA0000A1Z5 (Optional)"
+                      maxLength={15}
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}
+                    />
+                  </div>
+
+                  <div className="ss-field" style={{ marginBottom: 0 }}>
+                    <label className="ss-label">Upload GST Certificate (Optional)</label>
+                    <input
+                      type="file"
+                      id="upload-gst"
+                      accept="image/*,application/pdf"
+                      style={{ display: 'none' }}
+                      onChange={e => handleFileUpload('gst_document', e.target.files?.[0])}
+                    />
+                    {!formData.gst_document ? (
+                      <label htmlFor="upload-gst" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', padding: '0.85rem', border: `1.5px dashed ${c.border}`, borderRadius: 8, background: dark ? '#151515' : '#fafafa', cursor: 'pointer', transition: 'border-color 0.2s' }}>
+                        <span style={{ fontSize: '1.1rem' }}>📎</span>
+                        <span style={{ fontSize: '0.8rem', color: c.muted, fontWeight: 600 }}>Click to select GST Certificate (Optional)</span>
+                      </label>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: dark ? '#0a2a1a' : '#f0fdf4', border: '1.5px solid #10b981', borderRadius: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflow: 'hidden' }}>
+                          <span style={{ color: '#10b981', fontWeight: 800 }}>✓</span>
+                          {formData.gst_document.startsWith('data:image') ? (
+                            <img src={formData.gst_document} alt="GST" style={{ width: 34, height: 26, objectFit: 'cover', borderRadius: 4, border: '1px solid #10b981' }} />
+                          ) : (
+                            <span style={{ fontSize: '1.1rem' }}>📄</span>
+                          )}
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: c.text, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            {fileNames.gst_document || 'GST document attached'}
+                          </span>
+                        </div>
+                        <button type="button" onClick={() => removeFile('gst_document')} style={{ background: 'transparent', border: 'none', color: '#dc2626', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}>
+                          ✕ Remove
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -385,6 +599,16 @@ export default function SupplierSignupPage() {
                       <span style={{ color: c.muted }}>Location</span>
                       <strong style={{ color: c.text }}>{formData.city}, {formData.state}</strong>
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: c.muted }}>PAN</span>
+                      <strong style={{ color: c.text, letterSpacing: '0.06em' }}>{formData.pan_number || '—'}</strong>
+                    </div>
+                    {formData.gst_number && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: c.muted }}>GSTIN</span>
+                        <strong style={{ color: c.text, letterSpacing: '0.06em' }}>{formData.gst_number}</strong>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
                       <span style={{ color: c.muted, flexShrink: 0 }}>Products</span>
                       <div style={{ textAlign: 'right' }}>
