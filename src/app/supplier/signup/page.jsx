@@ -28,7 +28,8 @@ export default function SupplierSignupPage() {
   }, []);
 
   const [plans, setPlans] = useState([
-    { id: 'pkg_6m', name: '6 Months Plan', price: '₹100', rawPrice: 100, desc: 'Perfect for getting started. Complete material enquiries access.' },
+    { id: 'pkg_free_1m', name: '1 Month Free Trial', price: 'Free', rawPrice: 0, desc: 'Setup store & add products free for 1 month. Customer leads & direct payouts unlock on paid plan.' },
+    { id: 'pkg_6m', name: '6 Months Plan', price: '₹2,999', rawPrice: 2999, desc: 'Perfect for getting started. Complete material enquiries access.' },
     { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', rawPrice: 4999, desc: 'Most popular. Great value with a full year of enquiries.' },
     { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', rawPrice: 7999, desc: 'Best deal. Long-term peace of mind and maximum savings.' },
   ]);
@@ -56,7 +57,7 @@ export default function SupplierSignupPage() {
     email: '', password: '', confirmPassword: '',
     shop_name: '', phone: '',
     city: '', state: '', country: 'India', postal_code: '',
-    aadhaar_number: '', package_id: 'pkg_6m',
+    aadhaar_number: '', package_id: 'pkg_free_1m',
   });
 
   const selectedPlan = plans.find(p => p.id === formData.package_id);
@@ -229,7 +230,7 @@ export default function SupplierSignupPage() {
 
           {step === 5 && (
             <div className="ss-notice">
-              🔒 Your Aadhaar is used only for identity verification by the admin team. After approval you can log in and start receiving orders.
+              🔒 Your Aadhaar is used only for identity verification by the admin team. After approval you can log in and start adding products.
             </div>
           )}
 
@@ -418,10 +419,18 @@ export default function SupplierSignupPage() {
                         borderRadius: '12px',
                         cursor: 'pointer',
                         transition: 'all 0.2s',
+                        position: 'relative',
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>{pkg.name}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>{pkg.name}</span>
+                          {pkg.rawPrice === 0 && (
+                            <span style={{ background: '#10b981', color: '#fff', fontSize: '0.65rem', padding: '0.15rem 0.45rem', borderRadius: 999, fontWeight: 800 }}>
+                              FREE TRIAL
+                            </span>
+                          )}
+                        </div>
                         <span style={{ color: '#10b981', fontWeight: 800, fontSize: '0.875rem' }}>{pkg.price}</span>
                       </div>
                       <p style={{ fontSize: '0.75rem', color: c.muted, margin: 0 }}>{pkg.desc}</p>
@@ -439,7 +448,7 @@ export default function SupplierSignupPage() {
                 {step === TOTAL_STEPS
                   ? (loading
                       ? (isFreePlan ? 'Registering…' : 'Opening PayU…')
-                      : (isFreePlan ? 'Complete Registration →' : 'Pay & Submit →'))
+                      : (isFreePlan ? 'Complete Free Registration →' : 'Pay & Submit →'))
                   : 'Continue →'}
               </button>
             </div>

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import dynamic from "next/dynamic";
 import Navbar from "./components/Navbar";
 import "./globals.css";
@@ -11,8 +10,6 @@ import PrivacyConsentGuard from "./components/PrivacyConsentGuard";
 import FreeWhatsAppNotifier from "./components/FreeWhatsAppNotifier";
 import { usePathname } from "next/navigation";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-plus-jakarta-sans" });
 const ChatbotWidget = dynamic(() => import("./components/ChatbotWidget"), { ssr: false });
 const LeadConsultationModal = dynamic(
   () => import("./components/LeadConsultationModal"),
@@ -156,9 +153,12 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} ${isDarkMode ? "dark-mode" : ""} ${isShopPage ? "shop-html" : ""}`}>
+    <html lang="en" className={`${isDarkMode ? "dark-mode" : ""} ${isShopPage ? "shop-html" : ""}`}>
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
       </head>
       <body className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-clip"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />

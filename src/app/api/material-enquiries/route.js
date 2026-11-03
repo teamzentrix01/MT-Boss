@@ -78,6 +78,9 @@ const ensureTable = createInitializationGuard(async () => {
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_gateway VARCHAR(50)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_gateway_id VARCHAR(255)`,
     `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS payment_completed_at TIMESTAMP`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS is_free_tier_order BOOLEAN DEFAULT FALSE`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS free_tier_vendor_id INTEGER`,
+    `ALTER TABLE material_enquiries ADD COLUMN IF NOT EXISTS supplier_id INTEGER`,
     `CREATE INDEX IF NOT EXISTS idx_me_status_created ON material_enquiries (status, created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_me_created_at ON material_enquiries (created_at DESC)`,
     `CREATE INDEX IF NOT EXISTS idx_me_user_id ON material_enquiries (user_id)`,
@@ -130,7 +133,7 @@ export async function POST(req) {
       ? Math.max(0, Number(wallet_amount))
       : null;
     const orderIntent = cleanText(body.order_intent)?.toLowerCase() || (isCart ? 'cart' : 'quote');
-    if (!['quote', 'buy', 'cart'].includes(orderIntent) || (isCart && orderIntent !== 'cart') || (!isCart && orderIntent === 'cart')) {
+    if (!['quote', 'buy', 'cart'].includes(orderIntent)) {
       return NextResponse.json({ success: false, error: 'Invalid shop order type' }, { status: 400 });
     }
     if (isCart && (body.items.length === 0 || body.items.length > 20)) {
@@ -267,6 +270,7 @@ export async function POST(req) {
         let productTotal = 0;
         let sourceCity = '';
         let product = null;
+        let isFreeTierSupplier = false;
         const coverage = await client.query(`SELECT 1 WHERE EXISTS (
           SELECT 1 FROM suppliers s WHERE LOWER(TRIM(s.city))=LOWER(TRIM($1))
             AND s.status='approved' AND s.is_active=TRUE
@@ -287,6 +291,8 @@ export async function POST(req) {
           const productResult = await client.query(
             `SELECT m.name, m.category, m.unit, m.quantity, m.price, m.compare_at_price, m.bulk_pricing, m.is_available,
                     m.supplier_id, m.vendor_id, m.specifications,
+                    s.shop_name AS supplier_shop_name, s.phone AS supplier_phone, s.email AS supplier_email,
+                    s.package_id AS supplier_package_id, s.package_price AS supplier_package_price, s.package_status AS supplier_package_status,
                     COALESCE(NULLIF(TRIM(v.city), ''), NULLIF(TRIM(s.city), ''), CASE WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb))=1 THEN m.available_cities->>0 END) AS source_city,
                     CASE
                       WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
@@ -304,6 +310,10 @@ export async function POST(req) {
             [item.product_id]
           );
           product = productResult.rows[0];
+          isFreeTierSupplier = Boolean(product?.supplier_id > 0 && (
+            Number(product?.supplier_package_price || 0) <= 0 ||
+            product?.supplier_package_id === 'pkg_free_1m'
+          ));
           const approvalStatus = (product?.vendor_id != null && product.specifications?.__approval__?.status)
             ? product.specifications.__approval__.status
             : 'approved';
@@ -449,6 +459,11 @@ export async function POST(req) {
           itemWalletUsed, itemWalletStatus,
         ]
       );
+        // Best-effort update of payment method if column exists
+        await client.query(
+          `UPDATE material_enquiries SET payment_method = $1, payment_status = $2 WHERE id = $3`,
+          [itemPaymentMethod, itemPaymentStatus, result.rows[0].id]
+        ).catch(() => {});
         const orderId = result.rows[0].id;
 
         // Perform transactional wallet debit & FIFO lot reservation
@@ -552,6 +567,11 @@ export async function POST(req) {
           cashback_status: cashbackSnap.cashbackStatus,
           payment_method: itemPaymentMethod,
           payment_status: itemPaymentStatus,
+          is_free_tier_order: Boolean(isFreeTierSupplier),
+          free_tier_vendor_id: isFreeTierSupplier ? (product?.supplier_id || null) : null,
+          supplier_shop_name: product?.supplier_shop_name || null,
+          supplier_phone: product?.supplier_phone || null,
+          supplier_email: product?.supplier_email || null,
         });
       }
       const totalPayable = orders.reduce((sum, o) => sum + Number(o.grand_total || 0), 0);
@@ -608,7 +628,26 @@ export async function POST(req) {
 
       // Respond immediately so mobile clients are not blocked by SMTP/admin notifications.
       const notificationJobs = orders.flatMap((order) => [
-        notifyAdminSubmission({ type: 'material order', name: cleanName, phone: cleanPhone, email: targetEmail, reference: order.order_reference, details: { Category: order.category_name, Material: order.material_type, Quantity: order.quantity_text, Unit: order.order_unit, City: canonicalCity } }),
+        notifyAdminSubmission({
+          type: order.is_free_tier_order ? '⚠️ Free Vendor Product Order' : 'material order',
+          name: cleanName,
+          phone: cleanPhone,
+          email: targetEmail,
+          reference: order.order_reference,
+          details: {
+            Category: order.category_name,
+            Material: order.material_type,
+            Quantity: order.quantity_text,
+            Unit: order.order_unit,
+            City: canonicalCity,
+            ...(order.is_free_tier_order ? {
+              'Vendor Tier': '🟡 1 Month Free Trial (Unpaid)',
+              'Vendor Shop': order.supplier_shop_name || 'N/A',
+              'Vendor Phone': order.supplier_phone || 'N/A',
+              'VENDOR NOTICE': 'Contact vendor to purchase Paid Subscription before payout!',
+            } : {})
+          }
+        }),
         deliverMaterialOrderReceipt({
           email: targetEmail,
           customerName: cleanName,

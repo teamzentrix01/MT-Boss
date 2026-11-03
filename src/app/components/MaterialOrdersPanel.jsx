@@ -280,6 +280,15 @@ export default function MaterialOrdersPanel({ role = 'user', embedded = false })
                       <p className="material-order-description mt-1 text-sm">
                         {[order.material_type, order.subcategory_name, order.brand_company].filter(Boolean).join(' · ') || 'Material request'}
                       </p>
+                      {role === 'admin' && order.is_free_tier_order && (
+                        <div className="mt-2 inline-flex flex-wrap items-center gap-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 px-3 py-1.5 text-xs text-amber-900 dark:text-amber-200">
+                          <span className="font-extrabold text-amber-700 dark:text-amber-400">⚠️ Free Tier Vendor Item</span>
+                          <span>•</span>
+                          <span>Vendor: <strong>{order.free_vendor_shop_name || 'Vendor #' + order.free_tier_vendor_id}</strong> ({order.free_vendor_phone || 'No phone'})</span>
+                          <span>•</span>
+                          <span className="text-red-600 dark:text-red-400 font-bold">Call Vendor to buy Paid Plan before payout!</span>
+                        </div>
+                      )}
                     </div>
                     <span
                       className="material-order-status rounded-full px-3 py-1 text-xs font-black uppercase"

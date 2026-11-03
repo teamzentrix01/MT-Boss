@@ -450,7 +450,7 @@ export default function CheckoutView({ productId: initialProductId }) {
       if (!token) throw new Error("Please login to place an order so you can track it.");
 
       const payload = {
-        order_intent: "buy",
+        order_intent: product ? "buy" : "cart",
         user_name: formData.name,
         user_phone: formData.phone,
         user_email: formData.email,

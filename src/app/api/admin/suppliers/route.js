@@ -52,10 +52,12 @@ export async function GET(req) {
         s.city, s.state, s.country, s.postal_code,
         s.aadhaar_number, s.aadhaar_status,
         s.product_categories,
-         s.status, s.is_active, s.package_name, s.package_price, s.package_status,
-         payment.txnid AS payment_reference, payment.status AS payment_status,
-         payment.amount AS payment_amount, payment.gateway_id AS payment_gateway_id,
-         payment.completed_at AS payment_completed_at,
+        s.status, s.is_active, s.package_id, s.package_name, s.package_price, s.package_status,
+        s.package_starts_at, s.package_expires_at,
+        CASE WHEN COALESCE(s.package_price, 0) <= 0 OR s.package_id = 'pkg_free_1m' THEN TRUE ELSE FALSE END AS is_free_tier,
+        payment.txnid AS payment_reference, payment.status AS payment_status,
+        payment.amount AS payment_amount, payment.gateway_id AS payment_gateway_id,
+        payment.completed_at AS payment_completed_at,
         s.rejection_reason,
         s.created_at, s.updated_at,
         COALESCE(e.total_earned, 0)      AS total_earned,
@@ -113,9 +115,15 @@ export async function PUT(req) {
 
     if (action === 'approve') {
       query = `UPDATE suppliers
-               SET status = 'approved', is_active = TRUE, rejection_reason = NULL, updated_at = NOW()
+               SET status = 'approved',
+                   is_active = TRUE,
+                   rejection_reason = NULL,
+                   package_status = CASE WHEN package_status = 'pending' THEN 'active' ELSE package_status END,
+                   package_starts_at = COALESCE(package_starts_at, NOW()),
+                   package_expires_at = COALESCE(package_expires_at, NOW() + (COALESCE(package_duration_months, 1) || ' months')::INTERVAL),
+                   updated_at = NOW()
                WHERE id = $1 AND package_status IN ('pending', 'active')
-               RETURNING id, email, shop_name, status, is_active`;
+               RETURNING id, email, shop_name, status, is_active, package_status, package_expires_at`;
       values = [supplier_id];
     } else if (action === 'reject') {
       query = `UPDATE suppliers SET status = 'rejected', is_active = FALSE, rejection_reason = $2, updated_at = NOW() WHERE id = $1 RETURNING id, email, shop_name, status, is_active`;

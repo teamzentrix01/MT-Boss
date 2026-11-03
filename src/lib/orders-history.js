@@ -188,12 +188,22 @@ export async function getAdminOrders({
       me.order_intent,
       COALESCE(me.message, me.status_note) AS notes,
       me.accepted_by_supplier_id,
+      sm.supplier_id AS free_tier_vendor_id,
+      COALESCE(ps.shop_name, '') AS free_vendor_shop_name,
+      COALESCE(ps.phone, '') AS free_vendor_phone,
+      COALESCE(ps.email, '') AS free_vendor_email,
+      CASE 
+        WHEN sm.supplier_id > 0 AND (COALESCE(ps.package_price, 0) <= 0 OR ps.package_id = 'pkg_free_1m') THEN TRUE
+        ELSE FALSE
+      END AS is_free_tier_order,
       NULL::JSON AS supplier,
       NULL::JSON AS vendor,
       '[]'::JSON AS events,
       1 AS type_sort_priority
     FROM material_enquiries me
     LEFT JOIN users u ON u.id = me.user_id
+    LEFT JOIN supplier_materials sm ON sm.id = me.product_id
+    LEFT JOIN suppliers ps ON ps.id = sm.supplier_id
   `;
 
   const serviceQuery = `
@@ -228,6 +238,11 @@ export async function getAdminOrders({
       'service' AS order_intent,
       COALESCE(sb.user_notes, sb.admin_notes, sb.vendor_notes) AS notes,
       NULL::INT AS accepted_by_supplier_id,
+      NULL::INT AS free_tier_vendor_id,
+      ''::TEXT AS free_vendor_shop_name,
+      ''::TEXT AS free_vendor_phone,
+      ''::TEXT AS free_vendor_email,
+      FALSE AS is_free_tier_order,
       NULL::JSON AS supplier,
       NULL::JSON AS vendor,
       '[]'::JSON AS events,
@@ -350,6 +365,14 @@ export async function getAdminOrderById(orderId, { type } = {}) {
       me.order_intent,
       COALESCE(me.message, me.status_note) AS notes,
       me.accepted_by_supplier_id,
+      sm.supplier_id AS free_tier_vendor_id,
+      COALESCE(ps.shop_name, '') AS free_vendor_shop_name,
+      COALESCE(ps.phone, '') AS free_vendor_phone,
+      COALESCE(ps.email, '') AS free_vendor_email,
+      CASE 
+        WHEN sm.supplier_id > 0 AND (COALESCE(ps.package_price, 0) <= 0 OR ps.package_id = 'pkg_free_1m') THEN TRUE
+        ELSE FALSE
+      END AS is_free_tier_order,
       (
         SELECT row_to_json(sup)
         FROM (
@@ -377,6 +400,8 @@ export async function getAdminOrderById(orderId, { type } = {}) {
       ) AS events
     FROM material_enquiries me
     LEFT JOIN users u ON u.id = me.user_id
+    LEFT JOIN supplier_materials sm ON sm.id = me.product_id
+    LEFT JOIN suppliers ps ON ps.id = sm.supplier_id
     WHERE ${isNumber ? 'me.id = $1 OR me.order_reference = $2' : 'me.order_reference = $1'}
     LIMIT 1
   `;
