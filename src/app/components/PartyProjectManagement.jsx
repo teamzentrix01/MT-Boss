@@ -358,6 +358,22 @@ export function isSameDayIST(dateOrTimestamp) {
 }
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
+  const [internalDark, setInternalDark] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const html = document.documentElement;
+    const sync = () =>
+      setInternalDark(
+        html.classList.contains('dark-mode') ||
+        html.classList.contains('dark') ||
+        localStorage.getItem('theme') === 'dark'
+      );
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  const effectiveDark = isDarkMode !== undefined ? Boolean(isDarkMode) : internalDark;
   const submitAction = useSubmitAction();
   if (isAgent) {
     _globalIsAgent = true;
@@ -485,6 +501,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const normalizeConstructionSub = (sub) => {
     if (!sub) return null;
     const s = sub.toLowerCase().trim();
+    if (s === 'used' || s === 'material_used' || s === 'material-used' || s === 'daily_usage' || s === 'daily-usage' || s === 'consumption') return 'used';
     if (s === 'adjustments' || s === 'adjustment' || s === 'wastage') return 'adjustments';
     if (s === 'return' || s === 'return_material' || s === 'return-material' || s === 'returns') return 'return';
     if (s === 'scrap' || s === 'scrap_material' || s === 'scrap-material') return 'scrap';
@@ -532,7 +549,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const rawSub = getUrlParam('sub');
     const norm = normalizeConstructionSub(rawSub);
     if (norm) return norm;
-    return 'adjustments';
+    return 'used';
   });
 
   useEffect(() => {
@@ -874,6 +891,285 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [reportData, setReportData] = useState({ title: '', headers: [], data: [], summary: null });
   const [loadingReport, setLoadingReport] = useState(false);
   const [allProjectsList, setAllProjectsList] = useState([]);
+
+  // ── Omni-Search & Cross-Project Quick Action State ──────────────────────────
+  const [omniSearchQuery, setOmniSearchQuery] = useState('');
+  const [omniSearchResults, setOmniSearchResults] = useState(null);
+  const [omniSearchLoading, setOmniSearchLoading] = useState(false);
+  const [omniSearchOpen, setOmniSearchOpen] = useState(false);
+  const [omniActiveTab, setOmniActiveTab] = useState('all');
+
+  // Quick Attendance Modal state
+  const [quickAttendanceModal, setQuickAttendanceModal] = useState(false);
+  const [quickAttendanceForm, setQuickAttendanceForm] = useState({
+    labor_id: '',
+    labor_name: '',
+    project_id: '',
+    project_name: '',
+    attendance_date: new Date().toISOString().slice(0, 10),
+    status: 'present',
+    shift_type: 'day',
+    overtime_hours: 0,
+    daily_rate: 0,
+    wage_amount: 0,
+    note: '',
+    available_projects: [],
+  });
+  const [savingQuickAttendance, setSavingQuickAttendance] = useState(false);
+
+  // Quick Payment Modal state
+  const [quickPaymentModal, setQuickPaymentModal] = useState(false);
+  const [quickPaymentForm, setQuickPaymentForm] = useState({
+    type: 'labor', // 'labor' | 'vendor'
+    id: '', // labor_id or project_vendor_id
+    name: '',
+    project_id: '',
+    project_name: '',
+    amount: '',
+    payment_date: new Date().toISOString().slice(0, 10),
+    mode: 'cash',
+    note: '',
+    transaction_reference: '',
+    balance_due: 0,
+    available_projects: [],
+  });
+  const [savingQuickPayment, setSavingQuickPayment] = useState(false);
+
+  // Omni Search Debounce
+  useEffect(() => {
+    const q = omniSearchQuery.trim();
+    if (!q) {
+      setOmniSearchResults(null);
+      setOmniSearchLoading(false);
+      return;
+    }
+    setOmniSearchLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(q)}`);
+        if (res.success) {
+          setOmniSearchResults(res);
+          setOmniSearchOpen(true);
+        }
+      } catch (err) {
+        console.error('Omni-search error:', err);
+      } finally {
+        setOmniSearchLoading(false);
+      }
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [omniSearchQuery]);
+
+  // Open Quick Attendance Modal
+  const openQuickAttendance = (worker, proj = null) => {
+    const defaultProj = proj || (worker.projects && worker.projects[0]) || {
+      labor_id: worker.labor_id || worker.id,
+      project_id: worker.project_id,
+      project_name: worker.project_name,
+      daily_rate: worker.daily_rate,
+    };
+    const rate = Number(defaultProj?.daily_rate || worker.daily_rate || 0);
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+
+    setQuickAttendanceForm({
+      labor_id: defaultProj?.labor_id || worker.labor_id || worker.id || '',
+      labor_name: worker.name || worker.labor_name || worker.entity_name || '',
+      project_id: defaultProj?.project_id || '',
+      project_name: defaultProj?.project_name || '',
+      attendance_date: today,
+      status: 'present',
+      shift_type: 'day',
+      overtime_hours: 0,
+      daily_rate: rate,
+      wage_amount: rate,
+      note: '',
+      available_projects: worker.projects && worker.projects.length > 0 ? worker.projects : [defaultProj],
+    });
+    setQuickAttendanceModal(true);
+  };
+
+  // Save Quick Attendance
+  const handleSaveQuickAttendance = async (e) => {
+    e?.preventDefault?.();
+    if (!quickAttendanceForm.labor_id || !quickAttendanceForm.project_id) {
+      setMessage('Labor and Project are required');
+      return;
+    }
+    setSavingQuickAttendance(true);
+    try {
+      const body = {
+        entries: [{
+          labor_id: Number(quickAttendanceForm.labor_id),
+          attendance_date: quickAttendanceForm.attendance_date,
+          status: quickAttendanceForm.status,
+          shift_type: quickAttendanceForm.shift_type,
+          overtime_hours: Number(quickAttendanceForm.overtime_hours || 0),
+          note: quickAttendanceForm.note,
+        }],
+        admin_override: true,
+      };
+      const res = await api('/api/admin/project-management/labor/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (res.success) {
+        setMessage(`✓ Attendance recorded for ${quickAttendanceForm.labor_name} in ${quickAttendanceForm.project_name || 'project'}`);
+        setQuickAttendanceModal(false);
+        if (omniSearchQuery.trim()) {
+          const updated = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(omniSearchQuery.trim())}`);
+          if (updated.success) setOmniSearchResults(updated);
+        }
+        if (screen === 'reports') {
+          loadReportsData(reportType, reportProjectFilter, reportMaterialFilter, reportProjectStatus, reportSearch, reportEntityType, reportFrequency, reportStartDate, reportEndDate);
+        }
+      } else {
+        setMessage(res.error || 'Failed to record attendance');
+      }
+    } catch (err) {
+      setMessage(err.message || 'Error recording attendance');
+    } finally {
+      setSavingQuickAttendance(false);
+    }
+  };
+
+  // Open Quick Payment Modal
+  const openQuickPayment = (entity, type = 'labor', proj = null) => {
+    const isSupplier =
+      type === 'supplier' ||
+      entity.entity_kind === 'supplier' ||
+      entity.pay_type === 'material_supply' ||
+      entity.trade === 'Material Supplier' ||
+      entity.trade === 'Material Vendor' ||
+      (type === 'vendor' && !entity.project_vendor_id && !proj?.project_vendor_id);
+    const isLabor = type === 'labor' && !isSupplier;
+    const resolvedType = isLabor ? 'labor' : (isSupplier ? 'supplier' : 'contractor');
+
+    const defaultProj = proj || (entity.projects && entity.projects[0]) || {
+      id: isLabor ? (entity.labor_id || entity.id) : (entity.project_vendor_id || entity.id),
+      labor_id: entity.labor_id || entity.id,
+      project_vendor_id: entity.project_vendor_id || entity.id,
+      project_id: entity.project_id,
+      project_name: entity.project_name,
+      supplier_name: entity.supplier_name || entity.name,
+      balance: entity.balance_due ?? entity.total_balance ?? 0,
+    };
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+
+    setQuickPaymentForm({
+      type: resolvedType,
+      id: isLabor ? (defaultProj?.labor_id || entity.labor_id || entity.id || '') : (defaultProj?.project_vendor_id || entity.project_vendor_id || entity.id || ''),
+      supplier_name: entity.supplier_name || defaultProj?.supplier_name || entity.name || entity.labor_name || entity.vendor_name || entity.entity_name || '',
+      supplier_id: entity.supplier_id || defaultProj?.supplier_id || null,
+      name: entity.name || entity.labor_name || entity.vendor_name || entity.entity_name || '',
+      project_id: defaultProj?.project_id || entity.project_id || '',
+      project_name: defaultProj?.project_name || entity.project_name || '',
+      amount: '',
+      payment_date: today,
+      mode: 'cash',
+      note: '',
+      transaction_reference: '',
+      balance_due: defaultProj?.balance ?? entity.total_balance ?? entity.balance_due ?? 0,
+      available_projects: entity.projects && entity.projects.length > 0 ? entity.projects : [defaultProj],
+    });
+    setQuickPaymentModal(true);
+  };
+
+  // Save Quick Payment
+  const handleSaveQuickPayment = async (e) => {
+    e?.preventDefault?.();
+    if (!quickPaymentForm.amount || Number(quickPaymentForm.amount) <= 0) {
+      setMessage('Please enter a valid payment amount');
+      return;
+    }
+    if (quickPaymentForm.type !== 'supplier' && !quickPaymentForm.id) {
+      setMessage('Payee identification missing');
+      return;
+    }
+    if (!quickPaymentForm.project_id) {
+      setMessage('Please select a project');
+      return;
+    }
+    setSavingQuickPayment(true);
+    try {
+      if (quickPaymentForm.type === 'labor') {
+        const body = {
+          labor_id: Number(quickPaymentForm.id),
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/labor/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      } else if (quickPaymentForm.type === 'supplier') {
+        const body = {
+          project_id: Number(quickPaymentForm.project_id),
+          supplier_name: (quickPaymentForm.supplier_name || quickPaymentForm.name || '').trim(),
+          supplier_id: quickPaymentForm.supplier_id ? Number(quickPaymentForm.supplier_id) : null,
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/supplier-payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      } else {
+        const body = {
+          project_vendor_id: Number(quickPaymentForm.id),
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          payment_type: 'labour',
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/vendor-payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      }
+
+      if (omniSearchQuery.trim()) {
+        const updated = await api(`/api/admin/project-management/omni-search?q=${encodeURIComponent(omniSearchQuery.trim())}`);
+        if (updated.success) setOmniSearchResults(updated);
+      }
+      if (screen === 'reports') {
+        loadReportsData(reportType, reportProjectFilter, reportMaterialFilter, reportProjectStatus, reportSearch, reportEntityType, reportFrequency, reportStartDate, reportEndDate);
+      }
+    } catch (err) {
+      setMessage(err.message || 'Error recording payment');
+    } finally {
+      setSavingQuickPayment(false);
+    }
+  };
 
   // ── Agent Assignment State ────────────────────────────────────────────────
   const [projectAgents, setProjectAgents] = useState([]);
@@ -1304,14 +1600,69 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const openReportsScreen = async () => {
     setScreen('reports');
     try {
-      const pRes = await api('/api/admin/project-management/projects?pageSize=100').catch(() => ({ data: [] }));
-      setAllProjectsList(pRes.data || []);
-      if (!materialsMaster || materialsMaster.length === 0) {
-        const mRes = await api('/api/admin/project-management/materials').catch(() => ({ data: [] }));
-        if (mRes?.data) setMaterialsMaster(mRes.data);
-      }
+      const pRes = await api('/api/admin/project-management/projects?pageSize=200').catch(() => ({ data: [] }));
+      if (pRes?.data && Array.isArray(pRes.data)) setAllProjectsList(pRes.data);
+      const mRes = await api('/api/admin/project-management/materials?pageSize=200').catch(() => ({ data: [] }));
+      if (mRes?.data && Array.isArray(mRes.data)) setMaterialsMaster(mRes.data);
     } catch {}
   };
+
+  useEffect(() => {
+    if (screen === 'reports') {
+      api('/api/admin/project-management/projects?pageSize=200')
+        .then((pRes) => {
+          if (pRes?.data && Array.isArray(pRes.data)) setAllProjectsList(pRes.data);
+        })
+        .catch(() => {});
+      api('/api/admin/project-management/materials?pageSize=200')
+        .then((mRes) => {
+          if (mRes?.data && Array.isArray(mRes.data)) setMaterialsMaster(mRes.data);
+        })
+        .catch(() => {});
+    }
+  }, [screen]);
+
+  const availableReportProjects = useMemo(() => {
+    const map = new Map();
+    (allProjectsList || []).forEach((p) => {
+      if (p && p.id) {
+        map.set(String(p.id), { id: String(p.id), name: p.name, status: p.status });
+      }
+    });
+    if (Array.isArray(reportData?.data)) {
+      reportData.data.forEach((r) => {
+        if (r && r.project_id && !map.has(String(r.project_id))) {
+          map.set(String(r.project_id), {
+            id: String(r.project_id),
+            name: r.project_name || `Project #${r.project_id}`,
+            status: r.project_status || r.status || '',
+          });
+        }
+      });
+    }
+    return Array.from(map.values()).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }, [allProjectsList, reportData]);
+
+  const availableReportMaterials = useMemo(() => {
+    const map = new Map();
+    (materialsMaster || []).forEach((m) => {
+      if (m && m.id) {
+        map.set(String(m.id), { id: String(m.id), name: m.name, unit: m.unit });
+      }
+    });
+    if (Array.isArray(reportData?.data)) {
+      reportData.data.forEach((r) => {
+        if (r && r.material_id && !map.has(String(r.material_id))) {
+          map.set(String(r.material_id), {
+            id: String(r.material_id),
+            name: r.material_name || `Material #${r.material_id}`,
+            unit: r.unit || r.material_unit || '',
+          });
+        }
+      });
+    }
+    return Array.from(map.values()).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }, [materialsMaster, reportData]);
 
   useEffect(() => {
     if (screen === 'reports') {
@@ -2484,7 +2835,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   };
 
   return (
-    <section className={`pm-container${isDarkMode ? ' dark-mode' : ''}`}>
+    <section className={`pm-container${effectiveDark ? ' dark-mode' : ''}`}>
       <SubmitToast toast={submitAction.toast} onDismiss={submitAction.dismissToast} />
       {/* ── TOP NAV BAR ───────────────────────────────────────────────────── */}
       <div className="bar" style={{ justifyContent: 'space-between', marginBottom: 16 }}>
@@ -2508,6 +2859,60 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               {role.toUpperCase()}
             </span>
           )}
+        </div>
+
+        {/* ── Global Omni-Search Bar ── */}
+        <div style={{ position: 'relative', flex: '1 1 320px', maxWidth: 460, minWidth: 200, margin: '0 8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: effectiveDark ? '#18181c' : '#fff',
+              border: omniSearchOpen ? '1.5px solid #0284c7' : (effectiveDark ? '1.5px solid #2a2a30' : '1.5px solid #cbd5e1'),
+              borderRadius: 8,
+              padding: '6px 12px',
+              boxShadow: effectiveDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.06)',
+            }}
+          >
+            <span style={{ marginRight: 8, color: '#64748b', fontSize: 13 }}>🔍</span>
+            <input
+              type="text"
+              value={omniSearchQuery}
+              onChange={(e) => setOmniSearchQuery(e.target.value)}
+              onFocus={() => { if (omniSearchResults) setOmniSearchOpen(true); }}
+              placeholder="Search Labor, Vendor, Material, Project (Name/Phone)..."
+              style={{
+                border: 'none',
+                outline: 'none',
+                width: '100%',
+                fontSize: 13,
+                background: 'transparent',
+                color: effectiveDark ? '#f0f0f5' : '#0f172a',
+              }}
+            />
+            {omniSearchLoading && <span style={{ fontSize: 11, color: '#0ea5e9', marginRight: 4 }}>⏳</span>}
+            {omniSearchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOmniSearchQuery('');
+                  setOmniSearchResults(null);
+                  setOmniSearchOpen(false);
+                }}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  fontSize: 14,
+                  padding: '0 4px',
+                  fontWeight: 'bold',
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -3239,101 +3644,112 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     </div>
                   </div>
 
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Vendor</th>
-                        <th>Trade</th>
-                        <th>Work Description</th>
-                        <th>Pay Type</th>
-                        {(!isAgent || hasAgentPayment) && <th>Rate / Contract</th>}
-                        {(!isAgent || hasAgentPayment) && <th>Total Earned</th>}
-                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Total Paid</th>}
-                        {!isSupervisor && (!isAgent || hasAgentPayment) && <th>Balance</th>}
-                        <th>Status</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).map((pv) => {
-                        const earnedVal = pv.total_earned ?? pv.earned ?? 0;
-                        const paidVal = pv.total_paid ?? pv.paid ?? 0;
-                        const dueVal = pv.balance_due ?? pv.balance ?? (Number(earnedVal) - Number(paidVal));
-                        const isAdvance = Number(dueVal || 0) < 0;
-                        const isDue = Number(dueVal || 0) > 0;
-                        return (
-                          <tr
-                            key={pv.id}
-                            className="clickable-row"
-                            onClick={() => openVendorDetail(pv)}
-                            title="Click to open contractor detail page"
-                          >
-                            <td>
-                              <b>{pv.vendor_name}</b>
-                              <br />
-                              <span style={{ fontSize: 11, color: '#64748b' }}>{pv.vendor_phone || '—'}</span>
-                            </td>
-                            <td>{pv.trade || 'General'}</td>
-                            <td>{pv.work_description}</td>
-                            <td>
-                              <span className="badge badge-active">
-                                {pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}
-                              </span>
-                            </td>
-                            {(!isAgent || hasAgentPayment) && (
+                  <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '8px 0 16px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                    <table style={{ minWidth: 1050, width: '100%', borderCollapse: 'collapse', margin: 0 }}>
+                      <thead>
+                        <tr style={{ background: '#f8fafc' }}>
+                          <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>Vendor</th>
+                          <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>Trade</th>
+                          <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>Work Description</th>
+                          <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>Pay Type</th>
+                          {(!isAgent || hasAgentPayment) && <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>Rate / Contract</th>}
+                          {(!isAgent || hasAgentPayment) && <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>Total Earned</th>}
+                          {!isSupervisor && (!isAgent || hasAgentPayment) && <th style={{ minWidth: 100, whiteSpace: 'nowrap' }}>Total Paid</th>}
+                          {!isSupervisor && (!isAgent || hasAgentPayment) && <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>Balance</th>}
+                          <th style={{ minWidth: 90, whiteSpace: 'nowrap' }}>Status</th>
+                          <th style={{ minWidth: 140, textAlign: 'right', whiteSpace: 'nowrap' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).map((pv) => {
+                          const earnedVal = pv.total_earned ?? pv.earned ?? 0;
+                          const paidVal = pv.total_paid ?? pv.paid ?? 0;
+                          const dueVal = pv.balance_due ?? pv.balance ?? (Number(earnedVal) - Number(paidVal));
+                          const isAdvance = Number(dueVal || 0) < 0;
+                          const isDue = Number(dueVal || 0) > 0;
+                          return (
+                            <tr
+                              key={pv.id}
+                              className="clickable-row"
+                              onClick={() => openVendorDetail(pv)}
+                              title="Click to open contractor detail page"
+                            >
                               <td>
-                                {pv.pay_type === 'daily_wage' ? `${INR(pv.daily_rate)}/day` : INR(pv.contract_amount)}
+                                <b>{pv.vendor_name}</b>
+                                <br />
+                                <span style={{ fontSize: 11, color: '#64748b' }}>{pv.vendor_phone || '—'}</span>
                               </td>
-                            )}
-                            {(!isAgent || hasAgentPayment) && (
-                              <td style={{ fontWeight: 600 }}>{INR(earnedVal)}</td>
-                            )}
-                            {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(paidVal)}</td>}
-                            {!isSupervisor && (!isAgent || hasAgentPayment) && (
+                              <td>{pv.trade || 'General'}</td>
+                              <td>{pv.work_description}</td>
                               <td>
-                                {isDue ? (
-                                  <span style={{ fontWeight: 700, color: '#ea580c' }}>
-                                    Due: {INR(dueVal)}
-                                  </span>
-                                ) : isAdvance ? (
-                                  <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                                    Advance: {INR(Math.abs(dueVal))}
-                                  </span>
-                                ) : (
-                                  <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
-                                )}
+                                <span className="badge badge-active">
+                                  {pv.pay_type === 'daily_wage' ? 'Daily Wage' : 'Contract'}
+                                </span>
                               </td>
-                            )}
-                            <td>
-                              <span className={`badge ${pv.status === 'completed' ? 'badge-completed' : 'badge-active'}`}>
-                                {pv.status}
-                              </span>
-                            </td>
-                            <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6, flexWrap: 'wrap' }} onClick={(e) => e.stopPropagation()}>
-                              <button
-                                type="button"
-                                className="muted"
-                                style={{ padding: '4px 8px', fontSize: 12 }}
-                                onClick={() => openVendorDetail(pv)}
-                              >
-                                👥 Team &amp; Details
-                              </button>
-                              <button onClick={() => openVendorDetail(pv)}>View Details &amp; History &rarr;</button>
+                              {(!isAgent || hasAgentPayment) && (
+                                <td>
+                                  {pv.pay_type === 'daily_wage' ? `${INR(pv.daily_rate)}/day` : INR(pv.contract_amount)}
+                                </td>
+                              )}
+                              {(!isAgent || hasAgentPayment) && (
+                                <td style={{ fontWeight: 600 }}>{INR(earnedVal)}</td>
+                              )}
+                              {!isSupervisor && (!isAgent || hasAgentPayment) && <td style={{ color: '#16a34a' }}>{INR(paidVal)}</td>}
+                              {!isSupervisor && (!isAgent || hasAgentPayment) && (
+                                <td>
+                                  {isDue ? (
+                                    <span style={{ fontWeight: 700, color: '#ea580c' }}>
+                                      Due: {INR(dueVal)}
+                                    </span>
+                                  ) : isAdvance ? (
+                                    <span className="badge badge-active" style={{ background: '#dcfce7', color: '#15803d', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                      Advance: {INR(Math.abs(dueVal))}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color: '#64748b', fontWeight: 600 }}>Settled (₹0)</span>
+                                  )}
+                                </td>
+                              )}
+                              <td>
+                                <span className={`badge ${pv.status === 'completed' ? 'badge-completed' : 'badge-active'}`}>
+                                  {pv.status}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  className="muted"
+                                  style={{
+                                    padding: '5px 12px',
+                                    fontSize: 12,
+                                    borderRadius: 6,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 6,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                  }}
+                                  onClick={() => openVendorDetail(pv)}
+                                >
+                                  <span>👥 Team &amp; Details</span>
+                                  <span style={{ fontSize: 11, color: '#64748b' }}>&rarr;</span>
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).length === 0 && (
+                          <tr>
+                            <td colSpan={(!isAgent || hasAgentPayment) ? (isSupervisor ? 8 : 10) : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                              {vendorTypeFilter === 'all'
+                                ? 'No contractors assigned to this project yet.'
+                                : `No ${vendorTypeFilter.toLowerCase().endsWith('contractor') ? vendorTypeFilter : `${vendorTypeFilter} contractor`} assigned to this project.`} Click &ldquo;+ Add Contractor&rdquo; above.
                             </td>
                           </tr>
-                        );
-                      })}
-                      {projectVendors.filter((pv) => matchesContractorType(pv.trade, vendorTypeFilter)).length === 0 && (
-                        <tr>
-                          <td colSpan={(!isAgent || hasAgentPayment) ? (isSupervisor ? 8 : 10) : 6} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                            {vendorTypeFilter === 'all'
-                              ? 'No contractors assigned to this project yet.'
-                              : `No ${vendorTypeFilter.toLowerCase().endsWith('contractor') ? vendorTypeFilter : `${vendorTypeFilter} contractor`} assigned to this project.`} Click &ldquo;+ Add Contractor&rdquo; above.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
@@ -6159,6 +6575,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                           <button
+                            className={constructionSubTab === 'used' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('used')}
+                          >
+                            🧱 Daily Material Used ({usedRows.length})
+                          </button>
+                          <button
                             className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('adjustments')}
                           >
@@ -6185,6 +6607,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {constructionSubTab === 'used' && (
+                            <button
+                              onClick={() => {
+                                setUsedForm({ ...usedBlank, used_date: today() });
+                                setEditingUsedId(null);
+                                setModalReadOnly(false);
+                                setModalError('');
+                                setUsedModal(true);
+                              }}
+                            >
+                              🧱 + Record Daily Consumption
+                            </button>
+                          )}
                           {constructionSubTab === 'adjustments' && (
                             <button
                               onClick={() => {
@@ -6592,8 +7027,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             ))}
                           {usedRows.length === 0 && (
                             <tr>
-                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                No material usage entries yet.
+                              <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>🧱</div>
+                                <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 4 }}>No daily material usage entries yet</div>
+                                <div style={{ fontSize: 13, marginBottom: 14 }}>Record daily site material consumption (cement, sand, bricks, sariya) to track usage in reports.</div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUsedForm({ ...usedBlank, used_date: today() });
+                                    setEditingUsedId(null);
+                                    setModalReadOnly(false);
+                                    setModalError('');
+                                    setUsedModal(true);
+                                  }}
+                                  style={{ padding: '6px 14px', fontSize: 12 }}
+                                >
+                                  🧱 + Record Daily Consumption
+                                </button>
                               </td>
                             </tr>
                           )}
@@ -8919,9 +9369,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       }}
                     >
                       <option value="">Select Vendor (or type name below)</option>
-                      {suppliersMaster.filter((s) => s.is_local).length > 0 && (
+                      {suppliersMaster.filter((s) => s.is_local || (!s.is_registered && s.shop_name)).length > 0 && (
                         <optgroup label="📍 Project Local Vendors">
-                          {suppliersMaster.filter((s) => s.is_local).map((local) => (
+                          {suppliersMaster.filter((s) => s.is_local || (!s.is_registered && s.shop_name)).map((local) => (
                             <option key={`local_${local.shop_name}`} value={`local_${local.shop_name}`}>
                               {local.shop_name} {local.phone ? `(${local.phone})` : ''} {local.city ? `• ${local.city}` : ''}
                             </option>
@@ -8974,7 +9424,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('usage', () => saveUsedEntry(e), { successMessage: 'Material usage saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Material Usage' : (editingUsedId ? '✏️ Edit Material Usage' : 'Record Material Usage')}
+                  {modalReadOnly ? '👁️ View Daily Material Usage' : (editingUsedId ? '✏️ Edit Daily Material Usage' : '🧱 Record Daily Material Consumption')}
                 </h3>
                 {modalReadOnly && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -8984,6 +9434,45 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  {stockRows.length > 0 && !modalReadOnly && !editingUsedId && (
+                    <div style={{ marginBottom: 14, background: '#f8fafc', padding: '10px 12px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600, marginBottom: 6 }}>
+                        Quick Select Material from Site Stock:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {stockRows.map((s) => {
+                          const isSel = usedForm.material_name?.toLowerCase() === s.name?.toLowerCase();
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => {
+                                setUsedForm((prev) => ({
+                                  ...prev,
+                                  material_id: String(s.id),
+                                  material_name: s.name,
+                                  unit: s.unit || prev.unit,
+                                }));
+                              }}
+                              style={{
+                                fontSize: 11,
+                                padding: '4px 10px',
+                                borderRadius: 6,
+                                background: isSel ? '#dbeafe' : '#ffffff',
+                                color: isSel ? '#1d4ed8' : '#334155',
+                                border: isSel ? '1.5px solid #3b82f6' : '1px solid #cbd5e1',
+                                cursor: 'pointer',
+                                fontWeight: isSel ? 700 : 500,
+                              }}
+                            >
+                              {s.name} ({Number(s.stock ?? s.current_stock ?? 0).toFixed(1)} {s.unit})
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid">
                   <Input
                     label="Material Name"
@@ -9012,7 +9501,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   />
                   <Input label="Usage Date" name="used_date" type="date" value={usedForm.used_date} set={setUsedForm} required />
                   <Input label="Used For (e.g. Foundation, Slab, Plaster)" name="used_for" value={usedForm.used_for} set={setUsedForm} placeholder="e.g. 1st Floor Slab casting" />
-                  <Input label="Note" name="note" value={usedForm.note} set={setUsedForm} />
+                  <Input label="Note / Remarks" name="note" value={usedForm.note} set={setUsedForm} placeholder="Optional site remarks" />
                 </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
@@ -9685,7 +10174,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
                   >
                     <option value="">All Projects</option>
-                    {allProjectsList.map((p) => (
+                    {availableReportProjects.map((p) => (
                       <option value={p.id} key={p.id}>
                         {p.name} {p.status ? `(${p.status})` : ''}
                       </option>
@@ -9705,7 +10194,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
                     >
                       <option value="">All Materials</option>
-                      {materialsMaster.map((m) => (
+                      {availableReportMaterials.map((m) => (
                         <option value={m.id} key={m.id}>
                           {m.name} {m.unit ? `(${m.unit})` : ''}
                         </option>
@@ -9921,6 +10410,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {reportData.headers?.map((h) => (
                       <th key={h.key}>{h.label}</th>
                     ))}
+                    {(reportType === 'cross_project_entity' || reportType === 'labor_summary') && (
+                      <th style={{ textAlign: 'center', minWidth: 150 }}>Quick Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -10006,11 +10498,154 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </td>
                         );
                       })}
+                      {(reportType === 'cross_project_entity' || reportType === 'labor_summary') && (
+                        <td style={{ textAlign: 'center' }}>
+                          <div style={{ display: 'inline-flex', gap: 6 }}>
+                            {(row.entity_type === 'Labor / Worker' || reportType === 'labor_summary') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickAttendance({
+                                  labor_id: row.entity_record_id || row.labor_id,
+                                  name: row.entity_name || row.labor_name,
+                                  daily_rate: row.daily_rate,
+                                  projects: [{
+                                    labor_id: row.entity_record_id || row.labor_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    daily_rate: row.daily_rate,
+                                  }],
+                                })}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0f9ff',
+                                  color: '#0284c7',
+                                  border: '1px solid #bae6fd',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>📅</span>
+                                <span>Attendance</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Labor / Worker' || reportType === 'labor_summary') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  labor_id: row.entity_record_id || row.labor_id,
+                                  name: row.entity_name || row.labor_name,
+                                  balance_due: row.balance_due,
+                                  projects: [{
+                                    labor_id: row.entity_record_id || row.labor_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'labor')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0fdf4',
+                                  color: '#16a34a',
+                                  border: '1px solid #bbf7d0',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Contractor' || row.entity_type === 'Service Provider') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  project_vendor_id: row.entity_record_id,
+                                  name: row.entity_name,
+                                  balance_due: row.balance_due,
+                                  projects: [{
+                                    project_vendor_id: row.entity_record_id,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'contractor')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#fef3c7',
+                                  color: '#b45309',
+                                  border: '1px solid #fde68a',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay Contractor</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Vendor / Supplier' || row.entity_type === 'Vendor') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  supplier_name: row.entity_name,
+                                  name: row.entity_name,
+                                  balance_due: row.balance_due,
+                                  entity_kind: 'supplier',
+                                  projects: [{
+                                    supplier_name: row.entity_name,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'supplier')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0fdf4',
+                                  color: '#16a34a',
+                                  border: '1px solid #bbf7d0',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay Vendor</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
                   {(!reportData.data || reportData.data.length === 0) && (
                     <tr>
-                      <td colSpan={reportData.headers?.length || 5} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                      <td colSpan={(reportData.headers?.length || 5) + ((reportType === 'cross_project_entity' || reportType === 'labor_summary') ? 1 : 0)} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
                         No records match the selected filters. Try broadening your search or resetting filters.
                       </td>
                     </tr>
@@ -10579,6 +11214,1211 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         </div>
       )}
 
+      {/* ── 7. OMNI-SEARCH RESULTS MODAL / DRAWER ────────────────────────── */}
+      {omniSearchOpen && omniSearchResults && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setOmniSearchOpen(false)}
+        >
+          <div
+            style={{
+              background: effectiveDark ? '#18181c' : '#ffffff',
+              borderRadius: 14,
+              maxWidth: 960,
+              width: '100%',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: effectiveDark ? '1px solid #2a2a30' : '1px solid #cbd5e1',
+              color: effectiveDark ? '#f0f0f5' : '#0f172a',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '16px 22px',
+                borderBottom: '1px solid #e2e8f0',
+                background: '#f8fafc',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 18, color: '#0284c7' }}>🔍</span>
+                  <h3 style={{ margin: 0, fontSize: 18, color: '#0f172a', fontWeight: 700 }}>
+                    Omni-Search Results
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      background: '#e0f2fe',
+                      color: '#0369a1',
+                      padding: '3px 10px',
+                      borderRadius: 12,
+                      fontWeight: 600,
+                      border: '1px solid #bae6fd',
+                    }}
+                  >
+                    {omniSearchResults.query}
+                  </span>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#64748b' }}>
+                  Found {((omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.contractors || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0))} match(es) across all project records
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOmniSearchOpen(false)}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  border: '1px solid #e2e8f0',
+                  background: '#ffffff',
+                  color: '#64748b',
+                  fontSize: 14,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  transition: 'all 0.15s ease',
+                }}
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Category Navigation Pills */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                padding: '10px 20px',
+                background: '#ffffff',
+                borderBottom: '1px solid #f1f5f9',
+                overflowX: 'auto',
+                alignItems: 'center',
+              }}
+            >
+              {[
+                { id: 'all', label: 'All Matches', count: (omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.contractors || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0) },
+                { id: 'labor', label: 'Workers', count: omniSearchResults.counts?.labor || 0, icon: '👷' },
+                { id: 'projects', label: 'Projects', count: omniSearchResults.counts?.projects || 0, icon: '🏗️' },
+                { id: 'contractors', label: 'Service Providers & Contractors', count: omniSearchResults.counts?.contractors || 0, icon: '🛠️' },
+                { id: 'vendors', label: 'Vendors', count: omniSearchResults.counts?.vendors || 0, icon: '🚚' },
+                { id: 'materials', label: 'Materials', count: omniSearchResults.counts?.materials || 0, icon: '🧱' },
+                { id: 'parties', label: 'Clients', count: omniSearchResults.counts?.parties || 0, icon: '👥' },
+                { id: 'agents', label: 'Agents', count: omniSearchResults.counts?.agents || 0, icon: '🛡️' },
+              ].map((tab) => {
+                const isActive = omniActiveTab === tab.id;
+                const isZero = tab.count === 0 && tab.id !== 'all';
+
+                return (
+                  <button
+                    type="button"
+                    key={tab.id}
+                    onClick={() => setOmniActiveTab(tab.id)}
+                    style={{
+                      border: isActive ? '1px solid #0284c7' : '1px solid #e2e8f0',
+                      background: isActive ? '#0284c7' : '#ffffff',
+                      color: isActive ? '#ffffff' : isZero ? '#94a3b8' : '#334155',
+                      padding: '6px 12px',
+                      borderRadius: 20,
+                      fontSize: 12,
+                      fontWeight: isActive ? 600 : 500,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      whiteSpace: 'nowrap',
+                      boxShadow: isActive ? '0 2px 6px rgba(2, 132, 199, 0.25)' : 'none',
+                      transition: 'all 0.15s ease',
+                      opacity: isZero && !isActive ? 0.65 : 1,
+                    }}
+                  >
+                    {tab.icon && <span>{tab.icon}</span>}
+                    <span>{tab.label}</span>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        padding: '1px 6px',
+                        borderRadius: 10,
+                        fontWeight: 700,
+                        background: isActive ? 'rgba(255, 255, 255, 0.25)' : '#f1f5f9',
+                        color: isActive ? '#ffffff' : isZero ? '#94a3b8' : '#64748b',
+                      }}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Scrollable Results Body */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: 20, background: '#f8fafc' }}>
+              {/* 1. Labor / Workers Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'labor') && (omniSearchResults.results?.labor?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>👷</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Labor &amp; Workers ({omniSearchResults.results.labor.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {omniSearchResults.results.labor.map((w, wIdx) => (
+                      <div
+                        key={wIdx}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        {/* Worker Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 16, fontWeight: 700, color: '#0f172a' }}>{w.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#f0f9ff',
+                                color: '#0284c7',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #bae6fd',
+                              }}
+                            >
+                              {w.trade}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                              📞 {w.phone}
+                            </span>
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 600,
+                              background: '#f8fafc',
+                              color: '#475569',
+                              padding: '3px 10px',
+                              borderRadius: 12,
+                              border: '1px solid #e2e8f0',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                            }}
+                          >
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a' }}></span>
+                            Active across {w.projects.length} project(s)
+                          </div>
+                        </div>
+
+                        {/* Modern KPI Cards Strip */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, margin: '14px 0' }}>
+                          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Days Present</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{w.total_days_present} Days</div>
+                          </div>
+                          <div style={{ background: '#eff6ff', border: '1px solid #dbeafe', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Earned</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#2563eb', marginTop: 2 }}>{INR(w.total_earned)}</div>
+                          </div>
+                          <div style={{ background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Paid</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: '#16a34a', marginTop: 2 }}>{INR(w.total_paid)}</div>
+                          </div>
+                          <div style={{ background: w.total_balance > 0 ? '#fff1f2' : '#f0fdf4', border: w.total_balance > 0 ? '1px solid #ffe4e6' : '1px solid #dcfce7', borderRadius: 8, padding: '8px 12px' }}>
+                            <div style={{ fontSize: 10, color: w.total_balance > 0 ? '#991b1b' : '#166534', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Balance Due</div>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: w.total_balance > 0 ? '#e11d48' : '#16a34a', marginTop: 2 }}>
+                              {INR(w.total_balance)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Projects Breakdown Table */}
+                        <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9' }}>
+                          <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                            <thead>
+                              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>STATUS</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>DAILY RATE</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>DAYS PRESENT</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>QUICK ACTIONS</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {w.projects.map((p, pIdx) => (
+                                <tr key={pIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                  <td style={{ padding: '10px 12px', fontWeight: 600, color: '#0f172a' }}>{p.project_name}</td>
+                                  <td style={{ padding: '10px 12px' }}>
+                                    <span
+                                      style={{
+                                        fontSize: 10,
+                                        padding: '2px 7px',
+                                        borderRadius: 4,
+                                        fontWeight: 600,
+                                        textTransform: 'uppercase',
+                                        background: p.project_status === 'running' ? '#dcfce7' : '#e0e7ff',
+                                        color: p.project_status === 'running' ? '#15803d' : '#4338ca',
+                                      }}
+                                    >
+                                      {p.project_status}
+                                    </span>
+                                  </td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.daily_rate)}</td>
+                                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>{p.days_present}</td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.earned)}</td>
+                                  <td style={{ padding: '10px 12px' }}>{INR(p.paid)}</td>
+                                  <td style={{ padding: '10px 12px', fontWeight: 700, color: p.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                    {INR(p.balance)}
+                                  </td>
+                                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickAttendance(w, p)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0f9ff',
+                                          color: '#0284c7',
+                                          border: '1px solid #bae6fd',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>📅</span>
+                                        <span>Attendance</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(w, 'labor', p)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0fdf4',
+                                          color: '#16a34a',
+                                          border: '1px solid #bbf7d0',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay</span>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Projects Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'projects') && (omniSearchResults.results?.projects?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🏗️</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Projects ({omniSearchResults.results.projects.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.projects.map((proj) => (
+                      <div
+                        key={proj.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          {/* Top Row: Name and Status */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>{proj.name}</span>
+                            <span
+                              style={{
+                                fontSize: 10,
+                                padding: '2px 7px',
+                                borderRadius: 4,
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                background: proj.status === 'running' ? '#dcfce7' : '#e0e7ff',
+                                color: proj.status === 'running' ? '#15803d' : '#4338ca',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {proj.status}
+                            </span>
+                          </div>
+
+                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+                            Client: <strong style={{ color: '#334155' }}>{proj.party_name}</strong> {proj.party_phone !== '—' && <span style={{ color: '#94a3b8' }}>({proj.party_phone})</span>}
+                          </div>
+
+                          {/* Financial Mini Pills */}
+                          <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+                              <span style={{ color: '#64748b' }}>Contract: </span>
+                              <strong style={{ color: '#0f172a' }}>{INR(proj.contract_value)}</strong>
+                            </div>
+                            <div style={{ background: '#f0fdf4', border: '1px solid #dcfce7', borderRadius: 6, padding: '4px 8px', fontSize: 11 }}>
+                              <span style={{ color: '#166534' }}>Received: </span>
+                              <strong style={{ color: '#16a34a' }}>{INR(proj.received)}</strong>
+                            </div>
+                          </div>
+
+                          <div style={{ fontSize: 11, color: '#64748b', marginTop: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <span>👷 <strong>{proj.workers_count}</strong> Active Worker(s)</span>
+                            <span>🏢 <strong>{proj.vendors_count}</strong> Vendor(s)</span>
+                          </div>
+                        </div>
+
+                        {/* Action Link Button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOmniSearchOpen(false);
+                            showProject(proj.id);
+                          }}
+                          style={{
+                            marginTop: 14,
+                            padding: '8px 14px',
+                            fontSize: 12,
+                            borderRadius: 6,
+                            background: '#f0f9ff',
+                            color: '#0284c7',
+                            border: '1px solid #bae6fd',
+                            fontWeight: 600,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            cursor: 'pointer',
+                            width: '100%',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <span>Open Workspace</span>
+                          <span>&rarr;</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Service Providers & Contractors Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'contractors') && (omniSearchResults.results?.contractors?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🛠️</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Service Providers &amp; Contractors ({omniSearchResults.results.contractors.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {omniSearchResults.results.contractors.map((c) => (
+                      <div
+                        key={c.vendor_id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{c.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#fef3c7',
+                                color: '#b45309',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #fde68a',
+                              }}
+                            >
+                              {c.trade}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b' }}>📞 {c.phone}</span>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 10, fontSize: 12 }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6 }}>Earned: <strong>{INR(c.total_earned)}</strong></div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>Paid: <strong style={{ color: '#16a34a' }}>{INR(c.total_paid)}</strong></div>
+                            <div style={{ background: c.total_balance > 0 ? '#fff1f2' : '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>
+                              Due: <strong style={{ color: c.total_balance > 0 ? '#e11d48' : '#16a34a' }}>{INR(c.total_balance)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        {c.projects?.length > 0 && (
+                          <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9', marginTop: 12 }}>
+                            <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                              <thead>
+                                <tr style={{ background: '#f8fafc' }}>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>TYPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>ACTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {c.projects.map((cp, cpIdx) => (
+                                  <tr key={cpIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                    <td style={{ padding: '9px 12px', fontWeight: 600, color: '#0f172a' }}>{cp.project_name}</td>
+                                    <td style={{ padding: '9px 12px', color: '#475569' }}>{cp.work_description || '—'}</td>
+                                    <td style={{ padding: '9px 12px' }}>
+                                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#475569', fontWeight: 600 }}>
+                                        {cp.pay_type}
+                                      </span>
+                                    </td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(cp.earned)}</td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(cp.paid)}</td>
+                                    <td style={{ padding: '9px 12px', fontWeight: 700, color: cp.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                      {INR(cp.balance)}
+                                    </td>
+                                    <td style={{ padding: '9px 12px', textAlign: 'center' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(c, 'contractor', cp)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#fef3c7',
+                                          color: '#b45309',
+                                          border: '1px solid #fde68a',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay Contractor</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Vendors (Material Suppliers) Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'vendors') && (omniSearchResults.results?.vendors?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🚚</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Vendors ({omniSearchResults.results.vendors.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {omniSearchResults.results.vendors.map((v) => (
+                      <div
+                        key={v.vendor_id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{v.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#f0fdf4',
+                                color: '#15803d',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #bbf7d0',
+                              }}
+                            >
+                              {v.trade || 'Material Vendor'}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b' }}>📞 {v.phone}</span>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 10, fontSize: 12 }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6 }}>Earned: <strong>{INR(v.total_earned)}</strong></div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>Paid: <strong style={{ color: '#16a34a' }}>{INR(v.total_paid)}</strong></div>
+                            <div style={{ background: v.total_balance > 0 ? '#fff1f2' : '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>
+                              Due: <strong style={{ color: v.total_balance > 0 ? '#e11d48' : '#16a34a' }}>{INR(v.total_balance)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        {v.projects?.length > 0 && (
+                          <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9', marginTop: 12 }}>
+                            <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                              <thead>
+                                <tr style={{ background: '#f8fafc' }}>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE / SUPPLIED ITEMS</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>TYPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>ACTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {v.projects.map((vp, vpIdx) => (
+                                  <tr key={vpIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                    <td style={{ padding: '9px 12px', fontWeight: 600, color: '#0f172a' }}>{vp.project_name}</td>
+                                    <td style={{ padding: '9px 12px', color: '#475569' }}>{vp.work_description || '—'}</td>
+                                    <td style={{ padding: '9px 12px' }}>
+                                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#475569', fontWeight: 600 }}>
+                                        {vp.pay_type}
+                                      </span>
+                                    </td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(vp.earned)}</td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(vp.paid)}</td>
+                                    <td style={{ padding: '9px 12px', fontWeight: 700, color: vp.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                      {INR(vp.balance)}
+                                    </td>
+                                    <td style={{ padding: '9px 12px', textAlign: 'center' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(v, 'supplier', vp)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#f0fdf4',
+                                          color: '#16a34a',
+                                          border: '1px solid #bbf7d0',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay Vendor</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Materials Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'materials') && (omniSearchResults.results?.materials?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🧱</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Materials ({omniSearchResults.results.materials.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.materials.map((m) => (
+                      <div
+                        key={m.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{m.name}</span>
+                            <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#64748b', fontWeight: 600 }}>
+                              Unit: {m.unit || '—'}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, margin: '12px 0' }}>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Stock</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: m.current_stock < 0 ? '#e11d48' : '#16a34a', marginTop: 2 }}>
+                                {m.current_stock}
+                              </div>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Used</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{m.total_used}</div>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '6px 8px', borderRadius: 6, textAlign: 'center' }}>
+                              <div style={{ fontSize: 10, color: '#64748b' }}>Avg Rate</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginTop: 2 }}>{INR(m.avg_rate)}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReportType('material_consumption');
+                            setReportMaterialFilter(m.id);
+                            setOmniSearchOpen(false);
+                            openReportsScreen();
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: 11,
+                            borderRadius: 6,
+                            background: '#f8fafc',
+                            color: '#475569',
+                            border: '1px solid #cbd5e1',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            width: '100%',
+                          }}
+                        >
+                          <span>📊 View Consumption Report</span>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Clients / Parties Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'parties') && (omniSearchResults.results?.parties?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>👥</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Clients / Parties ({omniSearchResults.results.parties.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+                    {omniSearchResults.results.parties.map((pa) => (
+                      <div
+                        key={pa.id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{pa.name}</div>
+                          <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                            📞 {pa.phone} {pa.address && <span>&bull; {pa.address}</span>}
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 8, margin: '10px 0', flexWrap: 'wrap' }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6, fontSize: 11 }}>
+                              Projects: <strong>{pa.projects_count}</strong>
+                            </div>
+                            <div style={{ background: '#eff6ff', padding: '4px 8px', borderRadius: 6, fontSize: 11, color: '#1e40af' }}>
+                              Contract: <strong>{INR(pa.total_contract_value)}</strong>
+                            </div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6, fontSize: 11, color: '#166534' }}>
+                              Received: <strong>{INR(pa.total_received)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOmniSearchOpen(false);
+                            showParty(pa.id);
+                          }}
+                          style={{
+                            marginTop: 10,
+                            padding: '6px 12px',
+                            fontSize: 11,
+                            borderRadius: 6,
+                            background: '#f8fafc',
+                            color: '#475569',
+                            border: '1px solid #cbd5e1',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            width: '100%',
+                          }}
+                        >
+                          📂 Open Client Projects
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {(!omniSearchResults.results || Object.values(omniSearchResults.results).every((arr) => !arr || arr.length === 0)) && (
+                <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: '#64748b' }}>
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>🔍</div>
+                  <p style={{ fontSize: 16, margin: 0, fontWeight: 700, color: '#1e293b' }}>
+                    No records matched {omniSearchResults.query}
+                  </p>
+                  <p style={{ fontSize: 13, margin: '6px 0 0', color: '#64748b' }}>
+                    Try searching by worker name, phone number, project title, or contractor trade.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 8. QUICK ATTENDANCE MODAL ─────────────────────────────────────── */}
+      {quickAttendanceModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => { if (!savingQuickAttendance) setQuickAttendanceModal(false); }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 480,
+              width: '100%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+              border: '1px solid #cbd5e1',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#0f172a' }}>
+                  📅 Mark Attendance
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: 13, color: '#64748b' }}>
+                  Worker: <strong style={{ color: '#0f172a' }}>{quickAttendanceForm.labor_name}</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                className="muted"
+                onClick={() => setQuickAttendanceModal(false)}
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveQuickAttendance}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Select Project */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Select Project *
+                  </label>
+                  <select
+                    value={quickAttendanceForm.project_id}
+                    onChange={(e) => {
+                      const pid = Number(e.target.value);
+                      const matched = quickAttendanceForm.available_projects?.find((p) => p.project_id === pid);
+                      setQuickAttendanceForm((prev) => ({
+                        ...prev,
+                        project_id: pid,
+                        project_name: matched?.project_name || prev.project_name,
+                        labor_id: matched?.labor_id || prev.labor_id,
+                        daily_rate: matched?.daily_rate ?? prev.daily_rate,
+                      }));
+                    }}
+                    required
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    {quickAttendanceForm.available_projects?.map((p, idx) => (
+                      <option key={idx} value={p.project_id}>
+                        {p.project_name} (Rate: ₹{p.daily_rate || 0})
+                      </option>
+                    ))}
+                    {(!quickAttendanceForm.available_projects || quickAttendanceForm.available_projects.length === 0) && (
+                      <option value="">No projects assigned</option>
+                    )}
+                  </select>
+                </div>
+
+                {/* Attendance Date */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Attendance Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={quickAttendanceForm.attendance_date}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, attendance_date: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Status */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Status
+                    </label>
+                    <select
+                      value={quickAttendanceForm.status}
+                      onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, status: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="present">Present (Full Day)</option>
+                      <option value="half_day">Half Day</option>
+                      <option value="absent">Absent</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Shift Type
+                    </label>
+                    <select
+                      value={quickAttendanceForm.shift_type}
+                      onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, shift_type: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="day">Day Shift</option>
+                      <option value="night">Night Shift</option>
+                      <option value="double">Double (2x)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Overtime Hours */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Overtime Hours
+                  </label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="12"
+                    value={quickAttendanceForm.overtime_hours}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, overtime_hours: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Note */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Work Note / Remarks
+                  </label>
+                  <input
+                    type="text"
+                    value={quickAttendanceForm.note}
+                    onChange={(e) => setQuickAttendanceForm((prev) => ({ ...prev, note: e.target.value }))}
+                    placeholder="e.g. Mason work on second floor"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+                <button
+                  type="button"
+                  className="muted"
+                  disabled={savingQuickAttendance}
+                  onClick={() => setQuickAttendanceModal(false)}
+                  style={{ padding: '7px 16px', borderRadius: 6 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingQuickAttendance}
+                  style={{ padding: '7px 18px', borderRadius: 6, fontWeight: 600 }}
+                >
+                  {savingQuickAttendance ? 'Saving…' : '✓ Save Attendance'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── 9. QUICK PAYMENT MODAL ────────────────────────────────────────── */}
+      {quickPaymentModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 2600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => { if (!savingQuickPayment) setQuickPaymentModal(false); }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 480,
+              width: '100%',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+              border: '1px solid #cbd5e1',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, color: '#0f172a' }}>
+                  💳 Record Quick Payment
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: 13, color: '#64748b' }}>
+                  Payee: <strong style={{ color: '#0f172a' }}>{quickPaymentForm.name}</strong> ({quickPaymentForm.type === 'labor' ? 'Worker' : quickPaymentForm.type === 'supplier' ? 'Vendor' : 'Service Provider / Contractor'})
+                </p>
+              </div>
+              <button
+                type="button"
+                className="muted"
+                onClick={() => setQuickPaymentModal(false)}
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 16, fontWeight: 'bold' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveQuickPayment}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Current Balance Notice */}
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, color: '#991b1b', fontWeight: 600 }}>Current Balance Due:</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#dc2626' }}>{INR(quickPaymentForm.balance_due)}</span>
+                </div>
+
+                {/* Select Project */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Select Project *
+                  </label>
+                  <select
+                    value={quickPaymentForm.project_id}
+                    onChange={(e) => {
+                      const pid = Number(e.target.value);
+                      const matched = quickPaymentForm.available_projects?.find((p) => Number(p.project_id) === pid);
+                      setQuickPaymentForm((prev) => ({
+                        ...prev,
+                        project_id: pid,
+                        project_name: matched?.project_name || prev.project_name,
+                        id: prev.type === 'labor' ? (matched?.labor_id || prev.id) : (matched?.project_vendor_id || prev.id),
+                        supplier_name: matched?.supplier_name || prev.supplier_name,
+                        balance_due: matched?.balance ?? prev.balance_due,
+                      }));
+                    }}
+                    required
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  >
+                    {quickPaymentForm.available_projects?.map((p, idx) => (
+                      <option key={idx} value={p.project_id}>
+                        {p.project_name} (Due: ₹{p.balance || 0})
+                      </option>
+                    ))}
+                    {(!quickPaymentForm.available_projects || quickPaymentForm.available_projects.length === 0) && (
+                      <option value="">No projects found</option>
+                    )}
+                  </select>
+                </div>
+
+                {/* Payment Amount */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Payment Amount (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    required
+                    placeholder="Enter amount in ₹"
+                    value={quickPaymentForm.amount}
+                    onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, amount: e.target.value }))}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 14, fontWeight: 600, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+
+                {/* Date & Mode */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Payment Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={quickPaymentForm.payment_date}
+                      onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, payment_date: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                      Payment Mode
+                    </label>
+                    <select
+                      value={quickPaymentForm.mode}
+                      onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, mode: e.target.value }))}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="upi">UPI / Online</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="cheque">Cheque</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Note / Ref */}
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    Note / Reference (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={quickPaymentForm.note}
+                    onChange={(e) => setQuickPaymentForm((prev) => ({ ...prev, note: e.target.value }))}
+                    placeholder="e.g. UPI Ref / Cash voucher #42"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 6, border: '1px solid #cbd5e1' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+                <button
+                  type="button"
+                  className="muted"
+                  disabled={savingQuickPayment}
+                  onClick={() => setQuickPaymentModal(false)}
+                  style={{ padding: '7px 16px', borderRadius: 6 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingQuickPayment}
+                  style={{ padding: '7px 18px', borderRadius: 6, fontWeight: 600 }}
+                >
+                  {savingQuickPayment ? 'Recording…' : '✓ Record Payment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Global Datalists for Materials and Units */}
       <datalist id="all-master-materials-list">
         {materialsMaster.map((m) => (
@@ -10634,10 +12474,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         :global(.dark-mode) .pm-container .modal-card,
         .pm-container.dark-mode .modal-card,
         :global(.dark-mode) .pm-container table,
+        :global(.dark) .pm-container table,
         .pm-container.dark-mode table {
-          background: #18181c;
-          border-color: #2a2a30;
-          color: #f0f0f5;
+          background: #18181c !important;
+          border-color: #2a2a30 !important;
+          color: #f0f0f5 !important;
         }
         :global(.dark-mode) .pm-container th,
         .pm-container.dark-mode th {
@@ -10679,14 +12520,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           color: #a1a1aa;
         }
         :global(.dark-mode) .pm-container input,
+        :global(.dark) .pm-container input,
         .pm-container.dark-mode input,
         :global(.dark-mode) .pm-container select,
+        :global(.dark) .pm-container select,
         .pm-container.dark-mode select,
         :global(.dark-mode) .pm-container textarea,
+        :global(.dark) .pm-container textarea,
         .pm-container.dark-mode textarea {
-          background: #18181c;
-          color: #f0f0f5;
-          border-color: #2a2a30;
+          background: #18181c !important;
+          color: #f0f0f5 !important;
+          border-color: #2a2a30 !important;
         }
         :global(.dark-mode) .pm-container button.muted,
         .pm-container.dark-mode button.muted {

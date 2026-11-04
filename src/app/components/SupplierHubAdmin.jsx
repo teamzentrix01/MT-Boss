@@ -358,14 +358,86 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               </div>
             </div>
 
-            {/* Aadhaar */}
-            <div style={{ background: selectedSupplier.aadhaar_number ? (isDarkMode?'#0a1f0a':'#f0fdf4') : (isDarkMode?'#2a1a0a':'#fff7ed'), border: `2px solid ${selectedSupplier.aadhaar_number ? '#16a34a' : '#f97316'}`, borderRadius: 10, padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <span style={{ fontSize: '2rem' }}>🪪</span>
-              <div>
-                <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted, marginBottom: '0.25rem' }}>Aadhaar — Verify before approving</div>
-                <div style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '0.18em', color: selectedSupplier.aadhaar_number ? text : '#f97316', fontFamily: 'monospace' }}>
-                  {selectedSupplier.aadhaar_number ? selectedSupplier.aadhaar_number.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3') : 'Not provided'}
+            {/* Verification Documents & Numbers Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+              {/* Aadhaar */}
+              <div style={{
+                background: selectedSupplier.aadhaar_number ? (isDarkMode ? '#0a1f0a' : '#f0fdf4') : (isDarkMode ? '#2a1a0a' : '#fff7ed'),
+                border: `1.5px solid ${selectedSupplier.aadhaar_number ? '#16a34a' : '#f97316'}`,
+                borderRadius: 10, padding: '0.875rem',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '1.2rem' }}>🪪</span>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted }}>
+                    Aadhaar Details
+                  </div>
                 </div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.12em', color: selectedSupplier.aadhaar_number ? text : '#f97316', fontFamily: 'monospace', marginBottom: '0.4rem' }}>
+                  {selectedSupplier.aadhaar_number
+                    ? selectedSupplier.aadhaar_number.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')
+                    : 'Not provided'}
+                </div>
+                {selectedSupplier.aadhaar_document ? (
+                  <div>
+                    <a href={selectedSupplier.aadhaar_document} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 700, color: '#16a34a', textDecoration: 'none', background: isDarkMode ? '#1a2a1a' : '#dcfce7', padding: '0.25rem 0.55rem', borderRadius: 6 }}>
+                      👁️ View Aadhaar Doc
+                    </a>
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.7rem', color: muted }}>No document uploaded</span>
+                )}
+              </div>
+
+              {/* PAN */}
+              <div style={{
+                background: selectedSupplier.pan_number ? (isDarkMode ? '#0a1f1a' : '#f0fdfa') : (isDarkMode ? '#222' : '#f9f9f9'),
+                border: `1.5px solid ${selectedSupplier.pan_number ? '#0d9488' : border}`,
+                borderRadius: 10, padding: '0.875rem',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '1.2rem' }}>💳</span>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted }}>
+                    PAN Card Details
+                  </div>
+                </div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, letterSpacing: '0.12em', color: selectedSupplier.pan_number ? text : muted, fontFamily: 'monospace', marginBottom: '0.4rem' }}>
+                  {selectedSupplier.pan_number || 'Not provided'}
+                </div>
+                {selectedSupplier.pan_document ? (
+                  <div>
+                    <a href={selectedSupplier.pan_document} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 700, color: '#0d9488', textDecoration: 'none', background: isDarkMode ? '#0d2824' : '#ccfbf1', padding: '0.25rem 0.55rem', borderRadius: 6 }}>
+                      👁️ View PAN Doc
+                    </a>
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.7rem', color: muted }}>No document uploaded</span>
+                )}
+              </div>
+
+              {/* GST */}
+              <div style={{
+                background: selectedSupplier.gst_number ? (isDarkMode ? '#0a1829' : '#eff6ff') : (isDarkMode ? '#222' : '#f9f9f9'),
+                border: `1.5px solid ${selectedSupplier.gst_number ? '#2563eb' : border}`,
+                borderRadius: 10, padding: '0.875rem',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <span style={{ fontSize: '1.2rem' }}>🏢</span>
+                  <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: muted }}>
+                    GST Details
+                  </div>
+                </div>
+                <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '0.1em', color: selectedSupplier.gst_number ? text : muted, fontFamily: 'monospace', marginBottom: '0.4rem' }}>
+                  {selectedSupplier.gst_number || 'Not registered'}
+                </div>
+                {selectedSupplier.gst_document ? (
+                  <div>
+                    <a href={selectedSupplier.gst_document} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 700, color: '#2563eb', textDecoration: 'none', background: isDarkMode ? '#172554' : '#dbeafe', padding: '0.25rem 0.55rem', borderRadius: 6 }}>
+                      👁️ View GST Cert
+                    </a>
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.7rem', color: muted }}>No certificate</span>
+                )}
               </div>
             </div>
 

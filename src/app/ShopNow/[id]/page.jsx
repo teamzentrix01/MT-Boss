@@ -102,6 +102,16 @@ export default function ProductDetailPage({ params }) {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
+  // Sync selected city from Shop
+  useEffect(() => {
+    try {
+      const savedCity = localStorage.getItem("MTBOSS_selected_city");
+      if (savedCity) {
+        setSelectedCity(savedCity);
+      }
+    } catch {}
+  }, []);
+
   // Fetch wallet balance if logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -177,7 +187,15 @@ export default function ProductDetailPage({ params }) {
 
   const lineTotal = unitPrice * selectedQuantity;
   const savings = compareAtPrice > unitPrice ? (compareAtPrice - unitPrice) * selectedQuantity : 0;
-  const isAvailable = !product?.fromSupplier || Number(product?.quantity) > 0;
+  const normalizedCity = (selectedCity || "").trim().toLowerCase();
+  const isCityUnavailable = Boolean(
+    normalizedCity &&
+    Array.isArray(product?.available_cities) &&
+    product.available_cities.length > 0 &&
+    !product.available_cities.some((c) => c && c.trim().toLowerCase() === normalizedCity)
+  );
+  const outOfStock = Boolean(product?.fromSupplier && Number(product?.quantity) <= 0);
+  const isAvailable = !isCityUnavailable && !outOfStock;
 
   // City availability check
   const handleCheckCity = async (cityToVerify) => {
@@ -345,6 +363,10 @@ export default function ProductDetailPage({ params }) {
                       onClick={() => {
                         setSelectedCity(city);
                         setCityOpen(false);
+                        try {
+                          localStorage.setItem("MTBOSS_selected_city", city);
+                          window.dispatchEvent(new CustomEvent("MTBOSS_city_changed", { detail: city }));
+                        } catch {}
                         handleCheckCity(city);
                       }}
                       className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -523,7 +545,7 @@ export default function ProductDetailPage({ params }) {
                   }`}
                 >
                   <span className={`w-2 h-2 rounded-full ${isAvailable ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
-                  {isAvailable ? "Available in Stock" : "Temporarily Unavailable"}
+                  {isAvailable ? "Available in Stock" : isCityUnavailable ? `Out of Stock in ${selectedCity}` : "Temporarily Out of Stock"}
                 </span>
               </div>
 
@@ -720,7 +742,7 @@ export default function ProductDetailPage({ params }) {
                   className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-[var(--brand-blue)] to-sky-400 hover:from-sky-400 hover:to-[var(--brand-blue)] text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
                 >
                   <Zap size={18} className="fill-slate-950" />
-                  {isAvailable ? "Buy Now · Instant Checkout" : "Currently Unavailable"}
+                  {isAvailable ? "Buy Now · Instant Checkout" : isCityUnavailable ? `Out of Stock in ${selectedCity}` : "Currently Out of Stock"}
                 </button>
 
                 <button
@@ -734,7 +756,7 @@ export default function ProductDetailPage({ params }) {
                   }`}
                 >
                   <ShoppingCart size={18} />
-                  Add To Cart
+                  {isAvailable ? "Add To Cart" : "Out of Stock"}
                 </button>
               </div>
             </div>
@@ -957,7 +979,7 @@ export default function ProductDetailPage({ params }) {
               className="py-3 px-5 rounded-xl bg-[var(--brand-blue)] text-slate-950 font-black text-xs uppercase tracking-wider shadow-md active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap"
             >
               <Zap size={15} className="fill-slate-950" />
-              Buy Now
+              {isAvailable ? "Buy Now" : "Out of Stock"}
             </button>
           </div>
         </div>

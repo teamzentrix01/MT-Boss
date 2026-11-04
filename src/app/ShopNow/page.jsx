@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MapPin, Plus, Check, Trash2, Home, Building2, Briefcase } from "lucide-react";
 import { useCities } from "@/hooks/useCities";
+import { useShopLocation } from "@/hooks/useShopLocation";
+import LocationPromptModal from "./LocationPromptModal";
 import Storefront, { displayUnit } from "./Storefront";
 import { defaultShopStorefront } from "@/lib/shop-storefront-defaults";
 import { calculateCoupon } from "@/lib/coupon-calculations";
@@ -357,8 +359,17 @@ export default function ShopPage() {
   const [brandCompany, setBrandCompany]         = useState("");
   const [deliveryDate, setDeliveryDate]         = useState("");
 
-  // City selection
-  const [selectedCity, setSelectedCity] = useState("");
+  // City & Location selection
+  const {
+    selectedCity,
+    setSelectedCity,
+    isDetecting: isDetectingLocation,
+    detectionStatus: locationDetectionStatus,
+    showCityModal,
+    setShowCityModal,
+    detectLocation,
+    detectedInfo,
+  } = useShopLocation({ autoDetect: true });
   const [cityError, setCityError] = useState("");
   const [cityVerified, setCityVerified] = useState(false);
   const [checkingCity, setCheckingCity] = useState(false);
@@ -1024,7 +1035,7 @@ export default function ShopPage() {
   return (
     <div className={`min-h-screen ${pageBg} transition-colors duration-300`}>
 
-      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => { const pId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id); router.push('/ShopNow/' + pId + '/checkout?from=shop'); }} onCheckout={() => router.push('/ShopNow/checkout?mode=cart&from=shop')} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} promotions={promotions} />
+      <Storefront categories={categories} products={allProducts} content={storeContent} loading={catsLoading} cities={supportedCities} selectedCity={selectedCity} setSelectedCity={setSelectedCity} cart={cart} onAdd={addToCart} onChangeQty={changeCartQuantity} onQuote={(product) => openModal(product.category, product, "quote")} onBuy={(product) => { const pId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id); router.push('/ShopNow/' + pId + '/checkout?from=shop'); }} onCheckout={() => router.push('/ShopNow/checkout?mode=cart&from=shop')} activeCoupon={activeCoupon} couponCalculation={couponCalculation} couponOffers={couponOffers} onApplyCoupon={applyCouponCode} onSelectCoupon={selectCoupon} onClearCoupon={clearCoupon} shippingSettings={shippingSettings} shippingQuote={shippingQuote} promotions={promotions} onOpenLocationModal={() => setShowCityModal(true)} />
 
       {isModalOpen && mounted && createPortal(
         <div className="shop-checkout-modal fixed inset-0 flex items-center justify-center overflow-hidden bg-black/70 p-2 backdrop-blur-sm sm:p-4" style={{ zIndex: 99999 }}>
@@ -1887,6 +1898,21 @@ export default function ShopPage() {
         </div>,
         document.body
       )}
+
+      <LocationPromptModal
+        isOpen={showCityModal}
+        onClose={() => setShowCityModal(false)}
+        cities={supportedCities}
+        selectedCity={selectedCity}
+        onSelectCity={(city) => {
+          setSelectedCity(city);
+          setShowCityModal(false);
+        }}
+        onDetectLocation={detectLocation}
+        isDetecting={isDetectingLocation}
+        detectionStatus={locationDetectionStatus}
+        detectedInfo={detectedInfo}
+      />
     </div>
   );
 }

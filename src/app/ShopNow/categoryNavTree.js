@@ -2,7 +2,16 @@ export const CATEGORY_NAV_TREE = [
   {
     id: 'new-launches',
     label: 'New Launches',
-    children: [],
+    children: [
+      'Cabinet Hardware',
+      'Kitchen Systems & Hardware',
+      'General Hardware & Tools',
+      'Bathroom Renovation Materials',
+      'Conduits & Piping',
+      'PVC Pipes',
+      'Kitchen Sinks & Faucets',
+      'Home Appliances & Power Backup',
+    ],
   },
   {
     id: 'building-materials',
@@ -112,7 +121,7 @@ function nameKey(value = '') {
   return normalizeName(value).replace(/[^a-z0-9]+/g, '');
 }
 
-function namesMatch(a, b) {
+export function namesMatch(a, b) {
   const left = normalizeName(a);
   const right = normalizeName(b);
   if (!left || !right) return false;
@@ -122,7 +131,7 @@ function namesMatch(a, b) {
   return Boolean(leftKey && rightKey && (leftKey === rightKey || leftKey.includes(rightKey) || rightKey.includes(leftKey)));
 }
 
-function findCategoryByLabel(label, categories) {
+export function findCategoryByLabel(label, categories) {
   const target = normalizeName(label);
   const targetKey = nameKey(label);
   if (!target) return null;
@@ -142,7 +151,7 @@ function findCategoryByLabel(label, categories) {
   }) || null;
 }
 
-function productMatchesLeaf(product, leafLabel, parentLabel) {
+export function productMatchesLeaf(product, leafLabel, parentLabel) {
   const productCategory = typeof product?.category === 'object' ? product?.category?.name || '' : (product?.category || '');
   const productName = product?.name || '';
   const productSubcategory = product?.subcategory || '';
@@ -289,4 +298,245 @@ export function resolveCategoryNav(tree = CATEGORY_NAV_TREE, categories = [], pr
       }),
     };
   });
+}
+
+export const MAIN_NAV_DEFINITIONS = [
+  {
+    id: 'new-launches',
+    name: 'New Launches',
+    label: 'New Launches',
+    description: 'Explore the latest arrivals, tools, hardware & materials',
+    coverImage: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80',
+    tone: 'blue',
+  },
+  {
+    id: 'building-materials',
+    name: 'Building Materials',
+    label: 'Building Materials',
+    description: 'Cement, TMT Steel, Bricks, Sand, Blocks, Tiles, Waterproofing',
+    coverImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    tone: 'sand',
+  },
+  {
+    id: 'carpentry',
+    name: 'Carpentry',
+    label: 'Carpentry',
+    description: 'Plywood, Timber, HPL Laminates, Rough Carpentry',
+    coverImage: 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=800&q=80',
+    tone: 'coral',
+  },
+  {
+    id: 'plumbing',
+    name: 'Plumbing',
+    label: 'Plumbing',
+    description: 'CPVC Pipes, Sanitary, Bath Fittings, Overhead Tanks',
+    coverImage: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80',
+    tone: 'mint',
+  },
+  {
+    id: 'electrical',
+    name: 'Electrical',
+    label: 'Electrical',
+    description: 'Switches, Sockets, MCBs, DBs, LED Lights, Cables',
+    coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80',
+    tone: 'lavender',
+  },
+  {
+    id: 'furniture-architectural-hardware',
+    name: 'Furniture & Architectural Hardware',
+    label: 'Furniture & Architectural Hardware',
+    description: 'Hinges, Channels, Handles, Locks, Wardrobe & Kitchen Systems',
+    coverImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
+    tone: 'green',
+  },
+  {
+    id: 'chemicals',
+    name: 'Chemicals',
+    label: 'Chemicals',
+    description: 'Construction chemicals, adhesives, sealants & admixtures',
+    coverImage: 'https://images.unsplash.com/photo-1584467735871-8e85353a8413?w=800&q=80',
+    tone: 'mint',
+    isDirect: true,
+  },
+  {
+    id: 'paints',
+    name: 'Paints',
+    label: 'Paints',
+    description: 'Interior, exterior paints, primers & coatings',
+    coverImage: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80',
+    tone: 'coral',
+    isDirect: true,
+  },
+];
+
+export function getMainCategories(categories = [], products = []) {
+  return MAIN_NAV_DEFINITIONS.map((def) => {
+    const parentInTree = CATEGORY_NAV_TREE.find((t) => t.id === def.id || namesMatch(t.label, def.label));
+    const dbCat = findCategoryByLabel(def.label, categories);
+
+    let images = [];
+    if (dbCat?.image) images.push(dbCat.image);
+    if (Array.isArray(dbCat?.images)) images.push(...dbCat.images);
+
+    // If no direct image in dbCat, check if subcategory has an image (e.g. Building Materials -> Cement)
+    if (images.length === 0 && parentInTree?.children?.length > 0) {
+      for (const childLabel of parentInTree.children) {
+        const childCat = findCategoryByLabel(childLabel, categories);
+        if (childCat?.image) {
+          images.push(childCat.image);
+          break;
+        }
+      }
+    }
+
+    if (images.length === 0 && def.coverImage) {
+      images.push(def.coverImage);
+    }
+    images = Array.from(new Set(images.filter(Boolean)));
+
+    const children = parentInTree ? [...parentInTree.children] : [];
+    if (dbCat) {
+      let rawSubs = dbCat.subcategories;
+      if (typeof rawSubs === 'string') {
+        try { rawSubs = JSON.parse(rawSubs); } catch {}
+      }
+      if (Array.isArray(rawSubs)) {
+        rawSubs.forEach((entry) => {
+          const name = typeof entry === 'object' && entry !== null ? entry.name : entry;
+          if (name && typeof name === 'string' && !children.some((c) => namesMatch(c, name))) {
+            children.push(name.trim());
+          }
+        });
+      }
+    }
+
+    return {
+      ...def,
+      dbId: dbCat?.id ?? null,
+      children,
+      image: images[0] || def.coverImage,
+      images,
+    };
+  });
+}
+
+export function getSubcategoriesForParent(parentDefOrLabel, categories = [], products = []) {
+  let parent = null;
+  if (typeof parentDefOrLabel === 'string') {
+    parent = MAIN_NAV_DEFINITIONS.find((d) => d.id === parentDefOrLabel || namesMatch(d.label, parentDefOrLabel))
+      || CATEGORY_NAV_TREE.find((t) => t.id === parentDefOrLabel || namesMatch(t.label, parentDefOrLabel));
+  } else {
+    parent = parentDefOrLabel;
+  }
+  if (!parent) return [];
+
+  const parentTree = CATEGORY_NAV_TREE.find((t) => t.id === parent.id || namesMatch(t.label, parent.label));
+  const parentDb = findCategoryByLabel(parent.label, categories);
+
+  const labels = parentTree ? [...parentTree.children] : (parent.children ? [...parent.children] : []);
+  if (parentDb) {
+    let rawSubs = parentDb.subcategories;
+    if (typeof rawSubs === 'string') {
+      try { rawSubs = JSON.parse(rawSubs); } catch {}
+    }
+    if (Array.isArray(rawSubs)) {
+      rawSubs.forEach((entry) => {
+        const name = typeof entry === 'object' && entry !== null ? entry.name : entry;
+        if (name && typeof name === 'string' && !labels.some((l) => namesMatch(l, name))) {
+          labels.push(name.trim());
+        }
+      });
+    }
+  }
+
+  return labels.map((label) => {
+    const childDb = findCategoryByLabel(label, categories);
+    let images = [];
+    if (childDb?.image) images.push(childDb.image);
+    if (Array.isArray(childDb?.images)) images.push(...childDb.images);
+
+    if (images.length === 0) {
+      const matchProd = products.find((p) => productMatchesLeaf(p, label, parent.label));
+      if (matchProd?.image_url || matchProd?.image) {
+        images.push(matchProd.image_url || matchProd.image);
+      }
+    }
+
+    images = Array.from(new Set(images.filter(Boolean)));
+    const matchingProductsCount = products.filter((p) => productMatchesLeaf(p, label, parent.label)).length;
+
+    return {
+      id: childDb?.id ?? `sub-${normalizeName(label).replace(/[^a-z0-9]+/g, '-')}`,
+      name: label,
+      label,
+      parentLabel: parent.label,
+      parentId: parent.id,
+      image: images[0] || '',
+      images,
+      count: matchingProductsCount,
+      categoryId: childDb?.id ?? null,
+    };
+  });
+}
+
+export function productMatchesParent(product, parentLabel, allParents = MAIN_NAV_DEFINITIONS) {
+  if (!product || !parentLabel) return false;
+  const prodCat = typeof product.category === 'object' ? product.category?.name || '' : (product.category || '');
+  if (namesMatch(prodCat, parentLabel)) return true;
+
+  const parent = allParents.find((p) => namesMatch(p.label, parentLabel) || p.id === parentLabel)
+    || CATEGORY_NAV_TREE.find((t) => namesMatch(t.label, parentLabel) || t.id === parentLabel);
+  if (!parent) return false;
+
+  const children = parent.children || [];
+  return children.some((child) => productMatchesLeaf(product, child, parent.label));
+}
+
+export function productMatchesCategoryAndSub(product, parentLabel, subLabel, allParents = MAIN_NAV_DEFINITIONS) {
+  if (!product) return false;
+  if (subLabel) {
+    return productMatchesLeaf(product, subLabel, parentLabel || subLabel);
+  }
+  if (parentLabel && parentLabel !== 'all') {
+    return productMatchesParent(product, parentLabel, allParents);
+  }
+  return true;
+}
+
+export function resolveParentAndSubFromParam(categoryParam, subParam, categories = []) {
+  if (!categoryParam && !subParam) {
+    return { parentLabel: null, subLabel: null, isParent: false };
+  }
+
+  if (categoryParam && subParam) {
+    return { parentLabel: categoryParam, subLabel: subParam, isParent: false };
+  }
+
+  // Only categoryParam is provided
+  const mainMatch = MAIN_NAV_DEFINITIONS.find(
+    (m) => namesMatch(m.label, categoryParam) || m.id === categoryParam
+  );
+  if (mainMatch) {
+    if (mainMatch.isDirect) {
+      return { parentLabel: mainMatch.label, subLabel: mainMatch.label, isParent: false };
+    }
+    return { parentLabel: mainMatch.label, subLabel: null, isParent: true };
+  }
+
+  // Check if categoryParam is actually a subcategory (e.g. legacy ?category=Cement)
+  for (const main of MAIN_NAV_DEFINITIONS) {
+    const tree = CATEGORY_NAV_TREE.find((t) => t.id === main.id || namesMatch(t.label, main.label));
+    const children = tree?.children || main.children || [];
+    if (children.some((c) => namesMatch(c, categoryParam))) {
+      return { parentLabel: main.label, subLabel: categoryParam, isParent: false };
+    }
+  }
+
+  // Fallback: check direct DB category
+  const dbCat = findCategoryByLabel(categoryParam, categories);
+  if (dbCat) {
+    return { parentLabel: dbCat.name, subLabel: dbCat.name, isParent: false };
+  }
+
+  return { parentLabel: categoryParam, subLabel: null, isParent: true };
 }

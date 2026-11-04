@@ -9,6 +9,11 @@ const ensureSupplierColumns = createInitializationGuard(async () => {
   await ensurePackageSchema();
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
   await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS product_categories TEXT[] DEFAULT '{}'`);
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS aadhaar_document TEXT`);
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS pan_number VARCHAR(20)`);
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS pan_document TEXT`);
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS gst_number VARCHAR(30)`);
+  await pool.query(`ALTER TABLE suppliers ADD COLUMN IF NOT EXISTS gst_document TEXT`);
 });
 
 // GET — list all suppliers with earnings summary
@@ -51,6 +56,7 @@ export async function GET(req) {
         s.id, s.email, s.shop_name, s.phone,
         s.city, s.state, s.country, s.postal_code,
         s.aadhaar_number, s.aadhaar_status,
+        s.aadhaar_document, s.pan_number, s.pan_document, s.gst_number, s.gst_document,
         s.product_categories,
         s.status, s.is_active, s.package_id, s.package_name, s.package_price, s.package_status,
         s.package_starts_at, s.package_expires_at,

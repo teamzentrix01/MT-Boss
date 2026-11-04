@@ -79,6 +79,8 @@ export async function GET(req) {
            -- 1. Labor & Workers
            SELECT
              'Labor / Worker' AS entity_type,
+             l.id AS entity_record_id,
+             l.daily_rate,
              l.name AS entity_name,
              COALESCE(l.phone, '—') AS phone,
              COALESCE(l.trade, 'Labor') AS trade_or_role,
@@ -120,6 +122,8 @@ export async function GET(req) {
                WHEN v.trade ILIKE '%service%' THEN 'Service Provider'
                ELSE 'Vendor / Supplier'
              END AS entity_type,
+             pv.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
              v.name AS entity_name,
              COALESCE(v.phone, '—') AS phone,
              COALESCE(v.trade, pv.work_description, 'Vendor') AS trade_or_role,
@@ -165,9 +169,65 @@ export async function GET(req) {
 
            UNION ALL
 
+           -- 2b. Material Suppliers / Vendors
+           SELECT
+             'Vendor / Supplier' AS entity_type,
+             mr.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
+             TRIM(mr.supplier_name) AS entity_name,
+             '—' AS phone,
+             'Material Supplier' AS trade_or_role,
+             p.id AS project_id,
+             p.name AS project_name,
+             p.status AS project_status,
+             'Supplied: ' || m.name || ' (' || mr.quantity || ' ' || COALESCE(mr.unit, m.unit, 'units') || ')' AS work_summary,
+             mr.amount AS earned_amount,
+             COALESCE((
+               SELECT SUM(sp.amount) FROM pm_supplier_payments sp
+               WHERE NOT sp.is_deleted AND sp.project_id = p.id AND LOWER(TRIM(sp.supplier_name)) = LOWER(TRIM(mr.supplier_name))
+                 AND ($4::date IS NULL OR sp.payment_date >= $4::date)
+                 AND ($5::date IS NULL OR sp.payment_date <= $5::date)
+             ), 0)::numeric AS paid_amount,
+             (mr.amount - COALESCE((
+               SELECT SUM(sp.amount) FROM pm_supplier_payments sp
+               WHERE NOT sp.is_deleted AND sp.project_id = p.id AND LOWER(TRIM(sp.supplier_name)) = LOWER(TRIM(mr.supplier_name))
+                 AND ($4::date IS NULL OR sp.payment_date >= $4::date)
+                 AND ($5::date IS NULL OR sp.payment_date <= $5::date)
+             ), 0))::numeric AS balance_due
+           FROM pm_material_received mr
+           JOIN pm_projects p ON p.id = mr.project_id
+           JOIN pm_materials m ON m.id = mr.material_id
+           WHERE NOT mr.is_deleted AND mr.supplier_name IS NOT NULL AND TRIM(mr.supplier_name) <> ''
+             AND ($4::date IS NULL OR mr.received_date >= $4::date)
+             AND ($5::date IS NULL OR mr.received_date <= $5::date)
+
+           UNION ALL
+
+           -- 2c. Local Project Vendors
+           SELECT
+             'Vendor / Supplier' AS entity_type,
+             plv.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
+             plv.name AS entity_name,
+             COALESCE(plv.phone, '—') AS phone,
+             COALESCE(plv.material_type, 'Local Vendor') AS trade_or_role,
+             p.id AS project_id,
+             p.name AS project_name,
+             p.status AS project_status,
+             COALESCE(plv.material_type, 'Local Site Vendor') AS work_summary,
+             0::numeric AS earned_amount,
+             0::numeric AS paid_amount,
+             0::numeric AS balance_due
+           FROM pm_project_local_vendors plv
+           JOIN pm_projects p ON p.id = plv.project_id
+
+           UNION ALL
+
            -- 3. Party / Clients
            SELECT
              'Client / Party' AS entity_type,
+             p.id AS entity_record_id,
+             NULL::numeric AS daily_rate,
              pa.name AS entity_name,
              COALESCE(pa.phone, '—') AS phone,
              'Client' AS trade_or_role,
@@ -192,7 +252,7 @@ export async function GET(req) {
          SELECT * FROM unified_entities
          WHERE ($1::bigint IS NULL OR project_id = $1::bigint)
            AND ($2::text IS NULL OR $2 = 'all' OR project_status = $2)
-           AND ($3::text IS NULL OR $3 = '' OR entity_name ILIKE '%' || $3 || '%' OR phone ILIKE '%' || $3 || '%' OR trade_or_role ILIKE '%' || $3 || '%')
+           AND ($3::text IS NULL OR $3 = '' OR entity_name ILIKE '%' || $3 || '%' OR phone ILIKE '%' || $3 || '%' OR trade_or_role ILIKE '%' || $3 || '%' OR work_summary ILIKE '%' || $3 || '%' OR project_name ILIKE '%' || $3 || '%')
            AND (
              $6::text IS NULL OR $6 = 'all' OR
              ($6 = 'labor' AND entity_type = 'Labor / Worker') OR
@@ -228,6 +288,7 @@ export async function GET(req) {
           { key: 'used_qty', label: 'Quantity Used' },
           { key: 'avg_rate', label: 'Avg Rate (₹)' },
           { key: 'consumed_cost', label: 'Consumed Value (₹)' },
+          { key: 'used_for', label: 'Work Phase / Detail' },
         ];
 
         const r = await pool.query(
@@ -246,13 +307,16 @@ export async function GET(req) {
                WHEN $6 = 'yearly' THEN TO_CHAR(DATE_TRUNC('year', u.used_date), 'YYYY')
                ELSE TO_CHAR(u.used_date, 'YYYY-MM-DD')
              END AS period_label,
+             p.id AS project_id,
              p.name AS project_name,
              p.status AS project_status,
+             m.id AS material_id,
              m.name AS material_name,
              COALESCE(u.unit, m.unit) AS unit,
              SUM(u.quantity) AS used_qty,
              COALESCE(rr.avg_rate, 0) AS avg_rate,
-             ROUND(SUM(u.quantity) * COALESCE(rr.avg_rate, 0), 2) AS consumed_cost
+             ROUND(SUM(u.quantity) * COALESCE(rr.avg_rate, 0), 2) AS consumed_cost,
+             COALESCE(STRING_AGG(DISTINCT NULLIF(TRIM(u.used_for), ''), ', '), '—') AS used_for
            FROM pm_material_used u
            JOIN pm_projects p ON p.id = u.project_id
            JOIN pm_materials m ON m.id = u.material_id
@@ -264,7 +328,7 @@ export async function GET(req) {
              AND ($4::date IS NULL OR u.used_date >= $4::date)
              AND ($5::date IS NULL OR u.used_date <= $5::date)
              AND ($7::text IS NULL OR $7 = '' OR m.name ILIKE '%' || $7 || '%' OR p.name ILIKE '%' || $7 || '%')
-           GROUP BY 1, p.name, p.status, m.name, COALESCE(u.unit, m.unit), rr.avg_rate
+           GROUP BY 1, p.id, p.name, p.status, m.id, m.name, COALESCE(u.unit, m.unit), rr.avg_rate
            ORDER BY 1 DESC, p.name, m.name`,
           [projectId, materialId, projectStatus, startDate, endDate, frequency, search]
         );
@@ -489,7 +553,29 @@ export async function GET(req) {
          LEFT JOIN rcv ON rcv.project_id = p.id
          WHERE ($1::bigint IS NULL OR p.id = $1::bigint)
            AND ($2::text IS NULL OR $2 = 'all' OR p.status = $2)
-           AND ($3::text IS NULL OR $3 = '' OR p.name ILIKE '%' || $3 || '%' OR pa.name ILIKE '%' || $3 || '%' OR pa.phone ILIKE '%' || $3 || '%')
+           AND (
+             $3::text IS NULL OR $3 = ''
+             OR p.name ILIKE '%' || $3 || '%'
+             OR pa.name ILIKE '%' || $3 || '%'
+             OR pa.phone ILIKE '%' || $3 || '%'
+             OR EXISTS (
+               SELECT 1 FROM pm_project_vendors pv
+               JOIN pm_vendors v ON v.id = pv.vendor_id
+               WHERE pv.project_id = p.id AND (v.name ILIKE '%' || $3 || '%' OR v.phone ILIKE '%' || $3 || '%' OR v.trade ILIKE '%' || $3 || '%')
+             )
+             OR EXISTS (
+               SELECT 1 FROM pm_material_received mr
+               WHERE mr.project_id = p.id AND mr.supplier_name ILIKE '%' || $3 || '%'
+             )
+             OR EXISTS (
+               SELECT 1 FROM pm_project_local_vendors plv
+               WHERE plv.project_id = p.id AND (plv.name ILIKE '%' || $3 || '%' OR plv.phone ILIKE '%' || $3 || '%')
+             )
+             OR EXISTS (
+               SELECT 1 FROM pm_labor l
+               WHERE l.project_id = p.id AND (l.name ILIKE '%' || $3 || '%' OR l.phone ILIKE '%' || $3 || '%')
+             )
+           )
          ORDER BY p.name`,
         [projectId, projectStatus, search, startDate, endDate]
       );
@@ -541,6 +627,7 @@ export async function GET(req) {
            GROUP BY lp.labor_id
          )
          SELECT
+           l.id AS labor_id, l.project_id,
            l.name AS labor_name, COALESCE(l.phone, '—') AS phone, COALESCE(l.trade, '—') AS trade,
            COALESCE(v.name, 'Independent') AS vendor_name,
            p.name AS project_name, p.status AS project_status,
@@ -640,24 +727,85 @@ export async function GET(req) {
              AND ($2::text IS NULL OR $2 = 'all' OR p.status = $2)
            GROUP BY pv.vendor_id
          )
-         SELECT
-           v.name AS vendor_name, COALESCE(v.phone, '—') AS phone, COALESCE(v.trade, '—') AS trade,
-           COALESCE(proj_cnt.cnt, 0) AS projects_count,
-           COALESCE(dw.amt, 0) AS daily_earned,
-           COALESCE(ct.amt, 0) AS contract_earned,
-           COALESCE(ms.amt, 0) AS material_earned,
-           COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0) AS total_earned,
-           COALESCE(pd.amt, 0) AS total_paid,
-           (COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0)) - COALESCE(pd.amt, 0) AS balance_due
-         FROM pm_vendors v
-         LEFT JOIN dw ON dw.vendor_id = v.id
-         LEFT JOIN ct ON ct.vendor_id = v.id
-         LEFT JOIN ms ON ms.vendor_id = v.id
-         LEFT JOIN pd ON pd.vendor_id = v.id
-         LEFT JOIN proj_cnt ON proj_cnt.vendor_id = v.id
-         WHERE ($5::text IS NULL OR $5 = '' OR v.name ILIKE '%' || $5 || '%' OR v.phone ILIKE '%' || $5 || '%' OR v.trade ILIKE '%' || $5 || '%')
-           AND (COALESCE(dw.amt, 0) > 0 OR COALESCE(ct.amt, 0) > 0 OR COALESCE(ms.amt, 0) > 0 OR COALESCE(pd.amt, 0) > 0 OR COALESCE(proj_cnt.cnt, 0) > 0)
-         ORDER BY v.name`,
+         unified_vendors AS (
+           SELECT
+             v.name AS vendor_name, COALESCE(v.phone, '—') AS phone, COALESCE(v.trade, '—') AS trade,
+             COALESCE(proj_cnt.cnt, 0) AS projects_count,
+             COALESCE(dw.amt, 0) AS daily_earned,
+             COALESCE(ct.amt, 0) AS contract_earned,
+             COALESCE(ms.amt, 0) AS material_earned,
+             COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0) AS total_earned,
+             COALESCE(pd.amt, 0) AS total_paid,
+             (COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0)) - COALESCE(pd.amt, 0) AS balance_due
+           FROM pm_vendors v
+           LEFT JOIN dw ON dw.vendor_id = v.id
+           LEFT JOIN ct ON ct.vendor_id = v.id
+           LEFT JOIN ms ON ms.vendor_id = v.id
+           LEFT JOIN pd ON pd.vendor_id = v.id
+           LEFT JOIN proj_cnt ON proj_cnt.vendor_id = v.id
+           WHERE ($5::text IS NULL OR $5 = '' OR v.name ILIKE '%' || $5 || '%' OR v.phone ILIKE '%' || $5 || '%' OR v.trade ILIKE '%' || $5 || '%')
+             AND (COALESCE(dw.amt, 0) > 0 OR COALESCE(ct.amt, 0) > 0 OR COALESCE(ms.amt, 0) > 0 OR COALESCE(pd.amt, 0) > 0 OR COALESCE(proj_cnt.cnt, 0) > 0)
+
+           UNION ALL
+
+           SELECT
+             TRIM(mr.supplier_name) AS vendor_name,
+             '—' AS phone,
+             'Material Supplier' AS trade,
+             COUNT(DISTINCT mr.project_id) AS projects_count,
+             0 AS daily_earned,
+             0 AS contract_earned,
+             SUM(mr.amount) AS material_earned,
+             SUM(mr.amount) AS total_earned,
+             COALESCE((
+               SELECT SUM(sp.amount) FROM pm_supplier_payments sp
+               JOIN pm_projects pr ON pr.id = sp.project_id
+               WHERE NOT sp.is_deleted AND LOWER(TRIM(sp.supplier_name)) = LOWER(TRIM(mr.supplier_name))
+                 AND ($1::bigint IS NULL OR pr.id = $1::bigint)
+                 AND ($2::text IS NULL OR $2 = 'all' OR pr.status = $2)
+                 AND ($3::date IS NULL OR sp.payment_date >= $3::date)
+                 AND ($4::date IS NULL OR sp.payment_date <= $4::date)
+             ), 0) AS total_paid,
+             SUM(mr.amount) - COALESCE((
+               SELECT SUM(sp.amount) FROM pm_supplier_payments sp
+               JOIN pm_projects pr ON pr.id = sp.project_id
+               WHERE NOT sp.is_deleted AND LOWER(TRIM(sp.supplier_name)) = LOWER(TRIM(mr.supplier_name))
+                 AND ($1::bigint IS NULL OR pr.id = $1::bigint)
+                 AND ($2::text IS NULL OR $2 = 'all' OR pr.status = $2)
+                 AND ($3::date IS NULL OR sp.payment_date >= $3::date)
+                 AND ($4::date IS NULL OR sp.payment_date <= $4::date)
+             ), 0) AS balance_due
+           FROM pm_material_received mr
+           JOIN pm_projects p ON p.id = mr.project_id
+           WHERE NOT mr.is_deleted AND mr.supplier_name IS NOT NULL AND TRIM(mr.supplier_name) <> ''
+             AND ($1::bigint IS NULL OR p.id = $1::bigint)
+             AND ($2::text IS NULL OR $2 = 'all' OR p.status = $2)
+             AND ($3::date IS NULL OR mr.received_date >= $3::date)
+             AND ($4::date IS NULL OR mr.received_date <= $4::date)
+             AND ($5::text IS NULL OR $5 = '' OR mr.supplier_name ILIKE '%' || $5 || '%' OR 'Material Supplier' ILIKE '%' || $5 || '%')
+           GROUP BY TRIM(mr.supplier_name)
+
+           UNION ALL
+
+           SELECT
+             plv.name AS vendor_name,
+             COALESCE(plv.phone, '—') AS phone,
+             COALESCE(plv.material_type, 'Local Vendor') AS trade,
+             1 AS projects_count,
+             0 AS daily_earned,
+             0 AS contract_earned,
+             0 AS material_earned,
+             0 AS total_earned,
+             0 AS total_paid,
+             0 AS balance_due
+           FROM pm_project_local_vendors plv
+           JOIN pm_projects p ON p.id = plv.project_id
+           WHERE ($1::bigint IS NULL OR p.id = $1::bigint)
+             AND ($2::text IS NULL OR $2 = 'all' OR p.status = $2)
+             AND ($5::text IS NULL OR $5 = '' OR plv.name ILIKE '%' || $5 || '%' OR plv.phone ILIKE '%' || $5 || '%' OR plv.material_type ILIKE '%' || $5 || '%')
+         )
+         SELECT * FROM unified_vendors
+         ORDER BY vendor_name`,
         [projectId, projectStatus, startDate, endDate, search]
       );
       data = r.rows;
