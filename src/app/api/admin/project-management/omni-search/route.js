@@ -1,7 +1,24 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { requirePmAccess, ensureProjectManagementSchema, assertAgentAccess } from '@/lib/project-management';
+import { requirePmAccess, ensureProjectManagementSchema } from '@/lib/project-management';
 import { unauthorized } from '@/lib/auth';
+
+function makeSearchFilter(columnExpr, rawQuery) {
+  const q = (rawQuery || '').trim();
+  const tokens = q.split(/\s+/).filter(Boolean);
+  const params = [`%${q}%`];
+  if (tokens.length <= 1) {
+    return { sql: `${columnExpr} ILIKE $1`, params };
+  }
+  const tokenClauses = tokens.map((t) => {
+    params.push(`%${t}%`);
+    return `${columnExpr} ILIKE $${params.length}`;
+  });
+  return {
+    sql: `(${columnExpr} ILIKE $1 OR (${tokenClauses.join(' AND ')}))`,
+    params,
+  };
+}
 
 export async function GET(req) {
   const admin = await requirePmAccess(req);
@@ -18,19 +35,19 @@ export async function GET(req) {
         query: '',
         results: {
           labor: [],
+          contractors: [],
           vendors: [],
           projects: [],
           materials: [],
           parties: [],
           agents: []
         },
-        counts: { labor: 0, vendors: 0, projects: 0, materials: 0, parties: 0, agents: 0 }
+        counts: { labor: 0, contractors: 0, vendors: 0, projects: 0, materials: 0, parties: 0, agents: 0 }
       });
     }
 
-    const searchPattern = `%${q}%`;
-
     // ── 1. Search Labor & Workers (with cross-project aggregation) ───────────────
+    const laborFilter = makeSearchFilter("CONCAT_WS(' ', l.name, l.phone, l.trade, p.name)", q);
     const laborQuery = await pool.query(
       `WITH att AS (
          SELECT la.labor_id,
@@ -65,13 +82,12 @@ export async function GET(req) {
        JOIN pm_projects p ON p.id = l.project_id
        LEFT JOIN att ON att.labor_id = l.id
        LEFT JOIN pay ON pay.labor_id = l.id
-       WHERE l.name ILIKE $1 OR l.phone ILIKE $1 OR l.trade ILIKE $1
+       WHERE ${laborFilter.sql}
        ORDER BY l.name, p.name
        LIMIT 30`,
-      [searchPattern]
+      laborFilter.params
     );
 
-    // Group labor records by unique identity (phone or name) to show cross-project rollups
     const laborGroupMap = new Map();
     for (const row of laborQuery.rows) {
       const key = (row.phone && row.phone !== '—') ? `phone:${row.phone}` : `name:${row.labor_name.trim().toLowerCase()}`;
@@ -109,8 +125,9 @@ export async function GET(req) {
     }
     const laborResults = Array.from(laborGroupMap.values());
 
-    // ── 2. Search Vendors & Contractors ─────────────────────────────────────────
-    const vendorQuery = await pool.query(
+    // ── 2. Search Service Providers & Contractors ────────────────────────────────
+    const contractorFilter = makeSearchFilter('search_text', q);
+    const contractorQuery = await pool.query(
       `WITH dw AS (
          SELECT pv.vendor_id, pv.project_id, SUM(a.wage_amount) AS amt
          FROM pm_project_vendors pv
@@ -137,68 +154,178 @@ export async function GET(req) {
          JOIN pm_vendor_payments vp ON vp.project_vendor_id = pv.id
          WHERE NOT vp.is_deleted
          GROUP BY pv.vendor_id, pv.project_id
+       ),
+       all_contractors AS (
+         SELECT
+           v.id::text AS vendor_id,
+           v.name AS vendor_name,
+           COALESCE(v.phone, '—') AS phone,
+           COALESCE(v.trade, 'Contractor') AS trade,
+           'contractor' AS entity_kind,
+           p.id AS project_id,
+           COALESCE(p.name, '—') AS project_name,
+           COALESCE(p.status, 'running') AS project_status,
+           COALESCE(pv.id, 0) AS project_vendor_id,
+           COALESCE(pv.work_description, 'Service Provider / Contractor') AS work_description,
+           COALESCE(pv.pay_type, 'contract') AS pay_type,
+           COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0) AS earned_amount,
+           COALESCE(pd.amt, 0) AS paid_amount,
+           (COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0)) - COALESCE(pd.amt, 0) AS balance_due,
+           CONCAT_WS(' ', v.name, v.phone, v.trade, pv.work_description, p.name, 'Service Provider Contractor') AS search_text
+         FROM pm_vendors v
+         LEFT JOIN pm_project_vendors pv ON pv.vendor_id = v.id
+         LEFT JOIN pm_projects p ON p.id = pv.project_id
+         LEFT JOIN dw ON dw.vendor_id = v.id AND dw.project_id = p.id
+         LEFT JOIN ct ON ct.vendor_id = v.id AND ct.project_id = p.id
+         LEFT JOIN ms ON ms.vendor_id = v.id AND ms.project_id = p.id
+         LEFT JOIN pd ON pd.vendor_id = v.id AND pd.project_id = p.id
        )
-       SELECT
-         v.id AS vendor_id,
-         v.name AS vendor_name,
-         COALESCE(v.phone, '—') AS phone,
-         COALESCE(v.trade, 'Vendor') AS trade,
-         p.id AS project_id,
-         p.name AS project_name,
-         p.status AS project_status,
-         pv.id AS project_vendor_id,
-         pv.work_description,
-         pv.pay_type,
-         COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0) AS earned_amount,
-         COALESCE(pd.amt, 0) AS paid_amount,
-         (COALESCE(dw.amt, 0) + COALESCE(ct.amt, 0) + COALESCE(ms.amt, 0)) - COALESCE(pd.amt, 0) AS balance_due
-       FROM pm_vendors v
-       JOIN pm_project_vendors pv ON pv.vendor_id = v.id
-       JOIN pm_projects p ON p.id = pv.project_id
-       LEFT JOIN dw ON dw.vendor_id = v.id AND dw.project_id = p.id
-       LEFT JOIN ct ON ct.vendor_id = v.id AND ct.project_id = p.id
-       LEFT JOIN ms ON ms.vendor_id = v.id AND ms.project_id = p.id
-       LEFT JOIN pd ON pd.vendor_id = v.id AND pd.project_id = p.id
-       WHERE v.name ILIKE $1 OR v.phone ILIKE $1 OR v.trade ILIKE $1 OR pv.work_description ILIKE $1
-       ORDER BY v.name, p.name
-       LIMIT 30`,
-      [searchPattern]
+       SELECT * FROM all_contractors
+       WHERE ${contractorFilter.sql}
+       ORDER BY vendor_name, project_name
+       LIMIT 40`,
+      contractorFilter.params
     );
 
-    const vendorGroupMap = new Map();
-    for (const row of vendorQuery.rows) {
-      const vid = row.vendor_id;
-      if (!vendorGroupMap.has(vid)) {
-        vendorGroupMap.set(vid, {
-          vendor_id: vid,
+    const contractorGroupMap = new Map();
+    for (const row of contractorQuery.rows) {
+      const key = (row.phone && row.phone !== '—') ? `phone:${row.phone}` : `name:${row.vendor_name.trim().toLowerCase()}`;
+      if (!contractorGroupMap.has(key)) {
+        contractorGroupMap.set(key, {
+          vendor_id: row.vendor_id,
           name: row.vendor_name,
           phone: row.phone,
           trade: row.trade,
+          entity_kind: 'contractor',
           total_earned: 0,
           total_paid: 0,
           total_balance: 0,
           projects: []
         });
       }
-      const group = vendorGroupMap.get(vid);
+      const group = contractorGroupMap.get(key);
       group.total_earned += Number(row.earned_amount) || 0;
       group.total_paid += Number(row.paid_amount) || 0;
       group.total_balance += Number(row.balance_due) || 0;
-      group.projects.push({
-        project_vendor_id: row.project_vendor_id,
-        project_id: row.project_id,
-        project_name: row.project_name,
-        project_status: row.project_status,
-        work_description: row.work_description,
-        pay_type: row.pay_type,
-        earned: Number(row.earned_amount) || 0,
-        paid: Number(row.paid_amount) || 0,
-        balance: Number(row.balance_due) || 0,
-      });
+      if (row.project_id && row.project_vendor_id && Number(row.project_vendor_id) > 0) {
+        group.projects.push({
+          project_vendor_id: row.project_vendor_id,
+          project_id: row.project_id,
+          project_name: row.project_name,
+          project_status: row.project_status,
+          work_description: row.work_description,
+          pay_type: row.pay_type,
+          earned: Number(row.earned_amount) || 0,
+          paid: Number(row.paid_amount) || 0,
+          balance: Number(row.balance_due) || 0,
+        });
+      }
+    }
+    const contractorResults = Array.from(contractorGroupMap.values());
+
+    // ── 3. Search Material Vendors & Suppliers ──────────────────────────────────
+    const vendorFilter = makeSearchFilter('search_text', q);
+    const vendorQuery = await pool.query(
+      `WITH supp_paid AS (
+         SELECT
+           project_id,
+           LOWER(TRIM(supplier_name)) AS supp_key,
+           COALESCE(SUM(amount), 0) AS total_paid
+         FROM pm_supplier_payments
+         WHERE NOT is_deleted AND supplier_name IS NOT NULL
+         GROUP BY project_id, LOWER(TRIM(supplier_name))
+       ),
+       all_mat_vendors AS (
+         -- Material Deliveries from pm_material_received
+         SELECT
+           ('supp_' || md5(LOWER(TRIM(mr.supplier_name)))) AS vendor_id,
+           TRIM(mr.supplier_name) AS vendor_name,
+           '—' AS phone,
+           'Material Supplier' AS trade,
+           'supplier' AS entity_kind,
+           p.id AS project_id,
+           p.name AS project_name,
+           p.status AS project_status,
+           STRING_AGG(DISTINCT (m.name || ' (' || mr.quantity || ' ' || COALESCE(mr.unit, m.unit, 'units') || ')'), ', ') AS work_description,
+           'material_supply' AS pay_type,
+           SUM(mr.amount) AS earned_amount,
+           COALESCE(sp.total_paid, 0) AS paid_amount,
+           SUM(mr.amount) - COALESCE(sp.total_paid, 0) AS balance_due,
+           CONCAT_WS(' ', mr.supplier_name, STRING_AGG(DISTINCT m.name, ' '), p.name, 'Material Vendor Supplier') AS search_text
+         FROM pm_material_received mr
+         JOIN pm_projects p ON p.id = mr.project_id
+         JOIN pm_materials m ON m.id = mr.material_id
+         LEFT JOIN supp_paid sp ON sp.project_id = mr.project_id AND sp.supp_key = LOWER(TRIM(mr.supplier_name))
+         WHERE NOT mr.is_deleted AND mr.supplier_name IS NOT NULL AND TRIM(mr.supplier_name) <> ''
+         GROUP BY mr.supplier_name, p.id, p.name, p.status, sp.total_paid
+
+         UNION ALL
+
+         -- Local Project Site Vendors
+         SELECT
+           ('local_' || plv.id) AS vendor_id,
+           plv.name AS vendor_name,
+           COALESCE(plv.phone, '—') AS phone,
+           COALESCE(plv.material_type, 'Local Vendor') AS trade,
+           'supplier' AS entity_kind,
+           p.id AS project_id,
+           p.name AS project_name,
+           p.status AS project_status,
+           COALESCE(plv.material_type, 'Local Site Vendor') AS work_description,
+           'local_vendor' AS pay_type,
+           0 AS earned_amount,
+           0 AS paid_amount,
+           0 AS balance_due,
+           CONCAT_WS(' ', plv.name, plv.phone, plv.city, plv.material_type, p.name, 'Local Vendor Material Supplier') AS search_text
+         FROM pm_project_local_vendors plv
+         JOIN pm_projects p ON p.id = plv.project_id
+       )
+       SELECT * FROM all_mat_vendors
+       WHERE ${vendorFilter.sql}
+       ORDER BY vendor_name, project_name
+       LIMIT 40`,
+      vendorFilter.params
+    );
+
+    const vendorGroupMap = new Map();
+    for (const row of vendorQuery.rows) {
+      const key = (row.phone && row.phone !== '—') ? `phone:${row.phone}` : `name:${row.vendor_name.trim().toLowerCase()}`;
+      if (!vendorGroupMap.has(key)) {
+        vendorGroupMap.set(key, {
+          vendor_id: row.vendor_id,
+          name: row.vendor_name,
+          supplier_name: row.vendor_name,
+          phone: row.phone,
+          trade: row.trade,
+          entity_kind: 'supplier',
+          total_earned: 0,
+          total_paid: 0,
+          total_balance: 0,
+          projects: []
+        });
+      }
+      const group = vendorGroupMap.get(key);
+      group.total_earned += Number(row.earned_amount) || 0;
+      group.total_paid += Number(row.paid_amount) || 0;
+      group.total_balance += Number(row.balance_due) || 0;
+      if (row.project_id) {
+        group.projects.push({
+          project_id: row.project_id,
+          project_name: row.project_name,
+          project_status: row.project_status,
+          supplier_name: row.vendor_name,
+          work_description: row.work_description,
+          pay_type: row.pay_type,
+          earned: Number(row.earned_amount) || 0,
+          paid: Number(row.paid_amount) || 0,
+          balance: Number(row.balance_due) || 0,
+        });
+      }
     }
     const vendorResults = Array.from(vendorGroupMap.values());
 
     // ── 3. Search Projects ──────────────────────────────────────────────────────
+    const projFilter = makeSearchFilter("CONCAT_WS(' ', p.name, pa.name, pa.phone, p.site_address)", q);
     const projectQuery = await pool.query(
       `WITH exp AS (
          SELECT project_id, COALESCE(SUM(amount), 0) AS other_amt FROM pm_other_expenses WHERE NOT is_deleted GROUP BY project_id
@@ -218,13 +345,31 @@ export async function GET(req) {
        FROM pm_projects p
        JOIN pm_parties pa ON pa.id = p.party_id
        LEFT JOIN rcv ON rcv.project_id = p.id
-       WHERE p.name ILIKE $1 OR pa.name ILIKE $1 OR pa.phone ILIKE $1 OR p.site_address ILIKE $1
+       WHERE (${projFilter.sql})
+          OR EXISTS (
+            SELECT 1 FROM pm_project_vendors pv
+            JOIN pm_vendors v ON v.id = pv.vendor_id
+            WHERE pv.project_id = p.id AND (v.name ILIKE $1 OR v.phone ILIKE $1 OR v.trade ILIKE $1)
+          )
+          OR EXISTS (
+            SELECT 1 FROM pm_material_received mr
+            WHERE mr.project_id = p.id AND mr.supplier_name ILIKE $1
+          )
+          OR EXISTS (
+            SELECT 1 FROM pm_project_local_vendors plv
+            WHERE plv.project_id = p.id AND (plv.name ILIKE $1 OR plv.phone ILIKE $1)
+          )
+          OR EXISTS (
+            SELECT 1 FROM pm_labor l
+            WHERE l.project_id = p.id AND (l.name ILIKE $1 OR l.phone ILIKE $1)
+          )
        ORDER BY p.name
        LIMIT 15`,
-      [searchPattern]
+      projFilter.params
     );
 
     // ── 4. Search Materials (Stock & Consumption) ──────────────────────────────
+    const matFilter = makeSearchFilter("CONCAT_WS(' ', m.name, m.category, COALESCE(supp.names, ''))", q);
     const materialQuery = await pool.query(
       `WITH rcv AS (
          SELECT material_id, SUM(quantity) qty, SUM(amount) amt
@@ -237,6 +382,12 @@ export async function GET(req) {
        adj AS (
          SELECT material_id, SUM(quantity) qty
          FROM pm_material_adjustments WHERE NOT is_deleted GROUP BY material_id
+       ),
+       supp AS (
+         SELECT material_id, STRING_AGG(DISTINCT supplier_name, ' ') AS names
+         FROM pm_material_received
+         WHERE NOT is_deleted AND supplier_name IS NOT NULL
+         GROUP BY material_id
        )
        SELECT
          m.id, m.name, m.unit, m.category, m.min_stock_level,
@@ -262,13 +413,15 @@ export async function GET(req) {
        LEFT JOIN rcv ON rcv.material_id = m.id
        LEFT JOIN used ON used.material_id = m.id
        LEFT JOIN adj ON adj.material_id = m.id
-       WHERE m.name ILIKE $1 OR m.category ILIKE $1
+       LEFT JOIN supp ON supp.material_id = m.id
+       WHERE ${matFilter.sql}
        ORDER BY m.name
        LIMIT 15`,
-      [searchPattern]
+      matFilter.params
     );
 
     // ── 5. Search Clients / Parties ─────────────────────────────────────────────
+    const partyFilter = makeSearchFilter("CONCAT_WS(' ', pa.name, pa.phone, pa.address)", q);
     const partyQuery = await pool.query(
       `SELECT
          pa.id, pa.name, COALESCE(pa.phone, '—') AS phone, pa.address,
@@ -282,25 +435,26 @@ export async function GET(req) {
          ), 0) AS total_received
        FROM pm_parties pa
        LEFT JOIN pm_projects p ON p.party_id = pa.id
-       WHERE pa.name ILIKE $1 OR pa.phone ILIKE $1 OR pa.address ILIKE $1
+       WHERE ${partyFilter.sql}
        GROUP BY pa.id, pa.name, pa.phone, pa.address
        ORDER BY pa.name
        LIMIT 15`,
-      [searchPattern]
+      partyFilter.params
     );
 
     // ── 6. Search Agents ────────────────────────────────────────────────────────
     let agentResults = [];
     try {
+      const agentFilter = makeSearchFilter("CONCAT_WS(' ', u.name, u.email, u.phone)", q);
       const agentQuery = await pool.query(
         `SELECT u.id, u.name, u.email, COALESCE(u.phone, '—') AS phone,
                 COUNT(DISTINCT pa.project_id) AS assigned_projects
          FROM users u
          LEFT JOIN pm_project_agents pa ON pa.agent_id = u.id
-         WHERE u.role = 'agent' AND (u.name ILIKE $1 OR u.email ILIKE $1 OR u.phone ILIKE $1)
+         WHERE u.role = 'agent' AND (${agentFilter.sql})
          GROUP BY u.id, u.name, u.email, u.phone
          LIMIT 10`,
-        [searchPattern]
+        agentFilter.params
       );
       agentResults = agentQuery.rows;
     } catch {}
@@ -310,6 +464,7 @@ export async function GET(req) {
       query: q,
       results: {
         labor: laborResults,
+        contractors: contractorResults,
         vendors: vendorResults,
         projects: projectQuery.rows,
         materials: materialQuery.rows,
@@ -318,6 +473,7 @@ export async function GET(req) {
       },
       counts: {
         labor: laborResults.length,
+        contractors: contractorResults.length,
         vendors: vendorResults.length,
         projects: projectQuery.rows.length,
         materials: materialQuery.rows.length,
@@ -329,4 +485,3 @@ export async function GET(req) {
     return NextResponse.json({ success: false, error: e.message }, { status: 500 });
   }
 }
-

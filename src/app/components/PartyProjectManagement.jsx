@@ -1035,19 +1035,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   // Open Quick Payment Modal
   const openQuickPayment = (entity, type = 'labor', proj = null) => {
+    const isSupplier =
+      type === 'supplier' ||
+      entity.entity_kind === 'supplier' ||
+      entity.pay_type === 'material_supply' ||
+      entity.trade === 'Material Supplier' ||
+      entity.trade === 'Material Vendor' ||
+      (type === 'vendor' && !entity.project_vendor_id && !proj?.project_vendor_id);
+    const isLabor = type === 'labor' && !isSupplier;
+    const resolvedType = isLabor ? 'labor' : (isSupplier ? 'supplier' : 'contractor');
+
     const defaultProj = proj || (entity.projects && entity.projects[0]) || {
-      id: type === 'labor' ? (entity.labor_id || entity.id) : (entity.project_vendor_id || entity.id),
+      id: isLabor ? (entity.labor_id || entity.id) : (entity.project_vendor_id || entity.id),
       labor_id: entity.labor_id || entity.id,
       project_vendor_id: entity.project_vendor_id || entity.id,
       project_id: entity.project_id,
       project_name: entity.project_name,
+      supplier_name: entity.supplier_name || entity.name,
       balance: entity.balance_due ?? entity.total_balance ?? 0,
     };
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
 
     setQuickPaymentForm({
-      type,
-      id: type === 'labor' ? (defaultProj?.labor_id || entity.labor_id || entity.id || '') : (defaultProj?.project_vendor_id || entity.project_vendor_id || entity.id || ''),
+      type: resolvedType,
+      id: isLabor ? (defaultProj?.labor_id || entity.labor_id || entity.id || '') : (defaultProj?.project_vendor_id || entity.project_vendor_id || entity.id || ''),
+      supplier_name: entity.supplier_name || defaultProj?.supplier_name || entity.name || entity.labor_name || entity.vendor_name || entity.entity_name || '',
+      supplier_id: entity.supplier_id || defaultProj?.supplier_id || null,
       name: entity.name || entity.labor_name || entity.vendor_name || entity.entity_name || '',
       project_id: defaultProj?.project_id || entity.project_id || '',
       project_name: defaultProj?.project_name || entity.project_name || '',
@@ -1065,8 +1078,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   // Save Quick Payment
   const handleSaveQuickPayment = async (e) => {
     e?.preventDefault?.();
-    if (!quickPaymentForm.id || !quickPaymentForm.amount || Number(quickPaymentForm.amount) <= 0) {
+    if (!quickPaymentForm.amount || Number(quickPaymentForm.amount) <= 0) {
       setMessage('Please enter a valid payment amount');
+      return;
+    }
+    if (quickPaymentForm.type !== 'supplier' && !quickPaymentForm.id) {
+      setMessage('Payee identification missing');
+      return;
+    }
+    if (!quickPaymentForm.project_id) {
+      setMessage('Please select a project');
       return;
     }
     setSavingQuickPayment(true);
@@ -1081,6 +1102,28 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           transaction_reference: quickPaymentForm.transaction_reference,
         };
         const res = await api('/api/admin/project-management/labor/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.success) {
+          setMessage(`✓ Payment of ₹${quickPaymentForm.amount} recorded for ${quickPaymentForm.name}`);
+          setQuickPaymentModal(false);
+        } else {
+          setMessage(res.error || 'Failed to record payment');
+        }
+      } else if (quickPaymentForm.type === 'supplier') {
+        const body = {
+          project_id: Number(quickPaymentForm.project_id),
+          supplier_name: (quickPaymentForm.supplier_name || quickPaymentForm.name || '').trim(),
+          supplier_id: quickPaymentForm.supplier_id ? Number(quickPaymentForm.supplier_id) : null,
+          amount: Number(quickPaymentForm.amount),
+          payment_date: quickPaymentForm.payment_date,
+          mode: quickPaymentForm.mode,
+          note: quickPaymentForm.note,
+          transaction_reference: quickPaymentForm.transaction_reference,
+        };
+        const res = await api('/api/admin/project-management/supplier-payments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -10526,7 +10569,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 <span>Pay</span>
                               </button>
                             )}
-                            {(row.entity_type === 'Contractor' || row.entity_type === 'Vendor / Supplier' || row.entity_type === 'Service Provider') && (
+                            {(row.entity_type === 'Contractor' || row.entity_type === 'Service Provider') && (
                               <button
                                 type="button"
                                 onClick={() => openQuickPayment({
@@ -10539,7 +10582,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     project_name: row.project_name,
                                     balance: row.balance_due,
                                   }],
-                                }, 'vendor')}
+                                }, 'contractor')}
                                 style={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
@@ -10557,7 +10600,42 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 }}
                               >
                                 <span>💳</span>
-                                <span>Pay</span>
+                                <span>Pay Contractor</span>
+                              </button>
+                            )}
+                            {(row.entity_type === 'Vendor / Supplier' || row.entity_type === 'Vendor') && (
+                              <button
+                                type="button"
+                                onClick={() => openQuickPayment({
+                                  supplier_name: row.entity_name,
+                                  name: row.entity_name,
+                                  balance_due: row.balance_due,
+                                  entity_kind: 'supplier',
+                                  projects: [{
+                                    supplier_name: row.entity_name,
+                                    project_id: row.project_id,
+                                    project_name: row.project_name,
+                                    balance: row.balance_due,
+                                  }],
+                                }, 'supplier')}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 4,
+                                  fontSize: 11,
+                                  padding: '5px 10px',
+                                  borderRadius: 6,
+                                  background: '#f0fdf4',
+                                  color: '#16a34a',
+                                  border: '1px solid #bbf7d0',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap',
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                <span>💳</span>
+                                <span>Pay Vendor</span>
                               </button>
                             )}
                           </div>
@@ -11200,7 +11278,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </span>
                 </div>
                 <p style={{ margin: '4px 0 0', fontSize: 12, color: '#64748b' }}>
-                  Found {((omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0))} match(es) across all project records
+                  Found {((omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.contractors || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0))} match(es) across all project records
                 </p>
               </div>
 
@@ -11241,10 +11319,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               }}
             >
               {[
-                { id: 'all', label: 'All Matches', count: (omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0) },
+                { id: 'all', label: 'All Matches', count: (omniSearchResults.counts?.labor || 0) + (omniSearchResults.counts?.projects || 0) + (omniSearchResults.counts?.contractors || 0) + (omniSearchResults.counts?.vendors || 0) + (omniSearchResults.counts?.materials || 0) + (omniSearchResults.counts?.parties || 0) + (omniSearchResults.counts?.agents || 0) },
                 { id: 'labor', label: 'Workers', count: omniSearchResults.counts?.labor || 0, icon: '👷' },
                 { id: 'projects', label: 'Projects', count: omniSearchResults.counts?.projects || 0, icon: '🏗️' },
-                { id: 'vendors', label: 'Vendors & Contractors', count: omniSearchResults.counts?.vendors || 0, icon: '🏢' },
+                { id: 'contractors', label: 'Service Providers & Contractors', count: omniSearchResults.counts?.contractors || 0, icon: '🛠️' },
+                { id: 'vendors', label: 'Vendors', count: omniSearchResults.counts?.vendors || 0, icon: '🚚' },
                 { id: 'materials', label: 'Materials', count: omniSearchResults.counts?.materials || 0, icon: '🧱' },
                 { id: 'parties', label: 'Clients', count: omniSearchResults.counts?.parties || 0, icon: '👥' },
                 { id: 'agents', label: 'Agents', count: omniSearchResults.counts?.agents || 0, icon: '🛡️' },
@@ -11582,13 +11661,128 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </div>
               )}
 
-              {/* 3. Vendors & Contractors Section */}
+              {/* 3. Service Providers & Contractors Section */}
+              {(omniActiveTab === 'all' || omniActiveTab === 'contractors') && (omniSearchResults.results?.contractors?.length > 0) && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                    <span style={{ fontSize: 16 }}>🛠️</span>
+                    <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Service Providers &amp; Contractors ({omniSearchResults.results.contractors.length})
+                    </h4>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {omniSearchResults.results.contractors.map((c) => (
+                      <div
+                        key={c.vendor_id}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: 12,
+                          padding: 16,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{c.name}</span>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                background: '#fef3c7',
+                                color: '#b45309',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                border: '1px solid #fde68a',
+                              }}
+                            >
+                              {c.trade}
+                            </span>
+                            <span style={{ fontSize: 12, color: '#64748b' }}>📞 {c.phone}</span>
+                          </div>
+
+                          <div style={{ display: 'flex', gap: 10, fontSize: 12 }}>
+                            <div style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: 6 }}>Earned: <strong>{INR(c.total_earned)}</strong></div>
+                            <div style={{ background: '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>Paid: <strong style={{ color: '#16a34a' }}>{INR(c.total_paid)}</strong></div>
+                            <div style={{ background: c.total_balance > 0 ? '#fff1f2' : '#f0fdf4', padding: '4px 8px', borderRadius: 6 }}>
+                              Due: <strong style={{ color: c.total_balance > 0 ? '#e11d48' : '#16a34a' }}>{INR(c.total_balance)}</strong>
+                            </div>
+                          </div>
+                        </div>
+
+                        {c.projects?.length > 0 && (
+                          <div style={{ overflowX: 'auto', background: '#ffffff', borderRadius: 8, border: '1px solid #f1f5f9', marginTop: 12 }}>
+                            <table style={{ margin: 0, width: '100%', fontSize: 12 }}>
+                              <thead>
+                                <tr style={{ background: '#f8fafc' }}>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>TYPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>BALANCE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b', textAlign: 'center' }}>ACTION</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {c.projects.map((cp, cpIdx) => (
+                                  <tr key={cpIdx} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                    <td style={{ padding: '9px 12px', fontWeight: 600, color: '#0f172a' }}>{cp.project_name}</td>
+                                    <td style={{ padding: '9px 12px', color: '#475569' }}>{cp.work_description || '—'}</td>
+                                    <td style={{ padding: '9px 12px' }}>
+                                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#f1f5f9', color: '#475569', fontWeight: 600 }}>
+                                        {cp.pay_type}
+                                      </span>
+                                    </td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(cp.earned)}</td>
+                                    <td style={{ padding: '9px 12px' }}>{INR(cp.paid)}</td>
+                                    <td style={{ padding: '9px 12px', fontWeight: 700, color: cp.balance > 0 ? '#e11d48' : '#16a34a' }}>
+                                      {INR(cp.balance)}
+                                    </td>
+                                    <td style={{ padding: '9px 12px', textAlign: 'center' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => openQuickPayment(c, 'contractor', cp)}
+                                        style={{
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: 4,
+                                          fontSize: 11,
+                                          padding: '5px 10px',
+                                          borderRadius: 6,
+                                          background: '#fef3c7',
+                                          color: '#b45309',
+                                          border: '1px solid #fde68a',
+                                          cursor: 'pointer',
+                                          fontWeight: 600,
+                                          whiteSpace: 'nowrap',
+                                          lineHeight: 1.2,
+                                        }}
+                                      >
+                                        <span>💳</span>
+                                        <span>Pay Contractor</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Vendors (Material Suppliers) Section */}
               {(omniActiveTab === 'all' || omniActiveTab === 'vendors') && (omniSearchResults.results?.vendors?.length > 0) && (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <span style={{ fontSize: 16 }}>🏢</span>
+                    <span style={{ fontSize: 16 }}>🚚</span>
                     <h4 style={{ margin: 0, fontSize: 13, color: '#0f172a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      Vendors &amp; Contractors ({omniSearchResults.results.vendors.length})
+                      Vendors ({omniSearchResults.results.vendors.length})
                     </h4>
                   </div>
 
@@ -11610,15 +11804,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             <span
                               style={{
                                 fontSize: 11,
-                                background: '#fef3c7',
-                                color: '#b45309',
+                                background: '#f0fdf4',
+                                color: '#15803d',
                                 padding: '2px 8px',
                                 borderRadius: 6,
                                 fontWeight: 600,
-                                border: '1px solid #fde68a',
+                                border: '1px solid #bbf7d0',
                               }}
                             >
-                              {v.trade}
+                              {v.trade || 'Material Vendor'}
                             </span>
                             <span style={{ fontSize: 12, color: '#64748b' }}>📞 {v.phone}</span>
                           </div>
@@ -11638,7 +11832,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               <thead>
                                 <tr style={{ background: '#f8fafc' }}>
                                   <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PROJECT</th>
-                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE</th>
+                                  <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>SCOPE / SUPPLIED ITEMS</th>
                                   <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>TYPE</th>
                                   <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>EARNED</th>
                                   <th style={{ padding: '8px 12px', fontSize: 11, color: '#64748b' }}>PAID</th>
@@ -11664,7 +11858,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     <td style={{ padding: '9px 12px', textAlign: 'center' }}>
                                       <button
                                         type="button"
-                                        onClick={() => openQuickPayment(v, 'vendor', vp)}
+                                        onClick={() => openQuickPayment(v, 'supplier', vp)}
                                         style={{
                                           display: 'inline-flex',
                                           alignItems: 'center',
@@ -12084,7 +12278,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   💳 Record Quick Payment
                 </h3>
                 <p style={{ margin: '3px 0 0', fontSize: 13, color: '#64748b' }}>
-                  Payee: <strong style={{ color: '#0f172a' }}>{quickPaymentForm.name}</strong> ({quickPaymentForm.type === 'labor' ? 'Worker' : 'Vendor/Contractor'})
+                  Payee: <strong style={{ color: '#0f172a' }}>{quickPaymentForm.name}</strong> ({quickPaymentForm.type === 'labor' ? 'Worker' : quickPaymentForm.type === 'supplier' ? 'Vendor' : 'Service Provider / Contractor'})
                 </p>
               </div>
               <button
@@ -12114,12 +12308,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     value={quickPaymentForm.project_id}
                     onChange={(e) => {
                       const pid = Number(e.target.value);
-                      const matched = quickPaymentForm.available_projects?.find((p) => p.project_id === pid);
+                      const matched = quickPaymentForm.available_projects?.find((p) => Number(p.project_id) === pid);
                       setQuickPaymentForm((prev) => ({
                         ...prev,
                         project_id: pid,
                         project_name: matched?.project_name || prev.project_name,
                         id: prev.type === 'labor' ? (matched?.labor_id || prev.id) : (matched?.project_vendor_id || prev.id),
+                        supplier_name: matched?.supplier_name || prev.supplier_name,
                         balance_due: matched?.balance ?? prev.balance_due,
                       }));
                     }}
