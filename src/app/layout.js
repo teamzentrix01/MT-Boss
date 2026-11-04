@@ -122,7 +122,9 @@ export default function RootLayout({ children }) {
     };
     const onInput = (event) => validateField(event.target);
     const onSubmit = (event) => {
-      if (event.target.noValidate || event.target.hasAttribute('data-no-auto-validate')) return;
+      if (!event.target || !(event.target instanceof HTMLElement)) return;
+      if (event.target.noValidate || event.target.hasAttribute('data-no-auto-validate') || event.target.hasAttribute('noValidate')) return;
+      if (typeof event.target.querySelectorAll !== 'function') return;
       const fields = Array.from(event.target.querySelectorAll('input'));
       const ok = fields.every(validateField);
       if (!ok) {
@@ -156,14 +158,14 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en" className={`${isDarkMode ? "dark-mode dark" : ""} ${isShopPage ? "shop-html" : ""}`}>
+    <html lang="en" suppressHydrationWarning className={`${isDarkMode ? "dark-mode dark" : ""} ${isShopPage ? "shop-html" : ""}`}>
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
       </head>
-      <body className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-clip"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+      <body suppressHydrationWarning className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-clip"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>
         <PrivacyConsentGuard />
         {!isSoftwarePanel && <FreeWhatsAppNotifier />}
         {!isAdminDashboard && <Navbar isDarkMode={isDarkMode} toggleTheme={toggleTheme} />}

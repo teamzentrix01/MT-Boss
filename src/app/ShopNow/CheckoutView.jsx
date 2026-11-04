@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -263,19 +263,73 @@ export default function CheckoutView({ productId: initialProductId }) {
     }
   };
 
-  const handleCheckCity = async (city) => {
+  const handleCheckCity = useCallback(async (city, categoryName = null) => {
     if (!city) return;
-    const catName = product?.category || cartItems[0]?.product?.category?.name || "";
+    const catName = categoryName ?? (product?.category || (typeof cartItems[0]?.product?.category === 'object' ? cartItems[0]?.product?.category?.name : cartItems[0]?.product?.category) || "");
+    if (!catName) {
+      setCityAvailable(null);
+      return;
+    }
     setCityCheckLoading(true);
     try {
       const r = await fetch(`/api/pincode-check?city=${encodeURIComponent(city)}&type=category&name=${encodeURIComponent(catName)}`);
       const d = await r.json();
-      setCityAvailable(Boolean(d?.available));
+      if (d?.success) {
+        setCityAvailable(Boolean(d?.available));
+      } else {
+        setCityAvailable(null);
+      }
     } catch {
       setCityAvailable(null);
     } finally {
       setCityCheckLoading(false);
     }
+  }, [product, cartItems]);
+
+  // Re-verify city availability whenever selectedCity, product or cartItems updates
+  useEffect(() => {
+    const cat = product?.category || (typeof cartItems[0]?.product?.category === 'object' ? cartItems[0]?.product?.category?.name : cartItems[0]?.product?.category) || "";
+    if (selectedCity && cat) {
+      handleCheckCity(selectedCity, cat);
+    }
+  }, [selectedCity, product, cartItems, handleCheckCity]);
+
+  // Prefill city from MT-Boss Shop location selection
+  useEffect(() => {
+    if (!selectedCity) {
+      try {
+        const savedCity = localStorage.getItem("MTBOSS_selected_city");
+        if (savedCity) {
+          setSelectedCity(savedCity);
+        }
+      } catch {}
+    }
+  }, [selectedCity]);
+
+  const handleAutoDetectCity = () => {
+    if (typeof window === "undefined" || !("geolocation" in navigator)) return;
+    setCityCheckLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(`/api/location/reverse-geocode?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
+          const data = await res.json();
+          if (data?.success && data?.city) {
+            const finalCity = data.matchedCity || data.city;
+            setSelectedCity(finalCity);
+            try {
+              localStorage.setItem("MTBOSS_selected_city", finalCity);
+              window.dispatchEvent(new CustomEvent("MTBOSS_city_changed", { detail: finalCity }));
+            } catch {}
+            handleCheckCity(finalCity);
+          }
+        } catch {} finally {
+          setCityCheckLoading(false);
+        }
+      },
+      () => setCityCheckLoading(false),
+      { timeout: 8000 }
+    );
   };
 
   // ── Shipping quote ──────────────────────────────────────────────────────────
@@ -392,7 +446,7 @@ export default function CheckoutView({ productId: initialProductId }) {
 
   // GPS location detection
   const requestLocation = () => {
-    if (!navigator.geolocation) return;
+    if (typeof window === "undefined" || !("geolocation" in navigator)) return;
     setLocationStatus("loading");
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -400,13 +454,26 @@ export default function CheckoutView({ productId: initialProductId }) {
         setLocationCoords({ latitude, longitude });
         setLocationStatus("success");
         try {
-          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`, {
-            headers: { "Accept-Language": "en" },
-          });
+          const r = await fetch(`/api/location/reverse-geocode?lat=${latitude}&lng=${longitude}`);
           const d = await r.json();
-          if (d.display_name) setFormData((p) => ({ ...p, address: p.address?.trim() || d.display_name }));
-          if (d.address?.postcode) {
-            const pin = String(d.address.postcode).replace(/\D/g, "").slice(0, 6);
+          if (d?.success && d.city) {
+            const finalCity = d.matchedCity || d.city;
+            if (!selectedCity) {
+              setSelectedCity(finalCity);
+              try {
+                localStorage.setItem("MTBOSS_selected_city", finalCity);
+                window.dispatchEvent(new CustomEvent("MTBOSS_city_changed", { detail: finalCity }));
+              } catch {}
+            }
+          }
+          if (d?.district || d?.city) {
+            setFormData((p) => ({
+              ...p,
+              address: p.address?.trim() || [d.district, d.city, d.state].filter(Boolean).join(", ")
+            }));
+          }
+          if (d?.pincode) {
+            const pin = String(d.pincode).replace(/\D/g, "").slice(0, 6);
             if (pin.length === 6) setNewAddressPincode((prev) => prev || pin);
           }
         } catch {}
@@ -431,7 +498,7 @@ export default function CheckoutView({ productId: initialProductId }) {
       setSubmitError("Please enter your 10-digit phone number.");
       return;
     }
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
     if (!token) {
       setSubmitError("Please login to place an order so you can track it.");
       return;
@@ -446,7 +513,7 @@ export default function CheckoutView({ productId: initialProductId }) {
     setSubmitting(true);
     setSubmitError("");
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
       if (!token) throw new Error("Please login to place an order so you can track it.");
 
       const payload = {
@@ -478,8 +545,8 @@ export default function CheckoutView({ productId: initialProductId }) {
         payload.order_unit = product.unit || "unit";
       } else {
         payload.items = cartItems.map((ci) => ({
-          product_id: ci.product?.product_id || null,
-          category_name: ci.product?.category?.name || "Materials",
+          product_id: ci.product?.product_id || ci.product?.id || null,
+          category_name: ci.product?.category?.name || ci.product?.category || "Materials",
           material_type: ci.product?.name,
           quantity: ci.quantity,
           order_unit: ci.product?.unit || "unit",
@@ -698,20 +765,33 @@ export default function CheckoutView({ productId: initialProductId }) {
               LEFT: FORM INPUTS
              ────────────────────────────────────────────────────────── */}
           <div className="lg:col-span-7">
-            <form id="checkout-form" onSubmit={handleOpenPaymentModal} className="space-y-6">
+            <form id="checkout-form" onSubmit={handleOpenPaymentModal} noValidate data-no-auto-validate className="space-y-6">
 
               {/* 1. DELIVERY CITY */}
               <div className={`p-6 rounded-3xl border ${card}`}>
-                <h2 className="text-base font-black mb-3 flex items-center gap-2">
-                  <MapPin size={18} className="text-[var(--brand-blue)]" />
-                  1. Delivery City
-                </h2>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-base font-black flex items-center gap-2">
+                    <MapPin size={18} className="text-[var(--brand-blue)]" />
+                    1. Delivery City
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={handleAutoDetectCity}
+                    className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  >
+                    📍 Detect GPS
+                  </button>
+                </div>
                 <select
                   required
                   value={selectedCity}
                   onChange={(e) => {
                     const val = e.target.value;
                     setSelectedCity(val);
+                    try {
+                      localStorage.setItem("MTBOSS_selected_city", val);
+                      window.dispatchEvent(new CustomEvent("MTBOSS_city_changed", { detail: val }));
+                    } catch {}
                     handleCheckCity(val);
                   }}
                   className={inpClass}
@@ -1158,7 +1238,7 @@ export default function CheckoutView({ productId: initialProductId }) {
          ────────────────────────────────────────────────────────── */}
       {showPaymentModal && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={() => !submitting && setShowPaymentModal(false)}
         >
           <div

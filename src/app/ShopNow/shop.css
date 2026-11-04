@@ -2688,6 +2688,22 @@
   margin-top: 4px
 }
 
+.store-stock-note.store-stock-note-red {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.store-product-tag.store-product-tag-available {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  font-weight: 700;
+}
+
+.dark-mode .store-product-tag.store-product-tag-available {
+  background: #052e16 !important;
+  color: #86efac !important;
+}
+
 .store-catalog-tools {
   display: flex;
   justify-content: flex-end;

@@ -199,7 +199,7 @@ export default function MobileStorefront({
   onSelectCoupon = () => ({ error: 'Coupon service unavailable' }),
   onClearCoupon = () => { },
   shippingQuote = null,
-  promotions = [],
+  promotions = [], onOpenLocationModal = null,
 }) {
   const [mobileView, setMobileView] = useState("home"); // "home" | "listing" | "orders" | "account"
   const [activeCategoryId, setActiveCategoryId] = useState(null);
@@ -541,7 +541,7 @@ export default function MobileStorefront({
               <button
                 type="button"
                 className="mobile-delivery-dropdown"
-                onClick={() => setCitySheetOpen(true)}
+                onClick={() => (onOpenLocationModal ? onOpenLocationModal() : setCitySheetOpen(true))}
                 aria-label="Select delivery city"
               >
                 <span className="mobile-delivery-dot" />
@@ -1279,7 +1279,7 @@ export default function MobileStorefront({
 
               <button
                 type="button"
-                onClick={() => setCitySheetOpen(true)}
+                onClick={() => (onOpenLocationModal ? onOpenLocationModal() : setCitySheetOpen(true))}
                 className="w-full flex items-center justify-between p-3 text-left hover:bg-gray-50 dark:hover:bg-zinc-800/50 rounded-xl transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -1421,6 +1421,16 @@ export default function MobileStorefront({
             </div>
 
             <div className="mobile-city-list">
+              <button
+                type="button"
+                className="w-full mb-3 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-600 text-white font-semibold text-xs shadow-sm hover:bg-blue-700 transition-colors"
+                onClick={() => {
+                  setCitySheetOpen(false);
+                  if (onOpenLocationModal) onOpenLocationModal();
+                }}
+              >
+                <MapPin size={15} /> Auto-Detect My Location (GPS)
+              </button>
               {[...new Set(cities)].map((city) => {
                 const isSelected = selectedCity?.toLowerCase() === city.toLowerCase();
                 return (
@@ -2147,7 +2157,7 @@ function MobileProductCard({
   freeDeliveryMinOrder = 50000,
   categories = [],
   isDark = false,
-  promotions = [],
+  promotions = [], onOpenLocationModal = null,
   shippingSettings = null,
 }) {
   const price = Number(product.price) || 0;
@@ -2158,7 +2168,15 @@ function MobileProductCard({
   const activePromos = getProductPromotions(product, promotions);
   const productImage = getProductImage(product, product.category || categories);
 
-  const canOrder = !product.fromSupplier || Number(product.quantity) > 0;
+  const normalizedCity = (selectedCity || "").trim().toLowerCase();
+  const cityUnavailable = Boolean(
+    normalizedCity &&
+    Array.isArray(product.available_cities) &&
+    product.available_cities.length > 0 &&
+    !product.available_cities.some((c) => c && c.trim().toLowerCase() === normalizedCity)
+  );
+  const outOfStock = Boolean(product.fromSupplier && Number(product.quantity) <= 0);
+  const canOrder = !cityUnavailable && !outOfStock;
   const isAvailable = canOrder;
   const detailId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id);
   const detailHref = `/ShopNow/${detailId}`;
@@ -2206,6 +2224,15 @@ function MobileProductCard({
           >
             <h3 className="mobile-card-title">{product.name}</h3>
           </Link>
+          {cityUnavailable && (
+            <span className="text-[10px] font-bold text-red-600 block mt-0.5">Out of stock in {selectedCity}</span>
+          )}
+          {outOfStock && !cityUnavailable && (
+            <span className="text-[10px] font-bold text-red-600 block mt-0.5">Currently out of stock</span>
+          )}
+          {isAvailable && (
+            <span className="text-[10px] font-semibold text-emerald-600 block mt-0.5">In Stock</span>
+          )}
 
           {/* Price & MRP (only if rate is added) */}
           {hasFixedPrice && (
@@ -2283,11 +2310,11 @@ function MobileProductCard({
             ) : (
               <button
                 type="button"
-                className="mobile-add-btn"
+                className={`mobile-add-btn ${!isAvailable ? 'opacity-50 cursor-not-allowed bg-gray-200 dark:bg-zinc-800 text-gray-500' : ''}`}
                 disabled={!isAvailable}
                 onClick={(e) => onAdd(product, e)}
               >
-                <Plus size={14} /> ADD
+                {!isAvailable ? "Out of Stock" : <><Plus size={14} /> ADD</>}
               </button>
             )}
           </div>

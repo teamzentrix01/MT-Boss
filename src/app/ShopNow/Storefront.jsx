@@ -236,9 +236,15 @@ export function getProductFreeShippingPromo(product, promotions = []) {
 }
 
 function productCanOrder(product, selectedCity) {
-  const normalizedCity = selectedCity.trim().toLowerCase();
-  const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
-  return !cityUnavailable && (!product.fromSupplier || Number(product.quantity) > 0);
+  const normalizedCity = (selectedCity || "").trim().toLowerCase();
+  const cityUnavailable = Boolean(
+    normalizedCity &&
+    Array.isArray(product.available_cities) &&
+    product.available_cities.length > 0 &&
+    !product.available_cities.some((city) => city && city.trim().toLowerCase() === normalizedCity)
+  );
+  const outOfStock = Boolean(product.fromSupplier && Number(product.quantity) <= 0);
+  return !cityUnavailable && !outOfStock;
 }
 
 function discountPercent(product) {
@@ -276,9 +282,15 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   const price = Number(product.price);
   const hasFixedPrice = Number.isFinite(price) && price > 0;
   const discount = discountPercent(product);
-  const normalizedCity = selectedCity.trim().toLowerCase();
-  const cityUnavailable = Boolean(normalizedCity && product.available_cities?.length && !product.available_cities.some((city) => city.trim().toLowerCase() === normalizedCity));
-  const canOrder = productCanOrder(product, selectedCity);
+  const normalizedCity = (selectedCity || "").trim().toLowerCase();
+  const cityUnavailable = Boolean(
+    normalizedCity &&
+    Array.isArray(product.available_cities) &&
+    product.available_cities.length > 0 &&
+    !product.available_cities.some((city) => city && city.trim().toLowerCase() === normalizedCity)
+  );
+  const outOfStock = Boolean(product.fromSupplier && Number(product.quantity) <= 0);
+  const canOrder = !cityUnavailable && !outOfStock;
   const detailId = product.product_id || (String(product.id).startsWith('supplier-') ? product.id.replace('supplier-', '') : product.id);
   const detailHref = `/ShopNow/${detailId}`;
 
@@ -301,8 +313,8 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         <ProductVisual image={productImage} category={product.category} name={product.name} />
       </Link>
       <div className="store-product-details">
-        <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : ''}`}>
-          {canOrder ? 'Available' : 'Unavailable'}
+        <span className={`store-product-tag ${!canOrder ? 'store-product-tag-unavailable' : 'store-product-tag-available'}`}>
+          {canOrder ? 'In Stock' : 'Out of Stock'}
         </span>
         <Link
           href={detailHref}
@@ -369,19 +381,23 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         ) : null}
 
         <div className="store-product-footer">
-          {cityUnavailable && <span className="store-stock-note">Not delivered in {selectedCity}</span>}
-          {product.fromSupplier && Number(product.quantity) === 0 && <span className="store-stock-note">Currently unavailable</span>}
+          {cityUnavailable && <span className="store-stock-note store-stock-note-red">Out of stock in {selectedCity}</span>}
+          {outOfStock && !cityUnavailable && <span className="store-stock-note store-stock-note-red">Currently out of stock</span>}
           <div className="store-product-actions store-product-actions-single">
-            <button type="button" className="store-buy-btn" disabled={!canOrder} onClick={() => onBuy(product)}>{canOrder ? 'Buy Now' : 'Unavailable'}</button>
+            <button type="button" className={`store-buy-btn ${!canOrder ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!canOrder} onClick={() => onBuy(product)}>
+              {canOrder ? 'Buy Now' : 'Out of Stock'}
+            </button>
           </div>
           {quantity ? (
             <div className="store-quantity-control" aria-label={`${product.name} quantity in cart`}>
               <button type="button" onClick={() => onChangeQty(product.id, -1)} aria-label={`Remove one ${product.name}`}><Minus size={15} /></button>
               <span>{quantity} in cart</span>
-              <button type="button" onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
+              <button type="button" disabled={!canOrder} onClick={() => onChangeQty(product.id, 1)} aria-label={`Add one ${product.name}`}><Plus size={15} /></button>
             </div>
           ) : (
-            <button type="button" className="store-add-btn" disabled={!canAdd || !canOrder} onClick={(e) => onAdd(product, e)}><Plus size={15} /> {!canOrder ? 'Unavailable' : canAdd ? "Add to cart" : "Cart limit reached"}</button>
+            <button type="button" className={`store-add-btn ${!canOrder ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!canAdd || !canOrder} onClick={(e) => onAdd(product, e)}>
+              <Plus size={15} /> {!canOrder ? 'Out of Stock' : canAdd ? "Add to cart" : "Cart limit reached"}
+            </button>
           )}
         </div>
       </div>
@@ -389,7 +405,7 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
   );
 }
 
-export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings, shippingQuote, promotions = [] }) {
+export default function Storefront({ categories, products, offers = [], content, loading, cities, selectedCity, setSelectedCity, cart, onAdd, onChangeQty, onQuote, onBuy, onCheckout, activeCoupon, couponCalculation, couponOffers, onApplyCoupon, onSelectCoupon, onClearCoupon, shippingSettings, shippingQuote, promotions = [], onOpenLocationModal }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedParentNav, setSelectedParentNav] = useState(null);
@@ -959,6 +975,7 @@ export default function Storefront({ categories, products, offers = [], content,
           onSelectCoupon={onSelectCoupon}
           onClearCoupon={onClearCoupon}
           promotions={promotions}
+          onOpenLocationModal={onOpenLocationModal}
         />
       </div>
 
@@ -968,7 +985,7 @@ export default function Storefront({ categories, products, offers = [], content,
           <div className="store-header-inner">
             <Link href="/" className="store-brand" aria-label="MTBOSS home"><picture className="store-brand-picture"><Image src="/logo.png" alt="MTBOSS" width={46} height={46} sizes="(max-width: 560px) 34px, (max-width: 800px) 39px, 46px" /></picture><small>SHOP</small></Link>
             <div className="store-location-wrap">
-              <button type="button" className="store-location" onClick={() => setCityOpen(!cityOpen)} aria-expanded={cityOpen}>
+              <button type="button" className="store-location" onClick={() => (onOpenLocationModal ? onOpenLocationModal() : setCityOpen(!cityOpen))} aria-expanded={cityOpen}>
                 <MapPin size={20} /><span><strong>Deliver to {selectedCity || "your city"}</strong><small>{selectedCity ? "Change location" : "Select delivery location"}</small></span><ChevronDown size={16} />
               </button>
               {cityOpen && <div className="store-city-popover"><label htmlFor="store-city">Choose your city</label><select id="store-city" value={selectedCity} onChange={(e) => { setSelectedCity(e.target.value); setCityOpen(false); }}><option value="">Select city</option>{[...new Set(cities)].map((city) => <option key={city} value={city}>{city}</option>)}</select><p>Availability is checked at checkout.</p></div>}
