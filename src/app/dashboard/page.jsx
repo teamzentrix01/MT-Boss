@@ -132,7 +132,21 @@ function AdminDashboard() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'overview');
   const initialProjectId = searchParams.get('projectId') || null;
-  const isDarkMode = false;
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const html = document.documentElement;
+    const sync = () =>
+      setIsDarkMode(
+        html.classList.contains('dark-mode') ||
+        html.classList.contains('dark') ||
+        localStorage.getItem('theme') === 'dark'
+      );
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
   const [loading, setLoading] = useState(true);
   const [submissions, setSubmissions] = useState([]);
   const [selectedSubmission, setSelectedSubmission] = useState(null);

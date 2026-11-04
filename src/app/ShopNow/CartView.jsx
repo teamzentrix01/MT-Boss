@@ -302,7 +302,7 @@ export default function CartView() {
         <span>/</span>
         <Link href="/ShopNow" className="hover:text-[var(--brand-blue)] transition-colors">Shop Materials</Link>
         <span>/</span>
-        <span className="font-bold text-slate-900 dark:text-white">My Cart</span>
+        <span className={`font-bold ${isDark ? "text-white" : "text-slate-900"}`}>My Cart</span>
       </nav>
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────────────── */}
@@ -331,7 +331,7 @@ export default function CartView() {
             <div className="lg:col-span-7 space-y-4">
               <div className="flex items-center justify-between pb-2">
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-black tracking-tight">Shopping Cart</h1>
+                  <h1 className={`text-xl sm:text-2xl font-black tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>Shopping Cart</h1>
                   <p className={`text-xs mt-0.5 ${muted}`}>
                     {cart.length} {cart.length === 1 ? 'material category' : 'material categories'} · {totalItemsCount} total items
                   </p>
@@ -383,7 +383,7 @@ export default function CartView() {
                         <div className="min-w-0 flex-1">
                           <Link
                             href={`/ShopNow/${pId}`}
-                            className="font-extrabold text-sm sm:text-base hover:text-[var(--brand-blue)] transition-colors truncate block"
+                            className={`font-extrabold text-sm sm:text-base hover:text-[var(--brand-blue)] transition-colors truncate block ${isDark ? 'text-white' : 'text-slate-900'}`}
                           >
                             {p.name}
                           </Link>
@@ -394,7 +394,7 @@ export default function CartView() {
 
                           <div className="mt-1 flex items-center gap-2">
                             {price > 0 ? (
-                              <span className="text-xs font-bold text-slate-800 dark:text-zinc-200">
+                              <span className={`text-xs font-bold ${isDark ? 'text-zinc-100' : 'text-slate-800'}`}>
                                 ₹{price.toLocaleString('en-IN')} / {displayUnit(p.unit)}
                               </span>
                             ) : (
@@ -434,7 +434,7 @@ export default function CartView() {
                         {/* Line total */}
                         <div className="text-right min-w-[70px]">
                           {itemTotal !== null ? (
-                            <strong className="text-sm sm:text-base font-black">
+                            <strong className={`text-sm sm:text-base font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
                               ₹{itemTotal.toLocaleString('en-IN')}
                             </strong>
                           ) : (
@@ -472,7 +472,7 @@ export default function CartView() {
             {/* ── RIGHT: ORDER SUMMARY & CHECKOUT SIDEBAR ─────────────────────── */}
             <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-4">
               <div className={`p-5 sm:p-6 rounded-3xl border ${cardBg}`}>
-                <h2 className="text-base font-black uppercase tracking-wider mb-4">
+                <h2 className={`text-base font-black uppercase tracking-wider mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   Order Summary
                 </h2>
 
@@ -482,7 +482,7 @@ export default function CartView() {
                     <span className={muted}>
                       {hasUnpricedItems ? 'Current priced materials' : 'Materials total'}
                     </span>
-                    <strong className="font-bold text-sm">
+                    <strong className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {pricedTotal > 0
                         ? `₹${pricedTotal.toLocaleString('en-IN')}${hasUnpricedItems ? ' + quote items' : ''}`
                         : 'Price on confirmation'}
@@ -520,7 +520,7 @@ export default function CartView() {
                       </span>
                     </div>
                   ) : (
-                    <div className="flex justify-between text-slate-500">
+                    <div className={`flex justify-between ${muted}`}>
                       <span>Delivery charges</span>
                       <span>Calculated at checkout</span>
                     </div>
@@ -531,7 +531,7 @@ export default function CartView() {
                     <div className="p-3 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 dark:from-sky-950/30 dark:to-indigo-950/30 border border-sky-200 dark:border-sky-800 text-xs">
                       <div className="flex items-center gap-2">
                         <Zap size={15} className="text-amber-500 flex-none" />
-                        <span className="font-extrabold text-slate-900 dark:text-white">
+                        <span className={`font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                           {nextPromotion.promotion.badge_text || nextPromotion.promotion.name}
                         </span>
                       </div>
@@ -554,7 +554,7 @@ export default function CartView() {
                   {/* Grand total */}
                   <div className="pt-3 border-t border-slate-200 dark:border-zinc-800 flex justify-between items-baseline">
                     <div>
-                      <span className="text-sm font-extrabold">Estimated Subtotal</span>
+                      <span className={`text-sm font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>Estimated Subtotal</span>
                       <p className={`text-[10px] ${muted}`}>Inclusive of taxes & supplier invoice</p>
                     </div>
                     <strong className="text-xl font-black text-[var(--brand-blue)]">

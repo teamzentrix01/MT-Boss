@@ -358,6 +358,22 @@ export function isSameDayIST(dateOrTimestamp) {
 }
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
+  const [internalDark, setInternalDark] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const html = document.documentElement;
+    const sync = () =>
+      setInternalDark(
+        html.classList.contains('dark-mode') ||
+        html.classList.contains('dark') ||
+        localStorage.getItem('theme') === 'dark'
+      );
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+  const effectiveDark = isDarkMode !== undefined ? Boolean(isDarkMode) : internalDark;
   const submitAction = useSubmitAction();
   if (isAgent) {
     _globalIsAgent = true;
@@ -2776,7 +2792,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   };
 
   return (
-    <section className={`pm-container${isDarkMode ? ' dark-mode' : ''}`}>
+    <section className={`pm-container${effectiveDark ? ' dark-mode' : ''}`}>
       <SubmitToast toast={submitAction.toast} onDismiss={submitAction.dismissToast} />
       {/* ── TOP NAV BAR ───────────────────────────────────────────────────── */}
       <div className="bar" style={{ justifyContent: 'space-between', marginBottom: 16 }}>
@@ -2808,11 +2824,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             style={{
               display: 'flex',
               alignItems: 'center',
-              background: '#fff',
-              border: omniSearchOpen ? '1.5px solid #0284c7' : '1.5px solid #cbd5e1',
+              background: effectiveDark ? '#18181c' : '#fff',
+              border: omniSearchOpen ? '1.5px solid #0284c7' : (effectiveDark ? '1.5px solid #2a2a30' : '1.5px solid #cbd5e1'),
               borderRadius: 8,
               padding: '6px 12px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+              boxShadow: effectiveDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.06)',
             }}
           >
             <span style={{ marginRight: 8, color: '#64748b', fontSize: 13 }}>🔍</span>
@@ -2828,7 +2844,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 width: '100%',
                 fontSize: 13,
                 background: 'transparent',
-                color: '#0f172a',
+                color: effectiveDark ? '#f0f0f5' : '#0f172a',
               }}
             />
             {omniSearchLoading && <span style={{ fontSize: 11, color: '#0ea5e9', marginRight: 4 }}>⏳</span>}
@@ -11138,7 +11154,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         >
           <div
             style={{
-              background: '#ffffff',
+              background: effectiveDark ? '#18181c' : '#ffffff',
               borderRadius: 14,
               maxWidth: 960,
               width: '100%',
@@ -11146,7 +11162,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #cbd5e1',
+              border: effectiveDark ? '1px solid #2a2a30' : '1px solid #cbd5e1',
+              color: effectiveDark ? '#f0f0f5' : '#0f172a',
               overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
@@ -12262,10 +12279,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
         :global(.dark-mode) .pm-container .modal-card,
         .pm-container.dark-mode .modal-card,
         :global(.dark-mode) .pm-container table,
+        :global(.dark) .pm-container table,
         .pm-container.dark-mode table {
-          background: #18181c;
-          border-color: #2a2a30;
-          color: #f0f0f5;
+          background: #18181c !important;
+          border-color: #2a2a30 !important;
+          color: #f0f0f5 !important;
         }
         :global(.dark-mode) .pm-container th,
         .pm-container.dark-mode th {
@@ -12307,14 +12325,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           color: #a1a1aa;
         }
         :global(.dark-mode) .pm-container input,
+        :global(.dark) .pm-container input,
         .pm-container.dark-mode input,
         :global(.dark-mode) .pm-container select,
+        :global(.dark) .pm-container select,
         .pm-container.dark-mode select,
         :global(.dark-mode) .pm-container textarea,
+        :global(.dark) .pm-container textarea,
         .pm-container.dark-mode textarea {
-          background: #18181c;
-          color: #f0f0f5;
-          border-color: #2a2a30;
+          background: #18181c !important;
+          color: #f0f0f5 !important;
+          border-color: #2a2a30 !important;
         }
         :global(.dark-mode) .pm-container button.muted,
         .pm-container.dark-mode button.muted {

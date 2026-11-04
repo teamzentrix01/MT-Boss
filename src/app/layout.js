@@ -54,6 +54,7 @@ export default function RootLayout({ children }) {
       const dark = localStorage.getItem("theme") === "dark";
       setIsDarkMode(dark);
       document.documentElement.classList.toggle("dark-mode", dark);
+      document.documentElement.classList.toggle("dark", dark);
     });
     return () => cancelAnimationFrame(frame);
   }, []);
@@ -145,15 +146,17 @@ export default function RootLayout({ children }) {
 
     if (newMode) {
       document.documentElement.classList.add("dark-mode");
+      document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark-mode");
+      document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
   };
 
   return (
-    <html lang="en" className={`${isDarkMode ? "dark-mode" : ""} ${isShopPage ? "shop-html" : ""}`}>
+    <html lang="en" className={`${isDarkMode ? "dark-mode dark" : ""} ${isShopPage ? "shop-html" : ""}`}>
       <head>
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
