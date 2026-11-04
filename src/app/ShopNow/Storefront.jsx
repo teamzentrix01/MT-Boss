@@ -953,6 +953,7 @@ export default function Storefront({ categories, products, offers = [], content,
       <div className="storefront-mobile">
         <MobileStorefront
           categories={categories}
+          mainCategories={mainCategories}
           products={products}
           catalog={catalog}
           content={content}

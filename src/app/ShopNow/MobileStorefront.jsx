@@ -34,14 +34,22 @@ import {
   Wrench,
   X,
   Zap,
+  Sparkles,
 } from "lucide-react";
 import { displayUnit, getProductImage, ShopImage, getLowestBulkPrice, getProductPromotion, getProductPromotions, getProductFreeShippingPromo, formatPromoSpend } from "./Storefront";
 import AutoSwipeGallery from "./AutoSwipeGallery";
 import { getCartStep } from "@/lib/cart-step";
-import { CATEGORY_NAV_TREE } from "./categoryNavTree";
+import {
+  CATEGORY_NAV_TREE,
+  getMainCategories,
+  getSubcategoriesForParent,
+  productMatchesCategoryAndSub,
+  namesMatch,
+} from "./categoryNavTree";
 import GlobalSearch from "../components/GlobalSearch";
 import QuickServices from "../components/QuickServices";
 import MaterialOrdersPanel from "../components/MaterialOrdersPanel";
+
 function getCategoryIcon(name = "") {
   const val = name.toLowerCase();
   if (/cement|concrete/.test(val)) return Package;
@@ -51,8 +59,12 @@ function getCategoryIcon(name = "") {
   if (/paint|colour|primer/.test(val)) return PaintBucket;
   if (/tile|floor|marble|granite/.test(val)) return Grid3X3;
   if (/plumb|sanitary|tank/.test(val)) return Droplet;
-  if (/timber|wood|plywood|lakdi/.test(val)) return Layers;
+  if (/timber|wood|plywood|lakdi|carpentry/.test(val)) return Layers;
   if (/electric|wire|cable|switch|mcb/.test(val)) return Zap;
+  if (/hardware|furniture|hinges|lock/.test(val)) return ShieldCheck;
+  if (/chemical|waterproof/.test(val)) return Package;
+  if (/launch|arrival|new/.test(val)) return Sparkles;
+  if (/building/.test(val)) return Mountain;
   return Package;
 }
 
@@ -177,6 +189,7 @@ function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
 
 export default function MobileStorefront({
   categories = [],
+  mainCategories: mainCategoriesProp = [],
   products = [],
   catalog = [],
   content = {},
@@ -380,15 +393,24 @@ export default function MobileStorefront({
     window.location.href = '/login';
   };
 
-  // Active Category object
+  const resolvedMainCategories = useMemo(() => {
+    if (Array.isArray(mainCategoriesProp) && mainCategoriesProp.length > 0) {
+      return mainCategoriesProp;
+    }
+    return getMainCategories(categories, products);
+  }, [mainCategoriesProp, categories, products]);
+
+  // Active Category object (Main Navbar Category)
   const activeCategory = useMemo(() => {
-    if (!activeCategoryId && categories.length > 0) return categories[0];
-    return categories.find((c) => String(c.id) === String(activeCategoryId)) || categories[0] || null;
-  }, [categories, activeCategoryId]);
+    if (!activeCategoryId && resolvedMainCategories.length > 0) return resolvedMainCategories[0];
+    return resolvedMainCategories.find((c) => String(c.id) === String(activeCategoryId) || namesMatch(c.label || c.name, String(activeCategoryId)))
+      || categories.find((c) => String(c.id) === String(activeCategoryId))
+      || resolvedMainCategories[0] || null;
+  }, [resolvedMainCategories, categories, activeCategoryId]);
 
   const displayedHomeCategories = useMemo(() => {
-    return showAllCategories ? categories : categories.slice(0, 8);
-  }, [categories, showAllCategories]);
+    return showAllCategories ? resolvedMainCategories : resolvedMainCategories.slice(0, 8);
+  }, [resolvedMainCategories, showAllCategories]);
 
   useEffect(() => {
     if (mobileView === "listing") {
@@ -397,55 +419,37 @@ export default function MobileStorefront({
   }, [activeCategoryId, mobileView]);
 
   // Subcategories for active category
-  const subcategories = useMemo(() => {
-    return getSubcategoriesForCategory(activeCategory);
-  }, [activeCategory]);
+  const parentSubcategories = useMemo(() => {
+    if (!activeCategory) return [];
+    return getSubcategoriesForParent(activeCategory, categories, products);
+  }, [activeCategory, categories, products]);
 
-  // Filter chips (subcategories + brands) for right pane in listing
+  const subcategories = useMemo(() => {
+    if (parentSubcategories.length > 0) {
+      return ["All", ...parentSubcategories.map((s) => s.name)];
+    }
+    return getSubcategoriesForCategory(activeCategory);
+  }, [activeCategory, parentSubcategories]);
+
+  // Filter chips (subcategories) for right pane in listing
   const filterChips = useMemo(() => {
     if (!activeCategory) return ["All"];
-    const catProducts = catalog.filter(
-      (p) =>
-        String(p.category?.id) === String(activeCategory.id) ||
-        p.category?.name?.toLowerCase() === activeCategory.name?.toLowerCase()
-    );
-    const subcats = Array.isArray(activeCategory.subcategories) && activeCategory.subcategories.length > 0
-      ? activeCategory.subcategories.map(s => typeof s === 'object' && s !== null ? s.name : s).filter(Boolean)
-      : getSubcategoriesForCategory(activeCategory).filter((s) => s !== "All");
-    const brands = [...new Set(catProducts.map((p) => p.brand).filter(Boolean))];
-    const options = ["All", ...subcats, ...brands].filter(Boolean);
-    return [...new Set(options)].slice(0, 12);
-  }, [catalog, activeCategory]);
+    if (parentSubcategories.length > 0) {
+      return ["All", ...parentSubcategories.map((s) => s.name)];
+    }
+    const subcats = getSubcategoriesForCategory(activeCategory).filter((s) => s !== "All");
+    return ["All", ...subcats];
+  }, [activeCategory, parentSubcategories]);
 
   // Products belonging to the active category
   const categoryProducts = useMemo(() => {
     if (!activeCategory) return [];
+    const currentParent = activeCategory.label || activeCategory.name;
+    const currentSub = activeFilterChip !== "All" ? activeFilterChip : (activeSubcategory !== "All" ? activeSubcategory : null);
+
     let list = catalog.filter((product) => {
-      const matchCat =
-        String(product.category?.id) === String(activeCategory.id) ||
-        product.category?.name?.toLowerCase() === activeCategory.name?.toLowerCase();
-      return matchCat;
+      return productMatchesCategoryAndSub(product, currentParent, currentSub);
     });
-
-    // Subcategory filter
-    if (activeSubcategory && activeSubcategory !== "All") {
-      const subLower = activeSubcategory.toLowerCase();
-      const filtered = list.filter((p) => {
-        const text = `${p.name} ${p.description || ""} ${p.brand || ""}`.toLowerCase();
-        return text.includes(subLower);
-      });
-      if (filtered.length > 0) list = filtered;
-    }
-
-    // Filter chip filter (brand / specific tag)
-    if (activeFilterChip && activeFilterChip !== "All") {
-      const chipLower = activeFilterChip.toLowerCase();
-      const filtered = list.filter((p) => {
-        const text = `${p.name} ${p.brand || ""}`.toLowerCase();
-        return text.includes(chipLower);
-      });
-      if (filtered.length > 0) list = filtered;
-    }
 
     // Search filter
     if (searchQuery.trim()) {
@@ -504,7 +508,7 @@ export default function MobileStorefront({
   const cartTotalWithShipping = cartFinalTotal + (shippingQuote?.totalShipping || 0);
 
   const navigateToCategory = (cat) => {
-    setActiveCategoryId(cat.id);
+    setActiveCategoryId(cat?.id || cat?.label || cat?.name || null);
     setActiveSubcategory("All");
     setActiveFilterChip("All");
     setMobileView("listing");
@@ -850,7 +854,7 @@ export default function MobileStorefront({
                       <span className="mobile-section-kicker">EXPLORE MATERIALS</span>
                       <h2 className="mobile-section-heading">Shop by Category</h2>
                     </div>
-                    {categories.length > 8 ? (
+                    {resolvedMainCategories.length > 8 ? (
                       <button
                         type="button"
                         className="mobile-category-header-view-all"
@@ -859,11 +863,11 @@ export default function MobileStorefront({
                         {showAllCategories ? (
                           <>View less <ChevronUp size={14} /></>
                         ) : (
-                          <>View all ({categories.length}) <ChevronRight size={14} /></>
+                          <>View all ({resolvedMainCategories.length}) <ChevronRight size={14} /></>
                         )}
                       </button>
                     ) : (
-                      <span className="mobile-section-tag">Direct Supply</span>
+                      <span className="mobile-section-tag">8 Departments</span>
                     )}
                   </div>
 
@@ -877,14 +881,15 @@ export default function MobileStorefront({
                     <>
                       <div className="mobile-category-grid">
                         {displayedHomeCategories.map((cat) => {
-                          const Icon = getCategoryIcon(cat.name);
+                          const catLabel = cat.label || cat.name;
+                          const Icon = getCategoryIcon(catLabel);
                           return (
                             <button
                               key={cat.id}
                               type="button"
                               className="mobile-category-chip-btn"
                               onClick={() => navigateToCategory(cat)}
-                              aria-label={`Browse ${cat.name}`}
+                              aria-label={`Browse ${catLabel}`}
                             >
                               <div className="mobile-category-square">
                                 {(() => {
@@ -896,7 +901,7 @@ export default function MobileStorefront({
                                     return (
                                       <AutoSwipeGallery
                                         images={catImgs}
-                                        alt={cat.name}
+                                        alt={catLabel}
                                         delay={3000}
                                         showDots={false}
                                         style={{ width: '100%', height: '100%', borderRadius: '10px', overflow: 'hidden' }}
@@ -907,13 +912,13 @@ export default function MobileStorefront({
                                   return <Icon size={26} className={isDark ? "text-sky-300" : "text-[#12283F]"} />;
                                 })()}
                               </div>
-                              <span className="mobile-category-label">{cat.name}</span>
+                              <span className="mobile-category-label">{catLabel}</span>
                             </button>
                           );
                         })}
                       </div>
 
-                      {categories.length > 8 && (
+                      {resolvedMainCategories.length > 8 && (
                         <div className="mobile-category-view-all-wrap">
                           <button
                             type="button"
@@ -987,9 +992,11 @@ export default function MobileStorefront({
           <div className="mobile-two-pane-container">
             {/* LEFT PANE: Narrow (≈78px) vertical scrollable sidebar showing all remaining categories */}
             <aside className="mobile-left-sidebar" aria-label="Categories">
-              {categories.map((cat) => {
-                const isActive = String(cat.id) === String(activeCategory?.id);
-                const CatIcon = getCategoryIcon(cat.name);
+              {resolvedMainCategories.map((cat) => {
+                const catLabel = cat.label || cat.name;
+                const isActive = String(cat.id) === String(activeCategory?.id) || namesMatch(catLabel, activeCategory?.label || activeCategory?.name);
+                const CatIcon = getCategoryIcon(catLabel);
+                const catImg = cat.image || (Array.isArray(cat.images) ? cat.images[0] : null);
                 return (
                   <button
                     key={cat.id}
@@ -997,19 +1004,19 @@ export default function MobileStorefront({
                     type="button"
                     className={`mobile-subcat-btn ${isActive ? "is-active" : ""}`}
                     onClick={() => {
-                      setActiveCategoryId(cat.id);
+                      setActiveCategoryId(cat.id || catLabel);
                       setActiveSubcategory("All");
                       setActiveFilterChip("All");
                       rightFeedRef.current?.scrollTo({ top: 0, behavior: "instant" });
                     }}
-                    aria-label={cat.name}
+                    aria-label={catLabel}
                     aria-current={isActive ? "true" : undefined}
                   >
                     <div className="mobile-subcat-icon-wrap">
-                      {cat.image ? (
+                      {catImg ? (
                         <ShopImage
-                          src={cat.image}
-                          alt={cat.name}
+                          src={catImg}
+                          alt={catLabel}
                           width={26}
                           height={26}
                           className="object-cover rounded-md"
@@ -1019,7 +1026,7 @@ export default function MobileStorefront({
                         <CatIcon size={20} />
                       )}
                     </div>
-                    <span className="mobile-subcat-text">{cat.name}</span>
+                    <span className="mobile-subcat-text">{catLabel}</span>
                   </button>
                 );
               })}
@@ -1154,7 +1161,7 @@ export default function MobileStorefront({
               <button
                 type="button"
                 onClick={() => {
-                  if (categories.length > 0) navigateToCategory(activeCategory || categories[0]);
+                  if (resolvedMainCategories.length > 0) navigateToCategory(activeCategory || resolvedMainCategories[0]);
                 }}
                 className="text-xs font-bold text-[#E4572E] hover:underline"
               >
@@ -1363,8 +1370,8 @@ export default function MobileStorefront({
           type="button"
           className={`mobile-nav-item ${mobileView === "listing" ? "is-active" : ""}`}
           onClick={() => {
-            if (categories.length > 0) {
-              navigateToCategory(activeCategory || categories[0]);
+            if (resolvedMainCategories.length > 0) {
+              navigateToCategory(activeCategory || resolvedMainCategories[0]);
             } else {
               setMobileView("listing");
             }
