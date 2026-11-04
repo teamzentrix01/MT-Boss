@@ -14,7 +14,7 @@ export const metadata = {
     'government approved contractor in Bareilly, government approved contractor Bareilly, registered contractor Bareilly, licensed contractor Bareilly, verified contractor Bareilly, construction contractor Bareilly, building contractor Bareilly, civil contractor Bareilly, contractor registration Bareilly, MTBOSS Bareilly',
   alternates: {
     canonical:
-      'https://www.mtboss.in/government-approved-contractor-in-bareilly',
+      'https://www.mtboss.in/government-approved-contractor-bareilly',
   },
   openGraph: {
     title:
@@ -22,7 +22,7 @@ export const metadata = {
     description:
       'Looking for a government approved contractor in Bareilly? Learn what the term means, how to verify registration, and how MTBOSS shares verified credentials on request.',
     url:
-      'https://www.mtboss.in/government-approved-contractor-in-bareilly',
+      'https://www.mtboss.in/government-approved-contractor-bareilly',
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
@@ -59,7 +59,7 @@ export default function Page() {
     '@type': 'GeneralContractor',
     name: 'MTBOSS Construction Private Limited',
     url:
-      'https://www.mtboss.in/government-approved-contractor-in-bareilly',
+      'https://www.mtboss.in/government-approved-contractor-bareilly',
     telephone: '+91-9458410866',
     email: 'mtboss2016@gmail.com',
     address: {
