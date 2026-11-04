@@ -26,6 +26,7 @@ const ensureLocalVendorsTable = createInitializationGuard(async () => {
 export async function GET(req) {
   try {
     await ensureProjectManagementSchema();
+    await ensureLocalVendorsTable();
     const { searchParams } = new URL(req.url);
     const projectId = searchParams.get('projectId') ? Number(searchParams.get('projectId')) : null;
     const search = (searchParams.get('search') || '').trim().toLowerCase();
@@ -34,7 +35,7 @@ export async function GET(req) {
     const auth = await assertAgentAccess(req, projectId, ['construction', 'payments']);
     if (!auth.allowed) return auth.response;
 
-    // 1. Fetch all registered suppliers (Hub source)
+    // 1. Fetch all registered suppliers (Hub source) - all active approved vendors
     const registeredRes = await pool.query(`
       SELECT 
         s.id,
@@ -47,13 +48,11 @@ export async function GET(req) {
         s.is_active,
         TRUE AS is_registered
       FROM suppliers s
-      WHERE s.status = 'approved' AND s.is_active = TRUE
-        AND COALESCE(s.package_price, 0) > 0
-        AND s.package_status = 'active'
+      WHERE (s.status = 'approved' OR s.status IS NULL) AND s.is_active = TRUE
       ORDER BY s.shop_name ASC, s.id ASC
     `);
 
-    // 2. Fetch project local vendors from pm_project_local_vendors
+    // 2. Fetch local vendors from pm_project_local_vendors (all active, prioritizing this project)
     const localVendorsRes = await pool.query(`
       SELECT 
         id, 
@@ -63,15 +62,22 @@ export async function GET(req) {
         city, 
         address, 
         material_type, 
-        is_active
+        is_active,
+        (project_id = $1::bigint) AS is_this_project
       FROM pm_project_local_vendors
-      WHERE is_active AND ($1::bigint IS NULL OR project_id = $1::bigint)
-      ORDER BY name ASC
+      WHERE is_active
+      ORDER BY (project_id = $1::bigint) DESC, name ASC
     `, [projectId]);
 
     const localByName = new Map();
+    const dedupedLocal = [];
     localVendorsRes.rows.forEach(lv => {
-      if (lv.name) localByName.set(lv.name.trim().toLowerCase(), lv);
+      const key = (lv.name || '').trim().toLowerCase();
+      if (!key) return;
+      if (!localByName.has(key)) {
+        localByName.set(key, lv);
+        dedupedLocal.push(lv);
+      }
     });
 
     // 3. Fetch distinct un-registered supplier names used in PM
@@ -103,7 +109,7 @@ export async function GET(req) {
         is_registered: true,
         is_local: false,
       })),
-      ...localVendorsRes.rows.map(l => ({
+      ...dedupedLocal.map(l => ({
         id: null,
         local_vendor_id: l.id,
         shop_name: l.name,
@@ -125,7 +131,7 @@ export async function GET(req) {
           city: '',
           status: 'unregistered',
           is_registered: false,
-          is_local: false,
+          is_local: true,
         }))
     ];
 
