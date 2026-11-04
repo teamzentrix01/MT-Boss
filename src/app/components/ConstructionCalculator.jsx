@@ -1281,23 +1281,103 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
           padding: 14px;
           background: var(--boq-surface);
         }
-        .boq-item.disabled { opacity: .56; }
+        .boq-item.disabled {
+          background: var(--boq-surface);
+        }
+        .boq-item.disabled .boq-icon {
+          opacity: 0.45;
+        }
+        .boq-item.disabled h3 {
+          color: var(--boq-muted);
+        }
+        .boq-item.disabled .boq-select-box {
+          opacity: 0.45;
+        }
+        .boq-item.disabled .boq-amount {
+          opacity: 0.45;
+        }
         .boq-icon { width: 44px; height: 44px; border-radius: 8px; display: grid; place-items: center; background: var(--boq-soft); color: var(--boq-blue); border: 1px solid var(--boq-line); }
         .boq-item h3 { margin: 0 0 5px; font-size: .92rem; font-weight: 900; letter-spacing: 0; }
         .boq-meta { display: flex; flex-wrap: wrap; gap: 7px; color: var(--boq-muted); font-size: .72rem; font-weight: 800; }
-        .boq-toggle {
-          width: 38px;
-          height: 22px;
-          border: 0;
-          border-radius: 999px;
-          background: #b8beb8;
-          padding: 3px;
+        .boq-toggle-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 7px;
           cursor: pointer;
+          user-select: none;
         }
-        .boq-toggle span { display: block; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .16s; }
-        .boq-toggle.active { background: var(--boq-green); }
-        .boq-toggle.active span { transform: translateX(16px); }
-        .boq-toggle:disabled { cursor: not-allowed; }
+        .boq-toggle {
+          position: relative;
+          width: 46px;
+          height: 24px;
+          border: 1.5px solid transparent !important;
+          border-radius: 999px !important;
+          background-color: #cbd5e1 !important;
+          background-image: none !important;
+          box-shadow: inset 0 1px 3px rgba(0,0,0,0.12) !important;
+          padding: 2px !important;
+          cursor: pointer;
+          transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+          transform: none !important;
+          flex-shrink: 0;
+          display: inline-flex;
+          align-items: center;
+        }
+        .boq-toggle:hover:not(:disabled) {
+          background-color: #94a3b8 !important;
+          background-image: none !important;
+          transform: none !important;
+          box-shadow: inset 0 1px 3px rgba(0,0,0,0.16) !important;
+        }
+        .boq-toggle:active:not(:disabled) {
+          transform: none !important;
+        }
+        .boq-toggle .boq-toggle-knob,
+        .boq-toggle span {
+          display: block;
+          width: 18px;
+          height: 18px;
+          border-radius: 50% !important;
+          background: #ffffff !important;
+          background-image: none !important;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;
+          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transform: translateX(2px) !important;
+        }
+        .boq-toggle.active {
+          background-color: #16a34a !important;
+          background-image: none !important;
+          border-color: #15803d !important;
+          box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25) !important;
+        }
+        .boq-toggle.active:hover:not(:disabled) {
+          background-color: #15803d !important;
+          background-image: none !important;
+          transform: none !important;
+        }
+        .boq-toggle.active .boq-toggle-knob,
+        .boq-toggle.active span {
+          transform: translateX(22px) !important;
+        }
+        .boq-toggle-label {
+          font-size: 0.72rem;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: color 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .boq-toggle-label.is-on {
+          color: #16a34a;
+        }
+        .boq-toggle-label.is-off {
+          color: #64748b;
+        }
+        .boq-toggle:disabled { cursor: not-allowed; opacity: 0.5; }
         .boq-amount { text-align: right; }
         .boq-amount strong { display: block; font-size: .96rem; color: var(--boq-text); }
         .boq-amount span { display: block; color: var(--boq-muted); font-size: .72rem; margin-top: 3px; }
@@ -1425,6 +1505,28 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
         .boq-report-note { padding: 14px; border: 1px solid rgba(215,169,35,.65); background: #fff8dc; color: #1f2937; border-radius: 8px; line-height: 1.55; font-size: .82rem; }
         .dark-mode .boq-modal-overlay,
         .boq-page.dark .boq-modal-overlay { background: rgba(0,0,0,.68); }
+        .dark-mode .boq-toggle,
+        .boq-page.dark .boq-toggle {
+          background-color: #3f3f46 !important;
+        }
+        .dark-mode .boq-toggle:hover:not(:disabled),
+        .boq-page.dark .boq-toggle:hover:not(:disabled) {
+          background-color: #52525b !important;
+        }
+        .dark-mode .boq-toggle.active,
+        .boq-page.dark .boq-toggle.active {
+          background-color: #16a34a !important;
+          border-color: #22c55e !important;
+          box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25) !important;
+        }
+        .dark-mode .boq-toggle-label.is-on,
+        .boq-page.dark .boq-toggle-label.is-on {
+          color: #4ade80;
+        }
+        .dark-mode .boq-toggle-label.is-off,
+        .boq-page.dark .boq-toggle-label.is-off {
+          color: #94a3b8;
+        }
         .dark-mode .boq-modal,
         .boq-page.dark .boq-modal {
           background: var(--boq-surface);
@@ -1633,21 +1735,35 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                           </div>
                           <div className="boq-select-wrap">
                             {spec.type === 'Mandatory' ? null : (
-                              <button
-                                className={`boq-toggle${isIncluded ? ' active' : ''}`}
-                                type="button"
+                              <div
+                                className="boq-toggle-wrap"
                                 onClick={() => toggleIncluded(spec)}
-                                aria-label={`Toggle ${spec.title}`}
+                                title={isIncluded ? `${spec.title} is ON (Included). Click to exclude.` : `${spec.title} is OFF (Excluded). Click to include.`}
                               >
-                                <span />
-                              </button>
+                                <button
+                                  className={`boq-toggle no-global-btn${isIncluded ? ' active' : ''}`}
+                                  type="button"
+                                  role="switch"
+                                  aria-checked={isIncluded}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleIncluded(spec);
+                                  }}
+                                  aria-label={`Toggle ${spec.title}`}
+                                >
+                                  <span className="boq-toggle-knob" />
+                                </button>
+                                <span className={`boq-toggle-label ${isIncluded ? 'is-on' : 'is-off'}`}>
+                                  {isIncluded ? 'ON · Included' : 'OFF · Excluded'}
+                                </span>
+                              </div>
                             )}
+                            <div className="boq-select-box" style={{ position: 'relative' }}>
                             <select
                               className="boq-select"
                               value={selectedProducts[spec.key] || options[0]?.id || ''}
                               onChange={(e) => selectProduct(spec.key, e.target.value)}
                               disabled={!isIncluded}
-                              style={{ marginTop: spec.type === 'Mandatory' ? 0 : 8 }}
                             >
                               {options.length === 0 && (
                                 <option value="">No brand available</option>
@@ -1660,7 +1776,8 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                                 </option>
                               ))}
                             </select>
-                            <ChevronDown className="boq-select-icon" size={16} style={{ top: spec.type === 'Mandatory' ? '50%' : '68%' }} />
+                            <ChevronDown className="boq-select-icon" size={16} />
+                            </div>
                           </div>
                           <div className="boq-amount">
                             <strong>{item ? formatCurrency(item.amount) : formatCurrency(0)}</strong>
