@@ -485,6 +485,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const normalizeConstructionSub = (sub) => {
     if (!sub) return null;
     const s = sub.toLowerCase().trim();
+    if (s === 'used' || s === 'material_used' || s === 'material-used' || s === 'daily_usage' || s === 'daily-usage' || s === 'consumption') return 'used';
     if (s === 'adjustments' || s === 'adjustment' || s === 'wastage') return 'adjustments';
     if (s === 'return' || s === 'return_material' || s === 'return-material' || s === 'returns') return 'return';
     if (s === 'scrap' || s === 'scrap_material' || s === 'scrap-material') return 'scrap';
@@ -532,7 +533,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const rawSub = getUrlParam('sub');
     const norm = normalizeConstructionSub(rawSub);
     if (norm) return norm;
-    return 'adjustments';
+    return 'used';
   });
 
   useEffect(() => {
@@ -1540,14 +1541,69 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const openReportsScreen = async () => {
     setScreen('reports');
     try {
-      const pRes = await api('/api/admin/project-management/projects?pageSize=100').catch(() => ({ data: [] }));
-      setAllProjectsList(pRes.data || []);
-      if (!materialsMaster || materialsMaster.length === 0) {
-        const mRes = await api('/api/admin/project-management/materials').catch(() => ({ data: [] }));
-        if (mRes?.data) setMaterialsMaster(mRes.data);
-      }
+      const pRes = await api('/api/admin/project-management/projects?pageSize=200').catch(() => ({ data: [] }));
+      if (pRes?.data && Array.isArray(pRes.data)) setAllProjectsList(pRes.data);
+      const mRes = await api('/api/admin/project-management/materials?pageSize=200').catch(() => ({ data: [] }));
+      if (mRes?.data && Array.isArray(mRes.data)) setMaterialsMaster(mRes.data);
     } catch {}
   };
+
+  useEffect(() => {
+    if (screen === 'reports') {
+      api('/api/admin/project-management/projects?pageSize=200')
+        .then((pRes) => {
+          if (pRes?.data && Array.isArray(pRes.data)) setAllProjectsList(pRes.data);
+        })
+        .catch(() => {});
+      api('/api/admin/project-management/materials?pageSize=200')
+        .then((mRes) => {
+          if (mRes?.data && Array.isArray(mRes.data)) setMaterialsMaster(mRes.data);
+        })
+        .catch(() => {});
+    }
+  }, [screen]);
+
+  const availableReportProjects = useMemo(() => {
+    const map = new Map();
+    (allProjectsList || []).forEach((p) => {
+      if (p && p.id) {
+        map.set(String(p.id), { id: String(p.id), name: p.name, status: p.status });
+      }
+    });
+    if (Array.isArray(reportData?.data)) {
+      reportData.data.forEach((r) => {
+        if (r && r.project_id && !map.has(String(r.project_id))) {
+          map.set(String(r.project_id), {
+            id: String(r.project_id),
+            name: r.project_name || `Project #${r.project_id}`,
+            status: r.project_status || r.status || '',
+          });
+        }
+      });
+    }
+    return Array.from(map.values()).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }, [allProjectsList, reportData]);
+
+  const availableReportMaterials = useMemo(() => {
+    const map = new Map();
+    (materialsMaster || []).forEach((m) => {
+      if (m && m.id) {
+        map.set(String(m.id), { id: String(m.id), name: m.name, unit: m.unit });
+      }
+    });
+    if (Array.isArray(reportData?.data)) {
+      reportData.data.forEach((r) => {
+        if (r && r.material_id && !map.has(String(r.material_id))) {
+          map.set(String(r.material_id), {
+            id: String(r.material_id),
+            name: r.material_name || `Material #${r.material_id}`,
+            unit: r.unit || r.material_unit || '',
+          });
+        }
+      });
+    }
+    return Array.from(map.values()).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }, [materialsMaster, reportData]);
 
   useEffect(() => {
     if (screen === 'reports') {
@@ -6449,6 +6505,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                           <button
+                            className={constructionSubTab === 'used' ? 'active-btn' : 'muted'}
+                            onClick={() => handleConstructionSubChange('used')}
+                          >
+                            🧱 Daily Material Used ({usedRows.length})
+                          </button>
+                          <button
                             className={constructionSubTab === 'adjustments' ? 'active-btn' : 'muted'}
                             onClick={() => handleConstructionSubChange('adjustments')}
                           >
@@ -6475,6 +6537,19 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         </div>
 
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {constructionSubTab === 'used' && (
+                            <button
+                              onClick={() => {
+                                setUsedForm({ ...usedBlank, used_date: today() });
+                                setEditingUsedId(null);
+                                setModalReadOnly(false);
+                                setModalError('');
+                                setUsedModal(true);
+                              }}
+                            >
+                              🧱 + Record Daily Consumption
+                            </button>
+                          )}
                           {constructionSubTab === 'adjustments' && (
                             <button
                               onClick={() => {
@@ -6882,8 +6957,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             ))}
                           {usedRows.length === 0 && (
                             <tr>
-                              <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                                No material usage entries yet.
+                              <td colSpan={7} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>🧱</div>
+                                <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 4 }}>No daily material usage entries yet</div>
+                                <div style={{ fontSize: 13, marginBottom: 14 }}>Record daily site material consumption (cement, sand, bricks, sariya) to track usage in reports.</div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUsedForm({ ...usedBlank, used_date: today() });
+                                    setEditingUsedId(null);
+                                    setModalReadOnly(false);
+                                    setModalError('');
+                                    setUsedModal(true);
+                                  }}
+                                  style={{ padding: '6px 14px', fontSize: 12 }}
+                                >
+                                  🧱 + Record Daily Consumption
+                                </button>
                               </td>
                             </tr>
                           )}
@@ -9264,7 +9354,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('usage', () => saveUsedEntry(e), { successMessage: 'Material usage saved successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Material Usage' : (editingUsedId ? '✏️ Edit Material Usage' : 'Record Material Usage')}
+                  {modalReadOnly ? '👁️ View Daily Material Usage' : (editingUsedId ? '✏️ Edit Daily Material Usage' : '🧱 Record Daily Material Consumption')}
                 </h3>
                 {modalReadOnly && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -9274,6 +9364,45 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
                 <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                  {stockRows.length > 0 && !modalReadOnly && !editingUsedId && (
+                    <div style={{ marginBottom: 14, background: '#f8fafc', padding: '10px 12px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: 11, color: '#475569', fontWeight: 600, marginBottom: 6 }}>
+                        Quick Select Material from Site Stock:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {stockRows.map((s) => {
+                          const isSel = usedForm.material_name?.toLowerCase() === s.name?.toLowerCase();
+                          return (
+                            <button
+                              key={s.id}
+                              type="button"
+                              onClick={() => {
+                                setUsedForm((prev) => ({
+                                  ...prev,
+                                  material_id: String(s.id),
+                                  material_name: s.name,
+                                  unit: s.unit || prev.unit,
+                                }));
+                              }}
+                              style={{
+                                fontSize: 11,
+                                padding: '4px 10px',
+                                borderRadius: 6,
+                                background: isSel ? '#dbeafe' : '#ffffff',
+                                color: isSel ? '#1d4ed8' : '#334155',
+                                border: isSel ? '1.5px solid #3b82f6' : '1px solid #cbd5e1',
+                                cursor: 'pointer',
+                                fontWeight: isSel ? 700 : 500,
+                              }}
+                            >
+                              {s.name} ({Number(s.stock ?? s.current_stock ?? 0).toFixed(1)} {s.unit})
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid">
                   <Input
                     label="Material Name"
@@ -9302,7 +9431,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   />
                   <Input label="Usage Date" name="used_date" type="date" value={usedForm.used_date} set={setUsedForm} required />
                   <Input label="Used For (e.g. Foundation, Slab, Plaster)" name="used_for" value={usedForm.used_for} set={setUsedForm} placeholder="e.g. 1st Floor Slab casting" />
-                  <Input label="Note" name="note" value={usedForm.note} set={setUsedForm} />
+                  <Input label="Note / Remarks" name="note" value={usedForm.note} set={setUsedForm} placeholder="Optional site remarks" />
                 </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
@@ -9975,7 +10104,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
                   >
                     <option value="">All Projects</option>
-                    {allProjectsList.map((p) => (
+                    {availableReportProjects.map((p) => (
                       <option value={p.id} key={p.id}>
                         {p.name} {p.status ? `(${p.status})` : ''}
                       </option>
@@ -9995,7 +10124,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       style={{ width: '100%', padding: '6px 10px', fontSize: 12, borderRadius: 6, border: '1px solid #cbd5e1' }}
                     >
                       <option value="">All Materials</option>
-                      {materialsMaster.map((m) => (
+                      {availableReportMaterials.map((m) => (
                         <option value={m.id} key={m.id}>
                           {m.name} {m.unit ? `(${m.unit})` : ''}
                         </option>

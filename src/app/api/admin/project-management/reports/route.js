@@ -234,6 +234,7 @@ export async function GET(req) {
           { key: 'used_qty', label: 'Quantity Used' },
           { key: 'avg_rate', label: 'Avg Rate (₹)' },
           { key: 'consumed_cost', label: 'Consumed Value (₹)' },
+          { key: 'used_for', label: 'Work Phase / Detail' },
         ];
 
         const r = await pool.query(
@@ -252,13 +253,16 @@ export async function GET(req) {
                WHEN $6 = 'yearly' THEN TO_CHAR(DATE_TRUNC('year', u.used_date), 'YYYY')
                ELSE TO_CHAR(u.used_date, 'YYYY-MM-DD')
              END AS period_label,
+             p.id AS project_id,
              p.name AS project_name,
              p.status AS project_status,
+             m.id AS material_id,
              m.name AS material_name,
              COALESCE(u.unit, m.unit) AS unit,
              SUM(u.quantity) AS used_qty,
              COALESCE(rr.avg_rate, 0) AS avg_rate,
-             ROUND(SUM(u.quantity) * COALESCE(rr.avg_rate, 0), 2) AS consumed_cost
+             ROUND(SUM(u.quantity) * COALESCE(rr.avg_rate, 0), 2) AS consumed_cost,
+             COALESCE(STRING_AGG(DISTINCT NULLIF(TRIM(u.used_for), ''), ', '), '—') AS used_for
            FROM pm_material_used u
            JOIN pm_projects p ON p.id = u.project_id
            JOIN pm_materials m ON m.id = u.material_id
@@ -270,7 +274,7 @@ export async function GET(req) {
              AND ($4::date IS NULL OR u.used_date >= $4::date)
              AND ($5::date IS NULL OR u.used_date <= $5::date)
              AND ($7::text IS NULL OR $7 = '' OR m.name ILIKE '%' || $7 || '%' OR p.name ILIKE '%' || $7 || '%')
-           GROUP BY 1, p.name, p.status, m.name, COALESCE(u.unit, m.unit), rr.avg_rate
+           GROUP BY 1, p.id, p.name, p.status, m.id, m.name, COALESCE(u.unit, m.unit), rr.avg_rate
            ORDER BY 1 DESC, p.name, m.name`,
           [projectId, materialId, projectStatus, startDate, endDate, frequency, search]
         );
