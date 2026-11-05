@@ -3,6 +3,7 @@
 // service provider DASHBOARD - Notifications, Active Booking, Messages
 // ════════════════════════════════════════════════════════════════════════════════
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 
 import { Suspense, useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
@@ -1337,7 +1338,7 @@ function ServiceProviderDashboardContent() {
               ) : (
                 <>
                   <div>
-                    <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Extra Amount Beyond Base (₹) *</label>
+                    <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${muted}`}>Extra Amount Beyond Base (₹) <RequiredAsterisk /></label>
                     <input type="number" min="0"
                       className={`w-full px-3 py-2.5 text-sm border outline-none transition-all ${isDark ? "bg-zinc-900 border-zinc-700 text-white" : "bg-zinc-50 border-zinc-300 text-zinc-900"}`}
                       placeholder="Amount charged above ₹150 base"

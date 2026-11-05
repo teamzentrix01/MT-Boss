@@ -561,6 +561,7 @@ button[aria-expanded="true"]:not(:where(.shop-page, .shop-page *, .admin-dashboa
   text-underline-offset: 2px;
 }
 
+.field-required,
 .privacy-required { color: #dc2626; font-weight: 800; }
 .privacy-consent-help { display: block; margin: 5px 0 0 26px; font-size: 10px; opacity: .65; }
 

@@ -1,5 +1,6 @@
 'use client';
 
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -550,7 +551,7 @@ export default function SupplierLoginPage() {
 
               {/* Email field */}
               <div className="sl-field">
-                <label className="sl-label">Email address</label>
+                <label className="sl-label">Email address <RequiredAsterisk /></label>
                 <div className="sl-input-wrap">
                   <span className="sl-input-icon">✉</span>
                   <input
@@ -568,7 +569,7 @@ export default function SupplierLoginPage() {
 
               {/* Password field */}
               <div className="sl-field">
-                <label className="sl-label">Password</label>
+                <label className="sl-label">Password <RequiredAsterisk /></label>
                 <div className="sl-input-wrap">
                   <span className="sl-input-icon">🔒</span>
                   <input

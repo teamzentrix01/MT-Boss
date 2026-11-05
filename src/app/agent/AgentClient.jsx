@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../components/RequiredAsterisk';
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
@@ -91,7 +92,7 @@ const faqs = [
 
 export default function AgentPage() {
   const dark = useDarkMode();
-  const { cities, loading: citiesLoading, error: citiesError } = useCities();
+  const { cities, cityRecords, loading: citiesLoading, error: citiesError } = useCities();
   const dynamicFaqs = useFaqs('agent');
   const [activeFaq, setActiveFaq] = useState(null);
   const [submitted, setSubmitted] = useState(false);
@@ -120,6 +121,9 @@ export default function AgentPage() {
     if (name === 'phone') {
       const rawDigits = value.replace(/\D/g, '');
       setForm(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
+    } else if (name === 'city') {
+      const record = cityRecords.find((row) => row.name === value);
+      setForm((prev) => ({ ...prev, city: value, state: record?.state || prev.state }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }
@@ -147,20 +151,29 @@ export default function AgentPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    const phoneDigits = String(form.phone || '').replace(/\D/g, '').slice(0, 10);
     const phoneRegex = /^[6-9]\d{9}$/;
-    if (!form.phone) { setError('Phone number is required.'); return; }
-    if (!phoneRegex.test(form.phone)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
+    if (!form.name.trim()) { setError('Full name is required.'); return; }
+    if (!form.email.trim()) { setError('Email address is required.'); return; }
+    if (!phoneDigits) { setError('Phone number is required.'); return; }
+    if (!phoneRegex.test(phoneDigits)) { setError('Enter a valid 10-digit Indian mobile number (starts with 6-9).'); return; }
+    if (!form.city) { setError('City is required.'); return; }
+    if (!form.state) { setError('State is required.'); return; }
+    if (!form.agentType) { setError('Agent type is required.'); return; }
+    if (!form.occupation.trim()) { setError('Current occupation is required.'); return; }
     setLoading(true);
+
+    const payload = { ...form, phone: phoneDigits };
 
     try {
       // Save to DB → shows on admin dashboard
       const dbRes = await fetch("/api/agents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const dbData = await dbRes.json();
-      if (!dbData.success) {
+      if (!dbRes.ok || !dbData.success) {
         setError(dbData.error || "Something went wrong. Please try again.");
         setLoading(false);
         return;
@@ -562,19 +575,19 @@ export default function AgentPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>Full Name *</label>
+                    <label className={labelClass}>Full Name <RequiredAsterisk /></label>
                     <input type="text" name="name" required placeholder="Your full name" value={form.name} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Email Address *</label>
+                    <label className={labelClass}>Email Address <RequiredAsterisk /></label>
                     <input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Phone Number *</label>
-                    <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
+                    <label className={labelClass}>Phone Number <RequiredAsterisk /></label>
+                    <input type="tel" name="phone" required placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Current Occupation *</label>
+                    <label className={labelClass}>Current Occupation <RequiredAsterisk /></label>
                     <input type="text" name="occupation" required placeholder="e.g. Real Estate Broker, Engineer" value={form.occupation} onChange={handleChange} className={inputClass} />
                   </div>
                 </div>
@@ -587,7 +600,7 @@ export default function AgentPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>City *</label>
+                    <label className={labelClass}>City <RequiredAsterisk /></label>
                     <select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
                       <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
                       {cities.map(city => <option key={city} value={city}>{city}</option>)}
@@ -595,7 +608,7 @@ export default function AgentPage() {
                     {citiesError && <p className="mt-1 text-xs text-red-500">{citiesError}</p>}
                   </div>
                   <div>
-                    <label className={labelClass}>State *</label>
+                    <label className={labelClass}>State <RequiredAsterisk /></label>
                     <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>
                       <option value="">Select State</option>
                       {[
@@ -621,7 +634,7 @@ export default function AgentPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className={labelClass}>Agent Type *</label>
+                    <label className={labelClass}>Agent Type <RequiredAsterisk /></label>
                     <select name="agentType" required value={form.agentType} onChange={handleChange} className={inputClass}>
                       <option value="">Select Type</option>
                       <option value="Property Agent">Property Agent</option>

@@ -13,8 +13,10 @@ export async function GET(req) {
       id: user.id,
       mobile: user.mobile,
       name: user.name,
+      email: user.email || null,
       role: user.role,
       status: user.status,
+      phone: user.phone || user.mobile,
     },
   });
 }

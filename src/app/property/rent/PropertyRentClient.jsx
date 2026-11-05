@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from "react";
 import { useServiceCities } from "@/hooks/useServiceCities";
 import { uploadPropertyImages } from "@/lib/property-image-upload";
@@ -204,7 +205,7 @@ export default function RentPage() {
 
             {/* Seller type toggle */}
             <div>
-              <label className={lbl}>You are a *</label>
+              <label className={lbl}>You are a <RequiredAsterisk /></label>
               <div className="flex gap-3">
                 {["owner","broker"].map(t => (
                   <button key={t} type="button" onClick={() => set("seller_type", t)}
@@ -216,11 +217,11 @@ export default function RentPage() {
               </div>
             </div>
 
-            <div><label className={lbl}>Property Title *</label><input className={inp} placeholder="e.g. 2BHK Apartment for Rent in Noida" value={form.title} onChange={e=>set("title",e.target.value)} /></div>
+            <div><label className={lbl}>Property Title <RequiredAsterisk /></label><input className={inp} placeholder="e.g. 2BHK Apartment for Rent in Noida" value={form.title} onChange={e=>set("title",e.target.value)} /></div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={lbl}>Property Type *</label>
+                <label className={lbl}>Property Type <RequiredAsterisk /></label>
                 <input className={inp} list="rent-property-types" value={form.type}
                   onChange={e=>set("type",e.target.value)} placeholder="Select or type property type" />
                 <datalist id="rent-property-types">
@@ -229,7 +230,7 @@ export default function RentPage() {
                 <p className={`mt-1 text-[10px] ${muted}`}>Select an option or type a custom property type.</p>
               </div>
               <div>
-                <label className={lbl}>Location *</label>
+                <label className={lbl}>Location <RequiredAsterisk /></label>
                 <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)} required disabled={loadingCities}>
                   <option value="">{loadingCities ? 'Loading cities...' : 'Select city'}</option>
                   {availableCities.map(l => <option key={l} value={l}>{l}</option>)}
@@ -242,19 +243,19 @@ export default function RentPage() {
             <div><label className={lbl}>Full Address</label><input className={inp} placeholder="Street, Sector, City..." value={form.address} onChange={e=>set("address",e.target.value)} /></div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div><label className={lbl}>Monthly Rent (₹) Display *</label><input className={inp} placeholder="e.g. 25,000/mo" value={form.price} onChange={e=>set("price",e.target.value)} /></div>
-              <div><label className={lbl}>Rent Amount (numeric) *</label><input type="number" className={inp} placeholder="e.g. 25000" value={form.price_raw} onChange={e=>set("price_raw",e.target.value)} /></div>
+              <div><label className={lbl}>Monthly Rent (₹) Display <RequiredAsterisk /></label><input className={inp} placeholder="e.g. 25,000/mo" value={form.price} onChange={e=>set("price",e.target.value)} /></div>
+              <div><label className={lbl}>Rent Amount (numeric) <RequiredAsterisk /></label><input type="number" className={inp} placeholder="e.g. 25000" value={form.price_raw} onChange={e=>set("price_raw",e.target.value)} /></div>
             </div>
 
             {form.type !== "Plots" ? (
               <div className="grid grid-cols-3 gap-4">
                 <div><label className={lbl}>Beds</label><input type="number" className={inp} placeholder="2" value={form.beds} onChange={e=>set("beds",e.target.value)} /></div>
                 <div><label className={lbl}>Baths</label><input type="number" className={inp} placeholder="1" value={form.baths} onChange={e=>set("baths",e.target.value)} /></div>
-                <div><label className={lbl}>Area (sqft) *</label><input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} /></div>
+                <div><label className={lbl}>Area (sqft) <RequiredAsterisk /></label><input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} /></div>
               </div>
             ) : (
               <div>
-                <label className={lbl}>Area (sqft) *</label>
+                <label className={lbl}>Area (sqft) <RequiredAsterisk /></label>
                 <input type="number" className={inp} placeholder="950" value={form.area} onChange={e=>set("area",e.target.value)} />
               </div>
             )}
@@ -270,8 +271,8 @@ export default function RentPage() {
         {step === 2 && (
           <div className={`border rounded-sm p-6 space-y-5 ${card}`}>
             <h2 className="text-lg font-black uppercase tracking-tight">Your Information</h2>
-            <div><label className={lbl}>Full Name *</label><input className={inp} placeholder="Your name" value={form.seller_name} onChange={e=>set("seller_name",e.target.value)} /></div>
-            <div><label className={lbl}>Phone Number *</label><input type="tel" className={inp} placeholder="10-digit mobile number" value={form.seller_phone} onChange={e=>{ const rawDigits = e.target.value.replace(/\D/g, ''); set("seller_phone", rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : ''); }} maxLength={10} inputMode="numeric" /></div>
+            <div><label className={lbl}>Full Name <RequiredAsterisk /></label><input className={inp} placeholder="Your name" value={form.seller_name} onChange={e=>set("seller_name",e.target.value)} /></div>
+            <div><label className={lbl}>Phone Number <RequiredAsterisk /></label><input type="tel" className={inp} placeholder="10-digit mobile number" value={form.seller_phone} onChange={e=>{ const rawDigits = e.target.value.replace(/\D/g, ''); set("seller_phone", rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : ''); }} maxLength={10} inputMode="numeric" /></div>
             <div><label className={lbl}>Email Address</label><input type="email" className={inp} placeholder="you@example.com" value={form.seller_email} onChange={e=>set("seller_email",e.target.value)} /></div>
             <p className={`text-[11px] leading-relaxed ${muted}`}>⚠️ Your contact details are only shared with verified tenants after admin approval.</p>
             <div className="flex gap-3">

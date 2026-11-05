@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { generateSecureOtp, hashMobileOtp } from '@/lib/mobile-auth';
-import { sendOtpSms } from '@/lib/msg91';
+import { sendOtpSms, isOtpDevMode, DEV_FIXED_OTP } from '@/lib/msg91';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 const MOBILE_REGEX = /^[6-9]\d{9}$/;
 const OTP_VALID_MINUTES = 5;
 const OTP_EXPIRES_HOURS = 1;
-const RATE_LIMIT_WINDOW_SECONDS = 60;
 const RATE_LIMIT_MAX_PER_HOUR = 5;
 
 const ensureSchema = createInitializationGuard(async () => {
@@ -54,62 +53,59 @@ export async function POST(req) {
       );
     }
 
-    // ── Rate limiting (DB-backed, transactional) ──────────────────────────
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // Lock rate limit rows for this mobile to prevent concurrent bypasses
-      // Use advisory lock on mobile to prevent concurrent OTP requests bypassing rate limits
-      // Advisory lock key: hash mobile to int4 range
+      // Serialize OTP requests per mobile (prevents concurrent rate-limit bypass)
       const lockKey = mobile.split('').reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) | 0, 0);
       await client.query(`SELECT pg_advisory_xact_lock($1)`, [lockKey]);
 
-      // Check per-60-second rate limit
-      const recentRow = await client.query(
-        `SELECT COUNT(*)::INT AS cnt
-         FROM mobile_otp_rate_limits
-         WHERE mobile = $1 AND requested_at > NOW() - INTERVAL '60 seconds'
-         FOR UPDATE`,
-         WHERE mobile = $1 AND requested_at > NOW() - INTERVAL '60 seconds'`,
-        [mobile],
-      );
-      if (Number(recentRow.rows[0]?.cnt) >= 1) {
-        await client.query('ROLLBACK');
-        return NextResponse.json(
-          { success: false, error: 'Please wait 60 seconds before requesting another OTP.' },
-          { status: 429 },
+      const isDev = isOtpDevMode();
+
+      // Temporary: skip rate limits in dev so OTP flow can be retested quickly
+      if (!isDev) {
+        const recentRow = await client.query(
+          `SELECT COUNT(*)::INT AS cnt
+           FROM mobile_otp_rate_limits
+           WHERE mobile = $1 AND requested_at > NOW() - INTERVAL '60 seconds'`,
+          [mobile],
         );
+        if (Number(recentRow.rows[0]?.cnt) >= 1) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { success: false, error: 'Please wait 60 seconds before requesting another OTP.' },
+            { status: 429 },
+          );
+        }
+
+        const hourlyRow = await client.query(
+          `SELECT COUNT(*)::INT AS cnt
+           FROM mobile_otp_rate_limits
+           WHERE mobile = $1 AND requested_at > NOW() - INTERVAL '1 hour'`,
+          [mobile],
+        );
+        if (Number(hourlyRow.rows[0]?.cnt) >= RATE_LIMIT_MAX_PER_HOUR) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { success: false, error: 'Too many OTP requests. Try again in an hour.' },
+            { status: 429 },
+          );
+        }
       }
 
-      const hourlyRow = await client.query(
-        `SELECT COUNT(*)::INT AS cnt
-         FROM mobile_otp_rate_limits
-         WHERE mobile = $1 AND requested_at > NOW() - INTERVAL '1 hour'`,
-        [mobile],
-      );
-      if (Number(hourlyRow.rows[0]?.cnt) >= RATE_LIMIT_MAX_PER_HOUR) {
-        await client.query('ROLLBACK');
-        return NextResponse.json(
-          { success: false, error: 'Too many OTP requests. Try again in an hour.' },
-          { status: 429 },
-        );
-      }
-
-      // Record this request
       await client.query(
         `INSERT INTO mobile_otp_rate_limits (mobile) VALUES ($1)`,
         [mobile],
       );
 
-      // Invalidate any previous unused OTPs for this mobile
       await client.query(
         `UPDATE mobile_otps SET used = TRUE WHERE mobile = $1 AND used = FALSE`,
         [mobile],
       );
 
-      // Generate and store new OTP
-      const otp = generateSecureOtp();
+      // Temporary: fixed OTP in non-production / OTP_DEV_MODE for end-to-end testing
+      const otp = isDev ? DEV_FIXED_OTP : generateSecureOtp();
       const otpHash = hashMobileOtp(otp);
 
       await client.query(
@@ -120,12 +116,18 @@ export async function POST(req) {
 
       await client.query('COMMIT');
 
-      // ── Send SMS (outside transaction) ──────────────────────────────────
       try {
+        // Dev: no real SMS (sendOtpSms short-circuits). Prod: MSG91.
         await sendOtpSms(mobile, otp);
       } catch (smsErr) {
-        // Roll back the OTP record if SMS fails so we don't leave misleading state
-        await pool.query(`UPDATE mobile_otps SET used = TRUE WHERE mobile = $1 AND used = FALSE AND created_at > NOW() - INTERVAL '5 seconds'`, [mobile]);
+        await pool.query(
+          `UPDATE mobile_otps
+              SET used = TRUE
+            WHERE mobile = $1
+              AND used = FALSE
+              AND created_at > NOW() - INTERVAL '5 seconds'`,
+          [mobile],
+        );
         console.error('[send-otp] SMS delivery failed:', smsErr.message);
         return NextResponse.json(
           { success: false, error: 'Failed to send OTP. Please try again.' },
@@ -133,11 +135,17 @@ export async function POST(req) {
         );
       }
 
-      // Clean up old rate limit records > 2 hours (best effort, fire and forget)
       pool.query(`DELETE FROM mobile_otp_rate_limits WHERE requested_at < NOW() - INTERVAL '2 hours'`).catch(() => {});
       pool.query(`DELETE FROM mobile_otps WHERE expires_at < NOW()`).catch(() => {});
 
-      return NextResponse.json({ success: true, message: 'OTP sent successfully' });
+      // Never return the OTP value — in dev clients know the fixed code is 123456
+      return NextResponse.json({
+        success: true,
+        message: isDev
+          ? 'Dev OTP ready. Use 123456 to verify (no SMS sent).'
+          : 'OTP sent successfully',
+        ...(isDev ? { dev: true } : {}),
+      });
     } catch (err) {
       await client.query('ROLLBACK').catch(() => {});
       throw err;

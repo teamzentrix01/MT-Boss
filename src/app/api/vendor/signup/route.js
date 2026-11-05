@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
 import { cleanCity, ensureServiceCitiesSchema } from '@/lib/service-cities';
-import { resolveManagedCity } from '@/lib/cities';
+import { resolveManagedCity, resolveManagedCityWithMessage } from '@/lib/cities';
 import { verifyOtp } from '@/lib/otp';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
@@ -114,10 +114,28 @@ export async function POST(req) {
     // VALIDATION
     // ════════════════════════════════════════════════════════════════
 
-    if (!vendor_name || !email || !password || !phone || !canonicalManagedCity || !state || !postal_code) {
-      console.warn('❌ [SIGNUP] Missing required fields');
+    if (!vendor_name) {
+      return NextResponse.json({ error: 'Service provider name is required' }, { status: 400 });
+    }
+    if (!email) {
+      return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
+    }
+    if (!password) {
+      return NextResponse.json({ error: 'Password is required' }, { status: 400 });
+    }
+    if (!phone) {
+      return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
+    }
+    if (!state) {
+      return NextResponse.json({ error: 'State is required' }, { status: 400 });
+    }
+    if (!postal_code) {
+      return NextResponse.json({ error: 'Postal code is required' }, { status: 400 });
+    }
+    if (!canonicalManagedCity) {
+      const cityMsg = await resolveManagedCityWithMessage(city);
       return NextResponse.json(
-        { error: 'Missing required fields: vendor_name, email, password, phone, city, state, postal_code' },
+        { error: cityMsg.error || 'Please select an active service city' },
         { status: 400 }
       );
     }

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 import { Suspense, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -195,7 +196,7 @@ function RatingModal({ booking, isDark, onClose, onSuccess }) {
 
           {/* Overall Stars */}
           <div className="text-center">
-            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${muted}`}>Overall Rating *</p>
+            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${muted}`}>Overall Rating <RequiredAsterisk /></p>
             <div className="flex justify-center gap-1.5">
               {[1, 2, 3, 4, 5].map((s) => (
                 <button key={s} type="button"
@@ -307,7 +308,7 @@ function PrimaryServiceReviewModal({ enquiry, isDark, onClose, onSuccess }) {
         </div>
         <div className="p-6 space-y-5">
           <div className="text-center">
-            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${muted}`}>Overall Rating *</p>
+            <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${muted}`}>Overall Rating <RequiredAsterisk /></p>
             <div className="flex justify-center gap-1.5">
               {[1, 2, 3, 4, 5].map((s) => (
                 <button key={s} type="button"
@@ -729,7 +730,7 @@ function ProfileTabView({ user, isDark, onProfileUpdated }) {
         <form onSubmit={handleSave} className="mt-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${muted}`}>Full Name</label>
+              <label className={`block text-xs font-bold uppercase tracking-wider mb-1.5 ${muted}`}>Full Name <RequiredAsterisk /></label>
               <input
                 type="text"
                 required

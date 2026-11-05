@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -625,7 +626,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                 </div>
 
                 <div>
-                  <label className="qs-label">Image Fit *</label>
+                  <label className="qs-label">Image Fit <RequiredAsterisk /></label>
                   <select
                     className="qs-input"
                     value={formData.image_fit || 'cover'}
@@ -741,13 +742,13 @@ export default function QuickServicesManager({ isDarkMode }) {
                   </div>
                 </div>
                 <div>
-                  <label className="qs-label">Service Name *</label>
+                  <label className="qs-label">Service Name <RequiredAsterisk /></label>
                   <input className="qs-input" type="text" placeholder="e.g. Plumbing"
                     value={formData.label}
                     onChange={e => setFormData({ ...formData, label: e.target.value })} />
                 </div>
                 <div className="qs-form-full">
-                  <label className="qs-label">Description *</label>
+                  <label className="qs-label">Description <RequiredAsterisk /></label>
                   <textarea className="qs-textarea" rows={2} placeholder="Service description…"
                     value={formData.desc}
                     onChange={e => setFormData({ ...formData, desc: e.target.value })} />
@@ -802,7 +803,7 @@ export default function QuickServicesManager({ isDarkMode }) {
                   {!formData.sub_category.split(',').some((item) => item.trim()) ? <small style={{ color: 'var(--qs-muted)' }}>Add subcategories above to attach images to them.</small> : null}
                 </div>
                 <div className="qs-form-full">
-                  <label className="qs-label">Available Cities *</label>
+                  <label className="qs-label">Available Cities <RequiredAsterisk /></label>
                   <select className="qs-input" value="" onChange={e => {
                     const city = e.target.value;
                     if (city && !formData.cities.includes(city)) {

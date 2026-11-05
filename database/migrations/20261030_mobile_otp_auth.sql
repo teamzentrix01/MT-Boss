@@ -14,11 +14,16 @@ CREATE TABLE IF NOT EXISTS public.mobile_users (
   role VARCHAR(20) NOT NULL DEFAULT 'vendor' CHECK (role IN ('agent','vendor','supplier')),
   status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','active','blocked')),
   refresh_token_hash TEXT,
+  entity_id INTEGER,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE public.mobile_users
+  ADD COLUMN IF NOT EXISTS entity_id INTEGER;
+
 CREATE INDEX IF NOT EXISTS idx_mobile_users_mobile ON public.mobile_users(mobile);
+CREATE INDEX IF NOT EXISTS idx_mobile_users_entity ON public.mobile_users(role, entity_id);
 
 -- Step 3: OTPs table for mobile auth
 CREATE TABLE IF NOT EXISTS public.mobile_otps (

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
@@ -598,14 +599,14 @@ export default function FranchiseDashboardPage() {
               {message.text && <div className={`fd-notice ${message.type}`}>{message.text}</div>}
 
               <div>
-                <label className="fd-label">Project image *</label>
+                <label className="fd-label">Project image <RequiredAsterisk /></label>
                 {form.image_url && <Image className="fd-preview" src={form.image_url} alt="Project preview" width={640} height={360} quality={75} />}
                 <input ref={fileRef} type="file" accept="image/*" onChange={uploadImage} className="fd-input fd-file" disabled={uploading || (Boolean(editProject) && !can('projects.manage_images'))} />
                 {uploading && <div className="fd-muted">Uploading image...</div>}
               </div>
 
               <div>
-                <label className="fd-label">Title *</label>
+                <label className="fd-label">Title <RequiredAsterisk /></label>
                 <input className="fd-input" disabled={Boolean(editProject) && !can('projects.edit')} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
               </div>
 
@@ -633,7 +634,7 @@ export default function FranchiseDashboardPage() {
 
               <div className="fd-row">
                 <div>
-                  <label className="fd-label">Category *</label>
+                  <label className="fd-label">Category <RequiredAsterisk /></label>
                   <select className="fd-input" disabled={Boolean(editProject) && !can('projects.edit')} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
                     <option value="">Select category</option>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}

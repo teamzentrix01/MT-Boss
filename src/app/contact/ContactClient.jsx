@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 import { useState, useEffect, useRef } from 'react';
 import { COMPANY_CONTACT } from '../lib/company';
@@ -292,7 +293,7 @@ export default function ContactPage() {
 
                 {/* Department Selector */}
                 <div className="mb-6">
-                  <label className={labelClass}>What can we help you with? *</label>
+                  <label className={labelClass}>What can we help you with? <RequiredAsterisk /></label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {departments.map((dept) => (
                       <button
@@ -364,7 +365,7 @@ export default function ContactPage() {
                     {/* Name + Email */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className={labelClass}>Full Name *</label>
+                        <label className={labelClass}>Full Name <RequiredAsterisk /></label>
                         <input
                           type="text"
                           name="name"
@@ -390,7 +391,7 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className={labelClass}>City *</label>
+                      <label className={labelClass}>City <RequiredAsterisk /></label>
                       <select
                         name="city"
                         value={form.city}
@@ -406,7 +407,7 @@ export default function ContactPage() {
                     {/* Phone + Subject */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className={labelClass}>Phone Number *</label>
+                        <label className={labelClass}>Phone Number <RequiredAsterisk /></label>
                         <input
                           type="tel"
                           name="phone"
@@ -420,7 +421,7 @@ export default function ContactPage() {
                         {fieldErrors.phone && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.phone}</p>}
                       </div>
                       <div>
-                        <label className={labelClass}>Subject *</label>
+                        <label className={labelClass}>Subject <RequiredAsterisk /></label>
                         <input
                           type="text"
                           name="subject"
@@ -435,7 +436,7 @@ export default function ContactPage() {
 
                     {/* Message */}
                     <div>
-                      <label className={labelClass}>Message *</label>
+                      <label className={labelClass}>Message <RequiredAsterisk /></label>
                       <textarea
                         name="message"
                         rows={5}

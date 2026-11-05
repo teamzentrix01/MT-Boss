@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -839,7 +840,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Full Name *</label>
+                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Full Name <RequiredAsterisk /></label>
                     <input
                       type="text"
                       required
@@ -850,7 +851,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                     />
                   </div>
                   <div>
-                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Phone Number *</label>
+                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Phone Number <RequiredAsterisk /></label>
                     <input
                       type="tel"
                       required
@@ -864,7 +865,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Email Address *</label>
+                    <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Email Address <RequiredAsterisk /></label>
                     <input
                       type="email"
                       required
@@ -955,7 +956,7 @@ export default function CheckoutView({ productId: initialProductId }) {
                     </div>
 
                     <div>
-                      <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Full Street Address / Site Location *</label>
+                      <label className={`block text-[10px] font-black uppercase tracking-wider mb-1.5 ${muted}`}>Full Street Address / Site Location <RequiredAsterisk /></label>
                       <textarea
                         required
                         rows={3}

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 import { useEffect, useState, useCallback } from 'react';
 import { useCities } from '@/hooks/useCities';
 import { Pencil, Trash2, ShieldCheck, Ban, ActionIconButton, Plus, Save } from '@/app/components/ui/icons';
@@ -304,23 +305,23 @@ export default function ProfessionalServicesManager({ isDarkMode }) {
               <div style={{ background:msg.type==='error'?(isDarkMode?'#2d1515':'#fee2e2'):(isDarkMode?'#052e16':'#dcfce7'), color:msg.type==='error'?'#ef4444':'#22c55e', padding:'9px 12px', borderRadius:'4px', marginBottom:'16px', fontSize:'12px' }}>{msg.text}</div>
             )}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'14px' }}>
-              <div><label style={lbl}>Full Name *</label><input style={inp} value={form.name} onChange={set('name')} required /></div>
-              <div><label style={lbl}>Professional Title *</label><input style={inp} value={form.title} onChange={set('title')} required /></div>
+              <div><label style={lbl}>Full Name <RequiredAsterisk /></label><input style={inp} value={form.name} onChange={set('name')} required /></div>
+              <div><label style={lbl}>Professional Title <RequiredAsterisk /></label><input style={inp} value={form.title} onChange={set('title')} required /></div>
               <div>
-                <label style={lbl}>Category *</label>
+                <label style={lbl}>Category <RequiredAsterisk /></label>
                 <select style={inp} value={form.category} onChange={set('category')}>
                   {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div><label style={lbl}>Experience (years)</label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} /></div>
-              <div><label style={lbl}>City *</label><select style={inp} value={form.city} onChange={set('city')} required>
+              <div><label style={lbl}>City <RequiredAsterisk /></label><select style={inp} value={form.city} onChange={set('city')} required>
                 <option value="">Select city</option>
                 {cities.map(city => <option key={city} value={city}>{city}</option>)}
               </select></div>
-              <div><label style={lbl}>Phone *</label><input style={inp} value={form.phone} onChange={set('phone')} required /></div>
-              <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email *</label><input style={inp} type="email" value={form.email} onChange={set('email')} required /></div>
+              <div><label style={lbl}>Phone <RequiredAsterisk /></label><input style={inp} value={form.phone} onChange={set('phone')} required /></div>
+              <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email <RequiredAsterisk /></label><input style={inp} type="email" value={form.email} onChange={set('email')} required /></div>
               <div style={{ gridColumn:'span 2' }}>
-                <label style={lbl}>Bio / Description *</label>
+                <label style={lbl}>Bio / Description <RequiredAsterisk /></label>
                 <textarea style={{...inp,resize:'vertical'}} rows={4} value={form.description} onChange={set('description')} required />
               </div>
               <div style={{ gridColumn:'span 2' }}><label style={lbl}>Specializations (comma-separated)</label><input style={inp} value={form.specializations} onChange={set('specializations')} /></div>

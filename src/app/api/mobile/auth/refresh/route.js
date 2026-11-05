@@ -1,17 +1,61 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
-import { generateAccessToken, generateRefreshToken, hashRefreshToken } from '@/lib/mobile-auth';
+import {
+  getRefreshSecret,
+  generateRefreshToken,
+  hashRefreshToken,
+  signPartnerAccessToken,
+  loadPartnerEntity,
+  ensureMobileUsersEntityColumn,
+} from '@/lib/mobile-auth';
 
-function getRefreshSecret() {
-  const s = process.env.REFRESH_SECRET;
-  if (s) return s;
-  if (process.env.NODE_ENV !== 'production') return 'dev-refresh-secret-change-me';
-  throw new Error('REFRESH_SECRET is required in production');
+function entityStillAllowed(role, entity) {
+  if (!entity) return false;
+  if (role === 'agent') return entity.status === 'Approved' && entity.login_enabled;
+  if (role === 'vendor') return Boolean(entity.is_approved) && entity.status !== 'inactive';
+  return entity.status === 'approved' && entity.is_active !== false;
+}
+
+function profileFromEntity(role, entity, mobileFallback) {
+  const mobile = String(entity.phone || mobileFallback || '').replace(/\D/g, '').slice(-10);
+  if (role === 'agent') {
+    return {
+      id: entity.id,
+      mobile,
+      name: entity.name,
+      email: entity.email,
+      role: 'agent',
+      status: 'active',
+      phone: entity.phone,
+    };
+  }
+  if (role === 'vendor') {
+    return {
+      id: entity.id,
+      mobile,
+      name: entity.shop_name || entity.business_name || entity.vendor_name || entity.email,
+      email: entity.email,
+      role: 'vendor',
+      status: 'active',
+      phone: entity.phone,
+    };
+  }
+  return {
+    id: entity.id,
+    mobile,
+    name: entity.shop_name || entity.email,
+    email: entity.email,
+    role: 'supplier',
+    status: 'active',
+    phone: entity.phone,
+  };
 }
 
 export async function POST(req) {
   try {
+    await ensureMobileUsersEntityColumn();
+
     let body;
     try {
       body = await req.json();
@@ -24,12 +68,13 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Refresh token required' }, { status: 400 });
     }
 
-    // Verify JWT
     let payload;
     try {
       payload = jwt.verify(refreshToken, getRefreshSecret());
     } catch (err) {
-      const msg = err?.name === 'TokenExpiredError' ? 'Refresh token expired. Please sign in again.' : 'Invalid refresh token.';
+      const msg = err?.name === 'TokenExpiredError'
+        ? 'Refresh token expired. Please sign in again.'
+        : 'Invalid refresh token.';
       return NextResponse.json({ success: false, error: msg }, { status: 401 });
     }
 
@@ -37,16 +82,13 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Invalid token type.' }, { status: 401 });
     }
 
-    // Hash incoming refresh token
     const incomingHash = hashRefreshToken(refreshToken);
-
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // Load user and lock row
       const result = await client.query(
-        `SELECT id, mobile, name, role, status, refresh_token_hash
+        `SELECT id, mobile, name, role, status, entity_id, refresh_token_hash
          FROM mobile_users WHERE id = $1 FOR UPDATE`,
         [payload.userId],
       );
@@ -56,42 +98,64 @@ export async function POST(req) {
         return NextResponse.json({ success: false, error: 'User not found.' }, { status: 401 });
       }
 
-      const user = result.rows[0];
+      const mobileUser = result.rows[0];
 
-      if (user.status === 'blocked') {
+      if (mobileUser.status === 'blocked') {
         await client.query('ROLLBACK');
         return NextResponse.json({ success: false, error: 'Account blocked. Contact support.' }, { status: 403 });
       }
 
-      // Reject if stored hash doesn't match (token reuse / revocation)
-      if (!user.refresh_token_hash || user.refresh_token_hash !== incomingHash) {
+      if (!mobileUser.refresh_token_hash || mobileUser.refresh_token_hash !== incomingHash) {
         await client.query('ROLLBACK');
-        return NextResponse.json({ success: false, error: 'Refresh token revoked or already used.' }, { status: 401 });
+        return NextResponse.json(
+          { success: false, error: 'Refresh token revoked or already used.' },
+          { status: 401 },
+        );
       }
 
-      // Rotate tokens
-      const newAccessToken = generateAccessToken(user);
-      const newRefreshToken = generateRefreshToken(user);
+      const entityId = mobileUser.entity_id || payload.entityId;
+      const entity = await loadPartnerEntity(mobileUser.role, entityId);
+      if (!entityStillAllowed(mobileUser.role, entity)) {
+        await client.query('ROLLBACK');
+        return NextResponse.json(
+          { success: false, error: 'Linked partner account is inactive. Please sign in again.' },
+          { status: 401 },
+        );
+      }
+
+      const accessToken = signPartnerAccessToken(mobileUser.role, entity);
+      const newRefreshToken = generateRefreshToken({
+        ...mobileUser,
+        entity_id: entity.id,
+      });
       const newRefreshHash = hashRefreshToken(newRefreshToken);
 
       await client.query(
-        `UPDATE mobile_users SET refresh_token_hash = $1, updated_at = NOW() WHERE id = $2`,
-        [newRefreshHash, user.id],
+        `UPDATE mobile_users
+            SET refresh_token_hash = $1,
+                entity_id = $2,
+                name = COALESCE($3, name),
+                status = 'active',
+                updated_at = NOW()
+          WHERE id = $4`,
+        [
+          newRefreshHash,
+          entity.id,
+          profileFromEntity(mobileUser.role, entity, mobileUser.mobile).name,
+          mobileUser.id,
+        ],
       );
 
       await client.query('COMMIT');
 
+      const user = profileFromEntity(mobileUser.role, entity, mobileUser.mobile);
+
       return NextResponse.json({
         success: true,
-        accessToken: newAccessToken,
+        token: accessToken,
+        accessToken,
         refreshToken: newRefreshToken,
-        user: {
-          id: user.id,
-          mobile: user.mobile,
-          name: user.name,
-          role: user.role,
-          status: user.status,
-        },
+        user,
       });
     } catch (err) {
       await client.query('ROLLBACK').catch(() => {});

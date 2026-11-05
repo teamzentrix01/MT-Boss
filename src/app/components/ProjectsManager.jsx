@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useState, useEffect, useRef } from 'react';
 
@@ -678,7 +679,7 @@ export default function ProjectsManager() {
 
               {/* Image Upload */}
               <div>
-                <label className="pm-field-label">Project Image *</label>
+                <label className="pm-field-label">Project Image <RequiredAsterisk /></label>
                 <div className="pm-upload-area" onClick={() => fileRef.current?.click()}>
                   {preview && <img src={preview} alt="preview" className="pm-upload-preview" />}
                   <p className="pm-upload-label">
@@ -739,7 +740,7 @@ export default function ProjectsManager() {
 
               {/* Title */}
               <div>
-                <label className="pm-field-label">Project Title *</label>
+                <label className="pm-field-label">Project Title <RequiredAsterisk /></label>
                 <input
                   className="pm-input"
                   placeholder="e.g. The Sky Atrium"
@@ -751,7 +752,7 @@ export default function ProjectsManager() {
               {/* Category + Location */}
               <div className="pm-row">
                 <div>
-                  <label className="pm-field-label">Category *</label>
+                  <label className="pm-field-label">Category <RequiredAsterisk /></label>
                   <select
                     className="pm-input"
                     value={form.category}
