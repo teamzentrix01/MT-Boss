@@ -60,6 +60,226 @@ const ensureTable = createInitializationGuard(async () => {
   }
 });
 
+
+export const NAVBAR_PRESET_CATEGORIES = [
+  {
+    name: 'New Launches',
+    emoji: '🚀',
+    unit: 'pcs',
+    price_range: 'Price on request',
+    subcategories: [
+      'Cabinet Hardware',
+      'Kitchen Systems & Hardware',
+      'General Hardware & Tools',
+      'Bathroom Renovation Materials',
+      'Conduits & Piping',
+      'PVC Pipes',
+      'Kitchen Sinks & Faucets',
+      'Home Appliances & Power Backup',
+    ],
+  },
+  {
+    name: 'Building Materials',
+    emoji: '🧱',
+    unit: 'bag',
+    price_range: '₹35 - ₹10,000',
+    subcategories: [
+      'Cement',
+      'Iron',
+      'Steel',
+      'Aggregate (Barjri)',
+      'Coarse Sand',
+      'Fine Sand',
+      'Brick',
+      'Block',
+      'POP',
+      'Tiles',
+      'Marble',
+      'Glass',
+      'Waterproofing',
+    ],
+  },
+  {
+    name: 'Carpentry',
+    emoji: '🪵',
+    unit: 'cft',
+    price_range: '₹1,000 - ₹3,000',
+    subcategories: [
+      'Timber',
+      'Plywood',
+      'HPL',
+      'Rough Carpentry',
+    ],
+  },
+  {
+    name: 'Plumbing',
+    emoji: '🚿',
+    unit: 'meter',
+    price_range: '₹50 - ₹500',
+    subcategories: [
+      'CPVC Pipes',
+      'Sanitary',
+      'Bath Fittings',
+      'Overhead Tanks',
+    ],
+  },
+  {
+    name: 'Electrical',
+    emoji: '⚡',
+    unit: 'pcs',
+    price_range: '₹50 - ₹2,500',
+    subcategories: [
+      'Sockets',
+      'Switches',
+      'MCB',
+      'Distribution Board (DB)',
+      'LED Lights',
+      'Electrical Cables',
+    ],
+  },
+  {
+    name: 'Furniture & Architectural Hardware',
+    emoji: '🚪',
+    unit: 'pcs',
+    price_range: 'Price on request',
+    subcategories: [
+      'Hinges, Channels & Handles',
+      'Kitchen Systems & Accessories',
+      'Wardrobe & Bed Fittings',
+      'Door Locks & Hardware',
+    ],
+  },
+  {
+    name: 'Chemicals',
+    emoji: '🧪',
+    unit: 'litre',
+    price_range: '₹150 - ₹5,000',
+    subcategories: [
+      'Construction Chemicals',
+      'Waterproofing Chemicals',
+      'Tile Adhesives',
+      'Admixtures',
+    ],
+  },
+  {
+    name: 'Paints',
+    emoji: '🎨',
+    unit: 'litre',
+    price_range: '₹200 - ₹8,000',
+    subcategories: [
+      'Interior Paints',
+      'Exterior Paints',
+      'Primers',
+      'Enamels & Distempers',
+      'Wall Putty',
+    ],
+  },
+];
+
+export async function syncNavbarCategories() {
+  try {
+    await pool.query(`
+      UPDATE supplier_materials
+      SET category = 'Building Materials',
+          subcategory = CASE
+            WHEN subcategory IS NOT NULL AND TRIM(subcategory) != '' THEN subcategory
+            WHEN LOWER(TRIM(category)) LIKE '%cement%' THEN 'Cement'
+            WHEN LOWER(TRIM(category)) LIKE '%brick%' THEN 'Brick'
+            WHEN LOWER(TRIM(category)) LIKE '%steel%' OR LOWER(TRIM(category)) LIKE '%iron%' THEN 'Steel'
+            WHEN LOWER(TRIM(category)) LIKE '%sand%' THEN 'Coarse Sand'
+            WHEN LOWER(TRIM(category)) LIKE '%aggregate%' OR LOWER(TRIM(category)) LIKE '%barjri%' THEN 'Aggregate (Barjri)'
+            ELSE 'Cement'
+          END
+      WHERE LOWER(TRIM(category)) IN ('cement', 'brick', 'steel', 'sand', 'aggregate ( barjri)', 'aggregate (barjri)', 'iron', 'block', 'pop', 'tiles', 'marble', 'glass', 'waterproofing')
+    `);
+
+    await pool.query(`
+      UPDATE supplier_materials
+      SET category = 'Carpentry',
+          subcategory = CASE
+            WHEN subcategory IS NOT NULL AND TRIM(subcategory) != '' THEN subcategory
+            ELSE 'Timber'
+          END
+      WHERE LOWER(TRIM(category)) IN ('timber ( lakdi)', 'timber', 'plywood', 'hpl', 'rough carpentry')
+    `);
+
+    await pool.query(`
+      UPDATE supplier_materials
+      SET category = 'Plumbing',
+          subcategory = CASE
+            WHEN subcategory IS NOT NULL AND TRIM(subcategory) != '' THEN subcategory
+            ELSE 'CPVC Pipes'
+          END
+      WHERE LOWER(TRIM(category)) IN ('plumbing', 'cpvc pipes', 'sanitary', 'bath fittings', 'overhead tanks')
+    `);
+  } catch (err) {
+    console.warn('Could not re-map supplier_materials products:', err.message);
+  }
+
+  let oldCementImg = null;
+  let oldTimberImg = null;
+  let oldPlumbingImg = null;
+  try {
+    const oldRows = await pool.query(`SELECT name, image, images FROM shop_categories`);
+    for (const row of oldRows.rows) {
+      const n = (row.name || '').toLowerCase();
+      const img = row.image || (Array.isArray(row.images) ? row.images[0] : null);
+      if (img) {
+        if (n.includes('cement') || n.includes('brick') || n.includes('steel')) oldCementImg = oldCementImg || img;
+        if (n.includes('timber')) oldTimberImg = oldTimberImg || img;
+        if (n.includes('plumb')) oldPlumbingImg = oldPlumbingImg || img;
+      }
+    }
+  } catch {}
+
+  for (let i = 0; i < NAVBAR_PRESET_CATEGORIES.length; i++) {
+    const cat = NAVBAR_PRESET_CATEGORIES[i];
+    const subJson = JSON.stringify(cat.subcategories);
+    const existing = await pool.query(
+      `SELECT id, image, images FROM shop_categories WHERE LOWER(TRIM(name)) = LOWER(TRIM($1)) LIMIT 1`,
+      [cat.name]
+    );
+
+    let defaultImg = null;
+    if (cat.name === 'Building Materials') defaultImg = oldCementImg || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80';
+    if (cat.name === 'Carpentry') defaultImg = oldTimberImg || 'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=800&q=80';
+    if (cat.name === 'Plumbing') defaultImg = oldPlumbingImg || 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80';
+    if (cat.name === 'New Launches') defaultImg = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80';
+    if (cat.name === 'Electrical') defaultImg = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80';
+    if (cat.name === 'Furniture & Architectural Hardware') defaultImg = 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80';
+    if (cat.name === 'Chemicals') defaultImg = 'https://images.unsplash.com/photo-1584467735871-8e85353a8413?w=800&q=80';
+    if (cat.name === 'Paints') defaultImg = 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80';
+
+    if (existing.rows.length > 0) {
+      const existingId = existing.rows[0].id;
+      await pool.query(
+        `UPDATE shop_categories
+         SET name=$1, emoji=$2, price_range=$3, unit=$4, sort_order=$5, is_active=TRUE,
+             types=$6::jsonb, subcategories=$6::jsonb, image=COALESCE(image, $7), updated_at=NOW()
+         WHERE id=$8`,
+        [cat.name, cat.emoji, cat.price_range, cat.unit, i + 1, subJson, defaultImg, existingId]
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO shop_categories
+           (name, emoji, price_range, unit, sort_order, is_active, types, subcategories, image, images, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, TRUE, $6::jsonb, $6::jsonb, $7, $8::jsonb, NOW(), NOW())`,
+        [cat.name, cat.emoji, cat.price_range, cat.unit, i + 1, subJson, defaultImg, JSON.stringify([defaultImg])]
+      );
+    }
+  }
+
+  await pool.query(`
+    DELETE FROM shop_categories
+    WHERE LOWER(TRIM(name)) IN (
+      'cement', 'brick', 'steel', 'sand', 'aggregate ( barjri)', 'aggregate (barjri)',
+      'timber ( lakdi)', 'timber'
+    )
+  `);
+
+  invalidatePublicCategoriesCache();
+}
+
 // ── GET ──────────────────────────────────────────────────────────────────────
 export async function GET(req) {
   try {

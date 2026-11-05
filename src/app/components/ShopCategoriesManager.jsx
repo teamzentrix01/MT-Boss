@@ -847,6 +847,66 @@ const SKU_UNITS = ['bag', 'bags', 'pcs', 'kg', 'quintal', 'box', 'bundle', 'cft'
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
+
+const NAVBAR_PRESETS = [
+  {
+    name: 'Building Materials',
+    emoji: '🧱',
+    unit: 'bag',
+    price_range: '₹35 - ₹10,000',
+    subcategories: ['Cement', 'Iron', 'Steel', 'Aggregate (Barjri)', 'Coarse Sand', 'Fine Sand', 'Brick', 'Block', 'POP', 'Tiles', 'Marble', 'Glass', 'Waterproofing'],
+  },
+  {
+    name: 'Carpentry',
+    emoji: '🪵',
+    unit: 'cft',
+    price_range: '₹1,000 - ₹3,000',
+    subcategories: ['Timber', 'Plywood', 'HPL', 'Rough Carpentry'],
+  },
+  {
+    name: 'Plumbing',
+    emoji: '🚿',
+    unit: 'meter',
+    price_range: '₹50 - ₹500',
+    subcategories: ['CPVC Pipes', 'Sanitary', 'Bath Fittings', 'Overhead Tanks'],
+  },
+  {
+    name: 'Electrical',
+    emoji: '⚡',
+    unit: 'pcs',
+    price_range: '₹50 - ₹2,500',
+    subcategories: ['Sockets', 'Switches', 'MCB', 'Distribution Board (DB)', 'LED Lights', 'Electrical Cables'],
+  },
+  {
+    name: 'Furniture & Architectural Hardware',
+    emoji: '🚪',
+    unit: 'pcs',
+    price_range: 'Price on request',
+    subcategories: ['Hinges, Channels & Handles', 'Kitchen Systems & Accessories', 'Wardrobe & Bed Fittings', 'Door Locks & Hardware'],
+  },
+  {
+    name: 'New Launches',
+    emoji: '🚀',
+    unit: 'pcs',
+    price_range: 'Price on request',
+    subcategories: ['Cabinet Hardware', 'Kitchen Systems & Hardware', 'General Hardware & Tools', 'Bathroom Renovation Materials', 'Conduits & Piping', 'PVC Pipes', 'Kitchen Sinks & Faucets', 'Home Appliances & Power Backup'],
+  },
+  {
+    name: 'Chemicals',
+    emoji: '🧪',
+    unit: 'litre',
+    price_range: '₹150 - ₹5,000',
+    subcategories: ['Construction Chemicals', 'Waterproofing Chemicals', 'Tile Adhesives', 'Admixtures'],
+  },
+  {
+    name: 'Paints',
+    emoji: '🎨',
+    unit: 'litre',
+    price_range: '₹200 - ₹8,000',
+    subcategories: ['Interior Paints', 'Exterior Paints', 'Primers', 'Enamels & Distempers', 'Wall Putty'],
+  },
+];
+
 export default function ShopCategoriesManager({ isDarkMode }) {
   const t = th(isDarkMode);
   const { cities } = useCities();
@@ -866,6 +926,35 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   const [saving, setSaving]         = useState(false);
   const [msg, setMsg]               = useState({ text: '', type: '' });
   const [orderSaving, setOrderSaving] = useState(false);
+  const [syncing, setSyncing]         = useState(false);
+
+  const handleSyncNavbar = async () => {
+    if (!confirm('This will align all shop categories and subcategories to match the Navbar structure (Building Materials, Carpentry, Plumbing, Electrical, Furniture & Architectural Hardware, New Launches, Chemicals, Paints). Existing products will be mapped cleanly. Do you want to proceed?')) {
+      return;
+    }
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/shop-categories?action=sync-navbar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token()}`,
+        },
+        body: JSON.stringify({ action: 'sync-navbar' }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        flash('Shop categories synced to Navbar structure successfully!');
+        await load();
+      } else {
+        flash(d.error || 'Failed to sync categories', 'error');
+      }
+    } catch (e) {
+      flash('Sync error: ' + e.message, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   /* drag */
   const dragIdx  = useRef(null);
@@ -891,6 +980,19 @@ export default function ShopCategoriesManager({ isDarkMode }) {
   function flash(text, type = 'success') {
     setMsg({ text, type });
     setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+  }
+
+  function applyNavbarPreset(preset) {
+    setForm((f) => ({
+      ...f,
+      name: preset.name,
+      emoji: preset.emoji,
+      unit: preset.unit,
+      price_range: preset.price_range,
+    }));
+    setSubs([...preset.subcategories]);
+    setTypes([...preset.subcategories]);
+    flash(`Applied "${preset.name}" preset with ${preset.subcategories.length} subcategories.`);
   }
 
   function resetForm() {
@@ -1396,7 +1498,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                 <thead>
                   <tr>
-                    {['⠿', 'Image', 'Name', 'Types', 'Badge', 'Price Range', 'Shipping (₹)', 'Status', 'Actions'].map((h, i) => (
+                    {['⠿', 'Image', 'Name', 'Subcategories', 'Badge', 'Price Range', 'Shipping (₹)', 'Status', 'Actions'].map((h, i) => (
                       <th key={i} style={{ padding: '10px 14px', textAlign: 'left', color: t.sub, fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: t.tHead, whiteSpace: 'nowrap', borderBottom: `1px solid ${t.border}` }}>{h}</th>
                     ))}
                   </tr>
@@ -1433,22 +1535,34 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                         <div style={{ color: t.muted, fontSize: '11px', marginTop: '2px' }}>{cat.unit}</div>
                       </td>
 
-                      {/* types count */}
-                      <td style={{ padding: '10px 14px' }}>
-                        {(cat.types || []).length > 0 ? (
-                          <div>
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand-blue-dark)' }}>
-                              {(cat.types || []).length} type{(cat.types || []).length !== 1 ? 's' : ''}
-                            </span>
-                            {(cat.subcategories || []).length > 0 && (
-                              <div style={{ fontSize: '10px', color: t.muted, marginTop: '2px' }}>
-                                +{(cat.subcategories || []).length} sub
+                      {/* subcategories count & list */}
+                      <td style={{ padding: '10px 14px', maxWidth: '280px' }}>
+                        {(() => {
+                          const subs = Array.isArray(cat.subcategories) && cat.subcategories.length > 0
+                            ? cat.subcategories.map((s) => (typeof s === 'object' && s !== null ? s.name : s)).filter(Boolean)
+                            : (Array.isArray(cat.types) ? cat.types : []);
+                          if (subs.length === 0) return <span style={{ fontSize: '10px', color: t.muted }}>None</span>;
+                          return (
+                            <div>
+                              <div style={{ fontSize: '11px', fontWeight: 700, color: '#1d4ed8' }}>
+                                {subs.length} subcategor{subs.length === 1 ? 'y' : 'ies'}
                               </div>
-                            )}
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '10px', color: t.muted }}>None</span>
-                        )}
+                              <div
+                                style={{
+                                  fontSize: '10.5px',
+                                  color: t.sub,
+                                  marginTop: '3px',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                }}
+                                title={subs.join(', ')}
+                              >
+                                {subs.slice(0, 3).join(', ')}{subs.length > 3 ? ` + ${subs.length - 3} more` : ''}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       {/* badge */}

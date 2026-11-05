@@ -484,9 +484,28 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             }}
           >
             <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
-            ))}
+            {(() => {
+              const standardNavbarCats = [
+                'Building Materials',
+                'Carpentry',
+                'Plumbing',
+                'Electrical',
+                'Furniture & Architectural Hardware',
+                'New Launches',
+                'Chemicals',
+                'Paints',
+              ];
+              const catNames = new Set(standardNavbarCats);
+              categories.forEach((c) => {
+                if (c.name && c.name.trim()) catNames.add(c.name.trim());
+              });
+              if (form.category && !catNames.has(form.category)) {
+                catNames.add(form.category);
+              }
+              return Array.from(catNames).map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ));
+            })()}
           </select>
         </label>
         <label>
@@ -552,6 +571,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
                   'sand': ['River Sand (Nadi ki Ret)', 'M-Sand (Manufactured Sand)', 'Coarse Sand', 'Fine Sand', 'Pit Sand'],
                   'aggregate ( barjri)': ['Fine Aggregate', 'Coarse Aggregate'],
                   'new launches': ['Cabinet Hardware', 'Kitchen Systems & Hardware', 'General Hardware & Tools', 'Bathroom Renovation Materials', 'Conduits & Piping', 'PVC Pipes', 'Kitchen Sinks & Faucets', 'Home Appliances & Power Backup'],
+                  'chemicals': ['Construction Chemicals', 'Waterproofing Chemicals', 'Tile Adhesives', 'Admixtures'],
+                  'paints': ['Interior Paints', 'Exterior Paints', 'Primers', 'Enamels & Distempers', 'Wall Putty'],
                 };
 
                 const normCatKey = (form.category || '').toLowerCase().trim();
@@ -605,295 +626,594 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           )}
         </label>
         {/* Dynamic Category Specifications Section (HomeRun Engine) */}
-        {form.category && (
-          <div className="shop-admin-wide" style={{
-            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-            border: '1.5px solid #cbd5e1',
-            borderRadius: '10px',
-            padding: '16px',
-            margin: '4px 0 10px'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Sparkles size={16} color="var(--brand-blue, #2563eb)" />
-                  <strong style={{ fontSize: '13px', color: '#0f172a' }}>
-                    Specifications & Filters ({getCategoryAttributeConfig(form.category, form.subcategory).label})
-                  </strong>
+        {form.category && (() => {
+          const config = getCategoryAttributeConfig(form.category, form.subcategory);
+          const fields = config.fields || [];
+          const isBMWithoutSub = (form.category || '').toLowerCase().includes('building') && !form.subcategory;
+
+          const renderFieldCard = (key) => {
+            if (key === 'grade') {
+              return (
+                <div key="grade" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>⭐</span> Grade / Standard
+                      </label>
+                      {formAttributes.grade && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, grade: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. OPC 53 Grade, Fe 500D, Class 1, Zone II
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. OPC 53 Grade, Fe 500D"
+                      value={formAttributes.grade || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, grade: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.grade?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.grade.map((val) => {
+                        const isSelected = (formAttributes.grade || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, grade: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-                <small style={{ color: '#64748b', fontSize: '11px' }}>
-                  Select or type values below so customers can filter by Thickness, Size, Type, Color & Material on Shop Now.
-                </small>
+              );
+            }
+
+            if (key === 'type') {
+              return (
+                <div key="type" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🏷️</span> Type / Variety
+                      </label>
+                      {formAttributes.type && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, type: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. PPC Cement, TMT Rebar, AAC Block, M-Sand
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. PPC Cement, TMT Rebar"
+                      value={formAttributes.type || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, type: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.type?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.type.map((val) => {
+                        const isSelected = (formAttributes.type || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, type: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'pack_size') {
+              return (
+                <div key="pack_size" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📦</span> Pack / Bag Size
+                      </label>
+                      {formAttributes.pack_size && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, pack_size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 50 Kg Bag, 1 Ton, CFT, 25 Kg Bag
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 50 Kg Bag, 1 Ton"
+                      value={formAttributes.pack_size || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, pack_size: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.pack_size?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.pack_size.map((val) => {
+                        const isSelected = (formAttributes.pack_size || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, pack_size: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'thickness') {
+              return (
+                <div key="thickness" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📏</span> Thickness / Diameter
+                      </label>
+                      {formAttributes.thickness && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, thickness: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 8mm, 10mm, 12mm, 16mm, 20mm
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 12mm, 16mm, 20mm"
+                      value={formAttributes.thickness || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, thickness: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.thickness?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.thickness.map((val) => {
+                        const isSelected = (formAttributes.thickness || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, thickness: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'size') {
+              return (
+                <div key="size" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📐</span> Dimensions / Size
+                      </label>
+                      {formAttributes.size && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 9x4x3 inch, 600x600 mm, 12m Length
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 9x4x3 inch, 600x600 mm"
+                      value={formAttributes.size || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, size: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.size?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.size.map((val) => {
+                        const isSelected = (formAttributes.size || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, size: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'material') {
+              return (
+                <div key="material" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🧱</span> Material Composition
+                      </label>
+                      {formAttributes.material && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, material: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. Primary Virgin Steel, Vitrified Porcelain, Clay
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. Primary Virgin Steel, Clay"
+                      value={formAttributes.material || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, material: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.material?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.material.map((val) => {
+                        const isSelected = (formAttributes.material || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, material: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'color') {
+              return (
+                <div key="color" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🎨</span> Color / Shade / Finish
+                      </label>
+                      {formAttributes.color && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, color: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. Grey, Super White, Terracotta
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. Grey, Super White"
+                      value={formAttributes.color || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, color: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.color?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.color.map((val) => {
+                        const isSelected = (formAttributes.color || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, color: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return null;
+          };
+
+          return (
+            <div className="shop-admin-wide" style={{
+              background: '#f8fafc',
+              border: '1.5px solid #cbd5e1',
+              borderRadius: '12px',
+              padding: '18px 20px',
+              margin: '8px 0 16px',
+              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <Sparkles size={17} color="#2563eb" />
+                    <strong style={{ fontSize: '14px', color: '#0f172a' }}>
+                      {config.label}
+                    </strong>
+                  </div>
+                  <small style={{ color: '#64748b', fontSize: '11.5px', marginTop: 2, display: 'block' }}>
+                    {form.subcategory
+                      ? `Fill specifications for ${form.subcategory} so buyers on Shop Now can filter by these exact attributes.`
+                      : 'Choose a subcategory below to open tailored fields and quick preset pills.'}
+                  </small>
+                </div>
+                {form.subcategory && (
+                  <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span>✓</span> Subcategory: {form.subcategory}
+                  </span>
+                )}
               </div>
-              {form.subcategory && (
-                <span style={{ fontSize: '11px', background: '#dbeafe', color: '#1e40af', padding: '3px 8px', borderRadius: '12px', fontWeight: 600 }}>
-                  Sub-category: {form.subcategory}
-                </span>
+
+              {isBMWithoutSub ? (
+                <div style={{
+                  background: '#ffffff',
+                  border: '1.5px dashed #93c5fd',
+                  borderRadius: '10px',
+                  padding: '16px 20px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af', marginBottom: 4 }}>
+                    📌 Select a Subcategory to view its dedicated specifications & quick pills:
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#64748b', marginBottom: 12 }}>
+                    Click any subcategory below to instantly load its tailored fields:
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
+                    {[
+                      { label: 'Cement', emoji: '🧱' },
+                      { label: 'Steel', emoji: '🔩' },
+                      { label: 'Brick', emoji: '🧱' },
+                      { label: 'Block', emoji: '🧱' },
+                      { label: 'Coarse Sand', emoji: '🏖️' },
+                      { label: 'Fine Sand', emoji: '🏖️' },
+                      { label: 'Aggregate (Barjri)', emoji: '🪨' },
+                      { label: 'Tiles', emoji: '✨' },
+                      { label: 'Marble', emoji: '🏛️' },
+                      { label: 'Glass', emoji: '🪟' },
+                      { label: 'POP', emoji: '✨' },
+                      { label: 'Waterproofing', emoji: '🧴' },
+                    ].map((subItem) => (
+                      <button
+                        key={subItem.label}
+                        type="button"
+                        onClick={() => setForm({ ...form, subcategory: subItem.label })}
+                        style={{
+                          background: '#eff6ff',
+                          border: '1px solid #bfdbfe',
+                          color: '#1d4ed8',
+                          padding: '6px 13px',
+                          borderRadius: '20px',
+                          fontSize: '11.5px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <span>{subItem.emoji}</span>
+                        <span>{subItem.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+                  gap: '14px',
+                }}>
+                  {fields.map((fKey) => renderFieldCard(fKey))}
+                </div>
               )}
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
-              {/* Thickness */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  📏 Thickness (e.g. 18mm, 12mm, 1mm)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. 18mm, 12mm"
-                  value={formAttributes.thickness}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, thickness: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).thickness?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).thickness.map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, thickness: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.thickness === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.thickness === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.thickness === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Size */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  📐 Size / Dimensions (e.g. 8x4 ft, 600x1200 mm)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. 8x4 ft, 600x1200 mm"
-                  value={formAttributes.size}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, size: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).size?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).size.map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, size: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.size === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.size === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.size === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Type */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  🏷️ Type / Grade (e.g. Vitrified, BWP Marine, Fe 500D)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Vitrified, BWP Marine"
-                  value={formAttributes.type}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, type: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).type?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).type.slice(0, 6).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, type: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.type === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.type === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.type === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Colors */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  🎨 Colors / Finish (e.g. White, Grey, Oak, Chrome)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. White, Natural Wood, Grey"
-                  value={formAttributes.color}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, color: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).color?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).color.slice(0, 6).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, color: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.color === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.color === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.color === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Grade / Quality Standard */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  ⭐ Grade / Standard (e.g. MR Grade, BWP Marine, PPC, OPC 53)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. MR Grade (IS:303), PPC, OPC 53"
-                  value={formAttributes.grade}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, grade: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).grade?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).grade.slice(0, 6).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, grade: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.grade === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.grade === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.grade === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Pack Size */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  📦 Pack Size (e.g. 50 Kg Bag, 20 Kg Bag, 1 Litre, 25 Kg)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. 50 Kg Bag, 20 Kg, 1 Litre"
-                  value={formAttributes.pack_size}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, pack_size: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).pack_size?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).pack_size.slice(0, 6).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, pack_size: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.pack_size === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.pack_size === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.pack_size === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Material */}
-              <div style={{ background: '#fff', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  🧱 Material (e.g. HDHMR, Ceramic, SS 304, CPVC)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. HDHMR, SS 304, Ceramic"
-                  value={formAttributes.material}
-                  onChange={(e) => setFormAttributes({ ...formAttributes, material: e.target.value })}
-                  style={{ width: '100%', marginBottom: 6, minHeight: '34px', fontSize: '12px' }}
-                />
-                {getCategoryAttributeConfig(form.category, form.subcategory).material?.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                    {getCategoryAttributeConfig(form.category, form.subcategory).material.slice(0, 6).map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        onClick={() => setFormAttributes({ ...formAttributes, material: val })}
-                        style={{
-                          fontSize: '10px',
-                          padding: '2px 7px',
-                          borderRadius: '12px',
-                          border: formAttributes.material === val ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                          background: formAttributes.material === val ? '#2563eb' : '#f8fafc',
-                          color: formAttributes.material === val ? '#fff' : '#334155',
-                          cursor: 'pointer',
-                          fontWeight: 600
-                        }}
-                      >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
         <label>Product Selingl Price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
