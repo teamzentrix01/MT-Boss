@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 
@@ -252,7 +253,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
 
             {/* Service Availed */}
             <div>
-              <label className={labelClass}>Service Availed *</label>
+              <label className={labelClass}>Service Availed <RequiredAsterisk /></label>
               <select
                 value={service}
                 onChange={(e) => setService(e.target.value)}
@@ -270,7 +271,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
             {/* Name & Email */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className={labelClass}>Your Name *</label>
+                <label className={labelClass}>Your Name <RequiredAsterisk /></label>
                 <input
                   type="text"
                   placeholder="e.g. Rahul Sharma"
@@ -281,7 +282,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
                 />
               </div>
               <div>
-                <label className={labelClass}>Your Email *</label>
+                <label className={labelClass}>Your Email <RequiredAsterisk /></label>
                 <input
                   type="email"
                   placeholder="you@email.com"
@@ -295,7 +296,7 @@ export default function ReviewModal({ isOpen, onClose, isDarkMode }) {
 
             {/* Review text */}
             <div>
-              <label className={labelClass}>Your Review / Feedback *</label>
+              <label className={labelClass}>Your Review / Feedback <RequiredAsterisk /></label>
               <textarea
                 placeholder="Share your experience regarding project quality, timely delivery, communication, or staff responsiveness..."
                 rows={4}

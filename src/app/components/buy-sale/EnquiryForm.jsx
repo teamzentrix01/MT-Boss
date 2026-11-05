@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../RequiredAsterisk';
 import { useState } from "react";
 
 export default function EnquiryForm({ isDarkMode, propertyId, propertyTitle }) {
@@ -123,7 +124,7 @@ export default function EnquiryForm({ isDarkMode, propertyId, propertyTitle }) {
       <form onSubmit={handleSubmit} className="space-y-4">
 
         <div>
-          <label className={labelClass}>Full Name *</label>
+          <label className={labelClass}>Full Name <RequiredAsterisk /></label>
           <input
             type="text"
             name="name"
@@ -136,7 +137,7 @@ export default function EnquiryForm({ isDarkMode, propertyId, propertyTitle }) {
         </div>
 
         <div>
-          <label className={labelClass}>Phone Number *</label>
+          <label className={labelClass}>Phone Number <RequiredAsterisk /></label>
           <input
             type="tel"
             name="phone"

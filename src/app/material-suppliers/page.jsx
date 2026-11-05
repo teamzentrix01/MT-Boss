@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../components/RequiredAsterisk';
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
@@ -482,10 +483,10 @@ export default function MaterialSuppliersPage() {
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-700" : "text-zinc-400 border-gray-200"}`}>Personal Information</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div><label className={labelClass}>Full Name *</label><input type="text" name="name" required placeholder="Your full name" value={form.name} onChange={handleChange} className={inputClass} /></div>
-                  <div><label className={labelClass}>Email Address *</label><input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} /></div>
-                  <div><label className={labelClass}>Phone Number *</label><input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} /></div>
-                  <div><label className={labelClass}>Company / Firm Name *</label><input type="text" name="companyName" required placeholder="Your company name" value={form.companyName} onChange={handleChange} className={inputClass} /></div>
+                  <div><label className={labelClass}>Full Name <RequiredAsterisk /></label><input type="text" name="name" required placeholder="Your full name" value={form.name} onChange={handleChange} className={inputClass} /></div>
+                  <div><label className={labelClass}>Email Address <RequiredAsterisk /></label><input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} /></div>
+                  <div><label className={labelClass}>Phone Number <RequiredAsterisk /></label><input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} /></div>
+                  <div><label className={labelClass}>Company / Firm Name <RequiredAsterisk /></label><input type="text" name="companyName" required placeholder="Your company name" value={form.companyName} onChange={handleChange} className={inputClass} /></div>
                 </div>
               </div>
 
@@ -493,12 +494,12 @@ export default function MaterialSuppliersPage() {
               <div>
                 <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-700" : "text-zinc-400 border-gray-200"}`}>Location</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div><label className={labelClass}>City *</label><select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
+                  <div><label className={labelClass}>City <RequiredAsterisk /></label><select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
                     <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
                     {cities.map(city => <option key={city} value={city}>{city}</option>)}
                   </select></div>
                   <div>
-                    <label className={labelClass}>State *</label>
+                    <label className={labelClass}>State <RequiredAsterisk /></label>
                     <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>
                       <option value="">Select State</option>
                       {["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"].map((s) => (
@@ -515,7 +516,7 @@ export default function MaterialSuppliersPage() {
                 <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-700" : "text-zinc-400 border-gray-200"}`}>Material Details</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className={labelClass}>Primary Material Category *</label>
+                    <label className={labelClass}>Primary Material Category <RequiredAsterisk /></label>
                     <select name="materialCategory" required value={form.materialCategory} onChange={handleChange} className={inputClass}>
                       <option value="">Select Category</option>
                       <option value="Cement & Concrete">Cement & Concrete</option>
@@ -530,7 +531,7 @@ export default function MaterialSuppliersPage() {
                     </select>
                   </div>
                   <div>
-                    <label className={labelClass}>Supply Capacity *</label>
+                    <label className={labelClass}>Supply Capacity <RequiredAsterisk /></label>
                     <select name="supplyCapacity" required value={form.supplyCapacity} onChange={handleChange} className={inputClass}>
                       <option value="">Select Range</option>
                       <option value="Up to ₹5L per order">Up to ₹5L per order</option>
@@ -540,7 +541,7 @@ export default function MaterialSuppliersPage() {
                     </select>
                   </div>
                   <div>
-                    <label className={labelClass}>Years in Business *</label>
+                    <label className={labelClass}>Years in Business <RequiredAsterisk /></label>
                     <select name="experience" required value={form.experience} onChange={handleChange} className={inputClass}>
                       <option value="">Select</option>
                       <option value="Less than 2 Years">Less than 2 Years</option>
@@ -565,11 +566,11 @@ export default function MaterialSuppliersPage() {
                     <input type="text" name="gst" placeholder="GST registration number" value={form.gst} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>PAN Number *</label>
+                    <label className={labelClass}>PAN Number <RequiredAsterisk /></label>
                     <input type="text" name="pan" required placeholder="PAN card number" value={form.pan} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Registration Plan *</label>
+                    <label className={labelClass}>Registration Plan <RequiredAsterisk /></label>
                     <select name="plan" required value={form.plan} onChange={handleChange} className={inputClass}>
                       <option value="Free Listing">Free Listing — ₹0</option>
                       <option value="Verified Supplier">Verified Supplier — ₹3,999/yr</option>

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../../components/RequiredAsterisk';
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
@@ -382,11 +383,11 @@ export default function ProfessionalProfilePage() {
                 <form onSubmit={handleEnquiry}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '14px' }}>
                     <div>
-                      <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Your Name *</label>
+                      <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Your Name <RequiredAsterisk /></label>
                       <input className="enq-inp" style={inp} placeholder="Full name" value={form.name} onChange={set('name')} />
                     </div>
                     <div>
-                      <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Email Address *</label>
+                      <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Email Address <RequiredAsterisk /></label>
                       <input className="enq-inp" style={inp} type="email" placeholder="you@example.com" value={form.email} onChange={set('email')} />
                     </div>
                     <div>
@@ -395,7 +396,7 @@ export default function ProfessionalProfilePage() {
                     </div>
                   </div>
                   <div style={{ marginBottom: '20px' }}>
-                    <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Your Message *</label>
+                    <label style={{ fontSize: '10px', fontWeight: 700, color: t.muted, textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: '6px' }}>Your Message <RequiredAsterisk /></label>
                     <textarea className="enq-inp" style={{ ...inp, resize: 'vertical' }} rows={5}
                       placeholder={`Describe your project or requirement to ${firstName}…`}
                       value={form.message} onChange={set('message')} />

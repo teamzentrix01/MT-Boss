@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../components/RequiredAsterisk';
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
@@ -680,15 +681,15 @@ export default function ContractorPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>Full Name *</label>
+                    <label className={labelClass}>Full Name <RequiredAsterisk /></label>
                     <input type="text" name="name" required placeholder="Your full name" value={form.name} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Email Address *</label>
+                    <label className={labelClass}>Email Address <RequiredAsterisk /></label>
                     <input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>Phone Number *</label>
+                    <label className={labelClass}>Phone Number <RequiredAsterisk /></label>
                     <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
                   </div>
                   <div>
@@ -705,14 +706,14 @@ export default function ContractorPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={labelClass}>City *</label>
+                    <label className={labelClass}>City <RequiredAsterisk /></label>
                     <select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
                       <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
                       {cities.map(city => <option key={city} value={city}>{city}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className={labelClass}>State *</label>
+                    <label className={labelClass}>State <RequiredAsterisk /></label>
                     <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>
                       <option value="">Select State</option>
                       {[
@@ -738,7 +739,7 @@ export default function ContractorPage() {
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className={labelClass}>Vendor Type *</label>
+                    <label className={labelClass}>Vendor Type <RequiredAsterisk /></label>
                     <select name="vendorType" required value={form.vendorType} onChange={handleChange} className={inputClass}>
                       <option value="">Select Type</option>
                       <option value="Civil Contractor">Civil Contractor</option>
@@ -749,7 +750,7 @@ export default function ContractorPage() {
                     </select>
                   </div>
                   <div>
-                    <label className={labelClass}>Years of Experience *</label>
+                    <label className={labelClass}>Years of Experience <RequiredAsterisk /></label>
                     <select name="experience" required value={form.experience} onChange={handleChange} className={inputClass}>
                       <option value="">Select</option>
                       <option value="Less than 2 Years">Less than 2 Years</option>
@@ -759,7 +760,7 @@ export default function ContractorPage() {
                     </select>
                   </div>
                   <div>
-                    <label className={labelClass}>Registration Plan *</label>
+                    <label className={labelClass}>Registration Plan <RequiredAsterisk /></label>
                     <select name="plan" required value={form.plan} onChange={(e) => { handleChange(e); setSelectedPlan(e.target.value); }} className={inputClass}>
                       <option value="Free Listing">Free Listing — ₹0</option>
                       <option value="Professional">Professional — ₹2,999/yr</option>
@@ -780,7 +781,7 @@ export default function ContractorPage() {
                     <input type="text" name="gst" placeholder="Your GST registration number" value={form.gst} onChange={handleChange} className={inputClass} />
                   </div>
                   <div>
-                    <label className={labelClass}>PAN Number *</label>
+                    <label className={labelClass}>PAN Number <RequiredAsterisk /></label>
                     <input type="text" name="pan" required placeholder="Your PAN card number" value={form.pan} onChange={handleChange} className={inputClass} />
                   </div>
                   <div className="md:col-span-2">

@@ -1,5 +1,6 @@
 'use client';
 
+import RequiredAsterisk from '../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -443,7 +444,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit}>
               {/* Email */}
               <div className="lp-field">
-                <label className="lp-label" htmlFor="email">Email address</label>
+                <label className="lp-label" htmlFor="email">Email address <RequiredAsterisk /></label>
                 <div className="lp-input-wrap">
                   <svg className="lp-input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -459,7 +460,7 @@ export default function LoginPage() {
 
               {/* Password */}
               <div className="lp-field">
-                <label className="lp-label" htmlFor="password">Password</label>
+                <label className="lp-label" htmlFor="password">Password <RequiredAsterisk /></label>
                 <div className="lp-input-wrap">
                   <svg className="lp-input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { AdminStatCard, AdminSectionCard, AdminMoney, AdminButton, AdminInput } from './AdminUI';
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 const managerLoading = () => <div className="empty-state">Loading section...</div>;
 const dynamicManager = (loader) => dynamic(loader, { loading: managerLoading });
@@ -2571,7 +2572,10 @@ function AdminDashboard() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.6rem' }}>
                   {CAREER_EDIT_FIELDS.map(field => (
                     <label key={field.name} style={{ display: 'block' }}>
-                      <span className="modal-field-label">{field.label}</span>
+                      <span className="modal-field-label">
+                        {field.label}
+                        {field.required ? <> <RequiredAsterisk /></> : null}
+                      </span>
                       <input
                         type={field.type || 'text'}
                         required={field.required}

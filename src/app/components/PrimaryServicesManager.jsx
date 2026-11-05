@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 
@@ -104,7 +105,7 @@ function ImageUrlUploadField({ label, value, onChange, required = false, compact
 
   return (
     <div className="ps-field">
-      <label className="ps-field-label">{label}{required ? ' *' : ''}</label>
+      <label className="ps-field-label">{label}{required ? <> <RequiredAsterisk /></> : null}</label>
       <div className="ps-upload-line">
         {!compact && (
           <input
@@ -591,19 +592,19 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                   <>
                     <div className="ps-grid-2" style={{ marginBottom: '0.625rem' }}>
                       <div className="ps-field">
-                        <label className="ps-field-label">Slug *</label>
+                        <label className="ps-field-label">Slug <RequiredAsterisk /></label>
                         <input className="ps-input" type="text" placeholder="residential-construction"
                           value={formData.slug}
                           onChange={e => set('slug', e.target.value.toLowerCase().replace(/\s+/g, '-'))} />
                       </div>
                       <div className="ps-field">
-                        <label className="ps-field-label">Title *</label>
+                        <label className="ps-field-label">Title <RequiredAsterisk /></label>
                         <input className="ps-input" type="text" placeholder="Residential Construction"
                           value={formData.title} onChange={e => set('title', e.target.value)} />
                       </div>
                     </div>
                     <div className="ps-field">
-                      <label className="ps-field-label">Short Description *</label>
+                      <label className="ps-field-label">Short Description <RequiredAsterisk /></label>
                       <textarea className="ps-textarea" rows={2} placeholder="One-liner shown on service cards…"
                         value={formData.description} onChange={e => set('description', e.target.value)} />
                     </div>
@@ -613,7 +614,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                         value={formData.hero_subtitle} onChange={e => set('hero_subtitle', e.target.value)} />
                     </div>
                     <div className="ps-field">
-                      <label className="ps-field-label">Available Cities *</label>
+                      <label className="ps-field-label">Available Cities <RequiredAsterisk /></label>
                       <div className="ps-upload-line">
                         <input className="ps-input" list="primary-service-city-options" type="text"
                           placeholder="Select or type a city" value={customCity}
@@ -635,7 +636,7 @@ export default function PrimaryServicesManager({ isDarkMode }) {
                       </div>
                     </div>
                     <div className="ps-field">
-                      <label className="ps-field-label">Hero Image URL or Upload *</label>
+                      <label className="ps-field-label">Hero Image URL or Upload <RequiredAsterisk /></label>
                       <input className="ps-input" type="url" placeholder="https://images.unsplash.com/…"
                         value={formData.image} onChange={e => set('image', e.target.value)} />
                       <ImageUrlUploadField

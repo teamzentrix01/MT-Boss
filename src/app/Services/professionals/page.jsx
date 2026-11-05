@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -93,7 +94,7 @@ function SingleImageUpload({ label, value, onChange, isDark, required }) {
   return (
     <div>
       <label style={{ fontSize:'10px',fontWeight:700,color:t.sub,textTransform:'uppercase',letterSpacing:'0.07em',display:'block',marginBottom:'6px' }}>
-        {label}{required ? ' *' : ''}
+        {label}{required ? <> <RequiredAsterisk /></> : null}
       </label>
       <div style={{ display:'flex',gap:'10px',alignItems:'center' }}>
         {value && (
@@ -290,23 +291,23 @@ function ApplyModal({ isDark, onClose }) {
 
             <form onSubmit={handleSubmit}>
               <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px' }}>
-                <div><label style={lbl}>Full Name *</label><input style={inp} value={form.name} onChange={set('name')} placeholder="John Doe" /></div>
-                <div><label style={lbl}>Professional Title *</label><input style={inp} value={form.title} onChange={set('title')} placeholder="Senior Interior Designer" /></div>
+                <div><label style={lbl}>Full Name <RequiredAsterisk /></label><input style={inp} value={form.name} onChange={set('name')} placeholder="John Doe" /></div>
+                <div><label style={lbl}>Professional Title <RequiredAsterisk /></label><input style={inp} value={form.title} onChange={set('title')} placeholder="Senior Interior Designer" /></div>
                 <div>
-                  <label style={lbl}>Category *</label>
+                  <label style={lbl}>Category <RequiredAsterisk /></label>
                   <select style={inp} value={form.category} onChange={set('category')}>
                     {CATEGORIES.filter(c=>c!=='All').map(c=><option key={c}>{c}</option>)}
                   </select>
                 </div>
-                <div><label style={lbl}>Years of Experience *</label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} placeholder="5" /></div>
-                <div><label style={lbl}>City *</label><select style={inp} value={form.city} onChange={set('city')} disabled={citiesLoading}>
+                <div><label style={lbl}>Years of Experience <RequiredAsterisk /></label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} placeholder="5" /></div>
+                <div><label style={lbl}>City <RequiredAsterisk /></label><select style={inp} value={form.city} onChange={set('city')} disabled={citiesLoading}>
                   <option value="">{citiesLoading ? 'Loading cities...' : 'Select city'}</option>
                   {cities.map(city => <option key={city} value={city}>{city}</option>)}
                 </select></div>
-                <div><label style={lbl}>Phone *</label><input style={inp} value={form.phone} onChange={set('phone')} placeholder="+91 98765 43210" /></div>
-                <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email *</label><input style={inp} type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" /></div>
+                <div><label style={lbl}>Phone <RequiredAsterisk /></label><input style={inp} value={form.phone} onChange={set('phone')} placeholder="+91 98765 43210" /></div>
+                <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email <RequiredAsterisk /></label><input style={inp} type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" /></div>
                 <div style={{ gridColumn:'span 2' }}>
-                  <label style={lbl}>Bio / Description *</label>
+                  <label style={lbl}>Bio / Description <RequiredAsterisk /></label>
                   <textarea style={{...inp,resize:'vertical'}} rows={4} value={form.description} onChange={set('description')} placeholder="Describe your expertise, style and approach…" />
                 </div>
                 <div style={{ gridColumn:'span 2' }}><label style={lbl}>Specializations (comma-separated)</label><input style={inp} value={form.specializations} onChange={set('specializations')} placeholder="Residential Design, 3D Visualization…" /></div>

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useCities } from '@/hooks/useCities';
@@ -1091,7 +1092,7 @@ export default function ShopCategoriesManager({ isDarkMode }) {
 
                 {/* Name */}
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={lbl}>Category Name *</label>
+                  <label style={lbl}>Category Name <RequiredAsterisk /></label>
                   <input className="sc-inp" style={inp} value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Cement & Concrete" />
                 </div>

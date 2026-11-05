@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -268,11 +269,11 @@ export default function JobsManager({ isDarkMode }) {
             <div style={{ padding: '22px', display: 'grid', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Job Title *</label>
+                  <label style={labelStyle}>Job Title <RequiredAsterisk /></label>
                   <input style={fieldStyle} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Senior Civil Engineer" />
                 </div>
                 <div>
-                  <label style={labelStyle}>Department *</label>
+                  <label style={labelStyle}>Department <RequiredAsterisk /></label>
                   <input list="job-departments" style={fieldStyle} value={form.department} onChange={e => setForm(f => ({ ...f, department: e.target.value }))} placeholder="Engineering" />
                   <datalist id="job-departments">{DEPARTMENTS.map(item => <option key={item} value={item} />)}</datalist>
                 </div>
@@ -280,7 +281,7 @@ export default function JobsManager({ isDarkMode }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div>
-                  <label style={labelStyle}>Location *</label>
+                  <label style={labelStyle}>Location <RequiredAsterisk /></label>
                   <select style={fieldStyle} value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}>
                     <option value="">Select city</option>
                     {cities.map(city => <option key={city} value={city}>{city}</option>)}
@@ -293,7 +294,7 @@ export default function JobsManager({ isDarkMode }) {
                   </select>
                 </div>
                 <div>
-                  <label style={labelStyle}>Experience *</label>
+                  <label style={labelStyle}>Experience <RequiredAsterisk /></label>
                   <input style={fieldStyle} value={form.experience} onChange={e => setForm(f => ({ ...f, experience: e.target.value }))} placeholder="5-8 Years" />
                 </div>
                 <div>
@@ -303,7 +304,7 @@ export default function JobsManager({ isDarkMode }) {
               </div>
 
               <div>
-                <label style={labelStyle}>Description *</label>
+                <label style={labelStyle}>Description <RequiredAsterisk /></label>
                 <textarea style={{ ...fieldStyle, minHeight: '92px', resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Short role overview shown on the job detail page." />
               </div>
 

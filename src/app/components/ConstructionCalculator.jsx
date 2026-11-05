@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useEffect, useMemo, useState } from 'react';
 import { COMPANY_CONTACT } from '../lib/company';
@@ -1940,11 +1941,11 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                 </div>
                 <div className="boq-quote-grid">
                   <div className="boq-quote-field">
-                    <label>Full Name *</label>
+                    <label>Full Name <RequiredAsterisk /></label>
                     <input value={quoteForm.name} onChange={(e) => updateQuoteForm('name', e.target.value)} required placeholder="Your name" />
                   </div>
                   <div className="boq-quote-field">
-                    <label>Mobile Number *</label>
+                    <label>Mobile Number <RequiredAsterisk /></label>
                     <input
                       type="tel"
                       value={quoteForm.phone}
@@ -1980,11 +1981,11 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                   />
                 </div>
                 <div className="boq-quote-field">
-                  <label>Site Address *</label>
+                  <label>Site Address <RequiredAsterisk /></label>
                   <textarea value={quoteForm.address} onChange={(e) => updateQuoteForm('address', e.target.value)} required placeholder="Plot/street, city, state and PIN" />
                 </div>
                 <div className="boq-quote-field">
-                  <label>Site Image *</label>
+                  <label>Site Image <RequiredAsterisk /></label>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -2008,7 +2009,7 @@ export default function ConstructionCalculator({ initialIsLoggedIn = false }) {
                   Enter the OTP sent to your email. The same OTP verifies your quote request and unlocks the report download.
                 </div>
                 <div className="boq-quote-field">
-                  <label>6 Digit OTP *</label>
+                  <label>6 Digit OTP <RequiredAsterisk /></label>
                   <input
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}

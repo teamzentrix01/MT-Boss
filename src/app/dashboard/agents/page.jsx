@@ -1,5 +1,7 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
+import { useCities } from '@/hooks/useCities';
 import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
 
 const STATUS_OPTIONS = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
@@ -18,7 +20,12 @@ const statusStyle = {
   Rejected:  { bg: '#fff1f2', tx: '#9f1239' },
 };
 
+function normalizePhone(value) {
+  return String(value || '').replace(/\D/g, '').slice(0, 10);
+}
+
 export default function AgentsPage() {
+  const { cities, cityRecords, loading: citiesLoading, error: citiesLoadError } = useCities();
   const [agents, setAgents]       = useState([]);
   const [loading, setLoading]     = useState(true);
   const [selected, setSelected]   = useState(null);
@@ -222,12 +229,50 @@ export default function AgentsPage() {
     e.preventDefault();
     setCreateSaving(true);
     setError('');
+
+    const phone = normalizePhone(createForm.phone);
+    if (!createForm.name.trim()) {
+      setError('Full name is required.');
+      setCreateSaving(false);
+      return;
+    }
+    if (!createForm.email.trim()) {
+      setError('Email address is required.');
+      setCreateSaving(false);
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      setError('Phone number must be 10 digits and start with 6, 7, 8 or 9.');
+      setCreateSaving(false);
+      return;
+    }
+    if (!createForm.city.trim()) {
+      setError('City is required.');
+      setCreateSaving(false);
+      return;
+    }
+    if (!createForm.state.trim()) {
+      setError('State is required.');
+      setCreateSaving(false);
+      return;
+    }
+    if (!createForm.agentType) {
+      setError('Agent type is required.');
+      setCreateSaving(false);
+      return;
+    }
+    if (cities.length > 0 && !cities.includes(createForm.city)) {
+      setError(`"${createForm.city}" is not an active service city. Please select a city from the list.`);
+      setCreateSaving(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const res = await fetch('/api/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(createForm),
+        body: JSON.stringify({ ...createForm, phone }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -590,9 +635,26 @@ export default function AgentsPage() {
 
           <div style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--card-bg, #fff)', border: '1px solid var(--border)', borderRadius: '8px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <form onSubmit={handleCreateAgent}>
+              {error ? (
+                <div
+                  role="alert"
+                  style={{
+                    marginBottom: '1rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: 8,
+                    border: '1px solid #fecaca',
+                    background: '#fef2f2',
+                    color: '#b91c1c',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {error}
+                </div>
+              ) : null}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Full Name *</label>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Full Name <RequiredAsterisk /></label>
                   <input
                     required
                     className="ag-search"
@@ -603,7 +665,7 @@ export default function AgentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Email *</label>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Email <RequiredAsterisk /></label>
                   <input
                     type="email"
                     required
@@ -615,7 +677,7 @@ export default function AgentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Phone *</label>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Phone <RequiredAsterisk /></label>
                   <input
                     required
                     className="ag-search"
@@ -626,18 +688,34 @@ export default function AgentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>City *</label>
-                  <input
+                  <label className="ag-field-label" style={{ display: 'block' }}>City <RequiredAsterisk /></label>
+                  <select
                     required
                     className="ag-search"
                     style={{ width: '100%', boxSizing: 'border-box' }}
                     value={createForm.city}
-                    onChange={e => setCreateForm(prev => ({ ...prev, city: e.target.value }))}
-                    placeholder="e.g. Moradabad"
-                  />
+                    disabled={citiesLoading}
+                    onChange={e => {
+                      const city = e.target.value;
+                      const record = cityRecords.find((row) => row.name === city);
+                      setCreateForm(prev => ({
+                        ...prev,
+                        city,
+                        state: record?.state || prev.state,
+                      }));
+                    }}
+                  >
+                    <option value="">{citiesLoading ? 'Loading cities…' : 'Select city'}</option>
+                    {cities.map((cityName) => (
+                      <option key={cityName} value={cityName}>{cityName}</option>
+                    ))}
+                  </select>
+                  {citiesLoadError ? (
+                    <p style={{ marginTop: 6, fontSize: '0.75rem', color: '#dc2626' }}>{citiesLoadError}</p>
+                  ) : null}
                 </div>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>State *</label>
+                  <label className="ag-field-label" style={{ display: 'block' }}>State <RequiredAsterisk /></label>
                   <input
                     required
                     className="ag-search"
@@ -658,8 +736,9 @@ export default function AgentsPage() {
                   />
                 </div>
                 <div>
-                  <label className="ag-field-label" style={{ display: 'block' }}>Agent Type *</label>
+                  <label className="ag-field-label" style={{ display: 'block' }}>Agent Type <RequiredAsterisk /></label>
                   <select
+                    required
                     className="ag-search"
                     style={{ width: '100%', boxSizing: 'border-box' }}
                     value={createForm.agentType}
@@ -1244,7 +1323,7 @@ export default function AgentsPage() {
             <button
               type="button"
               className="ag-ok-btn"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => { setError(''); setShowCreateModal(true); }}
               style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
             >
               + Create Agent

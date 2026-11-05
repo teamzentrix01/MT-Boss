@@ -10,7 +10,7 @@ import {
   DEFAULT_APPROVED_FRANCHISE_PERMISSIONS,
   resolveFranchisePermissionDependencies,
 } from '@/lib/franchise-permissions';
-import { resolveManagedCity } from '@/lib/cities';
+import { resolveManagedCityWithMessage } from '@/lib/cities';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 import { notifyAdminSubmission } from '@/lib/customer-communications';
@@ -213,11 +213,23 @@ export async function POST(req) {
     const cleanName = clean(name);
     const cleanEmail = clean(email).toLowerCase();
     const cleanPhone = normalizePhone(phone);
-    const canonicalCity = await resolveManagedCity(city);
-
-    if (!cleanName || !cleanEmail || !cleanPhone || !clean(model) || !canonicalCity) {
-      return NextResponse.json({ success: false, error: 'Name, email, phone, city and franchise model are required' }, { status: 400 });
+    if (!cleanName) {
+      return NextResponse.json({ success: false, error: 'Name is required' }, { status: 400 });
     }
+    if (!cleanEmail) {
+      return NextResponse.json({ success: false, error: 'Email address is required' }, { status: 400 });
+    }
+    if (!cleanPhone) {
+      return NextResponse.json({ success: false, error: 'Phone number is required' }, { status: 400 });
+    }
+    if (!clean(model)) {
+      return NextResponse.json({ success: false, error: 'Franchise model is required' }, { status: 400 });
+    }
+    const cityResult = await resolveManagedCityWithMessage(city);
+    if (cityResult.error) {
+      return NextResponse.json({ success: false, error: cityResult.error }, { status: 400 });
+    }
+    const canonicalCity = cityResult.city;
     if (!FRANCHISE_FEE_ENV_KEYS[model]) {
       return NextResponse.json({ success: false, error: 'Select a valid franchise model' }, { status: 400 });
     }

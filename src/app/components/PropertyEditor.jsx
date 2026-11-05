@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { uploadPropertyImages } from '@/lib/property-image-upload';
@@ -334,7 +335,7 @@ export default function PropertyEditor({
         </div>
       </div>
 
-      <label style={styles.label}>Title *</label>
+      <label style={styles.label}>Title <RequiredAsterisk /></label>
       <input style={styles.input} value={form.title} onChange={(e) => setField('title', e.target.value)} placeholder="e.g. Spacious 2 BHK near Civil Lines" />
 
       <div style={styles.row}>
@@ -351,7 +352,7 @@ export default function PropertyEditor({
       <div style={styles.section}>Location</div>
       <div style={styles.row}>
         <div>
-          <label style={styles.label}>City *</label>
+          <label style={styles.label}>City <RequiredAsterisk /></label>
           <select style={styles.input} value={form.location} onChange={(e) => setField('location', e.target.value)}>
             <option value="">Select city</option>
             {cities.map((c) => {

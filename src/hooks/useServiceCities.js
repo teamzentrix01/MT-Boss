@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 export function useServiceCities() {
   const [cities, setCities] = useState([]);
+  const [cityRecords, setCityRecords] = useState([]);
   const [services, setServices] = useState([]);
   const [mapping, setMapping] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ export function useServiceCities() {
         if (!citiesResponse.ok || !cityData.success) throw new Error(cityData.error || 'Could not load cities');
         if (!active) return;
         setCities(cityData.cities || []);
+        setCityRecords(cityData.data || []);
         setServices(data.services || []);
         setMapping(data.mapping || []);
       })
@@ -34,5 +36,5 @@ export function useServiceCities() {
     return () => { active = false; };
   }, []);
 
-  return { cities, services, mapping, loading, error };
+  return { cities, cityRecords, services, mapping, loading, error };
 }

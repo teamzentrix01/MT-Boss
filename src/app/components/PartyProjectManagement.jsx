@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import React, { useState, useEffect, useCallback, useMemo, useId, useRef } from 'react';
 import { useSubmitAction } from '../../hooks/useSubmitAction';
@@ -23,7 +24,7 @@ function Input({ label, name, type = 'text', value, set, required, placeholder, 
   return (
     <label htmlFor={inputId}>
       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-        {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
+        {label} {required && <RequiredAsterisk />}
       </small>
       <input
         id={inputId}
@@ -78,7 +79,7 @@ function UnitSelector({ label = 'Unit / इकाई', value = 'bags', onChange,
   return (
     <label>
       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-        {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
+        {label} {required && <RequiredAsterisk />}
       </small>
       {!customActive ? (
         <select
@@ -8787,7 +8788,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                     <label>
                       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                        Select Registered Contractor <span style={{ color: '#ef4444' }}>*</span>
+                        Select Registered Contractor <RequiredAsterisk />
                       </small>
                       {contractorsLoading ? (
                         <div style={{ padding: '10px', fontSize: 12, color: '#64748b' }}>
@@ -9562,7 +9563,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Adjustment Type <span style={{ color: '#ef4444' }}>*</span>
+                      Adjustment Type <RequiredAsterisk />
                     </small>
                     <select
                       value={adjustmentForm.adjustment_type}
@@ -9657,7 +9658,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   {adjustmentForm.adjustment_type === 'transfer_out' && (
                     <label>
                       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                        Destination Project <span style={{ color: '#ef4444' }}>*</span>
+                        Destination Project <RequiredAsterisk />
                       </small>
                       <select
                         required
@@ -9723,7 +9724,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
-                      Category <span style={{ color: '#ef4444' }}>*</span>
+                      Category <RequiredAsterisk />
                     </small>
                     <select
                       value={expenseForm.category}

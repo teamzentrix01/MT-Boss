@@ -1,4 +1,6 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
+import ManagedCitySelect from './ManagedCitySelect';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
@@ -1062,14 +1064,18 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
 
                 <div>
                   <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>
-                    City *
+                    City <RequiredAsterisk />
                   </label>
-                  <input
-                    type="text"
+                  <ManagedCitySelect
                     required
                     value={createForm.city}
-                    onChange={(e) => setCreateForm({ ...createForm, city: e.target.value })}
-                    placeholder="e.g. Moradabad"
+                    onChange={(city, state) =>
+                      setCreateForm((prev) => ({
+                        ...prev,
+                        city,
+                        state: state || prev.state,
+                      }))
+                    }
                     style={{ width: '100%', padding: '9px 12px', borderRadius: '6px', border: '1px solid var(--border, #cbd5e1)', fontSize: '13px', background: 'var(--bg, #fff)', color: 'var(--text, #111)', boxSizing: 'border-box' }}
                   />
                 </div>
@@ -1096,7 +1102,7 @@ export default function UserManagementAdmin({ isDarkMode = false, initialRoleVie
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>Shop / Store Name *</label>
+                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--muted, #475569)', marginBottom: '6px' }}>Shop / Store Name <RequiredAsterisk /></label>
                       <input
                         type="text"
                         required
