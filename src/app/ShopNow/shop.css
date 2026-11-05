@@ -6515,6 +6515,198 @@ img[src*=".PNG"],
 .store-homerun-sort-select:hover {
   border-color: #71717a;
 }
+.store-homerun-filter-select.is-active {
+  border-color: var(--brand-blue, #0077c8);
+  background-color: #f0f7ff;
+  color: var(--brand-blue-deep, #005a96);
+  font-weight: 600;
+}
+.dark-mode .store-homerun-filter-select.is-active {
+  border-color: #38bdf8;
+  background-color: #0c4a6e;
+  color: #f0f9ff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HomeRun Popover Filter System (Image 1 Exact Style)
+   ───────────────────────────────────────────────────────────── */
+.homerun-filter-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+.dark-mode .homerun-filter-bar-container {
+  border-bottom-color: #334155;
+}
+
+.homerun-filter-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.homerun-filter-bar-label {
+  font-size: 14px;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+.homerun-filter-popover-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.homerun-filter-trigger {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  user-select: none;
+}
+.dark-mode .homerun-filter-trigger {
+  color: #f1f5f9;
+}
+.homerun-filter-trigger:hover {
+  color: var(--brand-blue, #0077c8);
+}
+.homerun-filter-trigger.is-open {
+  color: var(--brand-blue, #0077c8);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.homerun-filter-trigger.has-selected {
+  color: var(--brand-blue, #0077c8);
+  font-weight: 700;
+}
+
+.homerun-filter-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 70;
+  min-width: 220px;
+  max-width: 320px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+  padding: 12px 14px;
+}
+.dark-mode .homerun-filter-popover {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+.homerun-filter-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #6b7280;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.dark-mode .homerun-filter-popover-header {
+  color: #94a3b8;
+  border-bottom-color: #334155;
+}
+
+.homerun-filter-popover-reset {
+  color: #1f2937;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.dark-mode .homerun-filter-popover-reset {
+  color: #38bdf8;
+}
+
+.homerun-filter-popover-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.homerun-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13.5px;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+.dark-mode .homerun-filter-option {
+  color: #e2e8f0;
+}
+.homerun-filter-option:hover {
+  color: var(--brand-blue, #0077c8);
+}
+.dark-mode .homerun-filter-option:hover {
+  color: #38bdf8;
+}
+
+.homerun-filter-option input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  border: 1.5px solid #9ca3af;
+  accent-color: var(--brand-blue, #0077c8);
+  cursor: pointer;
+}
+
+.homerun-filter-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.homerun-filter-product-count {
+  font-size: 13.5px;
+  color: #6b7280;
+}
+.dark-mode .homerun-filter-product-count {
+  color: #94a3b8;
+}
+
+.homerun-filter-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: #6b7280;
+}
+.dark-mode .homerun-filter-sort-wrap {
+  color: #94a3b8;
+}
 .store-homerun-filter-select:focus,
 .store-homerun-sort-select:focus {
   border-color: var(--brand-blue, #0077c8);
