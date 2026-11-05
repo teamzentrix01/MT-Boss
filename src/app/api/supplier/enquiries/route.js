@@ -53,7 +53,7 @@ export async function GET(req) {
         success: true,
         data: { open: [], mine: [], taken: [] },
         is_free_plan: true,
-        message: 'You are on the 1-Month Free Trial. Upgrade to a Paid Subscription Plan to view customer leads, accept orders, and receive payouts.',
+        message: 'You are on the Free Plan. Upgrade to a Paid Subscription Plan to view customer leads, accept orders, and receive payouts.',
       });
     }
 

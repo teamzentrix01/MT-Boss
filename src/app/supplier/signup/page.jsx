@@ -29,7 +29,7 @@ export default function SupplierSignupPage() {
   }, []);
 
   const [plans, setPlans] = useState([
-    { id: 'pkg_free_1m', name: '1 Month Free Trial', price: 'Free', rawPrice: 0, desc: 'Setup store & add products free for 1 month. Customer leads & direct payouts unlock on paid plan.' },
+    { id: 'pkg_free_1m', name: 'Free Plan', price: 'Free', rawPrice: 0, desc: 'Setup store & add products free. Customer leads & direct payouts unlock on paid plan.' },
     { id: 'pkg_6m', name: '6 Months Plan', price: '₹2,999', rawPrice: 2999, desc: 'Perfect for getting started. Complete material enquiries access.' },
     { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', rawPrice: 4999, desc: 'Most popular. Great value with a full year of enquiries.' },
     { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', rawPrice: 7999, desc: 'Best deal. Long-term peace of mind and maximum savings.' },
@@ -652,7 +652,7 @@ export default function SupplierSignupPage() {
                           <span style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>{pkg.name}</span>
                           {pkg.rawPrice === 0 && (
                             <span style={{ background: '#10b981', color: '#fff', fontSize: '0.65rem', padding: '0.15rem 0.45rem', borderRadius: 999, fontWeight: 800 }}>
-                              FREE TRIAL
+                              FREE PLAN
                             </span>
                           )}
                         </div>

@@ -509,7 +509,7 @@ function SupplierDashboardContent() {
 
       <PanelLayout
         title="Vendor Hub"
-        subtitle={`${supplier?.shop_name || 'Vendor'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'} · ${isFreeVendor ? '🟡 Free Trial (1 Month)' : '🟢 Paid Vendor'}`}
+        subtitle={`${supplier?.shop_name || 'Vendor'} · ${supplier?.city ? supplier.city + ' · ' : ''}${supplier?.is_active === false ? 'Inactive' : 'Active'} · ${isFreeVendor ? '🟡 Free Plan' : '🟢 Paid Vendor'}`}
         user={{
           name: supplier?.shop_name || 'Supplier',
           email: supplier?.email || '',
@@ -582,7 +582,7 @@ function SupplierDashboardContent() {
             <div style={{ background: 'linear-gradient(90deg, #059669 0%, #10b981 100%)', color: '#fff', padding: '0.85rem 1.25rem', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', boxShadow: '0 4px 12px rgba(16,185,129,0.2)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '0.875rem' }}>
                 <span style={{ fontSize: '1.25rem' }}>🎉</span>
-                <span><strong>1-Month Free Trial Active:</strong> Store setup & product listing enabled! Customer leads and product buy payouts unlock when you upgrade to a Paid Plan.</span>
+                <span><strong>Free Plan Active:</strong> Store setup & product listing enabled! Customer leads and product buy payouts unlock when you upgrade to a Paid Plan.</span>
               </div>
               <button
                 type="button"
@@ -675,7 +675,7 @@ function SupplierDashboardContent() {
                     <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#b45309', margin: 0 }}>Customer Leads & Direct Orders are Locked</h3>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: dark ? '#fde68a' : '#78350f', margin: '0 0 0.85rem 0', lineHeight: 1.5 }}>
-                    You are currently enjoying the <strong>1-Month Free Trial</strong>. Your store is live and you can add products under the Products tab. Once a customer purchases your item, our Admin team will contact you to upgrade your subscription plan so your payment can be released and market leads unlocked.
+                    You are currently on the <strong>Free Plan</strong>. Your store is live and you can add products under the Products tab. Once a customer purchases your item, our Admin team will contact you to upgrade your subscription plan so your payment can be released and market leads unlocked.
                   </p>
                   <button
                     type="button"
@@ -914,7 +914,9 @@ function SupplierDashboardContent() {
                       <strong style={{ fontSize: '1.2rem', color: text }}>{pkgStatus.package_name || 'No Plan Selected'}</strong>
                       <div style={{ fontSize: '0.82rem', color: muted, marginTop: '0.25rem' }}>
                         {pkgStatus.is_active
-                          ? `Expires in ${pkgStatus.days_remaining} days (${new Date(pkgStatus.package_expires_at).toLocaleDateString('en-IN')})`
+                          ? (pkgStatus.is_free_plan
+                              ? '♾️ Lifetime Free Plan (No Expiry)'
+                              : `Expires in ${pkgStatus.days_remaining} days (${pkgStatus.package_expires_at ? new Date(pkgStatus.package_expires_at).toLocaleDateString('en-IN') : '—'})`)
                           : pkgStatus.package_status === 'pending'
                             ? '⏳ Pending Admin Approval'
                             : 'No active plan'

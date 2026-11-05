@@ -1,5 +1,4 @@
 'use client';
-import RequiredAsterisk from './RequiredAsterisk';
 
 import { useCallback, useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -466,9 +465,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
         <form id={formId} className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
-        <label>Product name <RequiredAsterisk /><input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>
-          Category *
+          <span>Product name <span style={{ color: '#ef4444' }}>*</span></span>
+          <input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        </label>
+        <label>
+          <span>Category <span style={{ color: '#ef4444' }}>*</span></span>
           <select
             required
             value={form.category}
@@ -510,7 +512,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           </select>
         </label>
         <label>
-          Subcategory
+          <span>Subcategory</span>
           {!isCustomSubcategory ? (
             <select
               value={form.subcategory}
@@ -627,10 +629,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           )}
         </label>
         {/* Dynamic Category Specifications Section (HomeRun Engine) */}
-        {form.category && (() => {
+        {form.category && form.subcategory && (() => {
           const config = getCategoryAttributeConfig(form.category, form.subcategory);
           const fields = config.fields || [];
-          const isBMWithoutSub = (form.category || '').toLowerCase().includes('building') && !form.subcategory;
+          if (!fields.length) return null;
 
           const renderFieldCard = (key) => {
             if (key === 'grade') {
@@ -1137,92 +1139,63 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
                     </strong>
                   </div>
                   <small style={{ color: '#64748b', fontSize: '11.5px', marginTop: 2, display: 'block' }}>
-                    {form.subcategory
-                      ? `Fill specifications for ${form.subcategory} so buyers on Shop Now can filter by these exact attributes.`
-                      : 'Choose a subcategory below to open tailored fields and quick preset pills.'}
+                    Fill specifications for {form.subcategory} so buyers on Shop Now can filter by these exact attributes.
                   </small>
                 </div>
-                {form.subcategory && (
-                  <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                    <span>✓</span> Subcategory: {form.subcategory}
-                  </span>
-                )}
+                <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span>✓</span> Subcategory: {form.subcategory}
+                </span>
               </div>
 
-              {isBMWithoutSub ? (
-                <div style={{
-                  background: '#ffffff',
-                  border: '1.5px dashed #93c5fd',
-                  borderRadius: '10px',
-                  padding: '16px 20px',
-                  textAlign: 'center',
-                }}>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e40af', marginBottom: 4 }}>
-                    📌 Select a Subcategory to view its dedicated specifications & quick pills:
-                  </div>
-                  <div style={{ fontSize: '11.5px', color: '#64748b', marginBottom: 12 }}>
-                    Click any subcategory below to instantly load its tailored fields:
-                  </div>
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
-                    {[
-                      { label: 'Cement', emoji: '🧱' },
-                      { label: 'Steel', emoji: '🔩' },
-                      { label: 'Brick', emoji: '🧱' },
-                      { label: 'Block', emoji: '🧱' },
-                      { label: 'Coarse Sand', emoji: '🏖️' },
-                      { label: 'Fine Sand', emoji: '🏖️' },
-                      { label: 'Aggregate (Barjri)', emoji: '🪨' },
-                      { label: 'Tiles', emoji: '✨' },
-                      { label: 'Marble', emoji: '🏛️' },
-                      { label: 'Glass', emoji: '🪟' },
-                      { label: 'POP', emoji: '✨' },
-                      { label: 'Waterproofing', emoji: '🧴' },
-                    ].map((subItem) => (
-                      <button
-                        key={subItem.label}
-                        type="button"
-                        onClick={() => setForm({ ...form, subcategory: subItem.label })}
-                        style={{
-                          background: '#eff6ff',
-                          border: '1px solid #bfdbfe',
-                          color: '#1d4ed8',
-                          padding: '6px 13px',
-                          borderRadius: '20px',
-                          fontSize: '11.5px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 5,
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <span>{subItem.emoji}</span>
-                        <span>{subItem.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-                  gap: '14px',
-                }}>
-                  {fields.map((fKey) => renderFieldCard(fKey))}
-                </div>
-              )}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+                gap: '14px',
+              }}>
+                {fields.map((fKey) => renderFieldCard(fKey))}
+              </div>
             </div>
           );
         })()}
 
-        <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
-        <label>Product Selingl Price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
-        <label>Product Discount Price (₹) *<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>
-        <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
-        <label>Unit <RequiredAsterisk /><select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
-        <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
-        <label className="shop-admin-wide">Description<textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
+        <label>
+          <span>Quality Tier <span style={{ color: '#ef4444' }}>*</span></span>
+          <select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}>
+            <option value="">Select quality tier</option>
+            {QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}
+          </select>
+          <small>Used by the Budget Calculator to match this product to a Quality Package.</small>
+        </label>
+        <label>
+          <span>Product Selling Price (₹) <span style={{ color: '#ef4444' }}>*</span></span>
+          <input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" />
+          <small>Required: Enter the selling price per unit.</small>
+        </label>
+        <label>
+          <span>Product Discount Price (₹)</span>
+          <input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" />
+          <small>A discount badge is calculated automatically when this is above the Buy Now price.</small>
+        </label>
+        <label>
+          <span>Brand</span>
+          <input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" />
+        </label>
+        <label>
+          <span>Unit <span style={{ color: '#ef4444' }}>*</span></span>
+          <select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
+            <option value="">Select unit</option>
+            {form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}
+            {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Quantity available</span>
+          <input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+        </label>
+        <label className="shop-admin-wide">
+          <span>Description</span>
+          <textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        </label>
 
         {/* Multi-Image Gallery Box */}
         <div className="shop-admin-wide shop-admin-gallery-box">
@@ -1750,12 +1723,18 @@ function OfferManager() {
     <div className="shop-admin-heading"><div><h2>Offers</h2><p>Show offer badges on Shop Now products by category, subcategory and/or brand. Blank targeting fields apply to everything.</p></div><button type="button" onClick={load}>Refresh</button></div>
     {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
     <form className="shop-admin-card" onSubmit={save}><h3>{editingId ? 'Edit offer' : 'Create offer'}</h3><div className="shop-admin-fields">
-      <label>Offer name <RequiredAsterisk /><input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" /></label>
+      <label>
+        <span>Offer name <span style={{ color: '#ef4444' }}>*</span></span>
+        <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" />
+      </label>
       <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value, subcategory: '' })}><option value="">All categories</option>{categories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}</select></label>
       <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })} disabled={!form.category}><option value="">All subcategories</option>{subcategories.map((item) => { const name = typeof item === 'object' && item !== null ? item.name : item; return <option key={name} value={name}>{name}</option>; })}</select></label>
       <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
       <label>Discount type<select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value })}><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></label>
-      <label>Discount value <RequiredAsterisk /><input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} /></label>
+      <label>
+        <span>Discount value <span style={{ color: '#ef4444' }}>*</span></span>
+        <input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} />
+      </label>
       <label>Badge text<input maxLength={80} value={form.badge_text} onChange={(e) => setForm({ ...form, badge_text: e.target.value })} placeholder="6% OFF (blank = automatic)" /></label>
       <label>Priority<input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /><small>Lower number wins when multiple offers match.</small></label>
       <label>Start date/time<input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></label>

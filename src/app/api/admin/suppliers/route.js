@@ -126,7 +126,10 @@ export async function PUT(req) {
                    rejection_reason = NULL,
                    package_status = CASE WHEN package_status = 'pending' THEN 'active' ELSE package_status END,
                    package_starts_at = COALESCE(package_starts_at, NOW()),
-                   package_expires_at = COALESCE(package_expires_at, NOW() + (COALESCE(package_duration_months, 1) || ' months')::INTERVAL),
+                   package_expires_at = CASE
+                     WHEN COALESCE(package_price, 0) <= 0 OR package_id = 'pkg_free_1m' THEN NULL
+                     ELSE COALESCE(package_expires_at, NOW() + (COALESCE(package_duration_months, 1) || ' months')::INTERVAL)
+                   END,
                    updated_at = NOW()
                WHERE id = $1 AND package_status IN ('pending', 'active')
                RETURNING id, email, shop_name, status, is_active, package_status, package_expires_at`;
