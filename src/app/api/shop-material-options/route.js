@@ -171,8 +171,9 @@ export async function GET(req) {
         }
 
         const category = String(searchParams.get('category') || '').trim();
+        const subcategory = String(searchParams.get('subcategory') || '').trim();
         const bypassCache = searchParams.get('fresh') === '1';
-        const cacheKey = category.toLowerCase();
+        const cacheKey = `${category.toLowerCase()}__${subcategory.toLowerCase()}`;
         const cached = productCache.get(cacheKey);
         if (!bypassCache && cached?.expiresAt > Date.now()) {
             return NextResponse.json(cached.payload, {
@@ -202,7 +203,8 @@ export async function GET(req) {
            OR (m.vendor_id IS NULL AND (m.supplier_id = 0 OR (s.status = 'approved' AND s.is_active = TRUE)))
          )
          AND ($1 = '' OR LOWER(TRIM(m.category)) = LOWER(TRIM($1)))
-       ORDER BY m.name ASC, m.id ASC`, [category]
+         AND ($2 = '' OR LOWER(TRIM(m.subcategory)) = LOWER(TRIM($2)))
+       ORDER BY m.name ASC, m.id ASC`, [category, subcategory]
         );
 
         const products = result.rows.map((row) => {

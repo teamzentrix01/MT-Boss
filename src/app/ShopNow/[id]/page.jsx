@@ -82,6 +82,89 @@ function getHighlightsBullets(product) {
   return bullets;
 }
 
+// ── Smart Related Products Filter ─────────────────────────────────────────────
+function areSubcategoriesRelated(subA, subB) {
+  const a = String(subA || "").trim().toLowerCase();
+  const b = String(subB || "").trim().toLowerCase();
+  if (!a || !b) return false;
+  if (a === b) return true;
+  if (a.includes(b) || b.includes(a)) return true;
+
+  // Word overlap comparison (e.g. "Sanitary Ware" vs "Sanitary", "CPVC Pipes" vs "Pipes")
+  const wordsA = a.split(/[\s,/\\-]+/).filter((w) => w.length >= 3);
+  const wordsB = b.split(/[\s,/\\-]+/).filter((w) => w.length >= 3);
+  return wordsA.some((w) => wordsB.includes(w));
+}
+
+function filterRelatedProducts(currentProduct, candidates) {
+  if (!currentProduct || !Array.isArray(candidates) || candidates.length === 0) {
+    return [];
+  }
+
+  const curId = String(currentProduct.id);
+  const curSub = String(currentProduct.subcategory || "").trim().toLowerCase();
+  const curCat = String(currentProduct.category || "").trim().toLowerCase();
+  const curName = String(currentProduct.name || "").trim().toLowerCase();
+
+  // Exclude current product itself
+  const pool = candidates.filter((p) => String(p.id) !== curId);
+
+  // Common stop words to exclude when tokenizing product names
+  const stopWords = new Set([
+    "with", "from", "each", "pack", "size", "inch", "free", "best", "super",
+    "high", "plus", "standard", "heavy", "duty", "item", "product", "bags", "bag", "pcs", "piece"
+  ]);
+  const nameTokens = curName
+    .replace(/[^a-zA-Z0-9\s]/g, " ")
+    .split(/\s+/)
+    .map((w) => w.trim())
+    .filter((w) => w.length >= 3 && !stopWords.has(w));
+
+  // Case 1: Current product has an explicit subcategory (e.g. 'Sanitary', 'Cement', 'CPVC Pipes')
+  if (curSub) {
+    // 1A. Items with strictly matching/related subcategory
+    const strictSubMatches = pool.filter((p) => {
+      const pSub = String(p.subcategory || "").trim().toLowerCase();
+      return pSub && areSubcategoriesRelated(curSub, pSub);
+    });
+
+    // 1B. Items with NO subcategory defined, but their name matches current name or subcategory
+    const unclassifiedMatches = pool.filter((p) => {
+      const pSub = String(p.subcategory || "").trim().toLowerCase();
+      if (pSub) return false; // Belongs to an explicitly different subcategory, reject!
+      const pName = String(p.name || "").toLowerCase();
+      if (pName.includes(curSub)) return true;
+      return nameTokens.some((tok) => pName.includes(tok));
+    });
+
+    const combined = [...strictSubMatches, ...unclassifiedMatches];
+    return combined.slice(0, 4);
+  }
+
+  // Case 2: Current product has NO subcategory
+  // Match candidate by matching name keywords or matching candidate subcategory
+  const nameMatches = pool.filter((p) => {
+    const pName = String(p.name || "").toLowerCase();
+    const pSub = String(p.subcategory || "").toLowerCase();
+    return nameTokens.some((tok) => pName.includes(tok) || pSub.includes(tok));
+  });
+
+  if (nameMatches.length > 0) {
+    return nameMatches.slice(0, 4);
+  }
+
+  // Fallback: only products in the exact same category
+  if (curCat) {
+    const sameCat = pool.filter((p) => {
+      const pCat = String(p.category || "").trim().toLowerCase();
+      return pCat === curCat;
+    });
+    return sameCat.slice(0, 4);
+  }
+
+  return [];
+}
+
 export default function ProductDetailPage({ params }) {
   const router = useRouter();
   const resolvedParams = use(params);
@@ -155,14 +238,13 @@ export default function ProductDetailPage({ params }) {
         setProduct(prod);
         setSelectedQuantity(getCartStep(prod) || 1);
 
-        // Fetch related products in the same category
-        if (prod.category) {
-          const relRes = await fetch(`/api/shop-material-options?category=${encodeURIComponent(prod.category)}`);
-          const relData = await relRes.json();
-          if (relData?.success && Array.isArray(relData.data?.products) && !isCancelled) {
-            const others = relData.data.products.filter((p) => String(p.id) !== String(prod.id));
-            setRelatedProducts(others.slice(0, 4));
-          }
+        // Fetch and filter related products strictly matching subcategory or relevance
+        const categoryParam = prod.category ? `?category=${encodeURIComponent(prod.category)}` : "";
+        const relRes = await fetch(`/api/shop-material-options${categoryParam}`);
+        const relData = await relRes.json();
+        if (relData?.success && Array.isArray(relData.data?.products) && !isCancelled) {
+          const matched = filterRelatedProducts(prod, relData.data.products);
+          setRelatedProducts(matched);
         }
       } catch (err) {
         if (!isCancelled) {
@@ -277,7 +359,31 @@ export default function ProductDetailPage({ params }) {
   const quickAnswer = getQuickAnswer(product);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-slate-900 dark:text-zinc-100 transition-colors">
+    <div className="shop-page shop-product-detail-page min-h-screen bg-white dark:bg-black font-sans text-slate-900 dark:text-zinc-100 transition-colors">
+      <style jsx global>{`
+        .product-side-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #94a3b8 #f1f5f9;
+        }
+        .product-side-scroll::-webkit-scrollbar {
+          width: 5px;
+        }
+        .product-side-scroll::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 4px;
+        }
+        .product-side-scroll::-webkit-scrollbar-thumb {
+          background: #94a3b8;
+          border-radius: 4px;
+        }
+        .dark-mode .product-side-scroll::-webkit-scrollbar-track {
+          background: #18181b;
+        }
+        .dark-mode .product-side-scroll::-webkit-scrollbar-thumb {
+          background: #52525b;
+        }
+      `}</style>
+
       {/* ── BREADCRUMB ───────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-2">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
@@ -327,9 +433,9 @@ export default function ProductDetailPage({ params }) {
           </div>
 
           {/* ─────────────────────────────────────────────────────────────
-              RIGHT COLUMN: PRODUCT DETAILS & ACCORDIONS (SCROLLABLE)
+              RIGHT COLUMN: SCROLLABLE PRODUCT DETAILS & ACCORDIONS
              ───────────────────────────────────────────────────────────── */}
-          <div className="md:col-span-6 space-y-4">
+          <div className="md:col-span-6 max-h-[520px] overflow-y-auto pr-2 sm:pr-3 space-y-4 product-side-scroll">
             {/* Product Title */}
             <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
               {product.name}
@@ -382,7 +488,7 @@ export default function ProductDetailPage({ params }) {
               type="button"
               onClick={(e) => handleAddToCart(e)}
               disabled={!isAvailable}
-              className="w-full py-3.5 px-6 rounded-md bg-[#15803d] hover:bg-[#166534] text-white font-bold text-base transition-colors shadow-xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+              className="w-full py-3.5 px-6 rounded-md !bg-[#15803d] hover:!bg-[#166534] !text-white !bg-none font-sans font-bold text-base transition-colors shadow-xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
             >
               {isAvailable ? "Add To Cart" : "Out of Stock"}
             </button>
@@ -396,7 +502,7 @@ export default function ProductDetailPage({ params }) {
                 <button
                   type="button"
                   onClick={() => toggleAccordion("highlights")}
-                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-bold text-slate-900 dark:text-white bg-slate-50/80 dark:bg-zinc-800/50 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-sans font-bold !text-slate-900 dark:!text-white !bg-slate-50/90 dark:!bg-zinc-800/60 hover:!bg-slate-100 dark:hover:!bg-zinc-800 transition-colors !bg-none"
                 >
                   <span>Product Highlights</span>
                   {openAccordions.highlights ? (
@@ -438,7 +544,7 @@ export default function ProductDetailPage({ params }) {
                 <button
                   type="button"
                   onClick={() => toggleAccordion("description")}
-                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-bold text-slate-900 dark:text-white bg-slate-50/80 dark:bg-zinc-800/50 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-sans font-bold !text-slate-900 dark:!text-white !bg-slate-50/90 dark:!bg-zinc-800/60 hover:!bg-slate-100 dark:hover:!bg-zinc-800 transition-colors !bg-none"
                 >
                   <span>Product Description</span>
                   {openAccordions.description ? (
@@ -466,7 +572,7 @@ export default function ProductDetailPage({ params }) {
                 <button
                   type="button"
                   onClick={() => toggleAccordion("faqs")}
-                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-bold text-slate-900 dark:text-white bg-slate-50/80 dark:bg-zinc-800/50 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-sans font-bold !text-slate-900 dark:!text-white !bg-slate-50/90 dark:!bg-zinc-800/60 hover:!bg-slate-100 dark:hover:!bg-zinc-800 transition-colors !bg-none"
                 >
                   <span>FAQs</span>
                   {openAccordions.faqs ? (
@@ -511,7 +617,7 @@ export default function ProductDetailPage({ params }) {
                 <button
                   type="button"
                   onClick={() => toggleAccordion("returns")}
-                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-bold text-slate-900 dark:text-white bg-slate-50/80 dark:bg-zinc-800/50 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="w-full py-3 px-4 flex items-center justify-between text-left text-sm font-sans font-bold !text-slate-900 dark:!text-white !bg-slate-50/90 dark:!bg-zinc-800/60 hover:!bg-slate-100 dark:hover:!bg-zinc-800 transition-colors !bg-none"
                 >
                   <span>Returns &amp; Exchange Policy</span>
                   {openAccordions.returns ? (
@@ -543,7 +649,7 @@ export default function ProductDetailPage({ params }) {
             "YOU MAY ALSO LIKE" SECTION (AS IN REFERENCE IMAGE)
            ───────────────────────────────────────────────────────────── */}
         {relatedProducts.length > 0 && (
-          <section className="mt-16 pt-8 border-t border-slate-100 dark:border-zinc-900">
+          <section className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-6">
               You may also like
             </h2>
@@ -635,7 +741,7 @@ export default function ProductDetailPage({ params }) {
                       <button
                         type="button"
                         onClick={(e) => handleAddToCart(e, relProd, 1)}
-                        className="w-full py-2 rounded bg-[#15803d] hover:bg-[#166534] text-white font-bold text-xs transition-colors mt-2 cursor-pointer"
+                        className="w-full py-2 rounded !bg-[#15803d] hover:!bg-[#166534] !text-white !bg-none font-sans font-bold text-xs transition-colors mt-2 cursor-pointer"
                       >
                         Add
                       </button>
