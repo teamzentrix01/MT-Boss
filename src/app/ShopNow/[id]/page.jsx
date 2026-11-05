@@ -145,10 +145,10 @@ export default function ProductDetailPage({ params }) {
 
     async function loadData() {
       try {
-        const res = await fetch(`/api/supplier/shop-products?id=${encodeURIComponent(productId)}`);
+        const res = await fetch(`/api/shop-material-options?id=${encodeURIComponent(productId)}`);
         if (!res.ok) throw new Error("Product not found");
         const data = await res.json();
-        const prod = data.product || data;
+        const prod = data.data?.product || data.product || data;
         if (!prod || !prod.id) throw new Error("Product data not found");
         if (isCancelled) return;
 

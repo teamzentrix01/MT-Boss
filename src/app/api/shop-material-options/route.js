@@ -138,9 +138,8 @@ export async function GET(req) {
 
                 const fallbackImage = row.category_image || '';
                 const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
-                const categoryImages = Array.isArray(row.category_images) ? row.category_images.filter(Boolean) : [];
-                const fallbackImages = rawImages.length > 0 ? rawImages : (categoryImages.length > 0 ? categoryImages : (fallbackImage ? [fallbackImage] : []));
-                const resolvedImageUrl = row.image_url || fallbackImage || (fallbackImages[0] || '');
+                const resolvedImageUrl = row.image_url || fallbackImage || '';
+                const productImages = rawImages.length > 0 ? rawImages : (resolvedImageUrl ? [resolvedImageUrl] : []);
 
                 const product = {
                     id: row.id,
@@ -160,7 +159,7 @@ export async function GET(req) {
                     brand: row.brand || '',
                     compare_at_price: row.compare_at_price,
                     is_featured_deal: row.is_featured_deal === true,
-                    images: fallbackImages,
+                    images: productImages,
                     specifications,
                     bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
                     available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
