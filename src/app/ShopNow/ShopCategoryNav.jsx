@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import {
   CATEGORY_NAV_TREE,
@@ -289,14 +290,12 @@ export default function ShopCategoryNav({
                           const price = Number(product.price);
                           const productImage = product.image_url || product.image;
                           return (
-                            <a
+                            <Link
                               key={product.id}
                               href={detailHref}
-                              target="_blank"
-                              rel="noopener noreferrer"
                               className="store-category-recent-item"
                               onClick={closeMenu}
-                              title={`Open ${product.name} in new tab`}
+                              title={`View ${product.name}`}
                             >
                               <div className="store-category-recent-thumb">
                                 {productImage ? (
@@ -317,10 +316,10 @@ export default function ShopCategoryNav({
                                       {typeof product.category === "object" ? product.category?.name : (product.category || "View product")}
                                     </span>
                                   )}
-                                  <span className="store-category-recent-arrow" aria-hidden="true">↗</span>
+                                  <span className="store-category-recent-arrow" aria-hidden="true">→</span>
                                 </span>
                               </div>
-                            </a>
+                            </Link>
                           );
                         })
                       ) : (

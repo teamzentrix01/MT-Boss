@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -1403,12 +1404,12 @@ function AgentDashboardContent() {
               <form onSubmit={createTask} className={`border ${card} p-6 max-w-2xl mx-auto rounded-md shadow-sm`}>
                 <div className="space-y-4">
                   <div>
-                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Title *</label>
+                    <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Title <RequiredAsterisk /></label>
                     <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} placeholder="Title" value={taskForm.title} onChange={(e) => setTaskForm((f) => ({ ...f, title: e.target.value }))} required />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Date *</label>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Date <RequiredAsterisk /></label>
                       <input className={`w-full border px-3 py-2 text-sm outline-none ${input}`} type="date" value={taskForm.scheduleDate} onChange={(e) => setTaskForm((f) => ({ ...f, scheduleDate: e.target.value }))} required />
                     </div>
                     <div>
@@ -1708,11 +1709,11 @@ function AgentDashboardContent() {
                     <div className={`border ${card} p-4 space-y-3`}>
                       <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">New Party Details</p>
                       <div>
-                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Client Name *</label>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Client Name <RequiredAsterisk /></label>
                         <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.newParty.name} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required disabled={isSubmittingConvert} />
                       </div>
                       <div>
-                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Phone *</label>
+                        <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Phone <RequiredAsterisk /></label>
                         <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.newParty.phone} onChange={(e) => setConversionData((p) => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required disabled={isSubmittingConvert} />
                       </div>
                       <div>
@@ -1729,19 +1730,19 @@ function AgentDashboardContent() {
                   <div className={`border ${card} p-4 space-y-3`}>
                     <p className="text-[10px] font-black uppercase tracking-widest text-[var(--brand-blue)]">Project Details</p>
                     <div>
-                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Project Name *</label>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Project Name <RequiredAsterisk /></label>
                       <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.project.name} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, name: e.target.value } }))} required disabled={isSubmittingConvert} />
                     </div>
                     <div>
-                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Start Date *</label>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Start Date <RequiredAsterisk /></label>
                       <input className={`w-full border px-3 py-2 text-sm ${input}`} type="date" value={conversionData.project.start_date} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required disabled={isSubmittingConvert} />
                     </div>
                     <div>
-                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Contract Value (₹) *</label>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Contract Value (₹) <RequiredAsterisk /></label>
                       <input className={`w-full border px-3 py-2 text-sm ${input}`} type="number" value={conversionData.project.contract_value} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required disabled={isSubmittingConvert} />
                     </div>
                     <div>
-                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Site / City *</label>
+                      <label className={`block text-[10px] font-black uppercase mb-1 ${muted}`}>Site / City <RequiredAsterisk /></label>
                       <input className={`w-full border px-3 py-2 text-sm ${input}`} value={conversionData.project.site_address} onChange={(e) => setConversionData((p) => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required disabled={isSubmittingConvert} />
                     </div>
                   </div>

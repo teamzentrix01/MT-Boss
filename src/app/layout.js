@@ -163,6 +163,7 @@ export default function RootLayout({ children }) {
         <meta name="google-site-verification" content="_HIsDPgunnMsWo7iWtmz2fX3YW9aG406vj5zL02lWXY" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
       </head>
       <body suppressHydrationWarning className={`transition-colors duration-500 ${isShopPage ? "shop-route" : "overflow-x-clip"} ${isDarkMode ? "bg-black text-white" : "bg-white text-black"}`}>

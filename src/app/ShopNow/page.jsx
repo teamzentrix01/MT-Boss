@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
@@ -1120,7 +1121,7 @@ export default function ShopPage() {
             ) : (
               <form onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 font-sans sm:px-6">
                 <div className="mb-4">
-                  <label className={lbl}>Delivery City *</label>
+                  <label className={lbl}>Delivery City <RequiredAsterisk /></label>
                   <div className="flex gap-2 items-end">
                     <select
                       className={`flex-1 ${sel}`}
@@ -1297,7 +1298,7 @@ export default function ShopPage() {
                 {/* Material Type */}
                 {hasTypes && (
                   <div className="mb-3">
-                    <label className={lbl}>Type of Material *</label>
+                    <label className={lbl}>Type of Material <RequiredAsterisk /></label>
                     <select
                       value={materialType}
                       onChange={(e) => { setMaterialType(e.target.value); setCustomType(""); }}
@@ -1354,7 +1355,7 @@ export default function ShopPage() {
                 {/* Custom subcategory */}
                 {subcategoryVal === "Others" && (
                   <div className="mb-3">
-                    <label className={lbl}>Specify Sub-category *</label>
+                    <label className={lbl}>Specify Sub-category <RequiredAsterisk /></label>
                     <input
                       type="text"
                       value={customSubcategory}
@@ -1387,17 +1388,17 @@ export default function ShopPage() {
 
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className={lbl}>Full Name *</label>
+                    <label className={lbl}>Full Name <RequiredAsterisk /></label>
                     <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="Your name" className={inp} />
                   </div>
                   <div>
-                    <label className={lbl}>Phone *</label>
+                    <label className={lbl}>Phone <RequiredAsterisk /></label>
                     <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+91 XXXXX" className={inp} />
                   </div>
                 </div>
 
                 <div className="mb-3">
-                  <label className={lbl}>Email Address *</label>
+                  <label className={lbl}>Email Address <RequiredAsterisk /></label>
                   <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="your@email.com" className={inp} />
                 </div>
 
@@ -1407,7 +1408,7 @@ export default function ShopPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                   {modalMode !== "cart" && <>
                   <div>
-                    <label className={lbl}>Quantity Required *</label>
+                    <label className={lbl}>Quantity Required <RequiredAsterisk /></label>
                     <input type="number" min={modalMode === "buy" ? "1" : "0.01"} max={modalMode === "buy" ? "10000" : "100000000"} step={modalMode === "buy" ? "1" : "any"} name="quantity" value={formData.quantity} onChange={handleInputChange} required placeholder="e.g. 500" className={inp} />
                   </div>
                   <div>
@@ -1628,7 +1629,7 @@ export default function ShopPage() {
 
                       {/* Full delivery address */}
                       <div>
-                        <label className={lbl}>Street Address / Plot / Flat No. *</label>
+                        <label className={lbl}>Street Address / Plot / Flat No. <RequiredAsterisk /></label>
                         <textarea
                           name="address"
                           value={formData.address}

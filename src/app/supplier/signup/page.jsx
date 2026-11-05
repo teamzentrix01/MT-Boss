@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -28,7 +29,7 @@ export default function SupplierSignupPage() {
   }, []);
 
   const [plans, setPlans] = useState([
-    { id: 'pkg_free_1m', name: '1 Month Free Trial', price: 'Free', rawPrice: 0, desc: 'Setup store & add products free for 1 month. Customer leads & direct payouts unlock on paid plan.' },
+    { id: 'pkg_free_1m', name: 'Free Plan', price: 'Free', rawPrice: 0, desc: 'Setup store & add products free. Customer leads & direct payouts unlock on paid plan.' },
     { id: 'pkg_6m', name: '6 Months Plan', price: '₹2,999', rawPrice: 2999, desc: 'Perfect for getting started. Complete material enquiries access.' },
     { id: 'pkg_1y', name: '1 Year Plan', price: '₹4,999', rawPrice: 4999, desc: 'Most popular. Great value with a full year of enquiries.' },
     { id: 'pkg_2y', name: '2 Years Plan', price: '₹7,999', rawPrice: 7999, desc: 'Best deal. Long-term peace of mind and maximum savings.' },
@@ -282,16 +283,16 @@ export default function SupplierSignupPage() {
             {step === 1 && (
               <>
                 <div className="ss-field">
-                  <label className="ss-label">Email Address *</label>
+                  <label className="ss-label">Email Address <RequiredAsterisk /></label>
                   <input className="ss-input" type="email" name="email" value={formData.email} onChange={handleChange} placeholder="supplier@example.com" required />
                 </div>
                 <div className="ss-row">
                   <div className="ss-field">
-                    <label className="ss-label">Password *</label>
+                    <label className="ss-label">Password <RequiredAsterisk /></label>
                     <input className="ss-input" type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Min 6 characters" required />
                   </div>
                   <div className="ss-field">
-                    <label className="ss-label">Confirm Password *</label>
+                    <label className="ss-label">Confirm Password <RequiredAsterisk /></label>
                     <input className="ss-input" type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Repeat password" required />
                   </div>
                 </div>
@@ -302,11 +303,11 @@ export default function SupplierSignupPage() {
             {step === 2 && (
               <>
                 <div className="ss-field">
-                  <label className="ss-label">Shop / Store Name *</label>
+                  <label className="ss-label">Shop / Store Name <RequiredAsterisk /></label>
                   <input className="ss-input" type="text" name="shop_name" value={formData.shop_name} onChange={handleChange} placeholder="e.g., Sharma Building Materials" required />
                 </div>
                 <div className="ss-field">
-                  <label className="ss-label">Contact Phone Number *</label>
+                  <label className="ss-label">Contact Phone Number <RequiredAsterisk /></label>
                   <input className="ss-input" type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="9876543210" required />
                 </div>
               </>
@@ -317,7 +318,7 @@ export default function SupplierSignupPage() {
               <>
                 <div className="ss-row">
                   <div className="ss-field">
-                    <label className="ss-label">City *</label>
+                    <label className="ss-label">City <RequiredAsterisk /></label>
                     <select className="ss-input" name="city" value={formData.city} onChange={handleChange} required disabled={citiesLoading}>
                       <option value="">{citiesLoading ? 'Loading cities...' : 'Select city'}</option>
                       {cities.map(city => <option key={city} value={city}>{city}</option>)}
@@ -325,17 +326,17 @@ export default function SupplierSignupPage() {
                     {citiesError && <div className="ss-error">{citiesError}</div>}
                   </div>
                   <div className="ss-field">
-                    <label className="ss-label">State *</label>
+                    <label className="ss-label">State <RequiredAsterisk /></label>
                     <input className="ss-input" type="text" name="state" value={formData.state} onChange={handleChange} placeholder="Delhi" required />
                   </div>
                 </div>
                 <div className="ss-row">
                   <div className="ss-field">
-                    <label className="ss-label">Country *</label>
+                    <label className="ss-label">Country <RequiredAsterisk /></label>
                     <input className="ss-input" type="text" name="country" value={formData.country} onChange={handleChange} placeholder="India" required />
                   </div>
                   <div className="ss-field">
-                    <label className="ss-label">Postal Code *</label>
+                    <label className="ss-label">Postal Code <RequiredAsterisk /></label>
                     <input className="ss-input" type="text" name="postal_code" value={formData.postal_code} onChange={handleChange} placeholder="110001" required />
                   </div>
                 </div> 
@@ -398,7 +399,7 @@ export default function SupplierSignupPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
                     <span style={{ fontSize: '1.2rem' }}>🪪</span>
                     <div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>Aadhaar Card Details *</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>Aadhaar Card Details <RequiredAsterisk /></div>
                       <div style={{ fontSize: '0.72rem', color: c.muted }}>Mandatory for identity verification</div>
                     </div>
                   </div>
@@ -423,7 +424,7 @@ export default function SupplierSignupPage() {
                   </div>
 
                   <div className="ss-field" style={{ marginBottom: 0 }}>
-                    <label className="ss-label">Upload Aadhaar Card (Photo / PDF) *</label>
+                    <label className="ss-label">Upload Aadhaar Card (Photo / PDF) <RequiredAsterisk /></label>
                     <input
                       type="file"
                       id="upload-aadhaar"
@@ -462,7 +463,7 @@ export default function SupplierSignupPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
                     <span style={{ fontSize: '1.2rem' }}>💳</span>
                     <div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>PAN Card Details *</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>PAN Card Details <RequiredAsterisk /></div>
                       <div style={{ fontSize: '0.72rem', color: c.muted }}>Mandatory for business & financial verification</div>
                     </div>
                   </div>
@@ -487,7 +488,7 @@ export default function SupplierSignupPage() {
                   </div>
 
                   <div className="ss-field" style={{ marginBottom: 0 }}>
-                    <label className="ss-label">Upload PAN Card (Photo / PDF) *</label>
+                    <label className="ss-label">Upload PAN Card (Photo / PDF) <RequiredAsterisk /></label>
                     <input
                       type="file"
                       id="upload-pan"
@@ -630,7 +631,7 @@ export default function SupplierSignupPage() {
             {/* STEP 6 — Subscription Plan */}
             {step === 6 && (
               <>
-                <label className="ss-label">Select a subscription plan *</label>
+                <label className="ss-label">Select a subscription plan <RequiredAsterisk /></label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
                   {plans.map(pkg => (
                     <div
@@ -651,7 +652,7 @@ export default function SupplierSignupPage() {
                           <span style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>{pkg.name}</span>
                           {pkg.rawPrice === 0 && (
                             <span style={{ background: '#10b981', color: '#fff', fontSize: '0.65rem', padding: '0.15rem 0.45rem', borderRadius: 999, fontWeight: 800 }}>
-                              FREE TRIAL
+                              FREE PLAN
                             </span>
                           )}
                         </div>

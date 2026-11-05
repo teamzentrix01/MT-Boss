@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pencil, Trash2, ActionIconButton } from '@/app/components/ui/icons';
@@ -191,7 +192,7 @@ export default function CitiesManager() {
         <h3 className="city-form-title">{editingId ? 'Edit city' : 'Add a new city'}</h3>
         <div className="city-grid">
           <label>
-            <span className="city-label">City name *</span>
+            <span className="city-label">City name <RequiredAsterisk /></span>
             <input className="city-input" required maxLength={120} value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
               placeholder="e.g. Moradabad" />

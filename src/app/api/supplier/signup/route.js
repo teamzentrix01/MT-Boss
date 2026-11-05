@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { ensurePackageSchema, getPackageById } from '@/lib/packages';
 import { cleanText, normalizePhone, isValidEmail, isValidIndianMobile } from '@/lib/validation';
-import { resolveManagedCity } from '@/lib/cities';
+import { resolveManagedCityWithMessage } from '@/lib/cities';
 import { createPayURequest } from '@/lib/payu';
 import { createPayUIntent, getPayUCallbackUrl, newPayUTxnId } from '@/lib/payu-intents';
 
@@ -21,11 +21,23 @@ export async function POST(request) {
     postal_code = cleanText(postal_code);
     pan_number = cleanText(pan_number || '').toUpperCase();
     gst_number = cleanText(gst_number || '').toUpperCase();
-    const canonicalCity = await resolveManagedCity(city);
-
-    if (!email || !password || !shop_name || !phone || !canonicalCity) {
-      return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Email address is required' }, { status: 400 });
     }
+    if (!password) {
+      return NextResponse.json({ error: 'Password is required' }, { status: 400 });
+    }
+    if (!shop_name) {
+      return NextResponse.json({ error: 'Shop name is required' }, { status: 400 });
+    }
+    if (!phone) {
+      return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
+    }
+    const cityResult = await resolveManagedCityWithMessage(city);
+    if (cityResult.error) {
+      return NextResponse.json({ error: cityResult.error }, { status: 400 });
+    }
+    const canonicalCity = cityResult.city;
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 });
     }

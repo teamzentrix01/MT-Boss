@@ -138,9 +138,8 @@ export async function GET(req) {
 
                 const fallbackImage = row.category_image || '';
                 const rawImages = Array.isArray(row.images) ? row.images.filter(Boolean) : [];
-                const categoryImages = Array.isArray(row.category_images) ? row.category_images.filter(Boolean) : [];
-                const fallbackImages = rawImages.length > 0 ? rawImages : (categoryImages.length > 0 ? categoryImages : (fallbackImage ? [fallbackImage] : []));
-                const resolvedImageUrl = row.image_url || fallbackImage || (fallbackImages[0] || '');
+                const resolvedImageUrl = row.image_url || fallbackImage || '';
+                const productImages = rawImages.length > 0 ? rawImages : (resolvedImageUrl ? [resolvedImageUrl] : []);
 
                 const product = {
                     id: row.id,
@@ -160,7 +159,7 @@ export async function GET(req) {
                     brand: row.brand || '',
                     compare_at_price: row.compare_at_price,
                     is_featured_deal: row.is_featured_deal === true,
-                    images: fallbackImages,
+                    images: productImages,
                     specifications,
                     bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
                     available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
@@ -172,8 +171,9 @@ export async function GET(req) {
         }
 
         const category = String(searchParams.get('category') || '').trim();
+        const subcategory = String(searchParams.get('subcategory') || '').trim();
         const bypassCache = searchParams.get('fresh') === '1';
-        const cacheKey = category.toLowerCase();
+        const cacheKey = `${category.toLowerCase()}__${subcategory.toLowerCase()}`;
         const cached = productCache.get(cacheKey);
         if (!bypassCache && cached?.expiresAt > Date.now()) {
             return NextResponse.json(cached.payload, {
@@ -203,7 +203,8 @@ export async function GET(req) {
            OR (m.vendor_id IS NULL AND (m.supplier_id = 0 OR (s.status = 'approved' AND s.is_active = TRUE)))
          )
          AND ($1 = '' OR LOWER(TRIM(m.category)) = LOWER(TRIM($1)))
-       ORDER BY m.name ASC, m.id ASC`, [category]
+         AND ($2 = '' OR LOWER(TRIM(m.subcategory)) = LOWER(TRIM($2)))
+       ORDER BY m.name ASC, m.id ASC`, [category, subcategory]
         );
 
         const products = result.rows.map((row) => {

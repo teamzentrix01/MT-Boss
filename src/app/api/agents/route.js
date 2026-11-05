@@ -3,23 +3,20 @@ import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
 import { ensureAgentSchema, requireAdmin } from '@/lib/agent-auth';
 import { sendMail } from '@/lib/email';
-import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { resolveManagedCity } from '@/lib/cities';
+import {
+  validateAgentApplicationBody,
+  cleanAgentSpecializations,
+  AGENT_DUPLICATE_EMAIL_MESSAGE,
+} from '@/lib/agent-application';
 import { ensureAgentNotificationsSchema } from '@/lib/agent-notifications';
 
 const AGENT_STATUSES = ['Pending', 'Reviewing', 'Approved', 'Rejected'];
-const ALLOWED_SPECIALIZATIONS = ['payments', 'labor', 'vendor', 'construction'];
 const AGENT_SAFE_COLUMNS = `
   id, name, email, phone, city, state, occupation, agent_type, experience,
   network, message, status, login_enabled, must_change_password, approved_at,
   approved_by, auth_version, last_login_at, created_at, updated_at, has_project_management_access,
   specializations, is_manager, manager_id
 `;
-
-function cleanSpecializations(specs) {
-  if (!specs || !Array.isArray(specs)) return [];
-  return specs.filter((s) => ALLOWED_SPECIALIZATIONS.includes(s));
-}
 
 function makeTemporaryPassword() {
   return `Agent@${Math.random().toString(36).slice(2, 8)}${Math.floor(10 + Math.random() * 90)}`;
@@ -96,21 +93,24 @@ export async function POST(req) {
   try {
     await ensureAgentSchema();
     const body = await req.json();
-    const { name, email, phone, city, state, occupation, agentType, experience, network, message, specializations, has_project_management_access } = body;
-    const cleanName = cleanText(name);
-    const cleanEmail = cleanText(email).toLowerCase();
-    const cleanPhone = normalizePhone(phone);
-    const canonicalCity = await resolveManagedCity(city);
-    const validSpecs = cleanSpecializations(specializations);
-    const pmAccess = Boolean(has_project_management_access || validSpecs.length > 0);
-
-    if (!cleanName || !cleanEmail || !cleanPhone || !canonicalCity || !state || !agentType) {
-      return NextResponse.json({ success: false, error: 'Required fields missing' }, { status: 400 });
+    const parsed = await validateAgentApplicationBody(body);
+    if (!parsed.ok) {
+      return NextResponse.json({ success: false, error: parsed.error }, { status: parsed.status || 400 });
     }
-    const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
-    if (contactError) {
-      return NextResponse.json({ success: false, error: contactError }, { status: 400 });
-    }
+    const {
+      cleanName,
+      cleanEmail,
+      cleanPhone,
+      canonicalCity,
+      cleanState,
+      cleanAgentType,
+      occupation,
+      experience,
+      network,
+      message,
+      validSpecs,
+      pmAccess,
+    } = parsed.data;
 
     const existing = await pool.query(
       `SELECT id FROM agents
@@ -121,7 +121,21 @@ export async function POST(req) {
     );
     if (existing.rows.length > 0) {
       return NextResponse.json(
-        { success: false, error: 'An active agent application already exists for this email.' },
+        { success: false, error: AGENT_DUPLICATE_EMAIL_MESSAGE },
+        { status: 409 }
+      );
+    }
+
+    const userConflict = await pool.query(
+      `SELECT id, role FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM($1)) LIMIT 1`,
+      [cleanEmail]
+    );
+    if (userConflict.rows[0] && String(userConflict.rows[0].role || '').toLowerCase() !== 'agent') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `This email is already registered as a ${userConflict.rows[0].role} account. Please sign in with that account or use a different email.`,
+        },
         { status: 409 }
       );
     }
@@ -130,7 +144,7 @@ export async function POST(req) {
       `INSERT INTO agents (name, email, phone, city, state, occupation, agent_type, experience, network, message, specializations, has_project_management_access)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12)
        RETURNING ${AGENT_SAFE_COLUMNS}`,
-      [cleanName, cleanEmail, cleanPhone, canonicalCity, state, occupation, agentType, experience || null, network || null, message || null, JSON.stringify(validSpecs), pmAccess]
+      [cleanName, cleanEmail, cleanPhone, canonicalCity, cleanState, occupation, cleanAgentType, experience, network, message, JSON.stringify(validSpecs), pmAccess]
     );
 
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
@@ -138,7 +152,7 @@ export async function POST(req) {
     console.error('Agent submit error:', error);
     if (error.code === '23505') {
       return NextResponse.json(
-        { success: false, error: 'An active agent application already exists for this email.' },
+        { success: false, error: AGENT_DUPLICATE_EMAIL_MESSAGE },
         { status: 409 }
       );
     }
@@ -166,7 +180,7 @@ export async function PATCH(req) {
       const updates = [];
       const params = [];
       if (specializations !== undefined) {
-        const validSpecs = cleanSpecializations(specializations);
+        const validSpecs = cleanAgentSpecializations(specializations);
         params.push(JSON.stringify(validSpecs));
         updates.push(`specializations = $${params.length}::jsonb`);
       }
@@ -217,7 +231,7 @@ export async function PATCH(req) {
       );
     }
 
-    const extraSpecsSql = specializations !== undefined ? `, specializations = '${JSON.stringify(cleanSpecializations(specializations))}'::jsonb` : '';
+    const extraSpecsSql = specializations !== undefined ? `, specializations = '${JSON.stringify(cleanAgentSpecializations(specializations))}'::jsonb` : '';
     const extraPmSql = typeof has_project_management_access === 'boolean' ? `, has_project_management_access = ${has_project_management_access}` : '';
     const extraManagerSql = typeof is_manager === 'boolean' ? `, is_manager = ${is_manager}` : '';
     const extraManagerIdSql = manager_id !== undefined ? `, manager_id = ${manager_id ? Number(manager_id) : 'NULL'}` : '';

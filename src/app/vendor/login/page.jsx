@@ -1,5 +1,6 @@
 'use client';
 
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -143,7 +144,7 @@ export default function ServiceProviderLoginPage() {
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <div style={{ marginBottom: '0.875rem' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Email address</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Email address <RequiredAsterisk /></label>
               <div style={{ position: 'relative' }}>
                 <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -158,7 +159,7 @@ export default function ServiceProviderLoginPage() {
 
             {/* Password */}
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Password</label>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Password <RequiredAsterisk /></label>
               <div style={{ position: 'relative' }}>
                 <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

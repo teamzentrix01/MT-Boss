@@ -123,6 +123,21 @@ export async function getManagedCities({ includeInactive = false } = {}) {
   return result.rows;
 }
 
+/** Returns canonical managed city name or a user-facing validation error string. */
+export async function resolveManagedCityWithMessage(value, { activeOnly = true } = {}) {
+  const cleaned = cleanCityName(value);
+  if (!cleaned) {
+    return { error: 'City is required.' };
+  }
+  const canonical = await resolveManagedCity(cleaned, { activeOnly });
+  if (!canonical) {
+    return {
+      error: `"${cleaned}" is not an active service city. Please select a city from the list.`,
+    };
+  }
+  return { city: canonical };
+}
+
 export async function resolveManagedCity(value, { activeOnly = true } = {}) {
   const city = cleanCityName(value);
   if (!city) return null;

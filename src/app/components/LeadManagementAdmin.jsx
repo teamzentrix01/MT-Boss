@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from './RequiredAsterisk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Eye, Download, RefreshCw, Plus, X, ArrowLeft, ActionIconButton } from '@/app/components/ui/icons';
 import LeadDetailView from './LeadDetailView';
@@ -976,11 +977,11 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                     <div style={{ fontSize: '0.85rem', fontWeight: 900, color: text, marginBottom: 8 }}>New Party Details</div>
                     <div style={{ display: 'grid', gap: 8 }}>
                       <div>
-                        <label style={labelStyle}>Client Name *</label>
+                        <label style={labelStyle}>Client Name <RequiredAsterisk /></label>
                         <input style={inputStyle} value={conversionData.newParty.name} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, name: e.target.value } }))} required disabled={isSubmitting} />
                       </div>
                       <div>
-                        <label style={labelStyle}>Phone *</label>
+                        <label style={labelStyle}>Phone <RequiredAsterisk /></label>
                         <input style={inputStyle} value={conversionData.newParty.phone} onChange={e => setConversionData(p => ({ ...p, newParty: { ...p.newParty, phone: e.target.value } }))} required disabled={isSubmitting} />
                       </div>
                       <div>
@@ -999,19 +1000,19 @@ export default function LeadManagementAdmin({ isDarkMode }) {
                   <div style={{ fontSize: '0.85rem', fontWeight: 900, color: text, marginBottom: 8 }}>Project Details</div>
                   <div style={{ display: 'grid', gap: 8 }}>
                     <div>
-                      <label style={labelStyle}>Project Name *</label>
+                      <label style={labelStyle}>Project Name <RequiredAsterisk /></label>
                       <input style={inputStyle} value={conversionData.project.name} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, name: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
-                      <label style={labelStyle}>Start Date *</label>
+                      <label style={labelStyle}>Start Date <RequiredAsterisk /></label>
                       <input type="date" style={inputStyle} value={conversionData.project.start_date} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, start_date: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
-                      <label style={labelStyle}>Contract Value (Rs) *</label>
+                      <label style={labelStyle}>Contract Value (Rs) <RequiredAsterisk /></label>
                       <input type="number" style={inputStyle} value={conversionData.project.contract_value} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, contract_value: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                     <div>
-                      <label style={labelStyle}>Site / City *</label>
+                      <label style={labelStyle}>Site / City <RequiredAsterisk /></label>
                       <input style={inputStyle} value={conversionData.project.site_address} onChange={e => setConversionData(p => ({ ...p, project: { ...p.project, site_address: e.target.value } }))} required disabled={isSubmitting} />
                     </div>
                   </div>

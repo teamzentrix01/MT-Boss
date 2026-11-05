@@ -1,5 +1,6 @@
 'use client';
 
+import RequiredAsterisk from './RequiredAsterisk';
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -125,7 +126,7 @@ function ResetForm({ loginHref, accentColor }) {
 
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom:'1rem' }}>
-                <label style={{ display:'block', fontSize:'0.78rem', fontWeight:600, color:muted, marginBottom:'0.4rem', textTransform:'uppercase', letterSpacing:'0.05em' }}>New Password</label>
+                <label style={{ display:'block', fontSize:'0.78rem', fontWeight:600, color:muted, marginBottom:'0.4rem', textTransform:'uppercase', letterSpacing:'0.05em' }}>New Password <RequiredAsterisk /></label>
                 <div style={{ position:'relative' }}>
                   <input type={showPwd?'text':'password'} value={password} onChange={e=>{setPassword(e.target.value);setError('');}} placeholder="Min. 6 characters" required
                     style={{ ...inputStyle, paddingRight:'2.5rem' }}
@@ -140,7 +141,7 @@ function ResetForm({ loginHref, accentColor }) {
               </div>
 
               <div style={{ marginBottom:'1.25rem' }}>
-                <label style={{ display:'block', fontSize:'0.78rem', fontWeight:600, color:muted, marginBottom:'0.4rem', textTransform:'uppercase', letterSpacing:'0.05em' }}>Confirm Password</label>
+                <label style={{ display:'block', fontSize:'0.78rem', fontWeight:600, color:muted, marginBottom:'0.4rem', textTransform:'uppercase', letterSpacing:'0.05em' }}>Confirm Password <RequiredAsterisk /></label>
                 <input type={showPwd?'text':'password'} value={confirm} onChange={e=>{setConfirm(e.target.value);setError('');}} placeholder="Repeat password" required
                   style={inputStyle}
                   onFocus={e=>e.target.style.borderColor=accentColor}

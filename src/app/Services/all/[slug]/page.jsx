@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../../../components/RequiredAsterisk';
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -653,7 +654,7 @@ export default function ServiceDetailPage() {
                   <h3 className="font-bold text-sm text-zinc-900 mb-3">Your details</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">Full name <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">Full name <RequiredAsterisk /></label>
                       <input
                         required
                         type="text"
@@ -664,7 +665,7 @@ export default function ServiceDetailPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">Phone number <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">Phone number <RequiredAsterisk /></label>
                       <input
                         required
                         type="tel"
@@ -695,7 +696,7 @@ export default function ServiceDetailPage() {
                   <h3 className="font-bold text-sm text-zinc-900 mb-3">Site and meeting</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">State / UT <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">State / UT <RequiredAsterisk /></label>
                       <select
                         required
                         className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-white text-sm text-zinc-800 focus:outline-none focus:border-[#1258d4] focus:ring-1 focus:ring-[#1258d4] transition-all"
@@ -707,7 +708,7 @@ export default function ServiceDetailPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">City <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-semibold text-zinc-700 mb-1.5 block">City <RequiredAsterisk /></label>
                       <input
                         required
                         type="text"
@@ -721,7 +722,7 @@ export default function ServiceDetailPage() {
 
                   <div className="mt-4">
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-semibold text-zinc-700">Full site address <span className="text-red-500">*</span></label>
+                      <label className="text-xs font-semibold text-zinc-700">Full site address <RequiredAsterisk /></label>
                       <button
                         type="button"
                         onClick={fetchLiveLocation}
@@ -914,7 +915,7 @@ export default function ServiceDetailPage() {
                     className="mt-0.5 rounded border-zinc-300 text-[#1258d4] focus:ring-[#1258d4] cursor-pointer"
                   />
                   <label htmlFor="site-terms" className="text-xs text-zinc-500 leading-relaxed cursor-pointer select-none">
-                    I agree to the <Link href="/privacy-policy" className="text-[#1258d4] font-semibold underline hover:underline">Privacy Policy</Link> and consent to MTBOSS using my details to follow up on this request. <span className="text-red-500">*</span>
+                    I agree to the <Link href="/privacy-policy" className="text-[#1258d4] font-semibold underline hover:underline">Privacy Policy</Link> and consent to MTBOSS using my details to follow up on this request. <RequiredAsterisk />
                   </label>
                 </div>
 

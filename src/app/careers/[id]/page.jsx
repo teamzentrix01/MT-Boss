@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -531,15 +532,15 @@ export default function JobDetailPage() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={labelClass}>Full Name *</label>
+                  <label className={labelClass}>Full Name <RequiredAsterisk /></label>
                   <input type="text" name="name" required placeholder="Your full name" value={form.name} onChange={handleChange} className={inputClass} />
                 </div>
                 <div>
-                  <label className={labelClass}>Email Address *</label>
+                  <label className={labelClass}>Email Address <RequiredAsterisk /></label>
                   <input type="email" name="email" required placeholder="your@email.com" value={form.email} onChange={handleChange} className={inputClass} />
                 </div>
                 <div>
-                  <label className={labelClass}>Phone Number *</label>
+                  <label className={labelClass}>Phone Number <RequiredAsterisk /></label>
                   <input type="tel" name="phone" placeholder="10-digit mobile number" value={form.phone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
                 </div>
                 <div>
@@ -547,7 +548,7 @@ export default function JobDetailPage() {
                   <input type="tel" name="alternativePhone" placeholder="Optional 10-digit mobile number" value={form.alternativePhone} onChange={handleChange} maxLength={10} inputMode="numeric" className={inputClass} />
                 </div>
                 <div>
-                  <label className={labelClass}>Years of Experience *</label>
+                  <label className={labelClass}>Years of Experience <RequiredAsterisk /></label>
                   <input type="text" name="experience" required placeholder="e.g. 5 Years" value={form.experience} onChange={handleChange} className={inputClass} />
                 </div>
               </div>
@@ -655,7 +656,7 @@ export default function JobDetailPage() {
               <p className={`text-[10px] font-black uppercase tracking-widest mb-4 pb-2 border-b ${dark ? "text-zinc-500 border-zinc-800" : "text-zinc-400 border-gray-100"}`}>
                 Cover Letter
               </p>
-              <label className={labelClass}>Why do you want to join MTBOSS? *</label>
+              <label className={labelClass}>Why do you want to join MTBOSS? <RequiredAsterisk /></label>
               <textarea
                 name="coverLetter"
                 required

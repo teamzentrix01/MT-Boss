@@ -4,6 +4,7 @@
 // ════════════════════════════════════════════════════════════════════════════════
 
 'use client';
+import RequiredAsterisk from './RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 import PaidTimeSlotsManager from './PaidTimeSlotsManager';
@@ -395,7 +396,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
               </div>
 
               <div className="form-group">
-                <label className="form-label">City *</label>
+                <label className="form-label">City <RequiredAsterisk /></label>
                 <select
                   className="form-select"
                   value={formData.city}
@@ -411,7 +412,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
               </div>
 
               <div className="form-group">
-                <label className="form-label">Slot Date *</label>
+                <label className="form-label">Slot Date <RequiredAsterisk /></label>
                 <input
                   type="date"
                   className="form-input"
@@ -447,7 +448,7 @@ export default function FreeTimeSlotsManager({ isDarkMode, tokenKey = 'token', d
               )}
 
               <div className="form-group">
-                <label className="form-label">Free Slot *</label>
+                <label className="form-label">Free Slot <RequiredAsterisk /></label>
                 <select
                   className="form-select"
                   value={`${formData.slot_start}-${formData.slot_end}`}

@@ -1,4 +1,5 @@
 "use client";
+import RequiredAsterisk from './RequiredAsterisk';
 
 import React, { useState } from "react";
 import { ChevronDown, User, Mail, Phone, MessageSquare } from "lucide-react";
@@ -103,7 +104,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1.5">
-              Full Name <span className="text-red-500">*</span>
+              Full Name <RequiredAsterisk />
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -121,7 +122,7 @@ const LandingEnquiry = ({ landingPage = "general" }) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                Phone <span className="text-red-500">*</span>
+                Phone <RequiredAsterisk />
               </label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

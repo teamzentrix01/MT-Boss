@@ -9,6 +9,7 @@ import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon, ArrowLeft } f
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
+import { getCategoryAttributeConfig, extractProductAttributes } from '@/lib/product-attributes';
 import './ShopNowManager.css';
 
 const ShopCategoriesManager = dynamic(() => import('./ShopCategoriesManager'), {
@@ -108,6 +109,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const [editingId, setEditingId] = useState(null);
   const [showProductForm, setShowProductForm] = useState(initialShowForm);
   const [isCustomSubcategory, setIsCustomSubcategory] = useState(false);
+  const [formAttributes, setFormAttributes] = useState({ thickness: '', size: '', type: '', color: '', material: '', grade: '', pack_size: '' });
 
   useEffect(() => {
     if (initialShowForm) setShowProductForm(true);
@@ -197,6 +199,16 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
       ...(Array.isArray(full.images) ? full.images : [])
     ].filter(Boolean)));
     setImagesList(existingImgs);
+    const extractedAttrs = extractProductAttributes(full);
+    setFormAttributes({
+      thickness: extractedAttrs.thickness || '',
+      size: extractedAttrs.size || '',
+      type: extractedAttrs.type || '',
+      color: extractedAttrs.color || '',
+      material: extractedAttrs.material || '',
+      grade: extractedAttrs.grade || '',
+      pack_size: extractedAttrs.pack_size || '',
+    });
     setForm({
       name: full.name || '', description: full.description || '', category: full.category || '', subcategory: full.subcategory || '', quality_tier: full.quality_tier || '',
       quote_price_range: full.quote_price_range || '', price: full.price ?? '', compare_at_price: full.compare_at_price ?? '', is_featured_deal: full.is_featured_deal === true, brand: full.brand || '', unit: full.unit || '', quantity: full.quantity ?? 0,
@@ -213,6 +225,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setEditingId(null);
     setShowProductForm(false);
     setIsCustomSubcategory(false);
+    setFormAttributes({ thickness: '', size: '', type: '', color: '', material: '', grade: '', pack_size: '' });
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -225,6 +238,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const startAddProduct = () => {
     setEditingId(null);
     setIsCustomSubcategory(false);
+    setFormAttributes({ thickness: '', size: '', type: '', color: '', material: '', grade: '', pack_size: '' });
     setForm(emptyProduct);
     setImagesList([]);
     setNewImageUrl('');
@@ -249,6 +263,13 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
 
       const parseLines = (value) => (value || '').split('\n').map((line) => line.trim()).filter(Boolean);
       const specifications = {};
+      if (formAttributes.thickness?.trim()) specifications.Thickness = formAttributes.thickness.trim();
+      if (formAttributes.size?.trim()) specifications.Size = formAttributes.size.trim();
+      if (formAttributes.type?.trim()) specifications.Type = formAttributes.type.trim();
+      if (formAttributes.color?.trim()) specifications.Colors = formAttributes.color.trim();
+      if (formAttributes.material?.trim()) specifications.Material = formAttributes.material.trim();
+      if (formAttributes.grade?.trim()) specifications.Grade = formAttributes.grade.trim();
+      if (formAttributes.pack_size?.trim()) specifications.PackSize = formAttributes.pack_size.trim();
       parseLines(specsText).forEach((line) => {
         const separator = line.indexOf(':');
         if (separator !== -1) {
@@ -444,9 +465,12 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
         <form id={formId} className="shop-admin-card" onSubmit={save}>
       <h3>{editingId ? 'Edit product' : 'Add product'}</h3>
       <div className="shop-admin-fields">
-        <label>Product name *<input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></label>
         <label>
-          Category *
+          <span>Product name <span style={{ color: '#ef4444' }}>*</span></span>
+          <input required maxLength={255} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        </label>
+        <label>
+          <span>Category <span style={{ color: '#ef4444' }}>*</span></span>
           <select
             required
             value={form.category}
@@ -463,13 +487,32 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             }}
           >
             <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>{cat.name}</option>
-            ))}
+            {(() => {
+              const standardNavbarCats = [
+                'Building Materials',
+                'Carpentry',
+                'Plumbing',
+                'Electrical',
+                'Furniture & Architectural Hardware',
+                'New Launches',
+                'Chemicals',
+                'Paints',
+              ];
+              const catNames = new Set(standardNavbarCats);
+              categories.forEach((c) => {
+                if (c.name && c.name.trim()) catNames.add(c.name.trim());
+              });
+              if (form.category && !catNames.has(form.category)) {
+                catNames.add(form.category);
+              }
+              return Array.from(catNames).map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ));
+            })()}
           </select>
         </label>
         <label>
-          Subcategory
+          <span>Subcategory</span>
           {!isCustomSubcategory ? (
             <select
               value={form.subcategory}
@@ -531,6 +574,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
                   'sand': ['River Sand (Nadi ki Ret)', 'M-Sand (Manufactured Sand)', 'Coarse Sand', 'Fine Sand', 'Pit Sand'],
                   'aggregate ( barjri)': ['Fine Aggregate', 'Coarse Aggregate'],
                   'new launches': ['Cabinet Hardware', 'Kitchen Systems & Hardware', 'General Hardware & Tools', 'Bathroom Renovation Materials', 'Conduits & Piping', 'PVC Pipes', 'Kitchen Sinks & Faucets', 'Home Appliances & Power Backup'],
+                  'chemicals': ['Construction Chemicals', 'Waterproofing Chemicals', 'Tile Adhesives', 'Admixtures'],
+                  'paints': ['Interior Paints', 'Exterior Paints', 'Primers', 'Enamels & Distempers', 'Wall Putty'],
                 };
 
                 const normCatKey = (form.category || '').toLowerCase().trim();
@@ -583,13 +628,574 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             </div>
           )}
         </label>
-        <label>Quality Tier *<select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}><option value="">Select quality tier</option>{QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}</select><small>Used by the Budget Calculator to match this product to a Quality Package.</small></label>
-        <label>Product Selingl Price (₹) *<input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" /><small>Required: Enter the selling price per unit.</small></label>
-        <label>Product Discount Price (₹) *<input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" /><small>A discount badge is calculated automatically when this is above the Buy Now price.</small></label>
-        <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
-        <label>Unit *<select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}><option value="">Select unit</option>{form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}{units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}</select></label>
-        <label>Quantity available<input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} /></label>
-        <label className="shop-admin-wide">Description<textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
+        {/* Dynamic Category Specifications Section (HomeRun Engine) */}
+        {form.category && form.subcategory && (() => {
+          const config = getCategoryAttributeConfig(form.category, form.subcategory);
+          const fields = config.fields || [];
+          if (!fields.length) return null;
+
+          const renderFieldCard = (key) => {
+            if (key === 'grade') {
+              return (
+                <div key="grade" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>⭐</span> Grade / Standard
+                      </label>
+                      {formAttributes.grade && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, grade: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. OPC 53 Grade, Fe 500D, Class 1, Zone II
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. OPC 53 Grade, Fe 500D"
+                      value={formAttributes.grade || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, grade: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.grade?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.grade.map((val) => {
+                        const isSelected = (formAttributes.grade || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, grade: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'type') {
+              return (
+                <div key="type" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🏷️</span> Type / Variety
+                      </label>
+                      {formAttributes.type && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, type: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. PPC Cement, TMT Rebar, AAC Block, M-Sand
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. PPC Cement, TMT Rebar"
+                      value={formAttributes.type || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, type: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.type?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.type.map((val) => {
+                        const isSelected = (formAttributes.type || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, type: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'pack_size') {
+              return (
+                <div key="pack_size" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📦</span> Pack / Bag Size
+                      </label>
+                      {formAttributes.pack_size && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, pack_size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 50 Kg Bag, 1 Ton, CFT, 25 Kg Bag
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 50 Kg Bag, 1 Ton"
+                      value={formAttributes.pack_size || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, pack_size: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.pack_size?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.pack_size.map((val) => {
+                        const isSelected = (formAttributes.pack_size || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, pack_size: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'thickness') {
+              return (
+                <div key="thickness" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📏</span> Thickness / Diameter
+                      </label>
+                      {formAttributes.thickness && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, thickness: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 8mm, 10mm, 12mm, 16mm, 20mm
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 12mm, 16mm, 20mm"
+                      value={formAttributes.thickness || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, thickness: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.thickness?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.thickness.map((val) => {
+                        const isSelected = (formAttributes.thickness || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, thickness: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'size') {
+              return (
+                <div key="size" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>📐</span> Dimensions / Size
+                      </label>
+                      {formAttributes.size && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. 9x4x3 inch, 600x600 mm, 12m Length
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. 9x4x3 inch, 600x600 mm"
+                      value={formAttributes.size || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, size: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.size?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.size.map((val) => {
+                        const isSelected = (formAttributes.size || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, size: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'material') {
+              return (
+                <div key="material" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🧱</span> Material Composition
+                      </label>
+                      {formAttributes.material && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, material: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. Primary Virgin Steel, Vitrified Porcelain, Clay
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. Primary Virgin Steel, Clay"
+                      value={formAttributes.material || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, material: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.material?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.material.map((val) => {
+                        const isSelected = (formAttributes.material || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, material: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            if (key === 'color') {
+              return (
+                <div key="color" style={{
+                  background: '#ffffff',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #e2e8f0',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>🎨</span> Color / Shade / Finish
+                      </label>
+                      {formAttributes.color && (
+                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, color: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                          ✕ Clear
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
+                      e.g. Grey, Super White, Terracotta
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="e.g. Grey, Super White"
+                      value={formAttributes.color || ''}
+                      onChange={(e) => setFormAttributes({ ...formAttributes, color: e.target.value })}
+                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  {config.color?.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
+                      {config.color.map((val) => {
+                        const isSelected = (formAttributes.color || '').toLowerCase().trim() === val.toLowerCase().trim();
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setFormAttributes({ ...formAttributes, color: isSelected ? '' : val })}
+                            style={{
+                              fontSize: '11px',
+                              padding: '3px 9px',
+                              borderRadius: '14px',
+                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isSelected ? '#2563eb' : '#f8fafc',
+                              color: isSelected ? '#ffffff' : '#334155',
+                              cursor: 'pointer',
+                              fontWeight: isSelected ? 700 : 500,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 3,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {isSelected && <span>✓</span>}
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return null;
+          };
+
+          return (
+            <div className="shop-admin-wide" style={{
+              background: '#f8fafc',
+              border: '1.5px solid #cbd5e1',
+              borderRadius: '12px',
+              padding: '18px 20px',
+              margin: '8px 0 16px',
+              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <Sparkles size={17} color="#2563eb" />
+                    <strong style={{ fontSize: '14px', color: '#0f172a' }}>
+                      {config.label}
+                    </strong>
+                  </div>
+                  <small style={{ color: '#64748b', fontSize: '11.5px', marginTop: 2, display: 'block' }}>
+                    Fill specifications for {form.subcategory} so buyers on Shop Now can filter by these exact attributes.
+                  </small>
+                </div>
+                <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span>✓</span> Subcategory: {form.subcategory}
+                </span>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+                gap: '14px',
+              }}>
+                {fields.map((fKey) => renderFieldCard(fKey))}
+              </div>
+            </div>
+          );
+        })()}
+
+        <label>
+          <span>Quality Tier <span style={{ color: '#ef4444' }}>*</span></span>
+          <select required value={form.quality_tier} onChange={(e) => setForm({ ...form, quality_tier: e.target.value })}>
+            <option value="">Select quality tier</option>
+            {QUALITY_TIER_OPTIONS.map((tier) => <option key={tier.value} value={tier.value}>{tier.label}</option>)}
+          </select>
+          <small>Used by the Budget Calculator to match this product to a Quality Package.</small>
+        </label>
+        <label>
+          <span>Product Selling Price (₹) <span style={{ color: '#ef4444' }}>*</span></span>
+          <input required type="number" min="0.01" max="99999999.99" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Enter fixed price (e.g. 450)" />
+          <small>Required: Enter the selling price per unit.</small>
+        </label>
+        <label>
+          <span>Product Discount Price (₹)</span>
+          <input type="number" min="0" step="0.01" value={form.compare_at_price} onChange={(e) => setForm({ ...form, compare_at_price: e.target.value })} placeholder="Shows discount when above selling price" />
+          <small>A discount badge is calculated automatically when this is above the Buy Now price.</small>
+        </label>
+        <label>
+          <span>Brand</span>
+          <input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" />
+        </label>
+        <label>
+          <span>Unit <span style={{ color: '#ef4444' }}>*</span></span>
+          <select required value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })}>
+            <option value="">Select unit</option>
+            {form.unit && !units.includes(form.unit) && <option value={form.unit}>{form.unit}</option>}
+            {units.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Quantity available</span>
+          <input type="number" min="0" step="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+        </label>
+        <label className="shop-admin-wide">
+          <span>Description</span>
+          <textarea rows="3" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        </label>
 
         {/* Multi-Image Gallery Box */}
         <div className="shop-admin-wide shop-admin-gallery-box">
@@ -1117,12 +1723,18 @@ function OfferManager() {
     <div className="shop-admin-heading"><div><h2>Offers</h2><p>Show offer badges on Shop Now products by category, subcategory and/or brand. Blank targeting fields apply to everything.</p></div><button type="button" onClick={load}>Refresh</button></div>
     {notice && <p className="shop-admin-notice" role="status">{notice}</p>}
     <form className="shop-admin-card" onSubmit={save}><h3>{editingId ? 'Edit offer' : 'Create offer'}</h3><div className="shop-admin-fields">
-      <label>Offer name *<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" /></label>
+      <label>
+        <span>Offer name <span style={{ color: '#ef4444' }}>*</span></span>
+        <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Cement sale" />
+      </label>
       <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value, subcategory: '' })}><option value="">All categories</option>{categories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}</select></label>
       <label>Subcategory<select value={form.subcategory} onChange={(e) => setForm({ ...form, subcategory: e.target.value })} disabled={!form.category}><option value="">All subcategories</option>{subcategories.map((item) => { const name = typeof item === 'object' && item !== null ? item.name : item; return <option key={name} value={name}>{name}</option>; })}</select></label>
       <label>Brand<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="e.g. UltraTech" /></label>
       <label>Discount type<select value={form.discount_type} onChange={(e) => setForm({ ...form, discount_type: e.target.value })}><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></label>
-      <label>Discount value *<input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} /></label>
+      <label>
+        <span>Discount value <span style={{ color: '#ef4444' }}>*</span></span>
+        <input required type="number" min="0.01" step="0.01" max={form.discount_type === 'percent' ? '100' : undefined} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: e.target.value })} />
+      </label>
       <label>Badge text<input maxLength={80} value={form.badge_text} onChange={(e) => setForm({ ...form, badge_text: e.target.value })} placeholder="6% OFF (blank = automatic)" /></label>
       <label>Priority<input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /><small>Lower number wins when multiple offers match.</small></label>
       <label>Start date/time<input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} /></label>

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../../components/RequiredAsterisk';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -11,7 +12,7 @@ export default function ServiceProviderSignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [dark, setDark] = useState(false);
-  const { cities: managedCities, services, loading: loadingServices, error: serviceCityError } = useServiceCities();
+  const { cities: managedCities, cityRecords, services, loading: loadingServices, error: serviceCityError } = useServiceCities();
   const [step, setStep] = useState(1);
   const [registrationOtp, setRegistrationOtp] = useState('');
   const [otpSending, setOtpSending] = useState(false);
@@ -99,7 +100,13 @@ export default function ServiceProviderSignupPage() {
       const rawDigits = value.replace(/\D/g, '');
       setFormData(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
     } else if (name === 'city') {
-      setFormData(prev => ({ ...prev, city: value, services: [] }));
+      const record = cityRecords.find((row) => row.name === value);
+      setFormData(prev => ({
+        ...prev,
+        city: value,
+        state: record?.state || prev.state,
+        services: [],
+      }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -638,7 +645,7 @@ const handleSubmit = async (e) => {
               {step === 1 && (
                 <>
                   <div className="vs-field">
-                    <label className="vs-label">Service Provider Name *</label>
+                    <label className="vs-label">Service Provider Name <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="text"
@@ -651,7 +658,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Email Address *</label>
+                    <label className="vs-label">Email Address <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="email"
@@ -664,7 +671,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Mobile Number *</label>
+                    <label className="vs-label">Mobile Number <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="tel"
@@ -677,7 +684,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Email Verification OTP *</label>
+                    <label className="vs-label">Email Verification OTP <RequiredAsterisk /></label>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <input
                         className="vs-input"
@@ -696,7 +703,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Password *</label>
+                    <label className="vs-label">Password <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="password"
@@ -709,7 +716,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Confirm Password *</label>
+                    <label className="vs-label">Confirm Password <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="password"
@@ -728,10 +735,11 @@ const handleSubmit = async (e) => {
                 <>
                   <div className="vs-row">
                     <div className="vs-field">
-                      <label className="vs-label">City *</label>
+                      <label className="vs-label">City <RequiredAsterisk /></label>
                       <select
                         className="vs-input"
                         name="city"
+                        required
                         value={formData.city}
                         onChange={handleChange}
                         disabled={loadingServices}
@@ -742,7 +750,7 @@ const handleSubmit = async (e) => {
                       {serviceCityError && <div className="vs-error" style={{ marginTop: '0.35rem' }}>{serviceCityError}</div>}
                     </div>
                     <div className="vs-field">
-                      <label className="vs-label">State *</label>
+                      <label className="vs-label">State <RequiredAsterisk /></label>
                       <input
                         className="vs-input"
                         type="text"
@@ -767,7 +775,7 @@ const handleSubmit = async (e) => {
                       />
                     </div>
                     <div className="vs-field">
-                      <label className="vs-label">Postal Code *</label>
+                      <label className="vs-label">Postal Code <RequiredAsterisk /></label>
                       <input
                         className="vs-input"
                         type="text"
@@ -781,7 +789,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   <div className="vs-field">
-                    <label className="vs-label">Aadhaar Number *</label>
+                    <label className="vs-label">Aadhaar Number <RequiredAsterisk /></label>
                     <input
                       className="vs-input"
                       type="text"
@@ -956,7 +964,7 @@ const handleSubmit = async (e) => {
                       </select>
                     </div>
                   )}
-                  <label className="vs-label">Select services you provide *</label>
+                  <label className="vs-label">Select services you provide <RequiredAsterisk /></label>
                   {loadingServices ? (
                     <div style={{ textAlign: 'center', padding: '2rem', color: dark ? '#555' : '#aaa', fontSize: '0.85rem' }}>
                       Loading services...
@@ -996,7 +1004,7 @@ const handleSubmit = async (e) => {
               {/* STEP 4 */}
               {step === 4 && (
                 <>
-                  <label className="vs-label">Select a subscription plan *</label>
+                  <label className="vs-label">Select a subscription plan <RequiredAsterisk /></label>
                   <div className="grid grid-cols-1 gap-3 mt-2">
                     {plans.map(pkg => (
                       <div

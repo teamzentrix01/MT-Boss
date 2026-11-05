@@ -31,7 +31,7 @@ function SubscriptionBadge({ s }) {
   if (isFree) {
     return (
       <span style={{ display:'inline-flex', alignItems:'center', gap:'0.2rem', background:'#fffbeb', color:'#b45309', border:'1px solid #fcd34d', padding:'0.2rem 0.55rem', borderRadius:20, fontSize:'0.68rem', fontWeight:800, textTransform:'uppercase', whiteSpace:'nowrap' }}>
-        🟡 Free Trial (₹0)
+        🟡 Free Plan (₹0)
       </span>
     );
   }

@@ -1,4 +1,5 @@
 'use client';
+import RequiredAsterisk from '../components/RequiredAsterisk';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -483,7 +484,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
                   />
                 </Field>
                 <div>
-                  <label className={lbl}>Pincode *</label>
+                  <label className={lbl}>Pincode <RequiredAsterisk /></label>
                   <div className="flex gap-2 items-end">
                     <input
                       className={`flex-1 px-3 py-2.5 text-sm border outline-none transition-all ${input} ${pincodeError ? 'border-red-500' : ''}`}
