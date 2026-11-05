@@ -311,8 +311,6 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
       )}
       <Link
         href={detailHref}
-        target="_blank"
-        rel="noopener noreferrer"
         className="store-product-image-button"
         aria-label={`View ${product.name} details`}
       >
@@ -324,8 +322,6 @@ function ProductCard({ product, quantity, canAdd, onAdd, onChangeQty, onQuote, o
         </span>
         <Link
           href={detailHref}
-          target="_blank"
-          rel="noopener noreferrer"
           className="store-product-title"
         >
           <h3>{product.name}</h3>

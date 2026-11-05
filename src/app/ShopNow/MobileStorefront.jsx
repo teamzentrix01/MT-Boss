@@ -2208,8 +2208,6 @@ function MobileProductCard({
         {/* Left: Product image */}
         <Link
           href={detailHref}
-          target="_blank"
-          rel="noopener noreferrer"
           className="mobile-card-img-btn"
           aria-label={`View ${product.name} details`}
         >
@@ -2234,8 +2232,6 @@ function MobileProductCard({
           {/* Product Name */}
           <Link
             href={detailHref}
-            target="_blank"
-            rel="noopener noreferrer"
             className="mobile-card-title-btn"
           >
             <h3 className="mobile-card-title">{product.name}</h3>
