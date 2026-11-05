@@ -39,6 +39,7 @@ import {
 import { displayUnit, getProductImage, ShopImage, getLowestBulkPrice, getProductPromotion, getProductPromotions, getProductFreeShippingPromo, formatPromoSpend } from "./Storefront";
 import AutoSwipeGallery from "./AutoSwipeGallery";
 import { getCartStep } from "@/lib/cart-step";
+import { extractProductAttributes, matchesAttribute, collectUniqueAttributes } from "@/lib/product-attributes";
 import {
   CATEGORY_NAV_TREE,
   getMainCategories,
@@ -454,7 +455,11 @@ export default function MobileStorefront({
     // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
-      list = list.filter((p) => `${p.name} ${p.brand || ""} ${p.category?.name || ""}`.toLowerCase().includes(q));
+      list = list.filter((p) => {
+        const attrs = extractProductAttributes(p);
+        const attrText = `${attrs.thickness} ${attrs.size} ${attrs.type} ${attrs.color} ${attrs.material}`.toLowerCase();
+        return `${p.name} ${p.brand || ""} ${p.category?.name || ""} ${attrText}`.toLowerCase().includes(q);
+      });
     }
 
     return list;
@@ -464,7 +469,11 @@ export default function MobileStorefront({
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const q = searchQuery.trim().toLowerCase();
-    return catalog.filter((p) => `${p.name} ${p.brand || ""} ${p.category?.name || ""}`.toLowerCase().includes(q));
+    return catalog.filter((p) => {
+      const attrs = extractProductAttributes(p);
+      const attrText = `${attrs.thickness} ${attrs.size} ${attrs.type} ${attrs.color} ${attrs.material}`.toLowerCase();
+      return `${p.name} ${p.brand || ""} ${p.category?.name || ""} ${attrText}`.toLowerCase().includes(q);
+    });
   }, [catalog, searchQuery]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -2231,6 +2240,39 @@ function MobileProductCard({
           >
             <h3 className="mobile-card-title">{product.name}</h3>
           </Link>
+          {/* Specification Chips (Thickness, Size, Type, Material) */}
+          {(() => {
+            const attrs = extractProductAttributes(product);
+            const chips = [
+              product.brand,
+              attrs.thickness,
+              attrs.size,
+              attrs.type,
+              attrs.material,
+            ].filter(Boolean);
+            if (!chips.length) return null;
+            return (
+              <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap', margin: '2px 0 4px' }}>
+                {chips.slice(0, 3).map((chip, idx) => (
+                  <span
+                    key={`${chip}-${idx}`}
+                    style={{
+                      fontSize: '9.5px',
+                      fontWeight: '700',
+                      padding: '1px 5px',
+                      borderRadius: '4px',
+                      background: '#f1f5f9',
+                      color: '#334155',
+                      border: '1px solid #e2e8f0',
+                    }}
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            );
+          })()}
+
           {cityUnavailable && (
             <span className="text-[10px] font-bold text-red-600 block mt-0.5">Out of stock in {selectedCity}</span>
           )}
