@@ -63,22 +63,6 @@ const ensureTable = createInitializationGuard(async () => {
 
 export const NAVBAR_PRESET_CATEGORIES = [
   {
-    name: 'New Launches',
-    emoji: '🚀',
-    unit: 'pcs',
-    price_range: 'Price on request',
-    subcategories: [
-      'Cabinet Hardware',
-      'Kitchen Systems & Hardware',
-      'General Hardware & Tools',
-      'Bathroom Renovation Materials',
-      'Conduits & Piping',
-      'PVC Pipes',
-      'Kitchen Sinks & Faucets',
-      'Home Appliances & Power Backup',
-    ],
-  },
-  {
     name: 'Building Materials',
     emoji: '🧱',
     unit: 'bag',
@@ -186,11 +170,23 @@ export async function syncNavbarCategories() {
             WHEN LOWER(TRIM(category)) LIKE '%cement%' THEN 'Cement'
             WHEN LOWER(TRIM(category)) LIKE '%brick%' THEN 'Brick'
             WHEN LOWER(TRIM(category)) LIKE '%steel%' OR LOWER(TRIM(category)) LIKE '%iron%' THEN 'Steel'
+            WHEN LOWER(TRIM(category)) LIKE '%fine sand%' THEN 'Fine Sand'
+            WHEN LOWER(TRIM(category)) LIKE '%coarse sand%' THEN 'Coarse Sand'
             WHEN LOWER(TRIM(category)) LIKE '%sand%' THEN 'Coarse Sand'
             WHEN LOWER(TRIM(category)) LIKE '%aggregate%' OR LOWER(TRIM(category)) LIKE '%barjri%' THEN 'Aggregate (Barjri)'
+            WHEN LOWER(TRIM(category)) LIKE '%block%' THEN 'Block'
+            WHEN LOWER(TRIM(category)) LIKE '%pop%' THEN 'POP'
+            WHEN LOWER(TRIM(category)) LIKE '%tile%' THEN 'Tiles'
+            WHEN LOWER(TRIM(category)) LIKE '%marble%' THEN 'Marble'
+            WHEN LOWER(TRIM(category)) LIKE '%glass%' THEN 'Glass'
+            WHEN LOWER(TRIM(category)) LIKE '%waterproof%' THEN 'Waterproofing'
             ELSE 'Cement'
           END
-      WHERE LOWER(TRIM(category)) IN ('cement', 'brick', 'steel', 'sand', 'aggregate ( barjri)', 'aggregate (barjri)', 'iron', 'block', 'pop', 'tiles', 'marble', 'glass', 'waterproofing')
+      WHERE LOWER(TRIM(category)) IN (
+        'cement', 'brick', 'steel', 'sand', 'coarse sand', 'fine sand',
+        'aggregate ( barjri)', 'aggregate (barjri)', 'iron', 'block',
+        'pop', 'tiles', 'marble', 'glass', 'waterproofing'
+      )
     `);
 
     await pool.query(`
@@ -198,6 +194,9 @@ export async function syncNavbarCategories() {
       SET category = 'Carpentry',
           subcategory = CASE
             WHEN subcategory IS NOT NULL AND TRIM(subcategory) != '' THEN subcategory
+            WHEN LOWER(TRIM(category)) LIKE '%ply%' THEN 'Plywood'
+            WHEN LOWER(TRIM(category)) LIKE '%hpl%' THEN 'HPL'
+            WHEN LOWER(TRIM(category)) LIKE '%rough%' THEN 'Rough Carpentry'
             ELSE 'Timber'
           END
       WHERE LOWER(TRIM(category)) IN ('timber ( lakdi)', 'timber', 'plywood', 'hpl', 'rough carpentry')
@@ -269,11 +268,14 @@ export async function syncNavbarCategories() {
     }
   }
 
+  // Delete all 18 obsolete flat categories completely
   await pool.query(`
     DELETE FROM shop_categories
     WHERE LOWER(TRIM(name)) IN (
-      'cement', 'brick', 'steel', 'sand', 'aggregate ( barjri)', 'aggregate (barjri)',
-      'timber ( lakdi)', 'timber'
+      'cement', 'brick', 'steel', 'sand', 'coarse sand', 'fine sand',
+      'aggregate ( barjri)', 'aggregate (barjri)', 'iron', 'block',
+      'pop', 'tiles', 'marble', 'glass', 'waterproofing',
+      'timber ( lakdi)', 'timber', 'plywood', 'hpl', 'rough carpentry'
     )
   `);
 
@@ -285,6 +287,31 @@ export async function GET(req) {
   try {
     await ensureTable();
     const { searchParams } = new URL(req.url);
+
+    // If explicit sync action requested via GET
+    if (searchParams.get('action') === 'sync-navbar') {
+      if (!requireRole(req, 'admin')) return unauthorized();
+      await syncNavbarCategories();
+      return NextResponse.json({ success: true, message: 'Shop categories synced to Navbar structure successfully!' });
+    }
+
+    // Auto-migrate check: if any obsolete flat category remains on main/production DB, auto-sync seamlessly
+    try {
+      const checkObsolete = await pool.query(`
+        SELECT 1 FROM shop_categories 
+        WHERE LOWER(TRIM(name)) IN (
+          'iron', 'coarse sand', 'fine sand', 'block', 'pop', 'tiles', 'marble', 'glass', 'plywood', 'hpl', 'waterproofing'
+        )
+        LIMIT 1
+      `);
+      if (checkObsolete.rows.length > 0) {
+        console.log('[shop-categories] Obsolete categories detected in DB, auto-migrating to Navbar structure...');
+        await syncNavbarCategories();
+      }
+    } catch (migErr) {
+      console.warn('Auto-sync check warning:', migErr.message);
+    }
+
     const isAdmin = searchParams.get('admin') === 'true';
     if (isAdmin && !requireRole(req, 'admin')) return unauthorized();
 
@@ -327,13 +354,23 @@ export async function GET(req) {
   }
 }
 
-// ── POST (create) ─────────────────────────────────────────────────────────────
+// ── POST (create / sync) ──────────────────────────────────────────────────────
 export async function POST(req) {
   try {
     await ensureTable();
+    const { searchParams } = new URL(req.url);
+    const body = await req.json().catch(() => ({}));
+
+    // Handle 1-click sync action
+    if (searchParams.get('action') === 'sync-navbar' || body.action === 'sync-navbar') {
+      if (!requireRole(req, 'admin')) return unauthorized();
+      await syncNavbarCategories();
+      return NextResponse.json({ success: true, message: 'Shop categories synced to Navbar structure successfully!' });
+    }
+
     if (!requireRole(req, 'admin')) return unauthorized();
 
-    const { name, image, images, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices, shipping_charge } = await req.json();
+    const { name, image, images, emoji, emoji_image, label, label_color, price_range, unit, types, subcategories, city_prices, shipping_charge } = body;
     if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     const normalizedCityPrices = await canonicalCityPrices(city_prices);
     if (!normalizedCityPrices) return NextResponse.json({ error: 'City prices must use active managed cities' }, { status: 400 });

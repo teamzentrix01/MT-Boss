@@ -1460,6 +1460,10 @@ export default function ShopCategoriesManager({ isDarkMode }) {
                 style={{ background: 'none', border: `1px solid ${t.border}`, borderRadius: '4px', padding: '8px 16px', color: t.sub, cursor: 'pointer', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
                 ↺ Refresh
               </button>
+              <button onClick={handleSyncNavbar} disabled={syncing}
+                style={{ background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '4px', padding: '8px 16px', cursor: syncing ? 'wait' : 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em', opacity: syncing ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                {syncing ? '⏳ Syncing...' : '⚡ Sync Navbar Categories'}
+              </button>
               <button onClick={openAdd}
                 style={{ background: t.accent, color: t.accentFg, border: 'none', borderRadius: '4px', padding: '8px 18px', cursor: 'pointer', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
                 + Add Category
