@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import pool, { isTransientConnectionError, queryReadWithRetry } from '@/lib/db';
 import { requireRole } from '@/lib/auth';
 
 const unauthorized = () =>
   NextResponse.json({ success: false, error: 'Admin access required' }, { status: 401 });
+
+function dbUnavailableResponse(error, context) {
+  console.error(`[product-approvals] ${context}:`, error?.code || '', error?.message || error);
+  return NextResponse.json(
+    {
+      success: false,
+      error: 'Database temporarily unavailable. Please try again in a moment.',
+    },
+    { status: 503 }
+  );
+}
+
+function internalErrorResponse(error, context, publicMessage) {
+  console.error(`[product-approvals] ${context}:`, error?.code || '', error?.message || error);
+  return NextResponse.json({ success: false, error: publicMessage }, { status: 500 });
+}
 
 export async function GET(req) {
   const admin = requireRole(req, 'admin');
@@ -13,9 +29,8 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const countOnly = searchParams.get('count_only') === 'true' || searchParams.get('count_only') === '1';
 
-    // If lightweight count query for sidebar badge
     if (countOnly) {
-      const pendingCountRes = await pool.query(`
+      const pendingCountRes = await queryReadWithRetry(`
         SELECT COUNT(*)::int AS count
         FROM supplier_materials m
         WHERE (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))
@@ -33,11 +48,9 @@ export async function GET(req) {
     const limit = Math.max(1, Math.min(100, Number(searchParams.get('limit')) || 20));
     const offset = (page - 1) * limit;
 
-    // Base query conditions for supplier or vendor / service provider sourced products
-    let whereClauses = ['(m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))'];
-    let queryParams = [];
+    const whereClauses = ['(m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))'];
+    const queryParams = [];
 
-    // Filter by approval status
     if (statusFilter === 'pending') {
       whereClauses.push("COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'pending'");
     } else if (statusFilter === 'approved') {
@@ -46,7 +59,6 @@ export async function GET(req) {
       whereClauses.push("COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'rejected'");
     }
 
-    // Search by product name, category, or vendor/supplier details
     if (search) {
       queryParams.push(`%${search}%`);
       const paramIdx = queryParams.length;
@@ -64,35 +76,49 @@ export async function GET(req) {
 
     const whereSql = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
-    // Overall stats counts
-    const statsRes = await pool.query(`
+    // One round-trip for global stats + filtered total (reduces pool pressure vs 2 queries).
+    const metaRes = await queryReadWithRetry(
+      `
+      WITH scoped AS (
+        SELECT
+          m.id,
+          COALESCE(m.specifications->'__approval__'->>'status', 'approved') AS approval_status
+        FROM supplier_materials m
+        LEFT JOIN vendors v ON v.id = m.vendor_id
+        LEFT JOIN suppliers s ON s.id = m.supplier_id
+        WHERE (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))
+      ),
+      filtered AS (
+        SELECT m.id
+        FROM supplier_materials m
+        LEFT JOIN vendors v ON v.id = m.vendor_id
+        LEFT JOIN suppliers s ON s.id = m.supplier_id
+        ${whereSql}
+      )
       SELECT
-        COUNT(*) FILTER (WHERE COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'pending')::int AS pending,
-        COUNT(*) FILTER (WHERE COALESCE(m.specifications->'__approval__'->>'status', 'approved') = 'approved')::int AS approved,
-        COUNT(*) FILTER (WHERE COALESCE(m.specifications->'__approval__'->>'status', 'rejected') = 'rejected')::int AS rejected,
-        COUNT(*)::int AS total
-      FROM supplier_materials m
-      WHERE (m.vendor_id IS NOT NULL OR (m.supplier_id IS NOT NULL AND m.supplier_id > 0))
-    `);
-    const stats = statsRes.rows[0] || { pending: 0, approved: 0, rejected: 0, total: 0 };
-
-    // Total count for current filtered query
-    const countRes = await pool.query(
-      `SELECT COUNT(*)::int AS total
-       FROM supplier_materials m
-       LEFT JOIN vendors v ON v.id = m.vendor_id
-       LEFT JOIN suppliers s ON s.id = m.supplier_id
-       ${whereSql}`,
+        (SELECT COUNT(*)::int FROM scoped WHERE approval_status = 'pending') AS pending,
+        (SELECT COUNT(*)::int FROM scoped WHERE approval_status = 'approved') AS approved,
+        (SELECT COUNT(*)::int FROM scoped WHERE approval_status = 'rejected') AS rejected,
+        (SELECT COUNT(*)::int FROM scoped) AS total,
+        (SELECT COUNT(*)::int FROM filtered) AS filtered_total
+      `,
       queryParams
     );
-    const totalFiltered = countRes.rows[0]?.total || 0;
 
-    // Paginated list
+    const meta = metaRes.rows[0] || {};
+    const stats = {
+      pending: meta.pending || 0,
+      approved: meta.approved || 0,
+      rejected: meta.rejected || 0,
+      total: meta.total || 0,
+    };
+    const totalFiltered = meta.filtered_total || 0;
+
     const listParams = [...queryParams, limit, offset];
     const limitIdx = queryParams.length + 1;
     const offsetIdx = queryParams.length + 2;
 
-    const listRes = await pool.query(
+    const listRes = await queryReadWithRetry(
       `SELECT
          m.id,
          m.vendor_id,
@@ -155,8 +181,10 @@ export async function GET(req) {
       },
     });
   } catch (error) {
-    console.error('GET admin product-approvals error:', error);
-    return NextResponse.json({ success: false, error: 'Could not load product approvals' }, { status: 500 });
+    if (isTransientConnectionError(error)) {
+      return dbUnavailableResponse(error, 'GET connect/query');
+    }
+    return internalErrorResponse(error, 'GET unexpected', 'Could not load product approvals');
   }
 }
 
@@ -178,7 +206,7 @@ export async function POST(req) {
       return NextResponse.json({ success: false, error: 'Action must be approve or reject' }, { status: 400 });
     }
 
-    // Verify product exists and is supplier or vendor sourced
+    // Writes use pool.query with NO automatic retry (avoid duplicate approvals).
     const existing = await pool.query(
       `SELECT m.id, m.name, m.vendor_id, m.supplier_id, m.specifications, m.is_available,
               CASE WHEN m.supplier_id > 0 THEN COALESCE(s.shop_name, s.business_name, 'Supplier') ELSE v.vendor_name END AS partner_name,
@@ -271,7 +299,9 @@ export async function POST(req) {
       });
     }
   } catch (error) {
-    console.error('POST admin product-approvals error:', error);
-    return NextResponse.json({ success: false, error: 'Could not update approval status' }, { status: 500 });
+    if (isTransientConnectionError(error)) {
+      return dbUnavailableResponse(error, 'POST connect/query');
+    }
+    return internalErrorResponse(error, 'POST unexpected', 'Could not update approval status');
   }
 }
