@@ -2,8 +2,15 @@ import { NextResponse } from 'next/server';
 import pool from './db';
 
 export function isDatabaseConnectionError(error) {
-  const message = String(error?.message || error?.cause?.message || '').toLowerCase();
-  const code = error?.code || error?.cause?.code;
+  const nestedMessages = Array.isArray(error?.errors)
+    ? error.errors.map((entry) => String(entry?.message || '').toLowerCase()).join(' ')
+    : '';
+  const message = `${String(error?.message || error?.cause?.message || '').toLowerCase()} ${nestedMessages}`;
+  const codes = new Set(
+    [error?.code, error?.cause?.code]
+      .concat(Array.isArray(error?.errors) ? error.errors.map((entry) => entry?.code) : [])
+      .filter(Boolean)
+  );
 
   return (
     message.includes('connect') ||
@@ -15,11 +22,11 @@ export function isDatabaseConnectionError(error) {
     message.includes('etimedout') ||
     message.includes('ehostunreach') ||
     message.includes('timeout') ||
-    code === 'ECONNREFUSED' ||
-    code === 'ENOTFOUND' ||
-    code === 'ETIMEDOUT' ||
-    code === 'EHOSTUNREACH' ||
-    code === 'XX000'
+    codes.has('ECONNREFUSED') ||
+    codes.has('ENOTFOUND') ||
+    codes.has('ETIMEDOUT') ||
+    codes.has('EHOSTUNREACH') ||
+    codes.has('XX000')
   );
 }
 

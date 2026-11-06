@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import jwt from 'jsonwebtoken';
-import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 export async function POST(request) {
   try {
@@ -117,6 +117,7 @@ export async function POST(request) {
         is_free_tier: Boolean(supplier.is_free_tier),
       },
     });
+    clearOtherAuthCookies(response, 'supplier-auth-token');
     return setAuthCookie(response, 'supplier-auth-token', token, rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7);
 
   } catch (err) {

@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, getJwtSecret, setAuthCookie } from '@/lib/auth';
 import { isAdminEmail } from '@/lib/admin-email';
+import { isDatabaseConnectionError } from '@/lib/api-utils';
 import { BLOCKED_ACCOUNT_MESSAGE, ensureUserModerationSchema } from '@/lib/user-moderation';
 
 const ADMIN_EMAIL =
@@ -15,7 +16,6 @@ const ADMIN_PASSWORD =
 
 export async function POST(req) {
   try {
-    await ensureUserModerationSchema();
     const { email, password } = await req.json();
     const normalizedEmail = String(email || '').trim().toLowerCase();
 
@@ -40,8 +40,11 @@ export async function POST(req) {
         user: { id: 0, email: normalizedAdminEmail, name: 'Admin', role: 'admin' },
         redirectTo: '/dashboard',
       }, { status: 200 });
+      clearOtherAuthCookies(response, 'auth-token');
       return setAuthCookie(response, 'auth-token', token);
     }
+
+    await ensureUserModerationSchema();
 
     const vendorResult = await pool.query(
       'SELECT id FROM vendors WHERE LOWER(email) = $1',
@@ -92,9 +95,16 @@ export async function POST(req) {
       user: { id: user.id, email: user.email, name: user.name, role: userRole },
       redirectTo: userRole === 'admin' ? '/dashboard' : '/userdashboard',
     }, { status: 200 });
+    clearOtherAuthCookies(response, 'auth-token');
     return setAuthCookie(response, 'auth-token', token);
   } catch (error) {
     console.error('Login error:', error);
+    if (isDatabaseConnectionError(error)) {
+      return NextResponse.json(
+        { error: 'Database is temporarily unavailable. Please try again in a moment.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: 'Server error occurred.' }, { status: 500 });
   }
 }

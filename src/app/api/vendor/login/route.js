@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, getJwtSecret, setAuthCookie } from '@/lib/auth';
 
 export async function POST(req) {
   try {
@@ -102,6 +102,7 @@ export async function POST(req) {
       },
       redirectTo: '/vendor/dashboard',
     }, { status: 200 });
+    clearOtherAuthCookies(response, 'vendor-auth-token');
     return setAuthCookie(response, 'vendor-auth-token', token);
 
   } catch (error) {

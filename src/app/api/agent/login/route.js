@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import pool from '@/lib/db';
-import { setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, setAuthCookie } from '@/lib/auth';
 import { ensureAgentSchema, signAgentToken } from '@/lib/agent-auth';
 
 export async function POST(req) {
@@ -90,6 +90,7 @@ export async function POST(req) {
       agent: { ...agent, role: 'agent' },
       redirectTo: '/agent/dashboard',
     });
+    clearOtherAuthCookies(response, 'agent-auth-token');
     return setAuthCookie(response, 'agent-auth-token', token);
   } catch (error) {
     console.error('Agent login error:', error);

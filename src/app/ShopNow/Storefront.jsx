@@ -813,10 +813,13 @@ export default function Storefront({ categories, products, offers = [], content,
 
   useEffect(() => {
     const checkProductManagerAccess = () => {
+      const activeRole = localStorage.getItem('mtboss.activeRole');
       let hasAdminRole = false;
       try { hasAdminRole = JSON.parse(localStorage.getItem('user') || '{}').role === 'admin'; }
       catch { /* Ignore stale user data. */ }
-      const hasAdminAccess = Boolean(localStorage.getItem('admin-token')) || (Boolean(localStorage.getItem('token')) && hasAdminRole);
+      const hasAdminAccess =
+        activeRole !== 'agent'
+        && (Boolean(localStorage.getItem('admin-token')) || (Boolean(localStorage.getItem('token')) && hasAdminRole));
       if (hasAdminAccess) setProductManagerHref('/dashboard?tab=shop-products');
       else if (localStorage.getItem('vendor-token')) setProductManagerHref('/vendor/dashboard?tab=products');
       else setProductManagerHref('');

@@ -87,6 +87,29 @@ export function setAuthCookie(response, name, token, maxAge = 60 * 60 * 24 * 7) 
   return response;
 }
 
+const AUTH_COOKIE_NAMES = [
+  'auth-token',
+  'vendor-auth-token',
+  'supplier-auth-token',
+  'franchise-auth-token',
+  'agent-auth-token',
+];
+
+/** Clear every auth cookie except the one being set for the new login. */
+export function clearOtherAuthCookies(response, keepCookieName) {
+  for (const name of AUTH_COOKIE_NAMES) {
+    if (name === keepCookieName) continue;
+    response.cookies.set(name, '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 0,
+    });
+  }
+  return response;
+}
+
 export function randomPassword(length = 12) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
   let out = '';

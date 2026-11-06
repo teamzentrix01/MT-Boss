@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getJwtSecret, setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, getJwtSecret, setAuthCookie } from '@/lib/auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
 import { normalizeFranchisePermissions } from '@/lib/franchise-permissions';
@@ -75,6 +75,7 @@ export async function POST(req) {
         role: 'franchise',
       },
     });
+    clearOtherAuthCookies(response, 'franchise-auth-token');
     return setAuthCookie(response, 'franchise-auth-token', token, rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 7);
   } catch (error) {
     console.error('Franchise login error:', error);

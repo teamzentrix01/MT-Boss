@@ -6,6 +6,7 @@ import "./admin-theme.css";
 import { AdminStatusBadge } from "./AdminUI";
 import DashboardNotifications from "./DashboardNotifications";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ACTIVE_ROLE_KEY } from "@/lib/client-session";
 import {
   LayoutDashboard,
   UserCog,
@@ -525,12 +526,30 @@ export default function DashboardLayout({ children }) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        let u = JSON.parse(localStorage.getItem("user"));
-        if (!u) {
+        const activeRole = localStorage.getItem(ACTIVE_ROLE_KEY);
+        let u = null;
+        if (activeRole === "agent") {
           const agentStr = localStorage.getItem("agent");
           if (agentStr) {
             u = JSON.parse(agentStr);
             u.role = "agent";
+          }
+        } else if (activeRole === "admin") {
+          const adminStr = localStorage.getItem("admin") || localStorage.getItem("user");
+          if (adminStr) {
+            u = JSON.parse(adminStr);
+            u.role = u.role || "admin";
+          }
+        } else {
+          const userStr = localStorage.getItem("user");
+          if (userStr) {
+            u = JSON.parse(userStr);
+          } else {
+            const agentStr = localStorage.getItem("agent");
+            if (agentStr) {
+              u = JSON.parse(agentStr);
+              u.role = "agent";
+            }
           }
         }
         setUser(u || {});

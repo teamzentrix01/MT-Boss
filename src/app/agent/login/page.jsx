@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { clearWebSessionExcept } from '@/lib/client-session';
 
 export default function AgentLoginPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function AgentLoginPage() {
         return;
       }
 
+      clearWebSessionExcept('agent');
       localStorage.setItem('agent-token', data.token);
       localStorage.setItem('agent', JSON.stringify(data.agent));
       window.dispatchEvent(new Event('userLoggedIn'));

@@ -32,11 +32,20 @@ if (
   );
 }
 
-// Suppress node pg/pg-connection-string v3 security warning:
-// explicitly normalize sslmode=require|prefer|verify-ca to sslmode=verify-full
-const cleanDatabaseUrl = databaseUrl
-  ? databaseUrl.replace(/sslmode=(?:require|prefer|verify-ca)(?=&|$)/gi, 'sslmode=verify-full')
-  : databaseUrl;
+function normalizeDatabaseUrl(url) {
+  if (!url) return url;
+  return url
+    // Suppress node pg/pg-connection-string v3 security warning.
+    .replace(/sslmode=(?:require|prefer|verify-ca)(?=&|$)/gi, 'sslmode=verify-full')
+    // Node `pg` on Windows does not support channel binding; Neon URLs often include it.
+    .replace(/&channel_binding=[^&]*/gi, '')
+    .replace(/\?channel_binding=[^&]*&/gi, '?')
+    .replace(/\?channel_binding=[^&]*(?=&|$)/gi, '');
+}
+
+const cleanDatabaseUrl = normalizeDatabaseUrl(databaseUrl);
+const isNeonHost = /neon\.tech/i.test(cleanDatabaseUrl || process.env.DB_HOST || '');
+const connectionTimeoutMillis = isNeonHost ? 60000 : 30000;
 
 const poolConfig = cleanDatabaseUrl
   ? {
@@ -49,11 +58,11 @@ const poolConfig = cleanDatabaseUrl
       },
       max: 10,
       idleTimeoutMillis: 30000,
-      // A Neon compute can need time to resume after scaling to zero. Keep
-      // this above the normal cold-start window rather than failing at 15s.
-      connectionTimeoutMillis: 30000,
-      query_timeout: 30000,
-      statement_timeout: 30000,
+      // Neon can take 20–40s to resume after scale-to-zero; parallel route boot
+      // must not fail at 30s while the compute is still waking up.
+      connectionTimeoutMillis,
+      query_timeout: connectionTimeoutMillis,
+      statement_timeout: connectionTimeoutMillis,
     }
   : {
       host: process.env.DB_HOST,
@@ -63,9 +72,9 @@ const poolConfig = cleanDatabaseUrl
       database: process.env.DB_NAME,
       max: 10,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 30000,
-      query_timeout: 30000,
-      statement_timeout: 30000,
+      connectionTimeoutMillis,
+      query_timeout: connectionTimeoutMillis,
+      statement_timeout: connectionTimeoutMillis,
     };
 
 const globalForDb = globalThis;
@@ -73,33 +82,116 @@ const pool = globalForDb.__MTBOSS_pg_pool__ || new Pool(poolConfig);
 if (!globalForDb.__MTBOSS_pg_pool__) {
   globalForDb.__MTBOSS_pg_pool__ = pool;
 }
+if (!globalForDb.__MTBOSS_pg_run_query__) {
+  globalForDb.__MTBOSS_pg_run_query__ = pool.query.bind(pool);
+  globalForDb.__MTBOSS_pg_run_connect__ = pool.connect.bind(pool);
+}
+
+const runQuery = globalForDb.__MTBOSS_pg_run_query__;
+const runConnect = globalForDb.__MTBOSS_pg_run_connect__;
 
 const transientConnectionError = (error) => {
-  const message = String(error?.message || '');
+  if (!error) return false;
+
+  const codes = new Set(
+    [error?.code, error?.cause?.code]
+      .concat(Array.isArray(error?.errors) ? error.errors.map((entry) => entry?.code) : [])
+      .filter(Boolean)
+  );
+  if (['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'EHOSTUNREACH', 'ENOTFOUND'].some((code) => codes.has(code))) {
+    return true;
+  }
+
+  const message = String(error?.message || error?.cause?.message || '').toLowerCase();
+  const nestedMessages = Array.isArray(error?.errors)
+    ? error.errors.map((entry) => String(entry?.message || '').toLowerCase()).join(' ')
+    : '';
+
+  const combined = `${message} ${nestedMessages}`;
   return (
-    /connection terminated due to connection timeout/i.test(message)
-    || /connection.*timed?\s*out/i.test(message)
-    || ['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED'].includes(error?.code)
+    /connection terminated due to connection timeout/i.test(combined)
+    || /connection.*timed?\s*out/i.test(combined)
+    || /connect etimedout/i.test(combined)
+    || /econnrefused/i.test(combined)
+    || /enotfound/i.test(combined)
   );
 };
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-// A just-resumed Neon compute can reject the first TCP connection while it is
-// becoming available. Retry that request once; do not retry SQL failures.
-export async function queryWithConnectionRetry(query, values) {
-  try {
-    return await pool.query(query, values);
-  } catch (error) {
-    if (!transientConnectionError(error)) throw error;
-
-    console.warn('Transient database connection failure; retrying once.', {
-      code: error.code,
-      message: error.message,
-    });
-    await wait(500);
-    return pool.query(query, values);
+function startDbWarmup() {
+  if (!globalForDb.__MTBOSS_db_warmup__) {
+    globalForDb.__MTBOSS_db_warmup__ = runConnect()
+      .then((client) => {
+        client.release();
+      })
+      .catch((error) => {
+        globalForDb.__MTBOSS_db_warmup__ = null;
+        console.warn('Database warmup failed; routes will retry on demand.', {
+          code: error?.code,
+          message: error?.message,
+        });
+      });
   }
+  return globalForDb.__MTBOSS_db_warmup__;
+}
+
+if (!globalForDb.__MTBOSS_db_warmup_started__) {
+  globalForDb.__MTBOSS_db_warmup_started__ = true;
+  startDbWarmup();
+}
+
+async function connectWithRetry() {
+  const retryDelaysMs = [500, 1500, 3000];
+  await startDbWarmup();
+
+  let lastError;
+  for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
+    try {
+      return await runConnect();
+    } catch (error) {
+      lastError = error;
+      if (!transientConnectionError(error) || attempt >= retryDelaysMs.length) throw error;
+      console.warn('Transient database connect failure; retrying.', {
+        attempt: attempt + 1,
+        code: error?.code,
+        message: error?.message,
+      });
+      await wait(retryDelaysMs[attempt]);
+    }
+  }
+  throw lastError;
+}
+
+// A just-resumed Neon compute can reject the first TCP connection while it is
+// becoming available. Retry a few times; do not retry SQL failures.
+export async function queryWithConnectionRetry(query, values) {
+  const retryDelaysMs = [500, 1500, 3000];
+  await startDbWarmup();
+
+  let lastError;
+  for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
+    try {
+      return await runQuery(query, values);
+    } catch (error) {
+      lastError = error;
+      if (!transientConnectionError(error) || attempt >= retryDelaysMs.length) throw error;
+
+      console.warn('Transient database connection failure; retrying.', {
+        attempt: attempt + 1,
+        code: error?.code,
+        message: error?.message,
+      });
+      await wait(retryDelaysMs[attempt]);
+    }
+  }
+  throw lastError;
+}
+
+if (!globalForDb.__MTBOSS_pg_query_patched__) {
+  pool.query = queryWithConnectionRetry;
+  pool.connect = connectWithRetry;
+  globalForDb.__MTBOSS_pg_query_patched__ = true;
 }
 
 pool.on('error', (err) => {
