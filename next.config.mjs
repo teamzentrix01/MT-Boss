@@ -10,6 +10,7 @@ dotenv.config({ path: path.join(projectRoot, "src", ".env") });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  staticPageGenerationTimeout: 120,
   // This repository has its own lockfile inside a parent workspace. Explicitly
   // setting the tracing root prevents Next from selecting the parent project.
   outputFileTracingRoot: projectRoot,

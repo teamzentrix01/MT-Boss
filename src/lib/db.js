@@ -45,7 +45,10 @@ function normalizeDatabaseUrl(url) {
 
 const cleanDatabaseUrl = normalizeDatabaseUrl(databaseUrl);
 const isNeonHost = /neon\.tech/i.test(cleanDatabaseUrl || process.env.DB_HOST || '');
-const connectionTimeoutMillis = isNeonHost ? 60000 : 30000;
+const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build';
+const connectionTimeoutMillis = isProductionBuild
+  ? 8000
+  : (isNeonHost ? 60000 : 30000);
 
 const poolConfig = cleanDatabaseUrl
   ? {
@@ -136,12 +139,16 @@ function startDbWarmup() {
   return globalForDb.__MTBOSS_db_warmup__;
 }
 
-if (!globalForDb.__MTBOSS_db_warmup_started__) {
+if (!globalForDb.__MTBOSS_db_warmup_started__ && !isProductionBuild) {
   globalForDb.__MTBOSS_db_warmup_started__ = true;
   startDbWarmup();
 }
 
 async function connectWithRetry() {
+  if (isProductionBuild) {
+    return runConnect();
+  }
+
   const retryDelaysMs = [500, 1500, 3000];
   await startDbWarmup();
 
@@ -166,6 +173,10 @@ async function connectWithRetry() {
 // A just-resumed Neon compute can reject the first TCP connection while it is
 // becoming available. Retry a few times; do not retry SQL failures.
 export async function queryWithConnectionRetry(query, values) {
+  if (isProductionBuild) {
+    return runQuery(query, values);
+  }
+
   const retryDelaysMs = [500, 1500, 3000];
   await startDbWarmup();
 
