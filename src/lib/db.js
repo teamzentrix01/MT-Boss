@@ -93,6 +93,11 @@ if (!globalForDb.__MTBOSS_pg_run_query__) {
 const runQuery = globalForDb.__MTBOSS_pg_run_query__;
 const runConnect = globalForDb.__MTBOSS_pg_run_connect__;
 
+/** Unpatched pg query — use for auth/login where outer timeouts must not stack with retries. */
+export function queryRaw(text, values) {
+  return runQuery(text, values);
+}
+
 const transientConnectionError = (error) => {
   if (!error) return false;
 
@@ -127,6 +132,7 @@ function startDbWarmup() {
     globalForDb.__MTBOSS_db_warmup__ = runConnect()
       .then((client) => {
         client.release();
+        return true;
       })
       .catch((error) => {
         globalForDb.__MTBOSS_db_warmup__ = null;
@@ -134,15 +140,15 @@ function startDbWarmup() {
           code: error?.code,
           message: error?.message,
         });
+        return false;
       });
   }
   return globalForDb.__MTBOSS_db_warmup__;
 }
 
-if (!globalForDb.__MTBOSS_db_warmup_started__ && !isProductionBuild) {
-  globalForDb.__MTBOSS_db_warmup_started__ = true;
-  startDbWarmup();
-}
+// Do not eagerly open Neon connections on module load — parallel warmups during
+// `next dev` compile storms exhaust the pool and break login with connect timeouts.
+// Routes warm the pool on first real query instead.
 
 async function connectWithRetry() {
   if (isProductionBuild) {
@@ -150,7 +156,6 @@ async function connectWithRetry() {
   }
 
   const retryDelaysMs = [500, 1500, 3000];
-  await startDbWarmup();
 
   let lastError;
   for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
@@ -164,6 +169,7 @@ async function connectWithRetry() {
         code: error?.code,
         message: error?.message,
       });
+      globalForDb.__MTBOSS_db_warmup__ = null;
       await wait(retryDelaysMs[attempt]);
     }
   }
@@ -178,7 +184,6 @@ export async function queryWithConnectionRetry(query, values) {
   }
 
   const retryDelaysMs = [500, 1500, 3000];
-  await startDbWarmup();
 
   let lastError;
   for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
@@ -193,6 +198,8 @@ export async function queryWithConnectionRetry(query, values) {
         code: error?.code,
         message: error?.message,
       });
+      // Clear a failed warmup so the next attempt opens a fresh connection.
+      globalForDb.__MTBOSS_db_warmup__ = null;
       await wait(retryDelaysMs[attempt]);
     }
   }

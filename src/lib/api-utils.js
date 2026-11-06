@@ -122,19 +122,29 @@ export function createInitializationGuard(initializer, ttlMs = 24 * 60 * 60 * 10
 }
 
 /**
- * Execute query with timeout and error handling
+ * Execute query with timeout and error handling.
+ * Attaches a no-op catch so a timed-out query cannot become an unhandledRejection
+ * and exhaust the pg pool while retries are still in flight.
  */
 export async function queryWithTimeout(query, params = [], timeoutMs = 10000) {
+  let timer;
+  const queryPromise = pool.query(query, params);
+  // Prevent unhandledRejection if we abandon this promise after timeout.
+  queryPromise.catch(() => {});
+
   try {
-    return await Promise.race([
-      pool.query(query, params),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
-      ),
+    const result = await Promise.race([
+      queryPromise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Query timeout')), timeoutMs);
+      }),
     ]);
+    return result;
   } catch (error) {
     console.error('Query error:', error.message);
     throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 

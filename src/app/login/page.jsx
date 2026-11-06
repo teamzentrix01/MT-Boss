@@ -57,18 +57,32 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) { setError('Email address is required.'); return; }
-    if (!emailRegex.test(formData.email)) { setError('Please enter a valid email address.'); return; }
+    const loginId = String(formData.email || '').trim();
+    if (!loginId) { setError('Email address is required.'); return; }
+    // Env admin may be a username (e.g. ADMIN_EMAIL=clear), not only an email.
+    if (loginId.includes('@') && !emailRegex.test(loginId)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     if (!formData.password) { setError('Password is required.'); return; }
     setLoading(true);
     setError('');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 50000);
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, email: loginId }),
+        signal: controller.signal,
       });
-      const data = await res.json();
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        setError('Unexpected server response. Please try again.');
+        return;
+      }
       if (res.ok) {
         const role = data.user?.role === 'admin' ? 'admin' : 'user';
         clearWebSessionExcept(role);
@@ -83,13 +97,18 @@ export default function LoginPage() {
           data.user?.role === 'admin'
             ? (data.redirectTo || '/dashboard')
             : (redirectParam || data.redirectTo || '/userdashboard');
-        router.push(destination);
+        router.replace(destination);
       } else {
         setError(data.error || data.message || 'Invalid credentials.');
       }
-    } catch {
-      setError('An error occurred. Please try again.');
+    } catch (err) {
+      if (err?.name === 'AbortError') {
+        setError('Sign-in timed out while connecting to the database. Wait a moment and try again, or use the env admin email/password from .env.');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -545,17 +564,18 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit}>
               <div className="lp-field">
-                <label className="lp-label" htmlFor="email">Email address <RequiredAsterisk /></label>
+                <label className="lp-label" htmlFor="email">Email or admin ID <RequiredAsterisk /></label>
                 <div className="lp-input-wrap">
                   <Mail className="lp-input-icon" size={17} strokeWidth={2} />
                   <input
                     className="lp-input"
-                    type="email"
+                    type="text"
                     id="email"
                     name="email"
+                    autoComplete="username"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="name@company.com"
+                    placeholder="name@company.com or admin ID"
                     required
                   />
                 </div>
