@@ -1,83 +1,53 @@
-import { Client } from 'pg';
-import { normalizePostgresUrl } from './pg-url.js';
+import pool, { isTransientConnectionError } from '@/lib/db';
 
 /**
- * Login uses a dedicated one-shot Client (not the shared pool).
- * Timed-out homepage/API queries often leave the shared pool exhausted in
- * `next dev`, which made real DB-user sign-in look "unreachable".
+ * Login uses the shared pool (singleton) with a small retry budget.
+ * Avoids opening extra one-shot Clients that competed with dashboard traffic
+ * for Neon pooler slots.
  */
 
 export const AUTH_LOGIN_QUERY_MS = 20_000;
 export const AUTH_LOGIN_ATTEMPTS = 3;
 
-function buildLoginClient() {
-  const databaseUrl = process.env.DATABASE_URL?.trim();
-  const databasePassword = process.env.DB_PASSWORD;
-  if (!databaseUrl) {
-    throw new Error('DATABASE_URL is not configured');
-  }
-
-  return new Client({
-    connectionString: normalizePostgresUrl(databaseUrl),
-    ...(databasePassword?.trim() ? { password: databasePassword } : {}),
-    ssl: { rejectUnauthorized: false },
-    connectionTimeoutMillis: AUTH_LOGIN_QUERY_MS,
-    query_timeout: AUTH_LOGIN_QUERY_MS,
-  });
-}
-
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function isRetryable(error) {
-  const message = String(error?.message || '').toLowerCase();
-  const code = String(error?.code || '');
-  return (
-    code === 'ETIMEDOUT'
-    || code === 'ECONNRESET'
-    || code === 'ECONNREFUSED'
-    || code === 'ENOTFOUND'
-    || code === '57P01'
-    || message.includes('timeout')
-    || message.includes('terminat')
-    || message.includes('connect')
-    || message.includes('does not exist')
-  );
+async function withTimeout(promise, timeoutMs, label) {
+  let timer;
+  const timeoutPromise = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label || 'Query'} timeout`)), timeoutMs);
+  });
+  // Prevent unhandledRejection if the underlying query loses the race.
+  promise.catch(() => {});
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
-/**
- * Run a login SQL statement on a fresh connection with retries for Neon wake-up.
- */
 export async function authLoginQuery(text, params = []) {
   let lastError;
 
   for (let attempt = 1; attempt <= AUTH_LOGIN_ATTEMPTS; attempt += 1) {
-    const client = buildLoginClient();
     try {
-      await client.connect();
-      const result = await client.query(text, params);
-      return result;
+      return await withTimeout(pool.query(text, params), AUTH_LOGIN_QUERY_MS, 'Query');
     } catch (error) {
       lastError = error;
-      if (!isRetryable(error) || attempt >= AUTH_LOGIN_ATTEMPTS) break;
-      console.warn('Auth login DB attempt failed; retrying.', {
+      const retryable =
+        isTransientConnectionError(error)
+        || String(error?.message || '').includes('timeout');
+      if (!retryable || attempt >= AUTH_LOGIN_ATTEMPTS) break;
+      console.warn('[auth-login] DB attempt failed; retrying', {
         attempt,
-        code: error?.code,
         message: error?.message,
       });
-      await wait(1000 * attempt);
-    } finally {
-      try {
-        await client.end();
-      } catch {
-        /* ignore close errors */
-      }
+      await wait(800 * attempt);
     }
   }
 
   throw lastError || new Error('Query timeout');
 }
 
-/** Best-effort lookups that must never fail a successful user login. */
 export async function softAuthLoginQuery(text, params = []) {
   try {
     return await authLoginQuery(text, params);
@@ -86,21 +56,14 @@ export async function softAuthLoginQuery(text, params = []) {
   }
 }
 
-/** Non-blocking last-login touch using a short-lived client. */
 export function touchUserLastLogin(userId) {
-  const client = buildLoginClient();
-  client
-    .connect()
-    .then(() => client.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [userId]))
-    .catch(() => {})
-    .finally(() => client.end().catch(() => {}));
+  pool
+    .query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [userId])
+    .catch(() => {});
 }
 
 export function touchAgentLastLogin(agentId) {
-  const client = buildLoginClient();
-  client
-    .connect()
-    .then(() => client.query('UPDATE agents SET last_login_at = NOW() WHERE id = $1', [agentId]))
-    .catch(() => {})
-    .finally(() => client.end().catch(() => {}));
+  pool
+    .query('UPDATE agents SET last_login_at = NOW() WHERE id = $1', [agentId])
+    .catch(() => {});
 }

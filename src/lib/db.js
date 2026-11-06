@@ -20,10 +20,6 @@ if (databaseUrl) {
   }
 }
 
-// `pg` emits the opaque SCRAM "password must be a string" error when the
-// password variable is absent. Validate it here so deployments fail with the
-// actionable configuration error instead of making every database route look
-// broken.
 if (
   (!databaseUrl || !databaseUrlHasPassword)
   && (typeof databasePassword !== 'string' || !databasePassword.trim())
@@ -35,27 +31,36 @@ if (
 
 const cleanDatabaseUrl = normalizePostgresUrl(databaseUrl);
 const isNeonHost = /neon\.tech/i.test(cleanDatabaseUrl || process.env.DB_HOST || '');
+const isNeonPooler = /-pooler\./i.test(cleanDatabaseUrl || '');
 const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build';
-const connectionTimeoutMillis = isProductionBuild
-  ? 8000
-  : (isNeonHost ? 60000 : 30000);
+const debugPool = process.env.DEBUG_DB_POOL === '1' || process.env.DEBUG_DB_POOL === 'true';
+
+function envInt(name, fallback) {
+  const raw = process.env[name];
+  if (raw == null || raw === '') return fallback;
+  const n = Number.parseInt(String(raw), 10);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+// Neon pooler plans are connection-limited; keep max modest unless overridden.
+const poolMax = envInt('DB_POOL_MAX', isNeonPooler ? 5 : isNeonHost ? 8 : 10);
+const connectionTimeoutMillis = envInt(
+  'DB_CONNECTION_TIMEOUT_MS',
+  isProductionBuild ? 10000 : 15000
+);
+const idleTimeoutMillis = envInt('DB_IDLE_TIMEOUT_MS', 30000);
 
 const poolConfig = cleanDatabaseUrl
   ? {
       connectionString: cleanDatabaseUrl,
-      // Permit deployment systems to keep the password in a separate secret
-      // even when the host/database details are supplied through DATABASE_URL.
       ...(databasePassword?.trim() ? { password: databasePassword } : {}),
-      ssl: {
-        rejectUnauthorized: false,
-      },
-      max: 10,
-      idleTimeoutMillis: 30000,
-      // Neon can take 20–40s to resume after scale-to-zero; parallel route boot
-      // must not fail at 30s while the compute is still waking up.
+      ssl: { rejectUnauthorized: false },
+      max: poolMax,
+      idleTimeoutMillis,
       connectionTimeoutMillis,
-      query_timeout: connectionTimeoutMillis,
-      statement_timeout: connectionTimeoutMillis,
+      allowExitOnIdle: true,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10000,
     }
   : {
       host: process.env.DB_HOST,
@@ -63,18 +68,30 @@ const poolConfig = cleanDatabaseUrl
       user: process.env.DB_USER,
       password: databasePassword,
       database: process.env.DB_NAME,
-      max: 10,
-      idleTimeoutMillis: 30000,
+      max: poolMax,
+      idleTimeoutMillis,
       connectionTimeoutMillis,
-      query_timeout: connectionTimeoutMillis,
-      statement_timeout: connectionTimeoutMillis,
+      allowExitOnIdle: true,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10000,
     };
 
 const globalForDb = globalThis;
-const pool = globalForDb.__MTBOSS_pg_pool__ || new Pool(poolConfig);
+
+function createPool() {
+  const next = new Pool(poolConfig);
+  next.on('error', (err) => {
+    // Idle client errors must not crash the Next.js process.
+    console.error('[db] idle client error:', err?.message || err);
+  });
+  return next;
+}
+
+const pool = globalForDb.__MTBOSS_pg_pool__ || createPool();
 if (!globalForDb.__MTBOSS_pg_pool__) {
   globalForDb.__MTBOSS_pg_pool__ = pool;
 }
+
 if (!globalForDb.__MTBOSS_pg_run_query__) {
   globalForDb.__MTBOSS_pg_run_query__ = pool.query.bind(pool);
   globalForDb.__MTBOSS_pg_run_connect__ = pool.connect.bind(pool);
@@ -83,12 +100,27 @@ if (!globalForDb.__MTBOSS_pg_run_query__) {
 const runQuery = globalForDb.__MTBOSS_pg_run_query__;
 const runConnect = globalForDb.__MTBOSS_pg_run_connect__;
 
-/** Unpatched pg query — use for auth/login where outer timeouts must not stack with retries. */
+export function getPoolStats() {
+  return {
+    total: pool.totalCount,
+    idle: pool.idleCount,
+    waiting: pool.waitingCount,
+    max: poolMax,
+  };
+}
+
+function logPool(event, extra = {}) {
+  if (!debugPool) return;
+  const stats = getPoolStats();
+  console.log('[db-pool]', event, { ...stats, ...extra });
+}
+
+/** Unpatched pg query — for callers that manage their own timeout/retry. */
 export function queryRaw(text, values) {
   return runQuery(text, values);
 }
 
-const transientConnectionError = (error) => {
+export function isTransientConnectionError(error) {
   if (!error) return false;
 
   const codes = new Set(
@@ -96,7 +128,7 @@ const transientConnectionError = (error) => {
       .concat(Array.isArray(error?.errors) ? error.errors.map((entry) => entry?.code) : [])
       .filter(Boolean)
   );
-  if (['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'EHOSTUNREACH', 'ENOTFOUND'].some((code) => codes.has(code))) {
+  if (['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'EHOSTUNREACH', 'ENOTFOUND', '57P01', '53300'].some((code) => codes.has(code))) {
     return true;
   }
 
@@ -107,89 +139,74 @@ const transientConnectionError = (error) => {
 
   const combined = `${message} ${nestedMessages}`;
   return (
-    /connection terminated due to connection timeout/i.test(combined)
+    /timeout exceeded when trying to connect/i.test(combined)
+    || /connection terminated due to connection timeout/i.test(combined)
     || /connection.*timed?\s*out/i.test(combined)
     || /connect etimedout/i.test(combined)
     || /econnrefused/i.test(combined)
     || /enotfound/i.test(combined)
+    || /too many connections/i.test(combined)
   );
-};
+}
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-function startDbWarmup() {
-  if (!globalForDb.__MTBOSS_db_warmup__) {
-    globalForDb.__MTBOSS_db_warmup__ = runConnect()
-      .then((client) => {
-        client.release();
-        return true;
-      })
-      .catch((error) => {
-        globalForDb.__MTBOSS_db_warmup__ = null;
-        console.warn('Database warmup failed; routes will retry on demand.', {
-          code: error?.code,
-          message: error?.message,
-        });
-        return false;
-      });
-  }
-  return globalForDb.__MTBOSS_db_warmup__;
-}
-
-// Do not eagerly open Neon connections on module load — parallel warmups during
-// `next dev` compile storms exhaust the pool and break login with connect timeouts.
-// Routes warm the pool on first real query instead.
-
 async function connectWithRetry() {
-  if (isProductionBuild) {
-    return runConnect();
-  }
-
-  const retryDelaysMs = [500, 1500, 3000];
-
+  const retryDelaysMs = isProductionBuild ? [] : [400, 1200];
+  const started = Date.now();
   let lastError;
+
   for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
     try {
-      return await runConnect();
+      logPool('connect:wait', { attempt: attempt + 1 });
+      const client = await runConnect();
+      logPool('connect:ok', { attempt: attempt + 1, waitMs: Date.now() - started });
+      return client;
     } catch (error) {
       lastError = error;
-      if (!transientConnectionError(error) || attempt >= retryDelaysMs.length) throw error;
-      console.warn('Transient database connect failure; retrying.', {
+      logPool('connect:fail', {
         attempt: attempt + 1,
-        code: error?.code,
+        waitMs: Date.now() - started,
         message: error?.message,
       });
-      globalForDb.__MTBOSS_db_warmup__ = null;
+      if (!isTransientConnectionError(error) || attempt >= retryDelaysMs.length) {
+        throw error;
+      }
+      console.warn('[db] transient connect failure; retrying', {
+        attempt: attempt + 1,
+        message: error?.message,
+      });
       await wait(retryDelaysMs[attempt]);
     }
   }
   throw lastError;
 }
 
-// A just-resumed Neon compute can reject the first TCP connection while it is
-// becoming available. Retry a few times; do not retry SQL failures.
 export async function queryWithConnectionRetry(query, values) {
-  if (isProductionBuild) {
-    return runQuery(query, values);
-  }
-
-  const retryDelaysMs = [500, 1500, 3000];
-
+  const retryDelaysMs = isProductionBuild ? [] : [400, 1200];
+  const started = Date.now();
   let lastError;
+
   for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
     try {
-      return await runQuery(query, values);
+      logPool('query:start', { attempt: attempt + 1 });
+      const result = await runQuery(query, values);
+      logPool('query:ok', { attempt: attempt + 1, waitMs: Date.now() - started });
+      return result;
     } catch (error) {
       lastError = error;
-      if (!transientConnectionError(error) || attempt >= retryDelaysMs.length) throw error;
-
-      console.warn('Transient database connection failure; retrying.', {
+      logPool('query:fail', {
         attempt: attempt + 1,
-        code: error?.code,
+        waitMs: Date.now() - started,
         message: error?.message,
       });
-      // Clear a failed warmup so the next attempt opens a fresh connection.
-      globalForDb.__MTBOSS_db_warmup__ = null;
+      if (!isTransientConnectionError(error) || attempt >= retryDelaysMs.length) {
+        throw error;
+      }
+      console.warn('[db] transient query failure; retrying', {
+        attempt: attempt + 1,
+        message: error?.message,
+      });
       await wait(retryDelaysMs[attempt]);
     }
   }
@@ -202,24 +219,23 @@ if (!globalForDb.__MTBOSS_pg_query_patched__) {
   globalForDb.__MTBOSS_pg_query_patched__ = true;
 }
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-});
-
-// pool.on('connect', () => {
-//   console.log('Connected to PostgreSQL database');
-// });
-
-// Health check function
 export async function checkPoolHealth() {
+  let client;
   try {
-    const client = await pool.connect();
+    client = await pool.connect();
     await client.query('SELECT 1');
-    client.release();
     return true;
   } catch (err) {
-    console.error('Pool health check failed:', err.message);
+    console.error('[db] pool health check failed:', err.message);
     return false;
+  } finally {
+    if (client) {
+      try {
+        client.release();
+      } catch {
+        /* ignore */
+      }
+    }
   }
 }
 

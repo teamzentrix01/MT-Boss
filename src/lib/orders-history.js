@@ -284,10 +284,10 @@ export async function getAdminOrders({
     LIMIT $${paramIdx} OFFSET $${paramIdx + 1}
   `;
 
-  const [summaryResult, itemsResult] = await Promise.all([
-    pool.query(summarySql, params),
-    pool.query(itemsSql, [...params, l, offset]),
-  ]);
+  // Sequential on purpose: Neon pooler max is small; twin heavy UNION queries
+  // in parallel often exhaust waitingCount during dashboard/orders loads.
+  const summaryResult = await pool.query(summarySql, params);
+  const itemsResult = await pool.query(itemsSql, [...params, l, offset]);
 
   const summary = summaryResult.rows[0] || {
     total_orders: 0,
