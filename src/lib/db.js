@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { Pool, types } from 'pg';
+import { normalizePostgresUrl } from './pg-url.js';
 
 // Parse PostgreSQL DATE (OID 1082) as exact YYYY-MM-DD string to prevent UTC date shift
 types.setTypeParser(1082, (val) => val);
@@ -32,18 +33,7 @@ if (
   );
 }
 
-function normalizeDatabaseUrl(url) {
-  if (!url) return url;
-  return url
-    // Suppress node pg/pg-connection-string v3 security warning.
-    .replace(/sslmode=(?:require|prefer|verify-ca)(?=&|$)/gi, 'sslmode=verify-full')
-    // Node `pg` on Windows does not support channel binding; Neon URLs often include it.
-    .replace(/&channel_binding=[^&]*/gi, '')
-    .replace(/\?channel_binding=[^&]*&/gi, '?')
-    .replace(/\?channel_binding=[^&]*(?=&|$)/gi, '');
-}
-
-const cleanDatabaseUrl = normalizeDatabaseUrl(databaseUrl);
+const cleanDatabaseUrl = normalizePostgresUrl(databaseUrl);
 const isNeonHost = /neon\.tech/i.test(cleanDatabaseUrl || process.env.DB_HOST || '');
 const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build';
 const connectionTimeoutMillis = isProductionBuild

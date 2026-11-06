@@ -68,7 +68,7 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 50000);
+    const timeoutId = setTimeout(() => controller.abort(), 70000);
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -103,7 +103,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       if (err?.name === 'AbortError') {
-        setError('Sign-in timed out while connecting to the database. Wait a moment and try again, or use the env admin email/password from .env.');
+        setError('Sign-in timed out while connecting to the database. Wait a few seconds and try again.');
       } else {
         setError('An error occurred. Please try again.');
       }

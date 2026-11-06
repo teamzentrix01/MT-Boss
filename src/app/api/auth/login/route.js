@@ -91,24 +91,26 @@ export async function POST(req) {
     }
 
     if (userResult.rows.length === 0) {
-      const [vendorResult, agentResult] = await Promise.all([
-        softAuthLoginQuery('SELECT id FROM vendors WHERE LOWER(email) = $1 LIMIT 1', [normalizedEmail]),
-        softAuthLoginQuery(
-          `SELECT id FROM agents
-            WHERE LOWER(TRIM(email)) = $1
-              AND status = 'Approved'
-              AND login_enabled IS TRUE
-            LIMIT 1`,
-          [normalizedEmail]
-        ),
-      ]);
-
+      // Sequential soft checks — avoid opening multiple Neon connections at once.
+      const vendorResult = await softAuthLoginQuery(
+        'SELECT id FROM vendors WHERE LOWER(email) = $1 LIMIT 1',
+        [normalizedEmail]
+      );
       if (vendorResult.rows.length > 0) {
         return NextResponse.json(
           { error: 'This email is registered as a vendor. Please use vendor login at /vendor/login' },
           { status: 401 }
         );
       }
+
+      const agentResult = await softAuthLoginQuery(
+        `SELECT id FROM agents
+          WHERE LOWER(TRIM(email)) = $1
+            AND status = 'Approved'
+            AND login_enabled IS TRUE
+          LIMIT 1`,
+        [normalizedEmail]
+      );
       if (agentResult.rows.length > 0) {
         return NextResponse.json(
           { error: 'This email is registered as an agent. Please use Agent login at /agent/login' },
@@ -155,7 +157,7 @@ export async function POST(req) {
       return NextResponse.json(
         {
           error:
-            'Database is slow or unreachable right now. For admin panel login use the exact ADMIN_EMAIL and ADMIN_PASSWORD from .env (no database needed).',
+            'Could not reach the database in time. Please wait a few seconds for Neon to wake up and try again.',
         },
         { status: 504 }
       );
@@ -166,7 +168,7 @@ export async function POST(req) {
         return NextResponse.json(
           {
             error:
-              'Database is temporarily unavailable. For admin panel login use the exact ADMIN_EMAIL and ADMIN_PASSWORD from .env.',
+              'Database connection failed. Check DATABASE_URL / network, wait a moment for Neon to wake, then try again.',
           },
           { status: 503 }
         );
