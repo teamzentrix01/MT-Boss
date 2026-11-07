@@ -12,7 +12,7 @@ export const metadata = {
   keywords:
     'architect near me Moradabad, house architect Moradabad, best architect near me, residential architect Moradabad, commercial architect Moradabad, architect for house design, architect contact number Moradabad, design and build company Moradabad, MTBOSS Moradabad, house design near me',
   alternates: {
-    canonical: 'https://www.MTBOSS.in/architect-near-me-in-moradabad',
+    canonical: 'https://www.MTBOSS.in/architect-near-me-moradabad',
   },
   openGraph: {
     title: 'Architect Near Me in Moradabad | Design & Build Guide',
@@ -22,7 +22,7 @@ export const metadata = {
     siteName: 'MTBOSS Construction Private Limited',
     images: [
       {
-        url: 'https://www.MTBOSS.in/og-architect-near-me-moradabad.jpg',
+        url: 'https://www.MTBOSS.in/og-architect-near-me-in-moradabad.jpg',
         width: 1200,
         height: 630,
         alt: 'Architect Near Me in Moradabad - MTBOSS',
@@ -33,10 +33,10 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Architect Near Me in Moradabad | Design & Build Guide',
+    title: 'Architect Near Me in  Moradabad | Design & Build Guide',
     description:
       'Searching for an "architect near me" in Moradabad? Learn what to look for, typical costs, and how design-and-build firms like MTBOSS can help. Call now!',
-    images: ['https://www.MTBOSS.in/og-architect-near-me-moradabad.jpg'],
+    images: ['https://www.MTBOSS.in/og-architect-near-me-in-moradabad.jpg'],
   },
   robots: {
     index: true,
