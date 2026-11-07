@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import GlobalSearch from "./GlobalSearch";
 import { ShoppingCart } from "@/app/components/ui/icons";
+import { getDashboardPath, resolveWebAuthUser, syncWebLogout } from "@/lib/client-session";
 
 function DropdownButton({ label, children, text, textHover, dropdownBg, id }) {
   const [open, setOpen] = useState(false);
@@ -96,56 +97,22 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   // Detect logged in user - UPDATED TO LISTEN FOR CHANGES
   useEffect(() => {
     const checkUser = () => {
-      const token = localStorage.getItem('token');
-      const vendorToken = localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token');
-      const adminToken = localStorage.getItem('admin-token');
-      const supplierToken = localStorage.getItem('supplier-token');
-      const franchiseToken = localStorage.getItem('franchise-token');
-
-      if (adminToken) {
-        const adminData = localStorage.getItem('admin');
-        if (adminData) {
-          try { setUser({ ...JSON.parse(adminData), role: 'admin' }); }
-          catch (e) { console.error('Error parsing admin data:', e); }
-        }
-      } else if (supplierToken) {
-        const supplierData = localStorage.getItem('supplier');
-        if (supplierData) {
-          try { setUser({ ...JSON.parse(supplierData), role: 'supplier' }); }
-          catch (e) { console.error('Error parsing supplier data:', e); }
-        }
-      } else if (franchiseToken) {
-        const franchiseData = localStorage.getItem('franchise');
-        if (franchiseData) {
-          try { setUser({ ...JSON.parse(franchiseData), role: 'franchise' }); }
-          catch (e) { console.error('Error parsing franchise data:', e); }
-        }
-      } else if (vendorToken) {
-        const vendorData = localStorage.getItem('vendor') || localStorage.getItem('service-provider');
-        if (vendorData) {
-          try { setUser({ ...JSON.parse(vendorData), role: 'vendor' }); }
-          catch (e) { console.error('Error parsing vendor data:', e); }
-        }
-      } else if (token) {
-        const userData = localStorage.getItem('user');
-        if (userData) {
-          try {
-            const parsed = JSON.parse(userData);
-            // Use the role stored in the user object (e.g. 'admin'), not a hardcoded 'user'
-            setUser({ ...parsed, role: parsed.role || 'user' });
-            if (parsed.role !== 'admin') {
-              fetch('/api/auth/session', { headers: { Authorization: `Bearer ${token}` } })
-                .then((res) => {
-                  if (res.status === 403) {
-                    ['token', 'user'].forEach((key) => localStorage.removeItem(key));
-                    setUser(null);
-                    window.location.href = '/login?error=account_suspended';
-                  }
-                })
-                .catch(() => {});
-            }
+      const resolved = resolveWebAuthUser();
+      if (resolved) {
+        setUser(resolved);
+        if (resolved.role === 'user') {
+          const token = localStorage.getItem('token');
+          if (token) {
+            fetch('/api/auth/session', { headers: { Authorization: `Bearer ${token}` } })
+              .then((res) => {
+                if (res.status === 403) {
+                  syncWebLogout();
+                  setUser(null);
+                  window.location.href = '/login?error=account_suspended';
+                }
+              })
+              .catch(() => {});
           }
-          catch (e) { console.error('Error parsing user data:', e); }
         }
       } else {
         setUser(null);
@@ -189,35 +156,24 @@ export default function Navbar({ isDarkMode, toggleTheme }) {
   const handleLogout = async () => {
     const logoutRole = user?.role;
 
-    [
-      'token',
-      'user',
-      'admin-token',
-      'admin',
-      'vendor-token',
-      'vendor',
-      'service-provider-token',
-      'service-provider',
-      'supplier-token',
-      'supplier',
-      'franchise-token',
-      'franchise',
-    ].forEach((key) => localStorage.removeItem(key));
-
-    await fetch('/api/auth/logout', { method: 'POST' });
+    await syncWebLogout();
 
     setUser(null);
     window.dispatchEvent(new Event('userLoggedIn'));
-    router.push(logoutRole === 'supplier' ? '/supplier/login' : logoutRole === 'franchise' ? '/franchise/login' : '/login');
+    router.push(
+      logoutRole === 'agent'
+        ? '/agent/login'
+        : logoutRole === 'supplier'
+          ? '/supplier/login'
+          : logoutRole === 'franchise'
+            ? '/franchise/login'
+            : '/login'
+    );
   };
 
   const handleDashboard = () => {
     closeMobileMenu();
-    if (user?.role === 'vendor' || user?.role === 'service provider') router.push('/vendor/dashboard');
-    else if (user?.role === 'admin') router.push('/dashboard');
-    else if (user?.role === 'supplier') router.push('/supplier/dashboard');
-    else if (user?.role === 'franchise') router.push('/franchise/dashboard');
-    else router.push('/userdashboard');
+    router.push(getDashboardPath(user?.role));
   };
 
   const propertyDropdown = [

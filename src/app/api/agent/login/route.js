@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import pool from '@/lib/db';
-import { setAuthCookie } from '@/lib/auth';
+import { clearOtherAuthCookies, setAuthCookie } from '@/lib/auth';
 import { ensureAgentSchema, signAgentToken } from '@/lib/agent-auth';
+import { authLoginQuery, touchAgentLastLogin } from '@/lib/auth-login-db';
+import { isDatabaseConnectionError } from '@/lib/api-utils';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
   try {
-    try {
-      await ensureAgentSchema();
-    } catch (schemaError) {
-      console.warn('ensureAgentSchema non-fatal warning during agent login:', schemaError?.message);
-    }
+    await Promise.race([
+      ensureAgentSchema().catch((schemaError) => {
+        console.warn('ensureAgentSchema non-fatal warning during agent login:', schemaError?.message);
+      }),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
 
     const body = await req.json().catch(() => ({}));
     const { email, password } = body;
@@ -22,7 +26,7 @@ export async function POST(req) {
 
     let result;
     try {
-      result = await pool.query(
+      result = await authLoginQuery(
         `SELECT id, name, email, phone, city, state, occupation, agent_type,
                 status, login_enabled, password_hash, must_change_password, auth_version,
                 has_project_management_access
@@ -35,7 +39,7 @@ export async function POST(req) {
     } catch (queryErr) {
       // Graceful fallback if has_project_management_access column hasn't been migrated yet
       if (String(queryErr?.message || '').toLowerCase().includes('has_project_management_access')) {
-        result = await pool.query(
+        result = await authLoginQuery(
           `SELECT id, name, email, phone, city, state, occupation, agent_type,
                   status, login_enabled, password_hash, must_change_password, auth_version,
                   FALSE AS has_project_management_access
@@ -75,11 +79,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    try {
-      await pool.query('UPDATE agents SET last_login_at = NOW() WHERE id = $1', [agent.id]);
-    } catch (updateErr) {
-      console.warn('Could not update last_login_at:', updateErr?.message);
-    }
+    touchAgentLastLogin(agent.id);
 
     const token = signAgentToken(agent);
     delete agent.password_hash;
@@ -90,9 +90,23 @@ export async function POST(req) {
       agent: { ...agent, role: 'agent' },
       redirectTo: '/agent/dashboard',
     });
+    clearOtherAuthCookies(response, 'agent-auth-token');
     return setAuthCookie(response, 'agent-auth-token', token);
   } catch (error) {
     console.error('Agent login error:', error);
+    const message = String(error?.message || '');
+    if (message.includes('Query timeout')) {
+      return NextResponse.json(
+        { error: 'Sign-in is taking too long. Please check your connection and try again.' },
+        { status: 504 }
+      );
+    }
+    if (isDatabaseConnectionError(error)) {
+      return NextResponse.json(
+        { error: 'Database is temporarily unavailable. Please try again in a moment.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: error?.message || 'Server error occurred during sign-in.' },
       { status: 500 }

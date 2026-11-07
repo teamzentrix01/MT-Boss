@@ -1,7 +1,11 @@
-const LEGACY_ADMIN_EMAILS = ['admin@MTBOSS.in'];
+const LEGACY_ADMIN_EMAILS = ['admin@MTBOSS.in', 'admin@mtboss.in', 'admin@mtboss.com', 'clear'];
+
+function cleanEnv(value) {
+  return String(value || '').replace(/^\uFEFF/, '').trim().toLowerCase();
+}
 
 export function isAdminEmail(email) {
-  const normalized = String(email || '').trim().toLowerCase();
+  const normalized = cleanEnv(email);
   if (!normalized) return false;
 
   const configured = [
@@ -10,7 +14,7 @@ export function isAdminEmail(email) {
     ...(process.env.ADMIN_EMAIL_ALIASES || '').split(','),
     ...LEGACY_ADMIN_EMAILS,
   ]
-    .map(value => String(value || '').trim().toLowerCase())
+    .map(cleanEnv)
     .filter(Boolean);
 
   return new Set(configured).has(normalized);

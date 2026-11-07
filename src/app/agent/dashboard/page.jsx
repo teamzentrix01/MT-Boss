@@ -392,9 +392,8 @@ function AgentDashboardContent() {
   }
 
   async function logout() {
-    localStorage.removeItem('agent-token');
-    localStorage.removeItem('agent');
-    await fetch('/api/auth/logout', { method: 'POST' });
+    const { syncWebLogout } = await import('@/lib/client-session');
+    await syncWebLogout();
     router.push('/agent/login');
   }
 

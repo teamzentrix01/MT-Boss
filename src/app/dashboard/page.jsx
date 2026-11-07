@@ -515,23 +515,23 @@ function AdminDashboard() {
           return;
         }
 
-        // Overview requests are independent, so do them concurrently. Previously
-        // each slow endpoint delayed every endpoint after it and blocked the page.
+        // Overview requests are independent, but firing all 7 at once exhausts the
+        // Neon pooler (max ~5). Run them in small batches of 3.
         setLoading(false);
-        await Promise.all([
-          requestJson('/api/contact').then((data) => {
+        const overviewJobs = [
+          () => requestJson('/api/contact').then((data) => {
             if (data?.success) setSubmissions(data.data || []);
           }),
-          requestJson('/api/properties?status=pending&fields=list&limit=1&page=1').then((data) => {
+          () => requestJson('/api/properties?status=pending&fields=list&limit=1&page=1').then((data) => {
             if (data?.success) setPendingProperties(data.pagination?.total || (data.data || []).length);
           }),
-          requestJson('/api/admin/vendors?status=pending&counts=1').then((data) => {
+          () => requestJson('/api/admin/vendors?status=pending&counts=1').then((data) => {
             if (data?.success) setPendingVendors(data.pagination?.total || 0);
           }),
-          requestJson('/api/admin/suppliers?status=pending&counts=1').then((data) => {
+          () => requestJson('/api/admin/suppliers?status=pending&counts=1').then((data) => {
             if (data?.success) setPendingSuppliers(data.pagination?.total || 0);
           }),
-          requestJson('/api/admin/suppliers', { method: 'PATCH' }).then((data) => {
+          () => requestJson('/api/admin/suppliers', { method: 'PATCH' }).then((data) => {
             if (data?.success) {
               setSupplierCommission({
                 total: parseFloat(data.data.total_commission || 0),
@@ -541,7 +541,7 @@ function AdminDashboard() {
               });
             }
           }),
-          requestJson('/api/admin/shop-commissions').then((data) => {
+          () => requestJson('/api/admin/shop-commissions').then((data) => {
             if (data?.success && data?.data) {
               setShopVendorCommission({
                 today: parseFloat(data.data.today || 0),
@@ -552,7 +552,7 @@ function AdminDashboard() {
               });
             }
           }),
-          requestJson('/api/admin/bookings').then((data) => {
+          () => requestJson('/api/admin/bookings').then((data) => {
             if (!data?.success) return;
 
             const all = data.data || [];
@@ -572,7 +572,12 @@ function AdminDashboard() {
                 .reduce((sum, booking) => sum + calcCommission(booking), 0)
             );
           }),
-        ]);
+        ];
+
+        for (let i = 0; i < overviewJobs.length; i += 3) {
+          // eslint-disable-next-line no-await-in-loop
+          await Promise.all(overviewJobs.slice(i, i + 3).map((job) => job().catch(() => undefined)));
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {

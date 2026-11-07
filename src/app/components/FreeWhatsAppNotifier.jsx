@@ -19,11 +19,6 @@ const TRACKED_ENDPOINTS = new Map([
   ['/api/auth/signup', 'Customer Registration'],
   ['/api/vendor/signup', 'Service Provider Registration'],
   ['/api/supplier/signup', 'Supplier Registration'],
-  ['/api/agent/login', 'Agent Login'],
-  ['/api/auth/login', 'Customer/Admin Login'],
-  ['/api/vendor/login', 'Service Provider Login'],
-  ['/api/supplier/login', 'Supplier Login'],
-  ['/api/franchise/login', 'Franchise Login'],
 ]);
 
 const BLOCKED_KEYS = /password|confirm|otp|token|secret|hash|aadhaar|pan|account|ifsc|bank|latitude|longitude|resume_data|authorization/i;

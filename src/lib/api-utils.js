@@ -2,8 +2,15 @@ import { NextResponse } from 'next/server';
 import pool from './db';
 
 export function isDatabaseConnectionError(error) {
-  const message = String(error?.message || error?.cause?.message || '').toLowerCase();
-  const code = error?.code || error?.cause?.code;
+  const nestedMessages = Array.isArray(error?.errors)
+    ? error.errors.map((entry) => String(entry?.message || '').toLowerCase()).join(' ')
+    : '';
+  const message = `${String(error?.message || error?.cause?.message || '').toLowerCase()} ${nestedMessages}`;
+  const codes = new Set(
+    [error?.code, error?.cause?.code]
+      .concat(Array.isArray(error?.errors) ? error.errors.map((entry) => entry?.code) : [])
+      .filter(Boolean)
+  );
 
   return (
     message.includes('connect') ||
@@ -15,11 +22,11 @@ export function isDatabaseConnectionError(error) {
     message.includes('etimedout') ||
     message.includes('ehostunreach') ||
     message.includes('timeout') ||
-    code === 'ECONNREFUSED' ||
-    code === 'ENOTFOUND' ||
-    code === 'ETIMEDOUT' ||
-    code === 'EHOSTUNREACH' ||
-    code === 'XX000'
+    codes.has('ECONNREFUSED') ||
+    codes.has('ENOTFOUND') ||
+    codes.has('ETIMEDOUT') ||
+    codes.has('EHOSTUNREACH') ||
+    codes.has('XX000')
   );
 }
 
@@ -115,19 +122,29 @@ export function createInitializationGuard(initializer, ttlMs = 24 * 60 * 60 * 10
 }
 
 /**
- * Execute query with timeout and error handling
+ * Execute query with timeout and error handling.
+ * Attaches a no-op catch so a timed-out query cannot become an unhandledRejection
+ * and exhaust the pg pool while retries are still in flight.
  */
 export async function queryWithTimeout(query, params = [], timeoutMs = 10000) {
+  let timer;
+  const queryPromise = pool.query(query, params);
+  // Prevent unhandledRejection if we abandon this promise after timeout.
+  queryPromise.catch(() => {});
+
   try {
-    return await Promise.race([
-      pool.query(query, params),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
-      ),
+    const result = await Promise.race([
+      queryPromise,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Query timeout')), timeoutMs);
+      }),
     ]);
+    return result;
   } catch (error) {
     console.error('Query error:', error.message);
     throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 

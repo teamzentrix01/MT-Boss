@@ -1,5 +1,6 @@
 "use client";
 
+import { getDashboardPath, resolveWebAuthUser, syncWebLogout } from "@/lib/client-session";
 import { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -145,11 +146,7 @@ function MobileTopNavBar({ user, isDark, onToggleTheme, onOpenNavDrawer }) {
           <button
             type="button"
             onClick={() => {
-              if (user.role === 'vendor') window.location.href = '/vendor/dashboard';
-              else if (user.role === 'admin') window.location.href = '/dashboard';
-              else if (user.role === 'supplier') window.location.href = '/supplier/dashboard';
-              else if (user.role === 'franchise') window.location.href = '/franchise/dashboard';
-              else window.location.href = '/userdashboard';
+              window.location.href = getDashboardPath(user?.role);
             }}
             className="mobile-btn-signin"
           >
@@ -334,13 +331,7 @@ export default function MobileStorefront({
 
   useEffect(() => {
     const checkUser = () => {
-      const token = localStorage.getItem('token') || localStorage.getItem('vendor-token') || localStorage.getItem('admin-token') || localStorage.getItem('supplier-token') || localStorage.getItem('franchise-token');
-      const userData = localStorage.getItem('user') || localStorage.getItem('vendor') || localStorage.getItem('admin') || localStorage.getItem('supplier') || localStorage.getItem('franchise');
-      if (token && userData) {
-        try { setUser(JSON.parse(userData)); } catch (e) { }
-      } else {
-        setUser(null);
-      }
+      setUser(resolveWebAuthUser());
     };
     checkUser();
     window.addEventListener('storage', checkUser);
@@ -384,14 +375,13 @@ export default function MobileStorefront({
   };
 
   const handleLogout = async () => {
-    [
-      'token', 'user', 'admin-token', 'admin', 'vendor-token', 'vendor',
-      'supplier-token', 'supplier', 'franchise-token', 'franchise'
-    ].forEach((key) => localStorage.removeItem(key));
-    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
+    await syncWebLogout();
     setUser(null);
-    window.dispatchEvent(new Event('userLoggedIn'));
     window.location.href = '/login';
+  };
+
+  const goDashboard = () => {
+    window.location.href = getDashboardPath(user?.role);
   };
 
   const resolvedMainCategories = useMemo(() => {
@@ -1337,13 +1327,7 @@ export default function MobileStorefront({
               <div className="pt-1 flex flex-col gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (user.role === 'vendor') window.location.href = '/vendor/dashboard';
-                    else if (user.role === 'admin') window.location.href = '/dashboard';
-                    else if (user.role === 'supplier') window.location.href = '/supplier/dashboard';
-                    else if (user.role === 'franchise') window.location.href = '/franchise/dashboard';
-                    else window.location.href = '/userdashboard';
-                  }}
+                  onClick={goDashboard}
                   className="w-full py-2.5 bg-[#12283F] text-white text-xs font-bold rounded-xl"
                 >
                   Open Full Dashboard
@@ -1892,11 +1876,7 @@ export default function MobileStorefront({
                     type="button"
                     onClick={() => {
                       setNavDrawerOpen(false);
-                      if (user.role === 'vendor') window.location.href = '/vendor/dashboard';
-                      else if (user.role === 'admin') window.location.href = '/dashboard';
-                      else if (user.role === 'supplier') window.location.href = '/supplier/dashboard';
-                      else if (user.role === 'franchise') window.location.href = '/franchise/dashboard';
-                      else window.location.href = '/userdashboard';
+                      window.location.href = getDashboardPath(user?.role);
                     }}
                     className="mobile-btn-signin"
                   >
@@ -2130,11 +2110,7 @@ export default function MobileStorefront({
                     type="button"
                     onClick={() => {
                       setNavDrawerOpen(false);
-                      if (user.role === 'vendor') window.location.href = '/vendor/dashboard';
-                      else if (user.role === 'admin') window.location.href = '/dashboard';
-                      else if (user.role === 'supplier') window.location.href = '/supplier/dashboard';
-                      else if (user.role === 'franchise') window.location.href = '/franchise/dashboard';
-                      else window.location.href = '/userdashboard';
+                      window.location.href = getDashboardPath(user?.role);
                     }}
                     className="block w-full py-2.5 text-center text-sm font-bold text-[#0284c7] border border-[#0284c7] rounded-lg hover:bg-sky-50 transition-colors"
                   >

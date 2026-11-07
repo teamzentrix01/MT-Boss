@@ -4,12 +4,15 @@ import { fileURLToPath } from "url";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
-// Load env before Next inlines NEXT_PUBLIC_* values (root .env is canonical; src/.env optional).
-dotenv.config({ path: path.join(projectRoot, ".env") });
-dotenv.config({ path: path.join(projectRoot, "src", ".env") });
+// Load env before Next inlines NEXT_PUBLIC_* values.
+// Prefer `.env.local` (does not override vars already set by the shell), then `.env`, then `src/.env`.
+dotenv.config({ path: path.join(projectRoot, ".env.local"), override: false });
+dotenv.config({ path: path.join(projectRoot, ".env"), override: false });
+dotenv.config({ path: path.join(projectRoot, "src", ".env"), override: false });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  staticPageGenerationTimeout: 120,
   // This repository has its own lockfile inside a parent workspace. Explicitly
   // setting the tracing root prevents Next from selecting the parent project.
   outputFileTracingRoot: projectRoot,

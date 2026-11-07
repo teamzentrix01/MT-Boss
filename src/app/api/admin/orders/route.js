@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
+import { isTransientConnectionError } from '@/lib/db';
 import { getAdminOrders, formatDateDDMMYYYY, formatINR } from '@/lib/orders-history';
 
 export async function GET(req) {
@@ -97,7 +98,13 @@ export async function GET(req) {
       pagination: result.pagination,
     });
   } catch (err) {
-    console.error('Error fetching admin orders:', err);
+    console.error('Error fetching admin orders:', err?.message || err);
+    if (isTransientConnectionError(err)) {
+      return NextResponse.json(
+        { success: false, error: 'Database temporarily unavailable. Please retry in a moment.' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { success: false, error: err.message || 'Failed to fetch orders history' },
       { status: 500 }

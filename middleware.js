@@ -6,9 +6,9 @@ export function middleware(request) {
   const agentToken = request.cookies.get('agent-auth-token')?.value;
   const vendorToken = request.cookies.get('vendor-auth-token')?.value;
   
-  // Protect dashboard routes
+  // Protect dashboard routes (admin cookie or agent cookie for limited agent PM access)
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!token) {
+    if (!token && !agentToken) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { clearWebSessionExcept } from '@/lib/client-session';
 
 export default function AgentLoginPage() {
   const router = useRouter();
@@ -30,25 +31,40 @@ export default function AgentLoginPage() {
     }
 
     setLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
       const res = await fetch('/api/agent/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, email: form.email.trim().toLowerCase() }),
+        signal: controller.signal,
       });
-      const data = await res.json();
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        setError('Unexpected server response. Please try again.');
+        return;
+      }
       if (!res.ok) {
         setError(data.error || 'Invalid credentials.');
         return;
       }
 
+      clearWebSessionExcept('agent');
       localStorage.setItem('agent-token', data.token);
       localStorage.setItem('agent', JSON.stringify(data.agent));
       window.dispatchEvent(new Event('userLoggedIn'));
-      router.push('/agent/dashboard');
-    } catch {
-      setError('An error occurred. Please try again.');
+      router.replace('/agent/dashboard');
+    } catch (err) {
+      if (err?.name === 'AbortError') {
+        setError('Sign-in timed out. Please check your connection and try again.');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   }

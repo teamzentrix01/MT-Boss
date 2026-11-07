@@ -128,7 +128,7 @@ export async function GET(req) {
       total: result.rowCount,
     });
   } catch (error) {
-    console.error('GET quick-services error:', error.message);
+    console.error('GET quick-services error:', error?.message || error?.code || error);
     if (isDatabaseConnectionError(error)) {
       if (adminView) {
         return jsonWithoutCache(
