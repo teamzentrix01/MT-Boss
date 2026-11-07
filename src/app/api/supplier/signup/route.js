@@ -53,8 +53,8 @@ export async function POST(request) {
     if (!aadhaar_number || !/^\d{12}$/.test(aadhaar_number.replace(/\s/g, ''))) {
       return NextResponse.json({ error: 'Valid 12-digit Aadhaar number is required' }, { status: 400 });
     }
-    if (pan_number && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan_number)) {
-      return NextResponse.json({ error: 'Valid 10-character PAN number is required (e.g., ABCDE1234F)' }, { status: 400 });
+    if (pan_number && !/^[A-Z]{4,5}[0-9]{4}[A-Z]{1}$/i.test(pan_number)) {
+      return NextResponse.json({ error: 'Valid PAN number is required (e.g., ABCDE1234F)' }, { status: 400 });
     }
     if (gst_number && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(gst_number)) {
       return NextResponse.json({ error: 'Invalid GST number format' }, { status: 400 });
