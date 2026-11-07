@@ -22,6 +22,8 @@ const modelStyle = {
   'Associate Partner':  { bg: '#eff4ff', tx: '#1e3a8a' },
   'Regional Franchise': { bg: '#fefce8', tx: 'var(--brand-blue-deeper)' },
   'Master Franchise':   { bg: '#faf5ff', tx: '#581c87' },
+  'Contact Inquiry':    { bg: '#fef3c7', tx: '#92400e' },
+  'Consultation Modal': { bg: '#e0f2fe', tx: '#0369a1' },
 };
 
 const Field = ({ label, value }) => (
@@ -153,22 +155,29 @@ export default function FranchisesPage() {
     }
   };
 
-  const models = ['All', 'Associate Partner', 'Regional Franchise', 'Master Franchise'];
+  const dynamicModels = Array.from(new Set(franchises.map(f => f.model).filter(Boolean)));
+  const defaultModels = ['Associate Partner', 'Regional Franchise', 'Master Franchise', 'Contact Inquiry'];
+  const allKnownModels = Array.from(new Set([...defaultModels, ...dynamicModels]));
+  const models = ['All', ...allKnownModels];
 
   const filtered = franchises.filter(f => {
+    const term = (search || '').trim().toLowerCase();
     const matchSearch =
-      f.name?.toLowerCase().includes(search.toLowerCase()) ||
-      f.email?.toLowerCase().includes(search.toLowerCase()) ||
-      f.city?.toLowerCase().includes(search.toLowerCase()) ||
-      f.territory?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filter === 'All' || f.status === filter;
+      !term ||
+      (f.name || '').toLowerCase().includes(term) ||
+      (f.email || '').toLowerCase().includes(term) ||
+      (f.phone || '').toLowerCase().includes(term) ||
+      (f.city || '').toLowerCase().includes(term) ||
+      (f.territory || '').toLowerCase().includes(term);
+    const effStatus = f.status || 'Pending';
+    const matchStatus = filter === 'All' || effStatus === filter;
     const matchModel  = modelFilter === 'All' || f.model === modelFilter;
     return matchSearch && matchStatus && matchModel;
   });
 
   const counts = {
     All:       franchises.length,
-    Pending:   franchises.filter(f => f.status === 'Pending').length,
+    Pending:   franchises.filter(f => (f.status || 'Pending') === 'Pending').length,
     Reviewing: franchises.filter(f => f.status === 'Reviewing').length,
     Approved:  franchises.filter(f => f.status === 'Approved').length,
     Rejected:  franchises.filter(f => f.status === 'Rejected').length,
@@ -490,8 +499,17 @@ export default function FranchisesPage() {
                     return (
                       <tr key={fr.id} onClick={() => { setSelected(fr); setSection('personal'); }}>
                         <td>
-                          <div className="fr-name">{fr.name}</div>
-                          <div className="fr-muted">{fr.occupation}</div>
+                          <div className="fr-name" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                            <span>{fr.name}</span>
+                            {fr._source === 'contact' ? (
+                              <span style={{ fontSize: '0.625rem', padding: '1px 6px', borderRadius: '4px', background: '#fef3c7', color: '#92400e', fontWeight: 700 }}>Inquiry</span>
+                            ) : fr._source === 'consultation' ? (
+                              <span style={{ fontSize: '0.625rem', padding: '1px 6px', borderRadius: '4px', background: '#e0f2fe', color: '#0369a1', fontWeight: 700 }}>Popup</span>
+                            ) : (
+                              <span style={{ fontSize: '0.625rem', padding: '1px 6px', borderRadius: '4px', background: '#dbeafe', color: '#1e40af', fontWeight: 700 }}>Application</span>
+                            )}
+                          </div>
+                          <div className="fr-muted">{fr.occupation || (fr._source === 'contact' ? 'Contact Form' : '—')}</div>
                         </td>
                         <td>
                           <div style={{ fontSize: '0.8125rem' }}>{fr.email}</div>
