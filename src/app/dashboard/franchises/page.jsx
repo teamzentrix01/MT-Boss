@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Eye, X, ActionIconButton } from '@/app/components/ui/icons';
+import { Eye, X, ActionIconButton, ClipboardList, Tags, Layers } from '@/app/components/ui/icons';
+import FranchiseModelsManager from './FranchiseModelsManager';
+import FranchiseContentManager from './FranchiseContentManager';
 import {
   EMPTY_FRANCHISE_PERMISSIONS,
   FRANCHISE_PERMISSION_DEFINITIONS,
@@ -34,6 +36,7 @@ const Field = ({ label, value }) => (
 );
 
 export default function FranchisesPage() {
+  const [mainTab, setMainTab]       = useState('applications');
   const [franchises, setFranchises] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [selected, setSelected]     = useState(null);
@@ -424,6 +427,60 @@ export default function FranchisesPage() {
 
       <div className="fr-wrap">
 
+        {/* Top-level Sub-tabs */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => setMainTab('applications')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
+              border: '1px solid',
+              borderColor: mainTab === 'applications' ? 'var(--accent)' : 'var(--border)',
+              background: mainTab === 'applications' ? 'var(--accent)' : 'var(--surface)',
+              color: mainTab === 'applications' ? '#fff' : 'var(--text)',
+              cursor: 'pointer', transition: 'all .15s'
+            }}
+          >
+            <ClipboardList size={14} /> Applications & Inquiries ({counts.All})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMainTab('models')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
+              border: '1px solid',
+              borderColor: mainTab === 'models' ? 'var(--accent)' : 'var(--border)',
+              background: mainTab === 'models' ? 'var(--accent)' : 'var(--surface)',
+              color: mainTab === 'models' ? '#fff' : 'var(--text)',
+              cursor: 'pointer', transition: 'all .15s'
+            }}
+          >
+            <Tags size={14} /> Franchise Models & Fees
+          </button>
+          <button
+            type="button"
+            onClick={() => setMainTab('content')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
+              border: '1px solid',
+              borderColor: mainTab === 'content' ? 'var(--accent)' : 'var(--border)',
+              background: mainTab === 'content' ? 'var(--accent)' : 'var(--surface)',
+              color: mainTab === 'content' ? '#fff' : 'var(--text)',
+              cursor: 'pointer', transition: 'all .15s'
+            }}
+          >
+            <Layers size={14} /> Page Sections (Hero, Benefits, Process)
+          </button>
+        </div>
+
+        {mainTab === 'models' && <FranchiseModelsManager />}
+        {mainTab === 'content' && <FranchiseContentManager />}
+
+        {mainTab === 'applications' && (
+          <>
         {/* Toolbar */}
         <div className="fr-toolbar">
           <span className="fr-title">Franchise Applications</span>
@@ -544,6 +601,8 @@ export default function FranchisesPage() {
             </div>
           )}
         </div>
+        </>
+        )}
       </div>
 
       {/* Detail Modal */}

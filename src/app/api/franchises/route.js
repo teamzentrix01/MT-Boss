@@ -43,19 +43,51 @@ function normalizeCity(value) {
   return clean(value).toLowerCase();
 }
 
-function getFranchiseRegistrationFee(model) {
+async function isFranchiseModelValid(model) {
+  if (FRANCHISE_FEE_ENV_KEYS[model]) return true;
+  try {
+    const res = await pool.query(
+      `SELECT 1 FROM franchise_models WHERE LOWER(TRIM(name)) = LOWER(TRIM($1)) AND is_active = TRUE LIMIT 1`,
+      [model]
+    );
+    return res.rows.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+async function getFranchiseRegistrationFee(model) {
+  // First attempt: check dynamic franchise_models table
+  try {
+    const res = await pool.query(
+      `SELECT registration_fee FROM franchise_models WHERE LOWER(TRIM(name)) = LOWER(TRIM($1)) AND is_active = TRUE LIMIT 1`,
+      [model]
+    );
+    if (res.rows[0]) {
+      const amount = Number(res.rows[0].registration_fee);
+      if (Number.isFinite(amount) && amount >= 0) {
+        return amount;
+      }
+    }
+  } catch (err) {
+    // Database table may not be ready or active
+  }
+
+  // Second attempt: check environment variables
   const modelEnvKey = FRANCHISE_FEE_ENV_KEYS[model];
-  if (!modelEnvKey) {
-    throw new Error('Invalid franchise model');
+  if (modelEnvKey) {
+    const amount = Number(
+      process.env[modelEnvKey]
+      || process.env.FRANCHISE_REGISTRATION_FEE
+    );
+    if (Number.isFinite(amount) && amount > 0) {
+      return amount;
+    }
   }
-  const amount = Number(
-    process.env[modelEnvKey]
-    || process.env.FRANCHISE_REGISTRATION_FEE
-  );
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error('Franchise registration fee is not configured');
-  }
-  return amount;
+
+  // Default fallback amount
+  const defaultFallback = Number(process.env.FRANCHISE_REGISTRATION_FEE || 499999);
+  return defaultFallback;
 }
 
 function hasSavedPermissions(value) {
@@ -159,13 +191,15 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     if (searchParams.get('action') === 'registration-fee') {
       const model = clean(searchParams.get('model'));
-      if (!FRANCHISE_FEE_ENV_KEYS[model]) {
+      const isValid = await isFranchiseModelValid(model);
+      if (!isValid) {
         return NextResponse.json({ success: false, error: 'Valid franchise model is required' }, { status: 400 });
       }
+      const fee = await getFranchiseRegistrationFee(model);
       return NextResponse.json({
         success: true,
         model,
-        amount: getFranchiseRegistrationFee(model),
+        amount: fee,
       });
     }
 
@@ -319,7 +353,8 @@ export async function POST(req) {
     if (!canonicalCity) {
       return NextResponse.json({ success: false, error: 'City is required.' }, { status: 400 });
     }
-    if (!FRANCHISE_FEE_ENV_KEYS[model]) {
+    const isValidModel = await isFranchiseModelValid(model);
+    if (!isValidModel) {
       return NextResponse.json({ success: false, error: 'Select a valid franchise model' }, { status: 400 });
     }
     const contactError = validateContactFields({ name: cleanName, email: cleanEmail, phone: cleanPhone });
@@ -441,7 +476,7 @@ export async function POST(req) {
     let payment = null;
     let registrationFee = null;
     try {
-      registrationFee = getFranchiseRegistrationFee(model);
+      registrationFee = await getFranchiseRegistrationFee(model);
       const payClient = await pool.connect();
       try {
         await payClient.query('BEGIN');
