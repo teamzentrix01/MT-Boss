@@ -30,6 +30,7 @@ export async function GET(req) {
     const countOnly = searchParams.get('count_only') === 'true' || searchParams.get('count_only') === '1';
 
     if (countOnly) {
+      // Table is currently small (EXPLAIN prefers seq scan); no expression index added.
       const pendingCountRes = await queryReadWithRetry(`
         SELECT COUNT(*)::int AS count
         FROM supplier_materials m

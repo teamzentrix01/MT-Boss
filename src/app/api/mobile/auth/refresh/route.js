@@ -12,8 +12,10 @@ import {
 
 function entityStillAllowed(role, entity) {
   if (!entity) return false;
+  if (role === 'user') return !entity.is_blocked;
   if (role === 'agent') return entity.status === 'Approved' && entity.login_enabled;
   if (role === 'vendor') return Boolean(entity.is_approved) && entity.status !== 'inactive';
+  if (role === 'franchise') return entity.status === 'Approved' && entity.login_enabled;
   return entity.status === 'approved' && entity.is_active !== false;
 }
 
@@ -37,6 +39,28 @@ function profileFromEntity(role, entity, mobileFallback) {
       name: entity.shop_name || entity.business_name || entity.vendor_name || entity.email,
       email: entity.email,
       role: 'vendor',
+      status: 'active',
+      phone: entity.phone,
+    };
+  }
+  if (role === 'user') {
+    return {
+      id: entity.id,
+      mobile,
+      name: entity.name,
+      email: entity.email,
+      role: 'user',
+      status: 'active',
+      phone: entity.phone || mobile,
+    };
+  }
+  if (role === 'franchise') {
+    return {
+      id: entity.id,
+      mobile,
+      name: entity.name,
+      email: entity.email,
+      role: 'franchise',
       status: 'active',
       phone: entity.phone,
     };

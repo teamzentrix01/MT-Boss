@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { clearWebSessionExcept } from '@/lib/client-session';
+import CustomerMobileOtpAuth from '@/app/components/CustomerMobileOtpAuth';
 import {
   Mail,
   Lock,
@@ -28,6 +29,7 @@ export default function LoginPage() {
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [redirectParam, setRedirectParam] = useState('');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -37,6 +39,9 @@ export default function LoginPage() {
     observer.observe(html, { attributes: true, attributeFilter: ['class'] });
     const params = new URLSearchParams(window.location.search);
     setRedirectParam(params.get('redirect') || '');
+    if (params.get('admin') === '1') {
+      setShowAdminLogin(true);
+    }
     const errorParam = params.get('error');
     if (errorParam) {
       setError(
@@ -115,6 +120,11 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     window.location.href = '/api/auth/google';
+  };
+
+  const handleCustomerOtpSuccess = () => {
+    const destination = redirectParam || '/userdashboard';
+    router.replace(destination);
   };
 
   return (
@@ -553,74 +563,81 @@ export default function LoginPage() {
 
           <div className="lp-form-panel">
             <div className="lp-form-title">Welcome back</div>
-            <div className="lp-form-sub">Sign in to your account to continue</div>
+            <div className="lp-form-sub">Sign in with your mobile number to shop, track orders and more</div>
 
-            {error && (
-              <div className="lp-error">
-                <span className="lp-error-dot" />
-                {error}
-              </div>
-            )}
+            <CustomerMobileOtpAuth onSuccess={handleCustomerOtpSuccess} compact />
 
-            <form onSubmit={handleSubmit}>
-              <div className="lp-field">
-                <label className="lp-label" htmlFor="email">Email or admin ID <RequiredAsterisk /></label>
-                <div className="lp-input-wrap">
-                  <Mail className="lp-input-icon" size={17} strokeWidth={2} />
-                  <input
-                    className="lp-input"
-                    type="text"
-                    id="email"
-                    name="email"
-                    autoComplete="username"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="name@company.com or admin ID"
-                    required
-                  />
-                </div>
-              </div>
+            <button
+              type="button"
+              className="lp-forgot"
+              style={{ marginTop: '1rem', width: '100%', textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => setShowAdminLogin((v) => !v)}
+            >
+              {showAdminLogin ? '← Back to mobile login' : 'Admin sign-in with email & password'}
+            </button>
 
-              <div className="lp-field">
-                <label className="lp-label" htmlFor="password">Password <RequiredAsterisk /></label>
-                <div className="lp-input-wrap">
-                  <Lock className="lp-input-icon" size={17} strokeWidth={2} />
-                  <input
-                    className="lp-input"
-                    style={{ paddingRight: '2.75rem' }}
-                    type={showPassword ? 'text' : 'password'}
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button type="button" className="lp-pw-toggle" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                    {showPassword ? <EyeOff size={17} strokeWidth={2} /> : <Eye size={17} strokeWidth={2} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="lp-options">
-                <label className="lp-remember">
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <Link href="/forgot-password" className="lp-forgot">Forgot password?</Link>
-              </div>
-
-              <button type="submit" className="lp-submit" disabled={loading}>
-                {loading ? (
-                  <><span className="lp-spinner" /> Signing in…</>
-                ) : (
-                  <>
-                    Sign in
-                    <ArrowRight size={17} strokeWidth={2.25} />
-                  </>
+            {showAdminLogin && (
+              <>
+                {error && (
+                  <div className="lp-error">
+                    <span className="lp-error-dot" />
+                    {error}
+                  </div>
                 )}
-              </button>
-            </form>
+
+                <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
+                  <div className="lp-field">
+                    <label className="lp-label" htmlFor="email">Email or admin ID <RequiredAsterisk /></label>
+                    <div className="lp-input-wrap">
+                      <Mail className="lp-input-icon" size={17} strokeWidth={2} />
+                      <input
+                        className="lp-input"
+                        type="text"
+                        id="email"
+                        name="email"
+                        autoComplete="username"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="name@company.com or admin ID"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="lp-field">
+                    <label className="lp-label" htmlFor="password">Password <RequiredAsterisk /></label>
+                    <div className="lp-input-wrap">
+                      <Lock className="lp-input-icon" size={17} strokeWidth={2} />
+                      <input
+                        className="lp-input"
+                        style={{ paddingRight: '2.75rem' }}
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Enter your password"
+                        required
+                      />
+                      <button type="button" className="lp-pw-toggle" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                        {showPassword ? <EyeOff size={17} strokeWidth={2} /> : <Eye size={17} strokeWidth={2} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="lp-submit" disabled={loading}>
+                    {loading ? (
+                      <><span className="lp-spinner" /> Signing in…</>
+                    ) : (
+                      <>
+                        Admin sign in
+                        <ArrowRight size={17} strokeWidth={2.25} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </>
+            )}
 
             <div className="lp-divider">
               <div className="lp-divider-line" />

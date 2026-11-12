@@ -4,6 +4,7 @@ import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function ServiceProviderLoginPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function ServiceProviderLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -131,17 +133,29 @@ export default function ServiceProviderLoginPage() {
             Back to User Login
           </Link>
 
-          <div style={{ fontSize: '1.125rem', fontWeight: 700, color: text, marginBottom: '0.2rem' }}>Service Provider Sign In</div>
-          <div style={{ fontSize: '0.8125rem', color: muted, marginBottom: '1.5rem' }}>Access your service provider dashboard</div>
+          <PartnerMobileOtpAuth
+            role="vendor"
+            title="Service provider sign in"
+            subtitle="Use the mobile number on your approved vendor profile."
+            onSuccess={() => router.push('/vendor/dashboard')}
+          />
 
-          {error && (
+          <button
+            type="button"
+            onClick={() => setShowLegacyLogin((v) => !v)}
+            style={{ marginTop: '1rem', width: '100%', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
+          >
+            {showLegacyLogin ? '← Use mobile OTP' : 'Sign in with email & password (legacy)'}
+          </button>
+
+          {showLegacyLogin && error && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '1rem' }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: dark ? '#fca5a5' : '#9f1239', flexShrink: 0 }} />
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          {showLegacyLogin ? <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
             {/* Email */}
             <div style={{ marginBottom: '0.875rem' }}>
               <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Email address <RequiredAsterisk /></label>
@@ -190,9 +204,9 @@ export default function ServiceProviderLoginPage() {
               style={{ width: '100%', padding: '0.6rem 1rem', background: 'var(--brand-blue)', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
               {loading ? 'Signing in…' : <>Sign In <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
             </button>
-          </form>
+          </form> : null}
 
-          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted }}>
+          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted, marginTop: '1rem' }}>
             No service provider account? <Link href="/vendor/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
           </div>
         </div>

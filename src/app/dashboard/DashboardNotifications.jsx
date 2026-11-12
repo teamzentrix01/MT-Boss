@@ -30,23 +30,30 @@ export default function DashboardNotifications() {
   const [loading, setLoading] = useState(true);
   const rootRef = useRef(null);
 
+  const refreshInFlight = useRef(false);
+
   const refresh = useCallback(async () => {
+    if (refreshInFlight.current) return;
     const token = localStorage.getItem("admin-token") || localStorage.getItem("token");
     if (!token) {
       setLoading(false);
       return;
     }
 
+    refreshInFlight.current = true;
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const responses = await Promise.all([
+      // Pool max is 4 — fetch in two waves so overview/sidebar counts are not starved.
+      const wave1 = await Promise.all([
         fetch("/api/primary-service-enquiries", { headers, cache: "no-store" }),
         fetch("/api/contact", { headers, cache: "no-store" }),
-        fetch("/api/admin/lead-management?lite=1&limit=100", { headers, cache: "no-store" }),
+      ]);
+      const wave2 = await Promise.all([
+        fetch("/api/admin/lead-management?lite=1&limit=30", { headers, cache: "no-store" }),
         fetch("/api/admin/orders?type=shop_order&limit=25", { headers, cache: "no-store" }),
       ]);
       const [enquiries, submissions, leads, orders] = await Promise.all(
-        responses.map((response) => response.json().catch(() => ({}))),
+        [...wave1, ...wave2].map((response) => response.json().catch(() => ({}))),
       );
 
       const currentItems = [
@@ -122,6 +129,7 @@ export default function DashboardNotifications() {
     } catch (error) {
       console.error("Dashboard notifications could not be refreshed:", error);
     } finally {
+      refreshInFlight.current = false;
       setLoading(false);
     }
   }, []);

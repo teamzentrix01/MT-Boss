@@ -522,8 +522,8 @@ function AdminDashboard() {
           () => requestJson('/api/contact').then((data) => {
             if (data?.success) setSubmissions(data.data || []);
           }),
-          () => requestJson('/api/properties?status=pending&fields=list&limit=1&page=1').then((data) => {
-            if (data?.success) setPendingProperties(data.pagination?.total || (data.data || []).length);
+          () => requestJson('/api/properties?status_counts=1').then((data) => {
+            if (data?.success) setPendingProperties(data.data?.pending || 0);
           }),
           () => requestJson('/api/admin/vendors?status=pending&counts=1').then((data) => {
             if (data?.success) setPendingVendors(data.pagination?.total || 0);

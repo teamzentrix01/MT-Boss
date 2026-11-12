@@ -4,6 +4,7 @@ import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function SupplierLoginPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function SupplierLoginPage() {
     password: '',
     rememberMe: false,
   });
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
 
   // Monitor dark mode
   useEffect(() => {
@@ -511,8 +513,20 @@ export default function SupplierLoginPage() {
 
           {/* ── Right form panel ── */}
           <div className="sl-right">
-            <div className="sl-form-title">Welcome back, Vendor</div>
-            <div className="sl-form-subtitle">Sign in to your vendor account to continue</div>
+            <PartnerMobileOtpAuth
+              role="supplier"
+              title="Supplier sign in"
+              subtitle="Use the mobile number on your approved supplier account."
+              onSuccess={() => router.push('/supplier/dashboard')}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowLegacyLogin((v) => !v)}
+              style={{ marginTop: '1rem', width: '100%', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontWeight: 800, fontSize: '0.82rem', cursor: 'pointer' }}
+            >
+              {showLegacyLogin ? '← Use mobile OTP' : 'Sign in with email & password (legacy)'}
+            </button>
 
             {/* Generic error */}
             {error && (
@@ -547,7 +561,7 @@ export default function SupplierLoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            {showLegacyLogin ? <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
 
               {/* Email field */}
               <div className="sl-field">
@@ -624,7 +638,7 @@ export default function SupplierLoginPage() {
                   <>Sign In →</>
                 )}
               </button>
-            </form>
+            </form> : null}
 
             {/* Register link */}
             <div className="sl-register">

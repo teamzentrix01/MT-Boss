@@ -252,12 +252,19 @@ export async function getAdminOrders({
     LEFT JOIN quick_services qs ON qs.id = sb.quick_service_id
   `;
 
-  // Combine based on type selection. Shop orders are prioritized first
+  // Skip the unused half of the UNION when the caller filters by type.
+  const unifiedBody =
+    type === 'shop_order'
+      ? shopQuery
+      : type === 'service_booking'
+        ? serviceQuery
+        : `${shopQuery}
+      UNION ALL
+      ${serviceQuery}`;
+
   const unionSql = `
     WITH unified AS (
-      ${shopQuery}
-      UNION ALL
-      ${serviceQuery}
+      ${unifiedBody}
     )
   `;
 

@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { clearWebSessionExcept } from '@/lib/client-session';
+import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function AgentLoginPage() {
   const router = useRouter();
   const [dark, setDark] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
   useEffect(() => {
@@ -56,7 +57,12 @@ export default function AgentLoginPage() {
       localStorage.setItem('agent-token', data.token);
       localStorage.setItem('agent', JSON.stringify(data.agent));
       window.dispatchEvent(new Event('userLoggedIn'));
-      router.replace('/agent/dashboard');
+      const agent = data.agent || {};
+      if (agent.has_project_management_access) {
+        router.replace('/dashboard?tab=overview');
+      } else {
+        router.replace('/agent/dashboard');
+      }
     } catch (err) {
       if (err?.name === 'AbortError') {
         setError('Sign-in timed out. Please check your connection and try again.');
@@ -68,6 +74,15 @@ export default function AgentLoginPage() {
       setLoading(false);
     }
   }
+
+  const handleOtpSuccess = (data) => {
+    const agent = data.agent || {};
+    if (agent.has_project_management_access) {
+      router.replace('/dashboard?tab=overview');
+    } else {
+      router.replace('/agent/dashboard');
+    }
+  };
 
   const bg = dark ? '#000' : '#f5f5f7';
   const surface = dark ? '#0a0a0a' : '#fff';
@@ -86,62 +101,65 @@ export default function AgentLoginPage() {
               <span style={{ marginLeft: 8, fontSize: 10, color: '#111', background: 'var(--brand-blue)', padding: '3px 8px', borderRadius: 99 }}>AGENT</span>
             </div>
             <h1 style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1.25, marginBottom: 10 }}>Manage your city leads with focus.</h1>
-            <p style={{ fontSize: 13, color: '#aaa', lineHeight: 1.7 }}>Sign in to track leads, follow-ups, and your daily schedule.</p>
+            <p style={{ fontSize: 13, color: '#aaa', lineHeight: 1.7 }}>Sign in with your registered mobile. Agents with project access can open the admin panel after login.</p>
           </div>
           <p style={{ fontSize: 11, color: '#666' }}>Approved agents only</p>
         </section>
 
-        <section style={{ flex: 1, padding: '2.25rem 2rem' }}>
+        <section style={{ flex: 1, padding: '2.25rem 2rem', color: text }}>
           <Link href="/login" prefetch={false} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: muted, fontSize: 12, fontWeight: 700, textDecoration: 'none', marginBottom: '1.5rem' }}>
-            Back to user login
+            Back to customer login
           </Link>
 
-          <h2 style={{ color: text, fontSize: '1.125rem', fontWeight: 800, margin: 0 }}>Agent Sign In</h2>
-          <p style={{ color: muted, fontSize: 13, marginTop: 4, marginBottom: 22 }}>Use the credentials sent by admin after approval.</p>
+          <PartnerMobileOtpAuth
+            role="agent"
+            title="Agent sign in"
+            subtitle="Use the mobile number linked to your approved agent profile."
+            onSuccess={handleOtpSuccess}
+          />
 
-          {error && (
-            <div style={{ padding: '0.6rem 0.85rem', border: '1px solid #fca5a5', background: dark ? '#3f1515' : '#fff1f2', color: dark ? '#fca5a5' : '#9f1239', borderRadius: 7, fontSize: 13, marginBottom: 14 }}>
-              {error}
-            </div>
+          <button
+            type="button"
+            onClick={() => setShowLegacyLogin((v) => !v)}
+            style={{ marginTop: '1.25rem', width: '100%', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}
+          >
+            {showLegacyLogin ? '← Use mobile OTP' : 'Sign in with email & password (legacy)'}
+          </button>
+
+          {showLegacyLogin && (
+            <>
+              {error && (
+                <div style={{ padding: '0.6rem 0.85rem', border: '1px solid #fca5a5', background: dark ? '#3f1515' : '#fff1f2', color: dark ? '#fca5a5' : '#9f1239', borderRadius: 7, fontSize: 13, marginBottom: 14, marginTop: 14 }}>
+                  {error}
+                </div>
+              )}
+              <form onSubmit={handleSubmit} style={{ marginTop: 12 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: muted, marginBottom: 6 }}>Email address</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="agent@example.com"
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '0.65rem 0.75rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: 13, outline: 'none', marginBottom: 14 }}
+                />
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: muted, marginBottom: 6 }}>Password</label>
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+                  placeholder="Temporary password"
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '0.65rem 0.75rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: 13, outline: 'none', marginBottom: 14 }}
+                />
+                <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.7rem 1rem', border: 0, borderRadius: 7, background: 'var(--brand-blue)', color: '#111', fontSize: 13, fontWeight: 900, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1 }}>
+                  {loading ? 'Signing in...' : 'Sign In'}
+                </button>
+              </form>
+            </>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: muted, marginBottom: 6 }}>Email address</label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              placeholder="agent@example.com"
-              style={{ width: '100%', boxSizing: 'border-box', padding: '0.65rem 0.75rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: 13, outline: 'none', marginBottom: 14 }}
-            />
-
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: muted, marginBottom: 6 }}>Password</label>
-            <div style={{ position: 'relative', marginBottom: 18 }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={form.password}
-                onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                placeholder="Temporary password"
-                style={{ width: '100%', boxSizing: 'border-box', padding: '0.65rem 4.5rem 0.65rem 0.75rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: 13, outline: 'none' }}
-              />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '-0.35rem 0 1rem' }}>
-              <Link href="/agent/forgot-password" prefetch={false} style={{ color: 'var(--brand-blue)', fontSize: 12, fontWeight: 800, textDecoration: 'none' }}>
-                Forgot password?
-              </Link>
-            </div>
-
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.7rem 1rem', border: 0, borderRadius: 7, background: 'var(--brand-blue)', color: '#111', fontSize: 13, fontWeight: 900, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.65 : 1 }}>
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-
           <p style={{ color: muted, fontSize: 12, lineHeight: 1.6, marginTop: 18 }}>
-            No credentials yet? Submit the agent application first and wait for admin approval.
+            Platform admin?{' '}
+            <Link href="/login?admin=1" style={{ color: 'var(--brand-blue)', fontWeight: 800 }}>Admin sign-in (email)</Link>
           </p>
         </section>
       </div>

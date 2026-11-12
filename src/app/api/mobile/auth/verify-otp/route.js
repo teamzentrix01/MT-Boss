@@ -1,20 +1,21 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import {
-  verifyMobileOtp,
   resolvePartnerByMobile,
   signPartnerAccessToken,
   generateRefreshToken,
   hashRefreshToken,
   upsertMobileUserSession,
   ensureMobileUsersEntityColumn,
+  verifyAndConsumeMobileOtp,
+  signMobileSignupToken,
   VALID_MOBILE_ROLES,
 } from '@/lib/mobile-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
+import { isOtpDevMode, verifyOtpViaMsg91 } from '@/lib/msg91';
 
 const MOBILE_REGEX = /^[6-9]\d{9}$/;
 const OTP_REGEX = /^\d{6}$/;
-const MAX_OTP_ATTEMPTS = 5;
 
 const ensureSchema = createInitializationGuard(async () => {
   await pool.query(`
@@ -22,7 +23,7 @@ const ensureSchema = createInitializationGuard(async () => {
       id SERIAL PRIMARY KEY,
       mobile VARCHAR(15) NOT NULL UNIQUE,
       name VARCHAR(255),
-      role VARCHAR(20) NOT NULL DEFAULT 'vendor' CHECK (role IN ('agent','vendor','supplier','user')),
+      role VARCHAR(20) NOT NULL DEFAULT 'vendor' CHECK (role IN ('agent','vendor','supplier','user','franchise')),
       status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','active','blocked')),
       refresh_token_hash TEXT,
       entity_id INTEGER,
@@ -41,7 +42,7 @@ const ensureSchema = createInitializationGuard(async () => {
   await pool.query(`
     ALTER TABLE mobile_users
       ADD CONSTRAINT mobile_users_role_check
-      CHECK (role IN ('agent','vendor','supplier','user'))
+      CHECK (role IN ('agent','vendor','supplier','user','franchise'))
   `).catch(() => {});
 }, 24 * 60 * 60 * 1000, 'mobile_users_schema');
 
@@ -59,6 +60,7 @@ export async function POST(req) {
     const mobile = String(body?.mobile || '').trim().replace(/\s/g, '');
     const otp = String(body?.otp || '').trim();
     const role = String(body?.role || '').trim().toLowerCase();
+    const createIfMissing = body?.create_if_missing === true;
 
     if (!MOBILE_REGEX.test(mobile)) {
       return NextResponse.json({ success: false, error: 'Invalid mobile number.' }, { status: 400 });
@@ -73,72 +75,36 @@ export async function POST(req) {
       );
     }
 
-    // Resolve existing business account BEFORE consuming OTP attempts for role/account errors
-    const partner = await resolvePartnerByMobile(role, mobile);
-    if (!partner.ok) {
-      return NextResponse.json(
-        { success: false, error: partner.error, code: partner.code || null },
-        { status: partner.status },
-      );
-    }
-
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      const otpResult = await client.query(
-        `SELECT id, otp_hash, attempts, valid_till
-         FROM mobile_otps
-         WHERE mobile = $1 AND used = FALSE AND expires_at > NOW()
-         ORDER BY created_at DESC
-         LIMIT 1
-         FOR UPDATE`,
-        [mobile],
-      );
-
-      if (otpResult.rows.length === 0) {
-        await client.query('ROLLBACK');
-        return NextResponse.json(
-          { success: false, error: 'No valid OTP found. Please request a new one.' },
-          { status: 400 },
-        );
-      }
-
-      const otpRecord = otpResult.rows[0];
-
-      if (new Date() > new Date(otpRecord.valid_till)) {
-        await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
+      const otpCheck = isOtpDevMode()
+        ? await verifyAndConsumeMobileOtp(client, mobile, otp)
+        : await verifyOtpViaMsg91(mobile, otp);
+      if (!otpCheck.ok) {
         await client.query('COMMIT');
-        return NextResponse.json(
-          { success: false, error: 'OTP has expired. Please request a new one.' },
-          { status: 400 },
-        );
+        return NextResponse.json({ success: false, error: otpCheck.error }, { status: otpCheck.status });
       }
 
-      if (otpRecord.attempts >= MAX_OTP_ATTEMPTS) {
-        await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
+      const partner = await resolvePartnerByMobile(role, mobile, { createIfMissing });
+
+      if (!partner.ok) {
         await client.query('COMMIT');
+        if (role === 'user' && partner.code === 'NEEDS_SIGNUP') {
+          return NextResponse.json({
+            success: true,
+            needsSignup: true,
+            mobile,
+            mobileSignupToken: signMobileSignupToken(mobile),
+            message: partner.error,
+          });
+        }
         return NextResponse.json(
-          { success: false, error: 'Maximum OTP attempts exceeded. Request a new OTP.' },
-          { status: 400 },
+          { success: false, error: partner.error, code: partner.code || null },
+          { status: partner.status },
         );
       }
-
-      await client.query(`UPDATE mobile_otps SET attempts = attempts + 1 WHERE id = $1`, [otpRecord.id]);
-
-      if (!verifyMobileOtp(otp, otpRecord.otp_hash)) {
-        const remaining = MAX_OTP_ATTEMPTS - (otpRecord.attempts + 1);
-        await client.query('COMMIT');
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Incorrect OTP. ${remaining > 0 ? `${remaining} attempt(s) remaining.` : 'Request a new OTP.'}`,
-          },
-          { status: 400 },
-        );
-      }
-
-      await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
 
       let mobileUser;
       try {
@@ -166,13 +132,14 @@ export async function POST(req) {
         [refreshTokenHash, mobileUser.id],
       );
 
-      // Best-effort last_login bump
       if (role === 'agent') {
         await client.query(`UPDATE agents SET last_login_at = NOW() WHERE id = $1`, [partner.entity.id]).catch(() => {});
       } else if (role === 'supplier') {
         await client.query(`UPDATE suppliers SET last_login_at = NOW() WHERE id = $1`, [partner.entity.id]).catch(() => {});
       } else if (role === 'user') {
         await client.query(`UPDATE users SET last_login_at = NOW() WHERE id = $1`, [partner.entity.id]).catch(() => {});
+      } else if (role === 'franchise') {
+        await client.query(`UPDATE franchises SET last_login_at = NOW() WHERE id = $1`, [partner.entity.id]).catch(() => {});
       }
 
       await client.query('COMMIT');
@@ -189,7 +156,6 @@ export async function POST(req) {
 
       return NextResponse.json({
         success: true,
-        // Compatible with existing mobile + email login clients
         token: accessToken,
         accessToken,
         refreshToken,

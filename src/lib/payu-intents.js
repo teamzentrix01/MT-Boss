@@ -1,7 +1,8 @@
 import pool from '@/lib/db';
+import { createInitializationGuard } from '@/lib/api-utils';
 
-export async function ensurePayUIntentSchema(client = pool) {
-  await client.query(`
+const ensurePayUIntentSchemaOnce = createInitializationGuard(async () => {
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS payu_payment_intents (
       id BIGSERIAL PRIMARY KEY,
       txnid TEXT NOT NULL UNIQUE,
@@ -15,6 +16,11 @@ export async function ensurePayUIntentSchema(client = pool) {
       completed_at TIMESTAMPTZ
     )
   `);
+});
+
+/** Schema is global; guard avoids CREATE TABLE round-trips on every request. */
+export async function ensurePayUIntentSchema(_client = pool) {
+  await ensurePayUIntentSchemaOnce();
 }
 
 export function newPayUTxnId(prefix = 'MTB') {

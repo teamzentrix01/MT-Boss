@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function FranchiseLoginPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function FranchiseLoginPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: '', password: '', rememberMe: false });
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -102,11 +104,23 @@ export default function FranchiseLoginPage() {
           <small style={{ color: '#666' }}>Access is limited to franchise features only.</small>
         </div>
 
-        <form onSubmit={submit} style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ margin: '0 0 .35rem', fontSize: '1.45rem' }}>Franchise Login</h2>
-          <p style={{ margin: '0 0 1.5rem', color: dark ? '#a1a1aa' : '#6b7280', fontSize: '.9rem' }}>Use your approved account credentials.</p>
+        <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <PartnerMobileOtpAuth
+            role="franchise"
+            title="Franchise sign in"
+            subtitle="Use the mobile number linked to your approved franchise account."
+            onSuccess={() => router.push('/franchise/dashboard')}
+          />
 
-          {error && (
+          <button
+            type="button"
+            onClick={() => setShowLegacyLogin((v) => !v)}
+            style={{ marginTop: '1rem', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontWeight: 800, fontSize: '.82rem', cursor: 'pointer' }}
+          >
+            {showLegacyLogin ? '← Use mobile OTP' : 'Sign in with email & password (legacy)'}
+          </button>
+
+          {showLegacyLogin && error && (
             <div style={{
               padding: '.8rem 1rem',
               borderRadius: 8,
@@ -120,7 +134,8 @@ export default function FranchiseLoginPage() {
             </div>
           )}
 
-          <label style={{ fontSize: '.76rem', fontWeight: 800, color: dark ? '#d4d4d8' : '#52525b', marginBottom: '.4rem' }}>Email</label>
+          {showLegacyLogin ? <form onSubmit={submit}>
+          <label style={{ fontSize: '.76rem', fontWeight: 800, color: dark ? '#d4d4d8' : '#52525b', marginBottom: '.4rem', marginTop: '1rem' }}>Email</label>
           <input
             type="email"
             value={form.email}
@@ -168,10 +183,12 @@ export default function FranchiseLoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
+          </form> : null}
+
           <p style={{ margin: '1rem 0 0', fontSize: '.82rem', color: dark ? '#71717a' : '#71717a', lineHeight: 1.6 }}>
             Do not have credentials yet? Submit the <Link href="/franchise" style={{ color: 'var(--brand-blue-deep)', fontWeight: 800 }}>franchise form</Link> and wait for admin approval.
           </p>
-        </form>
+        </div>
       </section>
     </main>
   );

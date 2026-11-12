@@ -118,7 +118,6 @@ function buildListingPayload(body, { forUpdate = false } = {}) {
 // GET — public filters + admin all + single id + mine
 export async function GET(req) {
   try {
-    await ensurePropertyListingSchema();
     const { searchParams } = new URL(req.url);
     const listing_type = searchParams.get('listing_type');
     const status = searchParams.get('status');
@@ -140,6 +139,12 @@ export async function GET(req) {
     const order = String(searchParams.get('order') || 'desc').toLowerCase() === 'asc' ? 'ASC' : 'DESC';
     const sortSql = PROPERTY_SORT[sortKey];
     const countsOnly = searchParams.get('counts') === '1' || searchParams.get('counts') === 'true';
+    const statusCountsOnly = searchParams.get('status_counts') === '1' || searchParams.get('status_counts') === 'true';
+
+    // Count-only badge paths only need status/listing_type columns already on properties.
+    if (!countsOnly && !statusCountsOnly) {
+      await ensurePropertyListingSchema();
+    }
 
     if (id) {
       const user = verifyBearer(req);
@@ -183,7 +188,6 @@ export async function GET(req) {
     const isAdmin = Boolean(requireRole(req, 'admin'));
     if (status === 'all' && !isAdmin) return unauthorized();
 
-    const statusCountsOnly = searchParams.get('status_counts') === '1' || searchParams.get('status_counts') === 'true';
     if (statusCountsOnly) {
       if (!isAdmin) return unauthorized();
       const countVals = [];

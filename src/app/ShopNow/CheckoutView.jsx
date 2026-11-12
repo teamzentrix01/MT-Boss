@@ -33,7 +33,20 @@ import { displayUnit, getProductImage, ShopImage } from "./Storefront";
 import { getCartStep } from "@/lib/cart-step";
 import { evaluateCartPromotions } from "@/lib/promotion-calculations";
 import { redirectToPayU } from "@/lib/payu-client";
+import CustomerMobileOtpAuth from "@/app/components/CustomerMobileOtpAuth";
 import "./shop.css";
+
+function readCustomerLoggedIn() {
+  if (typeof window === "undefined") return false;
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+    if (localStorage.getItem("admin-token")) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 function getNextDayDate() {
   const d = new Date();
@@ -148,6 +161,39 @@ export default function CheckoutView({ productId: initialProductId }) {
   const [submitted, setSubmitted] = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState(null);
 
+  const [customerAuthed, setCustomerAuthed] = useState(false);
+
+  const syncCustomerAuth = useCallback(() => {
+    setCustomerAuthed(readCustomerLoggedIn());
+  }, []);
+
+  useEffect(() => {
+    syncCustomerAuth();
+    const onLogin = () => syncCustomerAuth();
+    window.addEventListener("userLoggedIn", onLogin);
+    window.addEventListener("storage", onLogin);
+    return () => {
+      window.removeEventListener("userLoggedIn", onLogin);
+      window.removeEventListener("storage", onLogin);
+    };
+  }, [syncCustomerAuth]);
+
+  const handleAuthSuccess = useCallback(() => {
+    syncCustomerAuth();
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw) {
+        const u = JSON.parse(raw);
+        setFormData((p) => ({
+          ...p,
+          name: p.name || u.name || "",
+          email: p.email || u.email || "",
+          phone: p.phone || u.phone || "",
+        }));
+      }
+    } catch {}
+  }, [syncCustomerAuth]);
+
   // Fetch promotions
   useEffect(() => {
     fetch('/api/shop-promotions')
@@ -205,6 +251,7 @@ export default function CheckoutView({ productId: initialProductId }) {
 
   // ── Wallet balance ──────────────────────────────────────────────────────────
   useEffect(() => {
+    if (!customerAuthed) return;
     const token = localStorage.getItem("token");
     if (!token) return;
     fetch("/api/wallet", { headers: { Authorization: `Bearer ${token}` } })
@@ -213,10 +260,11 @@ export default function CheckoutView({ productId: initialProductId }) {
         if (d?.success && d?.data) setWalletBalance(Number(d.data.balance) || 0);
       })
       .catch(() => {});
-  }, []);
+  }, [customerAuthed]);
 
   // ── Saved addresses ─────────────────────────────────────────────────────────
   useEffect(() => {
+    if (!customerAuthed) return;
     const token = localStorage.getItem("token") || localStorage.getItem("admin-token");
     let list = [];
     const doLoad = async () => {
@@ -244,7 +292,7 @@ export default function CheckoutView({ productId: initialProductId }) {
       }
     };
     doLoad();
-  }, []);
+  }, [customerAuthed]);
 
   const applyAddress = (addr) => {
     if (!addr) return;
@@ -758,10 +806,24 @@ export default function CheckoutView({ productId: initialProductId }) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-2">
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-black">Checkout &amp; Delivery Details</h1>
-          <p className={`text-sm mt-1 ${muted}`}>Please enter your site delivery address to schedule dispatch.</p>
+          <p className={`text-sm mt-1 ${muted}`}>
+            {customerAuthed
+              ? "Please enter your site delivery address to schedule dispatch."
+              : "Sign in with your mobile number to complete checkout. You can browse and add to cart without logging in."}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {!customerAuthed ? (
+          <div className={`max-w-md mx-auto mb-10 p-6 sm:p-8 rounded-3xl border ${card}`}>
+            <CustomerMobileOtpAuth
+              title="Sign in to checkout"
+              subtitle="Verify your mobile with OTP. New customers can create an account on the next step."
+              onSuccess={handleAuthSuccess}
+            />
+          </div>
+        ) : null}
+
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 items-start ${!customerAuthed ? "opacity-40 pointer-events-none select-none" : ""}`}>
           {/* ──────────────────────────────────────────────────────────
               LEFT: FORM INPUTS
              ────────────────────────────────────────────────────────── */}
