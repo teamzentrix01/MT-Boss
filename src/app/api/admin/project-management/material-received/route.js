@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { ensureProjectManagementSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureStaffSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
 
 export async function GET(req) {
   try {
-    await ensureProjectManagementSchema();
+    await ensureStaffSchema();
     const s = new URL(req.url).searchParams;
     const { page, pageSize, offset } = pageParams(s);
     const projectId = Number(s.get('projectId'));
@@ -71,7 +71,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    await ensureProjectManagementSchema();
+    await ensureStaffSchema();
     const b = await req.json();
     const p = Number(b.project_id);
     let m = b.material_id ? Number(b.material_id) : null;
@@ -101,7 +101,12 @@ export async function POST(req) {
         ALTER TABLE pm_material_received 
         ADD COLUMN IF NOT EXISTS bill_url text,
         ADD COLUMN IF NOT EXISTS bill_filename text,
-        ADD COLUMN IF NOT EXISTS unit VARCHAR(50)
+        ADD COLUMN IF NOT EXISTS unit VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS vehicle_no VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS driver_name VARCHAR(150),
+        ADD COLUMN IF NOT EXISTS driver_phone VARCHAR(30),
+        ADD COLUMN IF NOT EXISTS received_by VARCHAR(150),
+        ADD COLUMN IF NOT EXISTS gate_pass_no VARCHAR(100)
       `);
     } catch {}
 
@@ -142,16 +147,24 @@ export async function POST(req) {
       }
 
       const amount = q * rate;
+      const vehicleNo = b.vehicle_no ? String(b.vehicle_no).trim() : null;
+      const driverName = b.driver_name ? String(b.driver_name).trim() : null;
+      const driverPhone = b.driver_phone ? String(b.driver_phone).trim() : null;
+      const receivedBy = b.received_by ? String(b.received_by).trim() : null;
+      const gatePassNo = b.gate_pass_no ? String(b.gate_pass_no).trim() : null;
+
       const r = await c.query(
         `INSERT INTO pm_material_received(
            project_id, material_id, supplier_name, supplier_id, supplier_vendor_id, vendor_supply_id,
-           quantity, rate, amount, received_date, challan_no, note, bill_url, bill_filename, created_by, unit
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+           quantity, rate, amount, received_date, challan_no, note, bill_url, bill_filename, created_by, unit,
+           vehicle_no, driver_name, driver_phone, received_by, gate_pass_no
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
          RETURNING *`,
         [
           p, m, resolvedSupplierName, supplierId, b.supplier_vendor_id || null, b.vendor_supply_id || null,
           q, rate, amount, b.received_date, b.challan_no || null, b.note || null,
-          b.bill_url || null, b.bill_filename || null, actor, selectedUnit
+          b.bill_url || null, b.bill_filename || null, actor, selectedUnit,
+          vehicleNo, driverName, driverPhone, receivedBy, gatePassNo
         ]
       );
 

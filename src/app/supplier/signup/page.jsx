@@ -148,9 +148,10 @@ export default function SupplierSignupPage() {
       if (!formData.aadhaar_number) { setError('Aadhaar number is required'); return false; }
       if (!/^\d{12}$/.test(formData.aadhaar_number.replace(/\s/g, ''))) { setError('Aadhaar must be exactly 12 digits'); return false; }
       if (!formData.aadhaar_document) { setError('Please upload Aadhaar card document (Photo or PDF)'); return false; }
-      if (!formData.pan_number) { setError('PAN number is required'); return false; }
-      if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i.test(formData.pan_number.trim())) { setError('Valid 10-character PAN number is required (e.g., ABCDE1234F)'); return false; }
-      if (!formData.pan_document) { setError('Please upload PAN card document (Photo or PDF)'); return false; }
+      if (formData.pan_number && !/^[A-Z]{4,5}[0-9]{4}[A-Z]{1}$/i.test(formData.pan_number.trim())) {
+        setError('Valid PAN number is required (e.g., ABCDE1234F)');
+        return false;
+      }
       if (formData.gst_number && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i.test(formData.gst_number.trim())) {
         setError('Invalid GST number format (15 characters, e.g., 07AAAAA0000A1Z5)');
         return false;
@@ -463,13 +464,13 @@ export default function SupplierSignupPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.85rem' }}>
                     <span style={{ fontSize: '1.2rem' }}>💳</span>
                     <div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>PAN Card Details <RequiredAsterisk /></div>
-                      <div style={{ fontSize: '0.72rem', color: c.muted }}>Mandatory for business & financial verification</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 700, color: c.text }}>PAN Card Details (Optional)</div>
+                      <div style={{ fontSize: '0.72rem', color: c.muted }}>Optional for business & financial verification</div>
                     </div>
                   </div>
 
                   <div className="ss-field">
-                    <label className="ss-label">PAN Number * (10 characters)</label>
+                    <label className="ss-label">PAN Number (Optional)</label>
                     <input
                       className="ss-input"
                       type="text"
@@ -483,12 +484,11 @@ export default function SupplierSignupPage() {
                       placeholder="e.g. ABCDE1234F"
                       maxLength={10}
                       style={{ textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}
-                      required
                     />
                   </div>
 
                   <div className="ss-field" style={{ marginBottom: 0 }}>
-                    <label className="ss-label">Upload PAN Card (Photo / PDF) <RequiredAsterisk /></label>
+                    <label className="ss-label">Upload PAN Card (Photo / PDF) (Optional)</label>
                     <input
                       type="file"
                       id="upload-pan"

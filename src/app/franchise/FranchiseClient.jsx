@@ -150,6 +150,34 @@ function FranchisePageContent() {
   const paymentStatus = searchParams.get("payment");
   const paymentMessage = searchParams.get("message");
 
+  const [dynamicContent, setDynamicContent] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/franchise/content")
+      .then(res => res.json())
+      .then(d => {
+        if (d.success && d.data) setDynamicContent(d.data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeModels = dynamicContent?.models?.length ? dynamicContent.models : franchiseModels;
+  const activeHero = dynamicContent?.hero || {
+    tagline: "MTBOSS Construction",
+    title: "Franchise",
+    highlightTitle: "Opportunity",
+    subtitle: "Partner with India's trusted construction brand. Build a profitable business with MTBOSS's proven model, technical expertise, and 20+ years of legacy.",
+    backgroundImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80",
+    stats: [
+      { value: "50+", label: "Cities" },
+      { value: "20+", label: "Years Legacy" },
+      { value: "500+", label: "Projects Done" },
+      { value: "3", label: "Franchise Models" },
+    ],
+  };
+  const activeBenefits = dynamicContent?.benefits?.length ? dynamicContent.benefits : benefits;
+  const activeProcess = dynamicContent?.process?.length ? dynamicContent.process : process;
+
   const [form, setForm] = useState({
     // Personal
     name: "", fatherName: "", dob: "", gender: "", maritalStatus: "",
@@ -394,7 +422,7 @@ function FranchisePageContent() {
       <section
         className="relative flex items-center justify-center text-center py-28 px-6"
         style={{
-          backgroundImage: "url(https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80)",
+          backgroundImage: `url(${activeHero.backgroundImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80'})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -410,24 +438,19 @@ function FranchisePageContent() {
           }}
         >
           <span className="text-[var(--brand-blue)] text-[10px] font-black uppercase tracking-[0.4em] block mb-4">
-            MTBOSS Construction
+            {activeHero.tagline || 'MTBOSS Construction'}
           </span>
           <h1 className="text-4xl sm:text-6xl font-black uppercase text-white mb-4 tracking-tighter">
-            Franchise
-            <span className="block text-[var(--brand-blue)]">Opportunity</span>
+            {activeHero.title || 'Franchise'}
+            <span className="block text-[var(--brand-blue)]">{activeHero.highlightTitle || 'Opportunity'}</span>
           </h1>
           <p className="text-zinc-400 text-sm max-w-xl mx-auto mb-8 leading-relaxed">
-            Partner with India&apos;s trusted construction brand. Build a profitable business with MTBOSS&apos;s proven model, technical expertise, and 20+ years of legacy.
+            {activeHero.subtitle}
           </p>
 
           {/* Stats */}
           <div className="flex flex-wrap items-center justify-center gap-8 mt-6">
-            {[
-              { value: "50+", label: "Cities" },
-              { value: "20+", label: "Years Legacy" },
-              { value: "500+", label: "Projects Done" },
-              { value: "3", label: "Franchise Models" },
-            ].map((s) => (
+            {(activeHero.stats || []).map((s) => (
               <div key={s.label} className="text-center">
                 <p className="text-[var(--brand-blue)] text-2xl font-black">{s.value}</p>
                 <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">{s.label}</p>
@@ -469,7 +492,7 @@ function FranchisePageContent() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {franchiseModels.map((model) => (
+            {activeModels.map((model) => (
               <div
                 key={model.id}
                 className={`relative rounded-sm border-2 p-8 transition-all duration-300 flex flex-col ${model.color} ${dark ? "bg-zinc-800" : "bg-white shadow-lg"
@@ -511,7 +534,7 @@ function FranchisePageContent() {
                 </div>
 
                 <ul className="space-y-2 mb-8 flex-1">
-                  {model.features.map((f, i) => (
+                  {(Array.isArray(model.features) ? model.features : []).map((f, i) => (
                     <li key={i} className="flex items-start gap-2">
                       <svg className="w-3.5 h-3.5 text-[var(--brand-blue)] mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -560,7 +583,7 @@ function FranchisePageContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {benefits.map((b, i) => (
+            {activeBenefits.map((b, i) => (
               <div
                 key={i}
                 className={`group p-6 rounded-sm border transition-all duration-300 hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-900 border-zinc-800 hover:bg-zinc-800" : "bg-white border-gray-100 hover:shadow-lg"
@@ -600,7 +623,7 @@ function FranchisePageContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {process.map((p, i) => (
+            {activeProcess.map((p, i) => (
               <div
                 key={i}
                 className={`relative p-6 rounded-sm border transition-all duration-300 group hover:border-[var(--brand-blue)] ${dark ? "bg-zinc-800 border-zinc-700" : "bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md"
@@ -1049,9 +1072,11 @@ function FranchisePageContent() {
                         <label className={labelClass}>Franchise Model <RequiredAsterisk /></label>
                         <select name="model" value={form.model} onChange={handleChange} className={inputClass}>
                           <option value="">Select Model</option>
-                          <option value="Associate Partner">Associate Partner</option>
-                          <option value="Regional Franchise">Regional Franchise</option>
-                          <option value="Master Franchise">Master Franchise</option>
+                          {activeModels.map((m) => (
+                            <option key={m.id || m.name} value={m.name}>
+                              {m.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div>
