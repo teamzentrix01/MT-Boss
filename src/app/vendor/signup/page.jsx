@@ -99,6 +99,8 @@ export default function ServiceProviderSignupPage() {
     if (name === 'phone') {
       const rawDigits = value.replace(/\D/g, '');
       setFormData(prev => ({ ...prev, phone: rawDigits && /^[6-9]/.test(rawDigits) ? rawDigits.slice(0, 10) : '' }));
+    } else if (name === 'vendor_name' || name === 'service provider_name') {
+      setFormData(prev => ({ ...prev, vendor_name: value }));
     } else if (name === 'city') {
       const record = cityRecords.find((row) => row.name === value);
       setFormData(prev => ({
@@ -232,6 +234,7 @@ const handleSubmit = async (e) => {
     try {
       // Build FormData for file uploads
       const payload = new FormData();
+      payload.append('vendor_name', formData.vendor_name);
       payload.append('service provider_name', formData.vendor_name);
       payload.append('email', formData.email);
       payload.append('password', formData.password);
@@ -706,7 +709,7 @@ const handleSubmit = async (e) => {
                     <input
                       className="vs-input"
                       type="text"
-                      name="service provider_name"
+                      name="vendor_name"
                       value={formData.vendor_name}
                       onChange={handleChange}
                       placeholder="Your full name"

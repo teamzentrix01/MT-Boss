@@ -34,7 +34,7 @@ export async function POST(req) {
       console.log('📨 [SIGNUP] Parsing FormData with file uploads...');
       
       const fd = await req.formData();
-      vendor_name   = fd.get('vendor_name');
+      vendor_name   = fd.get('vendor_name') || fd.get('service provider_name');
       email         = fd.get('email');
       password      = fd.get('password');
       phone         = fd.get('phone');
@@ -81,7 +81,7 @@ export async function POST(req) {
     } else {
       console.log('📨 [SIGNUP] Parsing JSON request...');
       const body = await req.json();
-      vendor_name   = body.vendor_name;
+      vendor_name   = body.vendor_name || body['service provider_name'];
       email         = body.email;
       password      = body.password;
       phone         = body.phone;
