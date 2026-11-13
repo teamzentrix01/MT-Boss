@@ -52,6 +52,7 @@ const menuStructure = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard, tab: '' },
   { id: 'users', label: 'Users', icon: Users, tab: 'users' },
   { id: 'agent-tasks', label: 'Tasks', icon: CalendarClock, tab: 'agent-tasks' },
+  { id: 'franchises', label: 'Franchises', icon: BriefcaseBusiness, tab: 'franchises' },
 
   // Approvals
   {
@@ -132,7 +133,6 @@ const menuStructure = [
       { label: 'Shipping Settings', tab: 'shipping-settings' },
       { label: 'Vendor Commission', tab: 'shop-commission-settings' },
       { label: 'Cashback & Wallet', tab: 'cashback' },
-      { label: 'Franchises', tab: 'franchises' },
     ],
   },
 
@@ -194,7 +194,6 @@ const menuStructure = [
     children: [
       { label: 'Office Locations', tab: 'office-locations' },
       { label: 'Cities', tab: 'cities' },
-      // { label: 'Franchises', tab: 'franchises' },
     ],
   },
 

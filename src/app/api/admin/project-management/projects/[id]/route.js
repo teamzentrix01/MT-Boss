@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { requirePmAccess } from '@/lib/project-management';
-import { ensureProjectManagementPhase5Schema, actorFromAdmin, writePmAudit } from '@/lib/project-management';
+import { ensureProjectManagementPhase5Schema, ensureStaffSchema, actorFromAdmin, writePmAudit } from '@/lib/project-management';
 import { recomputeProjectBenchmark } from '@/lib/pm-benchmarks';
 
 const valid = (b) => {
@@ -102,9 +102,59 @@ ind_labour AS (
   WHERE l.project_id = $1
   GROUP BY l.project_id
 ),
+labor_paid AS (
+  SELECT l.project_id, SUM(lp.amount) amount
+  FROM pm_labor l
+  JOIN pm_labor_payments lp ON lp.labor_id = l.id
+  WHERE l.project_id = $1 AND NOT lp.is_deleted
+  GROUP BY l.project_id
+),
 supplier_paid AS (
   SELECT project_id, SUM(amount) amount
   FROM pm_supplier_payments
+  WHERE project_id = $1 AND NOT is_deleted
+  GROUP BY project_id
+),
+commissions AS (
+  SELECT project_id, SUM(amount) amount
+  FROM pm_commissions
+  WHERE project_id = $1 AND NOT is_deleted
+  GROUP BY project_id
+),
+staff_cost AS (
+  SELECT st.project_id,
+         SUM(
+           CASE
+             WHEN st.pay_type = 'per_day' THEN (COALESCE(att.wages, 0) + COALESCE(att.ot, 0))
+             WHEN st.pay_type = 'monthly' THEN (st.salary_rate + COALESCE(att.ot, 0))
+             ELSE st.salary_rate
+           END + COALESCE(st.commission_rate, 0)
+         ) AS total_staff_cost,
+         SUM(
+           CASE
+             WHEN st.pay_type = 'per_day' THEN (COALESCE(att.wages, 0) + COALESCE(att.ot, 0))
+             WHEN st.pay_type = 'monthly' THEN (st.salary_rate + COALESCE(att.ot, 0))
+             ELSE st.salary_rate
+           END
+         ) AS staff_salary_cost,
+         SUM(COALESCE(st.commission_rate, 0)) AS staff_commission_cost
+  FROM pm_project_staff st
+  LEFT JOIN (
+    SELECT staff_id,
+           COALESCE(SUM(wage_amount), 0) wages,
+           COALESCE(SUM(overtime_amount), 0) ot
+    FROM pm_staff_attendance
+    GROUP BY staff_id
+  ) att ON att.staff_id = st.id
+  WHERE st.project_id = $1
+  GROUP BY st.project_id
+),
+staff_paid AS (
+  SELECT project_id,
+         SUM(amount) total_paid_to_staff,
+         SUM(amount) FILTER (WHERE payment_type IN ('salary', 'advance')) staff_salary_paid,
+         SUM(amount) FILTER (WHERE payment_type = 'commission') staff_commission_paid
+  FROM pm_staff_payments
   WHERE project_id = $1 AND NOT is_deleted
   GROUP BY project_id
 )
@@ -121,12 +171,55 @@ SELECT p.*, pa.name party_name,
   COALESCE(dm.amount, 0) direct_material_cost,
   COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) total_material_cost,
   COALESCE(oe.amount, 0) total_other_expenses,
-  (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) total_expense,
+  COALESCE(comm.amount, 0) total_commission,
+  COALESCE(sc.total_staff_cost, 0) total_staff_cost,
+  COALESCE(sc.staff_salary_cost, 0) staff_salary_cost,
+  COALESCE(sc.staff_commission_cost, 0) staff_commission_cost,
+  COALESCE(spaid.total_paid_to_staff, 0) total_paid_to_staff,
+  COALESCE(spaid.staff_salary_paid, 0) staff_salary_paid,
+  COALESCE(spaid.staff_commission_paid, 0) staff_commission_paid,
   COALESCE(vp.amount, 0) total_paid_to_vendors,
   COALESCE(sp.amount, 0) total_paid_to_suppliers,
+  COALESCE(lp.amount, 0) total_paid_to_labor,
+  -- Total Project Expense: labour + material + other expenses + staff cost + commissions
+  (
+    COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) +
+    COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) +
+    COALESCE(oe.amount, 0) +
+    COALESCE(sc.total_staff_cost, 0) +
+    COALESCE(comm.amount, 0)
+  ) total_expense,
+  -- Total Paid Out to everyone
+  (
+    COALESCE(vp.amount, 0) +
+    COALESCE(lp.amount, 0) +
+    COALESCE(sp.amount, 0) +
+    COALESCE(spaid.total_paid_to_staff, 0) +
+    COALESCE(comm.amount, 0) +
+    COALESCE(oe.amount, 0)
+  ) total_paid_out,
+  -- Total Pending Due (Payable across Contractors, Labor, Material Suppliers, and Staff)
+  (
+    GREATEST(0, (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0)) - COALESCE(vp.amount, 0)) +
+    GREATEST(0, COALESCE(il.amount, 0) - COALESCE(lp.amount, 0)) +
+    GREATEST(0, COALESCE(m.amount, 0) - COALESCE(sp.amount, 0)) +
+    GREATEST(0, COALESCE(sc.total_staff_cost, 0) - COALESCE(spaid.total_paid_to_staff, 0))
+  ) total_pending_payable,
   (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(m.amount, 0)) - COALESCE(vp.amount, 0) total_vendor_balance_pending,
-  COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_or_loss,
-  COALESCE(pt.received, 0) - (COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) + COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) + COALESCE(oe.amount, 0)) profit_so_far
+  COALESCE(pt.received, 0) - (
+    COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) +
+    COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) +
+    COALESCE(oe.amount, 0) +
+    COALESCE(sc.total_staff_cost, 0) +
+    COALESCE(comm.amount, 0)
+  ) profit_or_loss,
+  COALESCE(pt.received, 0) - (
+    COALESCE(l.amount, 0) + COALESCE(cd.amount, 0) + COALESCE(il.amount, 0) +
+    COALESCE(m.amount, 0) + COALESCE(dm.amount, 0) +
+    COALESCE(oe.amount, 0) +
+    COALESCE(sc.total_staff_cost, 0) +
+    COALESCE(comm.amount, 0)
+  ) profit_so_far
 FROM pm_projects p
 JOIN pm_parties pa ON pa.id = p.party_id
 LEFT JOIN party_totals pt ON pt.project_id = p.id
@@ -138,6 +231,10 @@ LEFT JOIN direct_mat dm ON dm.project_id = p.id
 LEFT JOIN other_exp oe ON oe.project_id = p.id
 LEFT JOIN ind_labour il ON il.project_id = p.id
 LEFT JOIN supplier_paid sp ON sp.project_id = p.id
+LEFT JOIN labor_paid lp ON lp.project_id = p.id
+LEFT JOIN commissions comm ON comm.project_id = p.id
+LEFT JOIN staff_cost sc ON sc.project_id = p.id
+LEFT JOIN staff_paid spaid ON spaid.project_id = p.id
 WHERE p.id = $1`;
 
 export async function GET(req, { params }) {
@@ -146,6 +243,7 @@ export async function GET(req, { params }) {
     if (!admin) return unauthorized();
     try {
         await ensureProjectManagementPhase5Schema();
+        await ensureStaffSchema();
         const id = Number(paramId);
         let result = await pool.query(PROJECT_DETAIL_SQL, [id]);
 

@@ -200,7 +200,7 @@ export default function Footer() {
       <div className={`py-6 px-6 border-t ${isDark ? "border-zinc-900 bg-zinc-950" : "border-zinc-100 bg-zinc-50"}`}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? "text-zinc-500" : "text-zinc-400"}`}>
-            (c) {new Date().getFullYear()} MTBOSS construction private limited - built with precision
+            (c) {new Date().getFullYear()} MTBOSS - built with precision
           </p>
           <div className="flex items-center gap-6">
             <button

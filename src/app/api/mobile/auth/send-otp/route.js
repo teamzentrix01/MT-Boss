@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { generateSecureOtp, hashMobileOtp } from '@/lib/mobile-auth';
-import { sendOtpSms, isOtpDevMode, DEV_FIXED_OTP } from '@/lib/msg91';
+import { hashMobileOtp } from '@/lib/mobile-auth';
+import { sendOtpViaMsg91, isOtpDevMode, DEV_FIXED_OTP } from '@/lib/msg91';
 import { createInitializationGuard } from '@/lib/api-utils';
 
 const MOBILE_REGEX = /^[6-9]\d{9}$/;
@@ -99,35 +99,36 @@ export async function POST(req) {
         [mobile],
       );
 
-      await client.query(
-        `UPDATE mobile_otps SET used = TRUE WHERE mobile = $1 AND used = FALSE`,
-        [mobile],
-      );
+      if (isDev) {
+        await client.query(
+          `UPDATE mobile_otps SET used = TRUE WHERE mobile = $1 AND used = FALSE`,
+          [mobile],
+        );
 
-      // Temporary: fixed OTP in non-production / OTP_DEV_MODE for end-to-end testing
-      const otp = isDev ? DEV_FIXED_OTP : generateSecureOtp();
-      const otpHash = hashMobileOtp(otp);
-
-      await client.query(
-        `INSERT INTO mobile_otps (mobile, otp_hash, valid_till, expires_at)
-         VALUES ($1, $2, NOW() + INTERVAL '${OTP_VALID_MINUTES} minutes', NOW() + INTERVAL '${OTP_EXPIRES_HOURS} hours')`,
-        [mobile, otpHash],
-      );
+        const otpHash = hashMobileOtp(DEV_FIXED_OTP);
+        await client.query(
+          `INSERT INTO mobile_otps (mobile, otp_hash, valid_till, expires_at)
+           VALUES ($1, $2, NOW() + INTERVAL '${OTP_VALID_MINUTES} minutes', NOW() + INTERVAL '${OTP_EXPIRES_HOURS} hours')`,
+          [mobile, otpHash],
+        );
+      }
 
       await client.query('COMMIT');
 
       try {
-        // Dev: no real SMS (sendOtpSms short-circuits). Prod: MSG91.
-        await sendOtpSms(mobile, otp);
+        // Dev: local hash only (no SMS). Prod: MSG91 generates and sends OTP.
+        await sendOtpViaMsg91(mobile);
       } catch (smsErr) {
-        await pool.query(
-          `UPDATE mobile_otps
-              SET used = TRUE
-            WHERE mobile = $1
-              AND used = FALSE
-              AND created_at > NOW() - INTERVAL '5 seconds'`,
-          [mobile],
-        );
+        if (isDev) {
+          await pool.query(
+            `UPDATE mobile_otps
+                SET used = TRUE
+              WHERE mobile = $1
+                AND used = FALSE
+                AND created_at > NOW() - INTERVAL '5 seconds'`,
+            [mobile],
+          );
+        }
         console.error('[send-otp] SMS delivery failed:', smsErr.message);
         return NextResponse.json(
           { success: false, error: 'Failed to send OTP. Please try again.' },

@@ -22,15 +22,18 @@ export async function GET(req) {
     const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    await ensureSupplierColumns();
-    await ensurePayUIntentSchema();
-
     const { searchParams } = new URL(req.url);
     const status = String(searchParams.get('status') || '').trim();
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
     const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '100', 10) || 100));
     const offset = (page - 1) * limit;
     const countsOnly = searchParams.get('counts') === '1';
+
+    // Count-only badge polls only need suppliers.status — skip package/PayU DDL.
+    if (!countsOnly) {
+      await ensureSupplierColumns();
+      await ensurePayUIntentSchema();
+    }
 
     const vals = [];
     const where = [];

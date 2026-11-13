@@ -4,6 +4,8 @@ import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Mail, Lock, Eye, EyeOff, Smartphone, ArrowRight, Clock, AlertTriangle } from 'lucide-react';
+import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function SupplierLoginPage() {
   const router = useRouter();
@@ -20,6 +22,8 @@ export default function SupplierLoginPage() {
     password: '',
     rememberMe: false,
   });
+  // 'mobile' or 'email'
+  const [authMode, setAuthMode] = useState('mobile');
 
   // Monitor dark mode
   useEffect(() => {
@@ -71,7 +75,6 @@ export default function SupplierLoginPage() {
         localStorage.setItem('supplier', JSON.stringify(data.supplier));
         router.push('/supplier/dashboard');
       } else {
-        // Check if blocked due to pending/rejected approval
         if (data.status === 'pending') {
           setApprovalStatus('pending');
         } else if (data.status === 'rejected') {
@@ -88,561 +91,453 @@ export default function SupplierLoginPage() {
     }
   };
 
+  const isDark = dark;
+  const brandGreen = '#10b981';
+
   return (
-    <>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: isDark ? '#050505' : '#f5f5f7',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+        fontFamily: "'DM Sans', system-ui, sans-serif",
+      }}
+    >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
-
-        .sl-root {
-          min-height: 100vh;
-          background: ${dark ? '#0a0a0a' : '#f0f0f0'};
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 1.5rem;
-          font-family: 'DM Sans', system-ui, sans-serif;
-          transition: background-color 0.4s;
-        }
-
-        /* Main card with split layout */
-        .sl-card {
+        .sup-card {
           width: 100%;
-          max-width: 900px;
-          display: grid;
-          grid-template-columns: 420px 1fr;
+          max-width: 880px;
+          display: flex;
+          background: ${isDark ? '#111' : '#fff'};
+          border: 1px solid ${isDark ? '#27272a' : '#e5e7eb'};
           border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.12);
         }
 
-        /* Left panel - dark branding side */
-        .sl-left {
-          background: ${dark ? '#0d0d0d' : '#111'};
-          padding: 3rem 2.5rem;
+        .sup-left {
+          flex: 0 0 340px;
+          background: #0f1115;
+          color: #fff;
+          padding: 2.75rem 2.25rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           position: relative;
-          overflow: hidden;
         }
 
-        .sl-left::before {
-          content: '';
-          position: absolute;
-          top: -80px;
-          right: -80px;
-          width: 250px;
-          height: 250px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
-          pointer-events: none;
-        }
-
-        .sl-left::after {
-          content: '';
-          position: absolute;
-          bottom: -60px;
-          left: -60px;
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
-          pointer-events: none;
-        }
-
-        .sl-logo {
-          font-size: 1.15rem;
-          font-weight: 800;
-          color: #fff;
-          letter-spacing: -0.02em;
-          position: relative;
-          z-index: 1;
-        }
-
-        .sl-logo span {
-          color: #10b981;
-        }
-
-        .sl-left-content {
-          position: relative;
-          z-index: 1;
-        }
-
-        .sl-left-heading {
-          font-size: 2rem;
-          font-weight: 800;
-          color: #fff;
-          line-height: 1.2;
-          margin-bottom: 1rem;
-          letter-spacing: -0.03em;
-        }
-
-        .sl-left-desc {
-          font-size: 0.9rem;
-          color: #888;
-          line-height: 1.6;
-        }
-
-        .sl-copyright {
-          font-size: 0.75rem;
-          color: #555;
-          position: relative;
-          z-index: 1;
-        }
-
-        /* Right panel - form side */
-        .sl-right {
-          background: ${dark ? '#1a1a1a' : '#fff'};
-          padding: 3rem 2.5rem;
+        .sup-right {
+          flex: 1;
+          padding: 2.5rem 2.25rem;
           display: flex;
           flex-direction: column;
           justify-content: center;
+          background: ${isDark ? '#141417' : '#ffffff'};
         }
 
-        .sl-form-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: ${dark ? '#fff' : '#111'};
-          margin-bottom: 0.4rem;
-          letter-spacing: -0.02em;
+        .sup-tab-bar {
+          display: flex;
+          background: ${isDark ? '#1f1f23' : '#f1f5f9'};
+          padding: 4px;
+          border-radius: 10px;
+          margin-bottom: 1.5rem;
+          border: 1px solid ${isDark ? '#2e2e33' : '#e2e8f0'};
         }
 
-        .sl-form-subtitle {
-          font-size: 0.875rem;
-          color: ${dark ? '#888' : '#666'};
-          margin-bottom: 2rem;
-        }
-
-        /* Generic error message */
-        .sl-error {
-          padding: 0.875rem 1rem;
-          background: ${dark ? '#2d0a0a' : '#fff0f0'};
-          border: 1px solid ${dark ? '#7f1d1d' : '#fca5a5'};
-          border-radius: 8px;
-          color: ${dark ? '#f87171' : '#dc2626'};
-          font-size: 0.875rem;
-          margin-bottom: 1.25rem;
+        .sup-tab-btn {
+          flex: 1;
           display: flex;
           align-items: center;
-          gap: 0.6rem;
-        }
-
-        /* ── Approval status banners ── */
-        .sl-approval-banner {
-          border-radius: 10px;
-          padding: 1.1rem 1.25rem;
-          margin-bottom: 1.25rem;
-          display: flex;
-          gap: 0.85rem;
-          align-items: flex-start;
-        }
-
-        .sl-approval-banner.pending {
-          background: ${dark ? '#0d1f14' : '#ecfdf5'};
-          border: 1px solid ${dark ? '#065f46' : '#6ee7b7'};
-        }
-
-        .sl-approval-banner.rejected {
-          background: ${dark ? '#2d0a0a' : '#fff0f0'};
-          border: 1px solid ${dark ? '#7f1d1d' : '#fca5a5'};
-        }
-
-        .sl-banner-icon {
-          font-size: 1.4rem;
-          flex-shrink: 0;
-          margin-top: 0.05rem;
-        }
-
-        .sl-banner-body {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-
-        .sl-banner-title {
-          font-size: 0.9rem;
+          justify-content: center;
+          gap: 6px;
+          padding: 0.6rem 0.75rem;
+          border-radius: 7px;
+          font-size: 0.8125rem;
           font-weight: 700;
+          border: none;
+          background: transparent;
+          color: ${isDark ? '#a1a1aa' : '#64748b'};
+          cursor: pointer;
+          transition: all 0.2s ease;
         }
 
-        .pending .sl-banner-title  { color: ${dark ? '#34d399' : '#065f46'}; }
-        .rejected .sl-banner-title { color: ${dark ? '#f87171' : '#dc2626'}; }
-
-        .sl-banner-msg {
-          font-size: 0.82rem;
-          line-height: 1.55;
+        .sup-tab-btn.active {
+          background: ${isDark ? '#27272a' : '#ffffff'};
+          color: ${isDark ? '#ffffff' : '#0f172a'};
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        .pending .sl-banner-msg  { color: ${dark ? '#6ee7b7' : '#047857'}; }
-        .rejected .sl-banner-msg { color: ${dark ? '#fca5a5' : '#b91c1c'}; }
-
-        /* Form fields */
-        .sl-field {
-          margin-bottom: 1.1rem;
-        }
-
-        .sl-label {
-          display: block;
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: ${dark ? '#aaa' : '#555'};
-          margin-bottom: 0.5rem;
-          letter-spacing: 0.02em;
-        }
-
-        .sl-input-wrap {
+        .sup-input-wrap {
           position: relative;
           display: flex;
           align-items: center;
-        }
-
-        .sl-input-icon {
-          position: absolute;
-          left: 0.85rem;
-          color: ${dark ? '#555' : '#bbb'};
-          font-size: 0.95rem;
-          pointer-events: none;
-          display: flex;
-          align-items: center;
-        }
-
-        .sl-input {
           width: 100%;
-          padding: 0.75rem 0.875rem 0.75rem 2.5rem;
-          border: 1.5px solid ${dark ? '#333' : '#e5e7eb'};
-          border-radius: 8px;
-          background: ${dark ? '#111' : '#f9fafb'};
-          color: ${dark ? '#fff' : '#111'};
-          font-size: 0.875rem;
-          font-family: inherit;
+        }
+
+        .sup-input-icon {
+          position: absolute;
+          left: 0.9rem;
+          color: ${isDark ? '#71717a' : '#9ca3af'};
+          pointer-events: none;
+        }
+
+        .sup-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+          border-radius: 10px;
+          border: 1px solid ${isDark ? '#3f3f46' : '#d4d4d8'};
+          background: ${isDark ? '#18181b' : '#fafafa'};
+          color: inherit;
+          font-size: 0.9rem;
           outline: none;
-          transition: border-color 0.2s, background 0.2s;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        .sl-input:focus {
+        .sup-input:focus {
           border-color: #10b981;
-          background: ${dark ? '#0d1f17' : '#f0fdf4'};
+          box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+          background: ${isDark ? '#18181b' : '#ffffff'};
         }
 
-        .sl-input::placeholder {
-          color: ${dark ? '#444' : '#c0c0c0'};
-        }
-
-        .sl-pwd-toggle {
+        .sup-pw-toggle {
           position: absolute;
           right: 0.85rem;
-          background: none;
+          background: transparent;
           border: none;
+          color: ${isDark ? '#a1a1aa' : '#71717a'};
           cursor: pointer;
-          color: ${dark ? '#555' : '#bbb'};
           display: flex;
           align-items: center;
-          padding: 0;
-          font-size: 1rem;
-          transition: color 0.2s;
+          padding: 4px;
         }
 
-        .sl-pwd-toggle:hover {
-          color: ${dark ? '#aaa' : '#666'};
-        }
-
-        .sl-options {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 1.5rem;
-          margin-top: 0.25rem;
-        }
-
-        .sl-remember {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          cursor: pointer;
-          font-size: 0.875rem;
-          color: ${dark ? '#aaa' : '#555'};
-          user-select: none;
-        }
-
-        .sl-remember input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          accent-color: #10b981;
-          cursor: pointer;
-        }
-
-        .sl-forgot {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #10b981;
-          text-decoration: none;
-        }
-
-        .sl-forgot:hover {
-          text-decoration: underline;
-        }
-
-        .sl-btn {
+        .sup-submit-btn {
           width: 100%;
-          padding: 0.875rem;
-          background: #10b981;
-          color: #fff;
           border: none;
-          border-radius: 8px;
-          font-size: 0.9rem;
-          font-weight: 700;
-          font-family: inherit;
+          border-radius: 10px;
+          background: #10b981;
+          color: #ffffff;
+          padding: 0.85rem 1rem;
+          font-weight: 800;
+          font-size: 0.925rem;
           cursor: pointer;
-          letter-spacing: 0.02em;
-          transition: opacity 0.2s, transform 0.1s;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
+          transition: opacity 0.2s, transform 0.1s;
         }
 
-        .sl-btn:hover:not(:disabled) {
-          opacity: 0.92;
-        }
-
-        .sl-btn:active:not(:disabled) {
-          transform: scale(0.99);
-        }
-
-        .sl-btn:disabled {
+        .sup-submit-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
-
-        .sl-register {
-          text-align: center;
-          font-size: 0.875rem;
-          color: ${dark ? '#777' : '#888'};
-          margin-top: 1.25rem;
+        .sup-mode-link {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          color: #10b981 !important;
+          font-weight: 600 !important;
+          font-size: 0.85rem !important;
+          cursor: pointer !important;
+          padding: 6px 10px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 4px !important;
+          text-decoration: none !important;
+          transition: opacity 0.15s ease !important;
+        }
+        .sup-mode-link:hover {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          text-decoration: underline !important;
+          opacity: 0.85 !important;
         }
 
-        .sl-register a {
-          color: #10b981;
-          font-weight: 700;
-          text-decoration: none;
-        }
-
-        .sl-register a:hover {
-          text-decoration: underline;
-        }
-
-        .sl-terms {
-          text-align: center;
-          font-size: 0.75rem;
-          color: ${dark ? '#555' : '#aaa'};
-          margin-top: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .sl-terms a {
-          color: ${dark ? '#777' : '#888'};
-          text-decoration: none;
-        }
-
-        .sl-terms a:hover {
-          text-decoration: underline;
-        }
-
-        @media (max-width: 700px) {
-          .sl-card {
-            grid-template-columns: 1fr;
+        @media (max-width: 768px) {
+          .sup-card {
+            flex-direction: column;
           }
-          .sl-left {
-            padding: 2rem 1.75rem;
-            min-height: 200px;
+          .sup-left {
+            display: none !important;
           }
-          .sl-left-heading {
-            font-size: 1.5rem;
+          .sup-right {
+            padding: 2rem 1.25rem;
           }
-          .sl-copyright {
-            display: none;
-          }
-          .sl-right {
-            padding: 2rem 1.75rem;
-          }
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        .sl-spinner {
-          width: 16px;
-          height: 16px;
-          border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
         }
       `}</style>
 
-      <div className="sl-root">
-        <div className="sl-card">
-
-          {/* ── Left branding panel ── */}
-          <div className="sl-left">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="sl-logo">VENDOR<span>HUB</span></div>
-              <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 600, color: '#666', textDecoration: 'none', padding: '0.35rem 0.75rem', border: '1px solid #333', borderRadius: 6, transition: 'all 0.2s', position: 'relative', zIndex: 1 }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#10b981'; e.currentTarget.style.borderColor = '#10b981'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = '#333'; }}>
-                ← Home
-              </Link>
+      <div className="sup-card">
+        {/* Left Branding Panel */}
+        <div className="sup-left">
+          <div>
+            <div style={{ fontWeight: 900, fontSize: '1.05rem', marginBottom: '2rem' }}>
+              MT<span style={{ color: brandGreen }}>BOSS</span>
+              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 800, color: '#fff', background: '#059669', padding: '3px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>
+                VENDOR
+              </span>
             </div>
-
-            <div className="sl-left-content">
-              <div className="sl-left-heading">
-                Grow your business<br />with us.
-              </div>
-              <div className="sl-left-desc">
-                Sign in to your vendor dashboard —<br />
-                manage products, orders, analytics and<br />
-                more, all in one place.
-              </div>
+            <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#fff', lineHeight: 1.28, marginBottom: '0.75rem' }}>
+              Vendors & Partner Portal
             </div>
-
-            <div className="sl-copyright">
-              © {new Date().getFullYear()} Vendor Hub. All rights reserved.
-            </div>
+            <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7 }}>
+              Manage material inventory, process direct supply orders, track payouts, and communicate with project teams seamlessly.
+            </p>
           </div>
+          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>© {new Date().getFullYear()} MTBOSS. All rights reserved.</div>
+        </div>
 
-          {/* ── Right form panel ── */}
-          <div className="sl-right">
-            <div className="sl-form-title">Welcome back, Vendor</div>
-            <div className="sl-form-subtitle">Sign in to your vendor account to continue</div>
+        {/* Right Form Panel */}
+        <div className="sup-right">
+          <Link
+            href="/login"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: isDark ? '#a1a1aa' : '#64748b',
+              textDecoration: 'none',
+              marginBottom: '1.25rem',
+            }}
+          >
+            ← Back to Customer Login
+          </Link>
 
-            {/* Generic error */}
-            {error && (
-              <div className="sl-error">
-                <span>⚠️</span> {error}
+          {authMode === 'mobile' ? (
+            <div>
+              <PartnerMobileOtpAuth
+                role="supplier"
+                title="Vendor sign in"
+                subtitle="Use the mobile number on your approved supplier account."
+                onSuccess={() => router.push('/supplier/dashboard')}
+              />
+
+              <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('email');
+                    setError('');
+                  }}
+                  className="sup-mode-link no-global-btn"
+                >
+                  Sign in with email & password instead →
+                </button>
               </div>
-            )}
+            </div>
+          ) : (
+            <div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <h2 style={{ margin: '0 0 .35rem', fontSize: '1.35rem', fontWeight: 800 }}>Vendor Sign In</h2>
+                <p style={{ margin: 0, color: isDark ? '#a1a1aa' : '#64748b', fontSize: '.84rem' }}>
+                  Use your registered account email and password.
+                </p>
+              </div>
 
-            {/* Pending approval banner */}
-            {approvalStatus === 'pending' && (
-              <div className="sl-approval-banner pending">
-                <span className="sl-banner-icon">⏳</span>
-                <div className="sl-banner-body">
-                  <div className="sl-banner-title">Account Pending Approval</div>
-                  <div className="sl-banner-msg">
-                    Your account is under review by our admin team. You will be notified once approved. Please check back later.
+              {error && (
+                <div style={{
+                  padding: '.75rem .95rem',
+                  borderRadius: 10,
+                  background: isDark ? '#2a0a0a' : '#fff1f2',
+                  color: isDark ? '#fca5a5' : '#9f1239',
+                  border: `1px solid ${isDark ? '#7f1d1d' : '#fecdd3'}`,
+                  fontSize: '.84rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', flexShrink: 0 }} />
+                  {error}
+                </div>
+              )}
+
+              {approvalStatus === 'pending' && (
+                <div style={{
+                  padding: '.85rem 1rem',
+                  borderRadius: 10,
+                  background: isDark ? '#2a1f0a' : '#fffbeb',
+                  color: isDark ? '#fde68a' : '#b45309',
+                  border: `1px solid ${isDark ? '#78350f' : '#fde68a'}`,
+                  fontSize: '.84rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  gap: '10px'
+                }}>
+                  <Clock size={18} style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <div style={{ fontWeight: 800, marginBottom: 2 }}>Account Pending Approval</div>
+                    <div style={{ fontSize: '.8rem', opacity: 0.9 }}>
+                      Your account is under review by our admin team. You will be notified once approved. Please check back later.
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Rejected banner */}
-            {approvalStatus === 'rejected' && (
-              <div className="sl-approval-banner rejected">
-                <span className="sl-banner-icon">🚫</span>
-                <div className="sl-banner-body">
-                  <div className="sl-banner-title">Account Not Approved</div>
-                  <div className="sl-banner-msg">
-                    Your vendor account was not approved. Please contact support for more information.
+              {approvalStatus === 'rejected' && (
+                <div style={{
+                  padding: '.85rem 1rem',
+                  borderRadius: 10,
+                  background: isDark ? '#2a0a0a' : '#fff1f2',
+                  color: isDark ? '#fca5a5' : '#9f1239',
+                  border: `1px solid ${isDark ? '#7f1d1d' : '#fecdd3'}`,
+                  fontSize: '.84rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  gap: '10px'
+                }}>
+                  <AlertTriangle size={18} style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <div style={{ fontWeight: 800, marginBottom: 2 }}>Account Not Approved</div>
+                    <div style={{ fontSize: '.8rem', opacity: 0.9 }}>
+                      Your supplier account was not approved. Please contact support for more information.
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <form onSubmit={handleSubmit}>
-
-              {/* Email field */}
-              <div className="sl-field">
-                <label className="sl-label">Email address <RequiredAsterisk /></label>
-                <div className="sl-input-wrap">
-                  <span className="sl-input-icon">✉</span>
-                  <input
-                    className="sl-input"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="supplier@example.com"
-                    autoComplete="email"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Password field */}
-              <div className="sl-field">
-                <label className="sl-label">Password <RequiredAsterisk /></label>
-                <div className="sl-input-wrap">
-                  <span className="sl-input-icon">🔒</span>
-                  <input
-                    className="sl-input"
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    autoComplete="current-password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="sl-pwd-toggle"
-                    onClick={() => setShowPassword(p => !p)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+                <div>
+                  <label
+                    htmlFor="sup-email"
+                    style={{
+                      display: 'block',
+                      fontSize: '.78rem',
+                      fontWeight: 700,
+                      color: isDark ? '#d4d4d8' : '#374151',
+                      marginBottom: '.4rem',
+                    }}
                   >
-                    {showPassword ? '🙈' : '👁'}
-                  </button>
+                    Email address <RequiredAsterisk />
+                  </label>
+                  <div className="sup-input-wrap">
+                    <Mail className="sup-input-icon" size={17} strokeWidth={2} />
+                    <input
+                      id="sup-email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="supplier@example.com"
+                      autoComplete="email"
+                      required
+                      className="sup-input"
+                    />
+                  </div>
                 </div>
+
+                <div>
+                  <label
+                    htmlFor="sup-password"
+                    style={{
+                      display: 'block',
+                      fontSize: '.78rem',
+                      fontWeight: 700,
+                      color: isDark ? '#d4d4d8' : '#374151',
+                      marginBottom: '.4rem',
+                    }}
+                  >
+                    Password <RequiredAsterisk />
+                  </label>
+                  <div className="sup-input-wrap">
+                    <Lock className="sup-input-icon" size={17} strokeWidth={2} />
+                    <input
+                      id="sup-password"
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="••••••••••••"
+                      autoComplete="current-password"
+                      required
+                      className="sup-input"
+                      style={{ paddingRight: '2.75rem' }}
+                    />
+                    <button
+                      type="button"
+                      className="sup-pw-toggle"
+                      onClick={() => setShowPassword(p => !p)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={17} strokeWidth={2} /> : <Eye size={17} strokeWidth={2} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '-0.25rem' }}>
+                  <label style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem', fontSize: '.84rem', color: isDark ? '#a1a1aa' : '#4b5563', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      name="rememberMe"
+                      checked={formData.rememberMe}
+                      onChange={handleChange}
+                      style={{ accentColor: '#10b981', cursor: 'pointer' }}
+                    />
+                    Remember me
+                  </label>
+                  <Link href="/supplier/forgot-password" style={{ fontSize: '0.8rem', fontWeight: 700, color: brandGreen, textDecoration: 'none' }}>
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <button type="submit" disabled={loading} className="sup-submit-btn">
+                  {loading ? 'Signing in…' : (
+                    <>
+                      Sign In
+                      <ArrowRight size={16} strokeWidth={2.4} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('mobile');
+                    setError('');
+                  }}
+                  className="sup-mode-link no-global-btn"
+                >
+                  ← Use mobile OTP instead
+                </button>
               </div>
-
-              {/* Remember me + Forgot password */}
-              <div className="sl-options">
-                <label className="sl-remember">
-                  <input
-                    type="checkbox"
-                    name="rememberMe"
-                    checked={formData.rememberMe}
-                    onChange={handleChange}
-                  />
-                  Remember me
-                </label>
-                <Link href="/supplier/forgot-password" className="sl-forgot">
-                  Forgot password?
-                </Link>
-              </div>
-
-              {/* Submit button */}
-              <button
-                type="submit"
-                className="sl-btn"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <div className="sl-spinner" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>Sign In →</>
-                )}
-              </button>
-            </form>
-
-            {/* Register link */}
-            <div className="sl-register">
-              Don&apos;t have a supplier account?{' '}
-              <Link href="/supplier/signup">Register here</Link>
             </div>
+          )}
 
-            {/* Terms */}
-            <div className="sl-terms">
+          <div style={{
+            margin: '1.75rem 0 0',
+            paddingTop: '1.25rem',
+            borderTop: `1px solid ${isDark ? '#27272a' : '#f1f5f9'}`,
+            textAlign: 'center',
+          }}>
+            <p style={{ margin: '0 0 0.5rem', fontSize: '.82rem', color: isDark ? '#888' : '#64748b' }}>
+              Don&apos;t have a Vendor account?{' '}
+              <Link href="/supplier/signup" style={{ color: brandGreen, fontWeight: 800, textDecoration: 'none' }}>
+                Register here
+              </Link>
+            </p>
+            <div style={{ fontSize: '.72rem', color: isDark ? '#666' : '#9ca3af' }}>
               By signing in, you agree to our{' '}
-              <Link href="/terms">Terms of Service</Link>{' '}
+              <Link href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>Terms</Link>{' '}
               and{' '}
-              <Link href="/privacy">Privacy Policy</Link>
+              <Link href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy Policy</Link>
             </div>
           </div>
-
         </div>
       </div>
-    </>
+    </div>
   );
 }

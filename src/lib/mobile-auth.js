@@ -14,8 +14,10 @@ import { isAdminEmail } from '@/lib/admin-email';
 import { signAgentToken } from '@/lib/agent-auth';
 import { normalizePhone } from '@/lib/validation';
 import { BLOCKED_ACCOUNT_MESSAGE, ensureUserModerationSchema } from '@/lib/user-moderation';
+import { ensureFranchiseAccessColumns } from '@/lib/franchise-access';
+import { normalizeFranchisePermissions } from '@/lib/franchise-permissions';
 
-export const VALID_MOBILE_ROLES = ['agent', 'vendor', 'supplier', 'user'];
+export const VALID_MOBILE_ROLES = ['agent', 'vendor', 'supplier', 'user', 'franchise'];
 
 // ─── Secrets ────────────────────────────────────────────────────────────────
 
@@ -68,7 +70,7 @@ const PHONE_MATCH_SQL = `RIGHT(regexp_replace(COALESCE(phone, ''), '\\D', '', 'g
  * Does not create accounts — OTP login is only for registered partners.
  * @returns {{ ok: true, entity: object, profile: object } | { ok: false, status: number, error: string, code?: string }}
  */
-async function resolveCustomerByMobile(mobile) {
+async function resolveCustomerByMobile(mobile, { createIfMissing = false } = {}) {
   await ensureUserModerationSchema();
   const result = await pool.query(
     `SELECT id, email, name, phone, is_blocked
@@ -81,6 +83,14 @@ async function resolveCustomerByMobile(mobile) {
 
   let user = result.rows[0];
   if (!user) {
+    if (!createIfMissing) {
+      return {
+        ok: false,
+        status: 404,
+        code: 'NEEDS_SIGNUP',
+        error: 'No account found for this mobile number. Please create an account.',
+      };
+    }
     const email = `m${mobile}@otp.mtboss.local`;
     const emailTaken = await pool.query(`SELECT id FROM users WHERE LOWER(TRIM(email)) = LOWER(TRIM($1)) LIMIT 1`, [email]);
     if (emailTaken.rows.length > 0) {
@@ -128,7 +138,7 @@ async function resolveCustomerByMobile(mobile) {
   };
 }
 
-export async function resolvePartnerByMobile(role, mobileRaw) {
+export async function resolvePartnerByMobile(role, mobileRaw, options = {}) {
   const mobile = normalizePhone(mobileRaw);
   if (!VALID_MOBILE_ROLES.includes(role)) {
     return { ok: false, status: 400, error: `Invalid role. Must be one of: ${VALID_MOBILE_ROLES.join(', ')}.` };
@@ -138,7 +148,7 @@ export async function resolvePartnerByMobile(role, mobileRaw) {
   }
 
   if (role === 'user') {
-    return resolveCustomerByMobile(mobile);
+    return resolveCustomerByMobile(mobile, options);
   }
 
   if (role === 'agent') {
@@ -291,6 +301,57 @@ export async function resolvePartnerByMobile(role, mobileRaw) {
     };
   }
 
+  if (role === 'franchise') {
+    await ensureFranchiseAccessColumns();
+    const result = await pool.query(
+      `SELECT id, name, email, phone, city, state, status, login_enabled, permissions
+         FROM franchises
+        WHERE ${PHONE_MATCH_SQL}
+        ORDER BY (status = 'Approved' AND login_enabled IS TRUE) DESC, id DESC
+        LIMIT 1`,
+      [mobile],
+    );
+    const franchise = result.rows[0];
+    if (!franchise) {
+      return {
+        ok: false,
+        status: 404,
+        code: 'NOT_FOUND',
+        error: 'No franchise account found for this mobile number. Contact admin after approval.',
+      };
+    }
+    if (franchise.status !== 'Approved') {
+      return {
+        ok: false,
+        status: 403,
+        code: 'PENDING_APPROVAL',
+        error: 'Your franchise application is not approved yet. Please contact admin.',
+      };
+    }
+    if (!franchise.login_enabled) {
+      return {
+        ok: false,
+        status: 403,
+        code: 'LOGIN_DISABLED',
+        error: 'Franchise login is not enabled. Contact admin.',
+      };
+    }
+    const permissions = normalizeFranchisePermissions(franchise.permissions);
+    return {
+      ok: true,
+      entity: { ...franchise, permissions },
+      profile: {
+        id: franchise.id,
+        mobile,
+        name: franchise.name,
+        email: franchise.email,
+        role: 'franchise',
+        status: 'active',
+        phone: franchise.phone,
+      },
+    };
+  }
+
   // supplier
   const result = await pool.query(
     `SELECT id, email, shop_name, phone, city, state, status, is_active, rejection_reason
@@ -367,6 +428,19 @@ export function signPartnerAccessToken(role, entity) {
   if (role === 'user') {
     return jwt.sign(
       { id: entity.id, email: entity.email, role: 'user' },
+      getJwtSecret(),
+      { expiresIn: process.env.JWT_EXPIRY || '7d' },
+    );
+  }
+  if (role === 'franchise') {
+    return jwt.sign(
+      {
+        id: entity.id,
+        email: entity.email,
+        name: entity.name,
+        city: entity.city,
+        role: 'franchise',
+      },
       getJwtSecret(),
       { expiresIn: process.env.JWT_EXPIRY || '7d' },
     );
@@ -464,8 +538,92 @@ export async function upsertMobileUserSession(client, { mobile, role, entityId, 
 /**
  * Reload partner entity for refresh / me using linked mobile_users row.
  */
+function getMobileSignupSecret() {
+  const s = process.env.MOBILE_SIGNUP_SECRET || process.env.OTP_SECRET;
+  if (s) return s;
+  if (process.env.NODE_ENV !== 'production') return 'dev-mobile-signup-secret';
+  return process.env.JWT_SECRET || 'dev-mobile-signup-secret';
+}
+
+/** Short-lived proof that a mobile number passed OTP verification (web signup after OTP). */
+export function signMobileSignupToken(mobile) {
+  const normalized = normalizePhone(mobile);
+  return jwt.sign(
+    { type: 'mobile_signup', mobile: normalized, role: 'user' },
+    getMobileSignupSecret(),
+    { expiresIn: '20m' },
+  );
+}
+
+export function verifyMobileSignupToken(token) {
+  if (!token) return null;
+  try {
+    const payload = jwt.verify(token, getMobileSignupSecret());
+    if (payload?.type !== 'mobile_signup' || !payload.mobile) return null;
+    return { mobile: normalizePhone(payload.mobile), role: 'user' };
+  } catch {
+    return null;
+  }
+}
+
+const MAX_OTP_ATTEMPTS = 5;
+
+/**
+ * Verify and consume a mobile OTP inside an open transaction (client must BEGIN).
+ * @returns {Promise<{ ok: true } | { ok: false, status: number, error: string }>}
+ */
+export async function verifyAndConsumeMobileOtp(client, mobile, otp) {
+  const otpResult = await client.query(
+    `SELECT id, otp_hash, attempts, valid_till
+       FROM mobile_otps
+      WHERE mobile = $1 AND used = FALSE AND expires_at > NOW()
+      ORDER BY created_at DESC
+      LIMIT 1
+      FOR UPDATE`,
+    [mobile],
+  );
+
+  if (otpResult.rows.length === 0) {
+    return { ok: false, status: 400, error: 'No valid OTP found. Please request a new one.' };
+  }
+
+  const otpRecord = otpResult.rows[0];
+
+  if (new Date() > new Date(otpRecord.valid_till)) {
+    await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
+    return { ok: false, status: 400, error: 'OTP has expired. Please request a new one.' };
+  }
+
+  if (otpRecord.attempts >= MAX_OTP_ATTEMPTS) {
+    await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
+    return { ok: false, status: 400, error: 'Maximum OTP attempts exceeded. Request a new OTP.' };
+  }
+
+  await client.query(`UPDATE mobile_otps SET attempts = attempts + 1 WHERE id = $1`, [otpRecord.id]);
+
+  if (!verifyMobileOtp(otp, otpRecord.otp_hash)) {
+    const remaining = MAX_OTP_ATTEMPTS - (otpRecord.attempts + 1);
+    return {
+      ok: false,
+      status: 400,
+      error: `Incorrect OTP. ${remaining > 0 ? `${remaining} attempt(s) remaining.` : 'Request a new OTP.'}`,
+    };
+  }
+
+  await client.query(`UPDATE mobile_otps SET used = TRUE WHERE id = $1`, [otpRecord.id]);
+  return { ok: true };
+}
+
 export async function loadPartnerEntity(role, entityId) {
   if (!entityId) return null;
+  if (role === 'user') {
+    await ensureUserModerationSchema();
+    const result = await pool.query(
+      `SELECT id, email, name, phone, is_blocked FROM users WHERE id = $1`,
+      [entityId],
+    );
+    return result.rows[0] || null;
+  }
   if (role === 'agent') {
     const result = await pool.query(
       `SELECT id, name, email, phone, city, state, occupation, agent_type,
@@ -486,6 +644,17 @@ export async function loadPartnerEntity(role, entityId) {
     );
     return result.rows[0] || null;
   }
+  if (role === 'franchise') {
+    await ensureFranchiseAccessColumns();
+    const result = await pool.query(
+      `SELECT id, name, email, phone, city, state, status, login_enabled, permissions
+         FROM franchises WHERE id = $1`,
+      [entityId],
+    );
+    const row = result.rows[0];
+    if (!row) return null;
+    return { ...row, permissions: normalizeFranchisePermissions(row.permissions) };
+  }
   const result = await pool.query(
     `SELECT id, email, shop_name, phone, city, state, status, is_active, rejection_reason
        FROM suppliers WHERE id = $1`,
@@ -496,8 +665,10 @@ export async function loadPartnerEntity(role, entityId) {
 
 function partnerStillActive(role, entity) {
   if (!entity) return false;
+  if (role === 'user') return !entity.is_blocked;
   if (role === 'agent') return entity.status === 'Approved' && entity.login_enabled;
   if (role === 'vendor') return Boolean(entity.is_approved) && entity.status !== 'inactive';
+  if (role === 'franchise') return entity.status === 'Approved' && entity.login_enabled;
   return entity.status === 'approved' && entity.is_active !== false;
 }
 
@@ -529,13 +700,14 @@ export async function requireMobileAuth(req, allowedRoles) {
     return NextResponse.json({ success: false, error: 'Forbidden: insufficient role' }, { status: 403 });
   }
 
-  const entity = await loadPartnerEntity(role, payload.id);
+  const entityId = payload.id;
+  const entity = await loadPartnerEntity(role, entityId);
   if (!partnerStillActive(role, entity)) {
     return NextResponse.json({ success: false, error: 'Account not found or inactive' }, { status: 401 });
   }
 
   const mobile = normalizePhone(entity.phone) || '';
-  const name = role === 'agent'
+  const name = role === 'user' || role === 'agent' || role === 'franchise'
     ? entity.name
     : (entity.shop_name || entity.business_name || entity.vendor_name || entity.name || entity.email);
 

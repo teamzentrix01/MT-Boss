@@ -267,7 +267,9 @@ const projectBlank = {
 };
 
 const materialBlank = { name: '', unit: 'bags', category: 'Civil', min_stock_level: 0, is_active: true };
-const receivedBlank = { material_id: '', material_name: '', unit: 'bags', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '' };
+const receivedBlank = { material_id: '', material_name: '', unit: 'bags', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '', vehicle_no: '', driver_name: '', driver_phone: '', received_by: '' };
+const staffBlank = { name: '', phone: '', role: 'Site Supervisor', pay_type: 'monthly', salary_rate: '', commission_rate: '', commission_notes: '', is_active: true };
+const staffRolesList = ['Site Supervisor', 'Site Engineer', 'Project Manager', 'Store Keeper / Incharge', 'Accountant', 'Quality Surveyor', 'Safety Officer', 'Other'];
 const contractorTrades = ['General Vendor', 'Civil Contractor', 'Plumber / Plumbing', 'Electrician', 'Mason', 'Carpenter', 'Painter', 'Fabricator', 'Tile / Flooring', 'Waterproofing', 'HVAC', 'Other'];
 const matchesContractorType = (trade, filter) => {
   if (!filter || filter === 'all') return true;
@@ -347,15 +349,29 @@ export function formatDateIST(dateVal) {
   return String(dateVal).slice(0, 10);
 }
 
-export function isSameDayIST(dateOrTimestamp) {
+export function isEditableWithin48Hours(dateOrTimestamp) {
   if (!dateOrTimestamp) return false;
   try {
-    const formatted = formatDateIST(dateOrTimestamp);
-    const todayStr = today();
-    return formatted === todayStr;
+    const str = String(dateOrTimestamp).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const todayStr = today();
+      const targetDate = new Date(`${str}T00:00:00+05:30`);
+      const todayDate = new Date(`${todayStr}T00:00:00+05:30`);
+      const diffMs = todayDate.getTime() - targetDate.getTime();
+      const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000));
+      return diffDays >= 0 && diffDays <= 2;
+    }
+    const targetTime = new Date(dateOrTimestamp).getTime();
+    if (Number.isNaN(targetTime)) return false;
+    const diffHours = (Date.now() - targetTime) / (1000 * 60 * 60);
+    return diffHours >= -1 && diffHours <= 48;
   } catch {
     return false;
   }
+}
+
+export function isSameDayIST(dateOrTimestamp) {
+  return isEditableWithin48Hours(dateOrTimestamp);
 }
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
@@ -451,6 +467,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       tabs.push('suppliers');
     }
     tabs.push('commission');
+    tabs.push('staff');
     return tabs;
   }, [isAgent, isSupervisor, agentSpecs]);
 
@@ -458,6 +475,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const subs = [];
     if (!isAgent || agentSpecs.includes('vendor')) subs.push('vendor');
     if (!isAgent || agentSpecs.includes('labor')) subs.push('labor');
+    subs.push('staff');
     return subs;
   }, [isAgent, agentSpecs]);
 
@@ -478,6 +496,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'construction' || s === 'materials' || s === 'expenses') return 'construction';
     if (s === 'suppliers' || s === 'supplier') return 'suppliers';
     if (s === 'commission' || s === 'commissions') return 'commission';
+    if (s === 'staff') return 'staff';
     return null;
   };
 
@@ -486,6 +505,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     const s = sub.toLowerCase().trim();
     if (s === 'labor' || s === 'labor-attendance' || s === 'labor_attendance') return 'labor';
     if (s === 'vendor' || s === 'vendor-attendance' || s === 'vendor_attendance') return 'vendor';
+    if (s === 'staff' || s === 'staff-attendance' || s === 'staff_attendance') return 'staff';
     return null;
   };
 
@@ -496,6 +516,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     if (s === 'party' || s === 'party-payment' || s === 'party_payment') return 'party';
     if (s === 'vendor' || s === 'vendor-payment' || s === 'vendor_payment') return 'vendor';
     if (s === 'supplier' || s === 'supplier-payment' || s === 'supplier_payment') return 'supplier';
+    if (s === 'staff' || s === 'staff-payment' || s === 'staff_payment') return 'staff';
     return null;
   };
 
@@ -605,6 +626,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const handleAttendanceSubChange = (sub) => {
     setAttendanceSubTab(sub);
     updateUrlParams('attendance', sub);
+    if (sub === 'staff' && project?.id) {
+      loadStaffAttendance(project.id, staffAttendanceDate);
+      loadProjectStaff(project.id);
+    }
   };
 
   const handlePaymentsSubChange = (sub) => {
@@ -612,6 +637,11 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     updateUrlParams('payments', sub);
     if (sub === 'supplier' && project?.id) {
       loadSupplierPayments(project.id);
+    }
+    if (sub === 'staff' && project?.id) {
+      loadStaffPayments(project.id);
+      loadProjectStaff(project.id);
+      refreshProjectData(project.id);
     }
   };
 
@@ -869,6 +899,29 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
   const [commissionModal, setCommissionModal] = useState(false);
   const [commissionForm, setCommissionForm] = useState(commissionBlank);
   const [editingCommissionId, setEditingCommissionId] = useState(null);
+
+  // ── Staff State ────────────────────────────────────────────────────────────
+  const [projectStaff, setProjectStaff] = useState([]);
+  const [staffSummary, setStaffSummary] = useState({ total_staff: 0, total_present: 0, total_half_day: 0, total_paid: 0, total_commission_paid: 0, total_commission_allocated: 0 });
+  const [staffSearch, setStaffSearch] = useState('');
+  const [staffRoleFilter, setStaffRoleFilter] = useState('');
+  const [staffModal, setStaffModal] = useState(false);
+  const [staffForm, setStaffForm] = useState(staffBlank);
+  const [editingStaffId, setEditingStaffId] = useState(null);
+  const [staffSubTab, setStaffSubTab] = useState('directory'); // 'directory' | 'attendance' | 'payments'
+  const [staffAttendanceDate, setStaffAttendanceDate] = useState(today());
+  const [staffDailyAttendance, setStaffDailyAttendance] = useState([]);
+  const [staffAttendanceLoading, setStaffAttendanceLoading] = useState(false);
+  const [savingStaffAttendance, setSavingStaffAttendance] = useState(false);
+  const [projectStaffAttendanceHistory, setProjectStaffAttendanceHistory] = useState([]);
+  const [staffPayments, setStaffPayments] = useState([]);
+  const [staffPaymentsSummary, setStaffPaymentsSummary] = useState({ total_amount: 0, salary_amount: 0, commission_amount: 0, bonus_amount: 0 });
+  const [staffPaymentModal, setStaffPaymentModal] = useState(false);
+  const [staffPaymentForm, setStaffPaymentForm] = useState({ staff_id: '', amount: '', payment_date: today(), payment_type: 'salary', mode: 'bank', transaction_reference: '', note: '' });
+  const [editingStaffPaymentId, setEditingStaffPaymentId] = useState(null);
+  const [staffPaymentFilterType, setStaffPaymentFilterType] = useState('');
+  const staffSavingRef = useRef(false);
+  const staffPaymentSavingRef = useRef(false);
 
   const expenseItemSuggestions = useMemo(() => {
     const set = new Set();
@@ -1555,6 +1608,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       loadContractorsList('all');
       loadProjectSuppliers(pid);
       loadSupplierPayments(pid);
+      loadProjectStaff(pid);
+      loadStaffPayments(pid);
       if (selectedSupplier) {
         loadSupplierLedger(pid, selectedSupplier.supplier_id, selectedSupplier.raw_supplier_name || selectedSupplier.supplier_name);
       }
@@ -2160,9 +2215,237 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
       setEditingCommissionId(null);
       setModalError('');
       setCommissionForm(commissionBlank);
+      refreshProjectData(project.id);
     } catch (err) {
       setMessage(err.message);
       throw err;
+    }
+  };
+
+  // ── Staff Management Handlers & Loaders ─────────────────────────────────────
+  const loadProjectStaff = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/staff?projectId=${pid}&pageSize=100`);
+      setProjectStaff(res.data || []);
+      if (res.summary) setStaffSummary(res.summary);
+    } catch (e) {
+      console.error('Error loading project staff:', e);
+    }
+  }, [project?.id]);
+
+  const computeStaffWage = (salaryRate, payType, status, shiftType = 'day', overtimeHours = 0) => {
+    if (status === 'absent' || !status || status === 'unmarked') return 0;
+    const mult = shiftType === 'double' ? 2 : 1;
+    let base = 0;
+    const rate = Number(salaryRate || 0);
+    if (payType === 'per_day') {
+      base = status === 'half_day' ? rate * 0.5 : rate * mult;
+    } else {
+      // Monthly pay: daily approx rate = rate / 30
+      const dailyApprox = rate / 30;
+      base = status === 'half_day' ? Math.round(dailyApprox * 0.5) : Math.round(dailyApprox * mult);
+    }
+    let ot = 0;
+    if (Number(overtimeHours) > 0) {
+      const hourly = rate > 0 ? (rate / (payType === 'monthly' ? 240 : 8)) : 0;
+      ot = Math.round(hourly * Number(overtimeHours));
+    }
+    return Math.round(base + ot);
+  };
+
+  const loadStaffAttendance = useCallback(async (projId, date) => {
+    const pid = projId || project?.id;
+    const targetDate = date || staffAttendanceDate || today();
+    if (!pid) return;
+    setStaffAttendanceLoading(true);
+    try {
+      const res = await api(`/api/admin/project-management/staff/attendance?projectId=${pid}&date=${targetDate}`);
+      const rows = (res.data || []).map((r) => ({
+        ...r,
+        dirty: false,
+        shift_type: r.shift_type || 'day',
+        overtime_hours: Number(r.overtime_hours || 0),
+        wage_amount: Number(r.wage_amount || 0) || computeStaffWage(r.salary_rate, r.pay_type, r.status, r.shift_type, r.overtime_hours),
+        note: r.note || '',
+      }));
+      setStaffDailyAttendance(rows);
+      if (res.history) {
+        setProjectStaffAttendanceHistory(res.history);
+      }
+    } catch (e) {
+      console.error('Error loading staff attendance:', e);
+    } finally {
+      setStaffAttendanceLoading(false);
+    }
+  }, [project?.id, staffAttendanceDate]);
+
+  const saveAllStaffAttendance = async () => {
+    if (!project?.id) return;
+    setSavingStaffAttendance(true);
+    try {
+      const dirtyRows = staffDailyAttendance.filter((r) => r.dirty);
+      if (!dirtyRows.length) return;
+      const entries = dirtyRows.map((r) => ({
+        staff_id: r.staff_id,
+        attendance_date: staffAttendanceDate,
+        status: r.status,
+        shift_type: r.shift_type || 'day',
+        overtime_hours: Number(r.overtime_hours || 0),
+        wage_amount: r.wage_amount,
+        note: r.note || '',
+      }));
+      await api('/api/admin/project-management/staff/attendance', {
+        method: 'POST',
+        body: JSON.stringify({
+          attendance_date: staffAttendanceDate,
+          entries,
+        }),
+      });
+      setMessage('✅ Staff attendance saved successfully');
+      loadStaffAttendance(project.id, staffAttendanceDate);
+      loadProjectStaff(project.id);
+      refreshProjectData(project.id);
+    } catch (e) {
+      setMessage(`❌ ${e.message || 'Could not save staff attendance'}`);
+    } finally {
+      setSavingStaffAttendance(false);
+    }
+  };
+
+  const loadStaffPayments = useCallback(async (projId) => {
+    const pid = projId || project?.id;
+    if (!pid) return;
+    try {
+      const res = await api(`/api/admin/project-management/staff/payments?projectId=${pid}&pageSize=100`);
+      setStaffPayments(res.data || []);
+      if (res.summary) setStaffPaymentsSummary(res.summary);
+    } catch (e) {
+      console.error('Error loading staff payments:', e);
+    }
+  }, [project?.id]);
+
+  const saveStaffMember = async (e) => {
+    if (e) e.preventDefault();
+    if (!project?.id) return;
+    if (staffSavingRef.current) return;
+    staffSavingRef.current = true;
+    try {
+      const payload = {
+        ...staffForm,
+        project_id: project.id,
+        salary_rate: Number(staffForm.salary_rate || 0),
+        commission_rate: Number(staffForm.commission_rate || 0),
+      };
+
+      if (editingStaffId) {
+        await api(`/api/admin/project-management/staff/${editingStaffId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+        setMessage('Staff member updated successfully');
+      } else {
+        await api('/api/admin/project-management/staff', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        setMessage('Staff member assigned to project');
+      }
+      setStaffModal(false);
+      setEditingStaffId(null);
+      setStaffForm(staffBlank);
+      setModalError('');
+      loadProjectStaff(project.id);
+      loadStaffAttendance(project.id, staffAttendanceDate);
+      refreshProjectData(project.id);
+      refreshProjectData(project.id);
+    } catch (err) {
+      setModalError(err.message || 'Could not save staff member');
+      setMessage(err.message);
+      throw err;
+    } finally {
+      staffSavingRef.current = false;
+    }
+  };
+
+  const markStaffAttendance = async (staffId, status, overtimeHours = 0, note = '') => {
+    if (!project?.id) return;
+    try {
+      await api('/api/admin/project-management/staff/attendance', {
+        method: 'POST',
+        body: JSON.stringify({
+          staff_id: staffId,
+          attendance_date: staffAttendanceDate,
+          status,
+          overtime_hours: overtimeHours,
+          note,
+        }),
+      });
+      setMessage(`Staff attendance marked as ${status}`);
+      loadStaffAttendance(project.id, staffAttendanceDate);
+      loadProjectStaff(project.id);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const saveStaffPayment = async (e) => {
+    if (e) e.preventDefault();
+    if (!project?.id) return;
+    if (staffPaymentSavingRef.current) return;
+    staffPaymentSavingRef.current = true;
+    try {
+      await api('/api/admin/project-management/staff/payments', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...staffPaymentForm,
+          project_id: project.id,
+          amount: Number(staffPaymentForm.amount),
+        }),
+      });
+      setMessage('Staff payment recorded successfully');
+      setStaffPaymentModal(false);
+      setStaffPaymentForm({ staff_id: '', amount: '', payment_date: today(), payment_type: 'salary', mode: 'bank', transaction_reference: '', note: '' });
+      setModalError('');
+      loadStaffPayments(project.id);
+      loadProjectStaff(project.id);
+      refreshProjectData(project.id);
+      refreshProjectData(project.id);
+    } catch (err) {
+      setModalError(err.message || 'Could not record staff payment');
+      setMessage(err.message);
+      throw err;
+    } finally {
+      staffPaymentSavingRef.current = false;
+    }
+  };
+
+  const deleteStaffMember = async (staffId) => {
+    if (!project?.id) return;
+    if (!confirm('Are you sure you want to remove/deactivate this staff member?')) return;
+    try {
+      const res = await api(`/api/admin/project-management/staff/${staffId}`, { method: 'DELETE' });
+      setMessage(res.message || 'Staff member removed');
+      loadProjectStaff(project.id);
+      loadStaffAttendance(project.id, staffAttendanceDate);
+      refreshProjectData(project.id);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const deleteStaffPayment = async (paymentId) => {
+    if (!project?.id) return;
+    if (!confirm('Are you sure you want to delete this payment record?')) return;
+    try {
+      await api(`/api/admin/project-management/staff/payments?id=${paymentId}`, { method: 'DELETE' });
+      setMessage('Staff payment deleted');
+      loadStaffPayments(project.id);
+      loadProjectStaff(project.id);
+      refreshProjectData(project.id);
+    } catch (err) {
+      setMessage(err.message);
     }
   };
 
@@ -2257,6 +2540,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           ...prev,
           totalAmount: Math.max(0, Number(prev.totalAmount || 0) - Number(deletedComm?.amount || 0)),
         }));
+        refreshProjectData();
       } else if (kind === 'labor') {
         await api(`/api/admin/project-management/labor/${id}`, { method: 'DELETE' });
         loadProjectLabors(project.id);
@@ -2526,6 +2810,20 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
     }
   }, [projectTab, paymentsSubTab, attendanceSubTab, loadProjectLabors, project?.id]);
 
+  useEffect(() => {
+    if (project?.id) {
+      if (projectTab === 'staff') {
+        loadProjectStaff(project.id);
+      } else if (projectTab === 'attendance' && attendanceSubTab === 'staff') {
+        loadProjectStaff(project.id);
+        loadStaffAttendance(project.id, staffAttendanceDate);
+      } else if (projectTab === 'payments' && paymentsSubTab === 'staff') {
+        loadProjectStaff(project.id);
+        loadStaffPayments(project.id);
+      }
+    }
+  }, [projectTab, attendanceSubTab, paymentsSubTab, project?.id, staffAttendanceDate, loadProjectStaff, loadStaffAttendance, loadStaffPayments]);
+
   const saveVendorPayment = async (e) => {
     if (e) e.preventDefault();
     try {
@@ -2647,8 +2945,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   /* Bulk checkbox controls intentionally removed; attendance is per worker. */
   const applyBulkStatus = (status) => {
-    if (laborAttendanceDate !== today()) {
-      setMessage(`❌ Purani date par attendance edit nahi kar sakte.`);
+    if (!isEditableWithin48Hours(laborAttendanceDate)) {
+      setMessage(`❌ 48 hours se purani date par attendance edit nahi kar sakte.`);
       return;
     }
     const selectedSet = new Set(selectedLaborIds);
@@ -2677,8 +2975,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   const saveAllLaborAttendance = async (customRows, includeUntouched = false) => {
     if (!project?.id) return;
-    if (laborAttendanceDate !== today()) {
-      setMessage(`❌ Sirf aaj ki date (${today()}) ki attendance save ki ja sakti hai.`);
+    if (!isEditableWithin48Hours(laborAttendanceDate)) {
+      setMessage(`❌ Sirf pichle 48 hours (aaj aur pichle 2 din) ki attendance save ki ja sakti hai.`);
       return;
     }
     const rowsToSave = (customRows || laborAttendanceRows).filter((row) =>
@@ -3462,6 +3760,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             </span>
                           </div>
                           <div className="stat">
+                            <small>Staff Cost</small>
+                            <b style={{ color: '#0284c7' }}>{INR(project.total_staff_cost || 0)}</b>
+                            <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                              Paid: {INR(project.total_paid_to_staff || 0)} | Due: {INR(Math.max(0, Number(project.total_staff_cost || 0) - Number(project.total_paid_to_staff || 0)))}
+                            </span>
+                          </div>
+                          <div className="stat">
+                            <small>Commission</small>
+                            <b style={{ color: '#d97706' }}>{INR(project.total_commission || 0)}</b>
+                          </div>
+                          <div className="stat">
                             <small>Other Expenses</small>
                             <b>{INR(project.total_other_expenses)}</b>
                           </div>
@@ -3472,6 +3781,9 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <div className="stat">
                             <small>Total Project Expense</small>
                             <b style={{ color: '#b45309' }}>{INR(project.total_expense)}</b>
+                            <span style={{ fontSize: 10, color: '#64748b', display: 'block', marginTop: 2 }}>
+                              Labour + Mat + Staff + Comm + Exp
+                            </span>
                           </div>
                           <div className="stat">
                             <small>Paid to Contractors</small>
@@ -3480,6 +3792,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           <div className="stat">
                             <small>Paid to Vendors</small>
                             <b style={{ color: '#0284c7' }}>{INR(project.total_paid_to_suppliers ?? projectSuppliers.reduce((sum, s) => sum + (Number(s.total_paid) || 0), 0))}</b>
+                          </div>
+                          <div className="stat">
+                            <small>Paid to Staff</small>
+                            <b style={{ color: '#16a34a' }}>{INR(project.total_paid_to_staff || 0)}</b>
+                          </div>
+                          <div className="stat">
+                            <small>Total Balance Due</small>
+                            <b style={{ color: '#dc2626' }}>{INR(project.total_pending_payable || 0)}</b>
+                            <span style={{ fontSize: 10, color: '#dc2626', display: 'block', marginTop: 2 }}>
+                              Total Pending Payable
+                            </span>
                           </div>
                           <div className="stat" style={{ background: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#f0fdf4' : '#fef2f2', border: `1px solid ${Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#bbf7d0' : '#fecaca'}` }}>
                             <small style={{ color: Number(project.profit_or_loss ?? project.profit_so_far) >= 0 ? '#166534' : '#991b1b' }}>Profit So Far</small>
@@ -3553,6 +3876,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('commission'); }}
                       >
                         🤝 Commission ({commissionRows.length})
+                      </button>
+                    )}
+                    {allowedMainTabs.includes('staff') && (
+                      <button
+                        className={projectTab === 'staff' ? 'active' : ''}
+                        onClick={() => { setSelectedSupplier(null); setContractorMenuOpen(false); handleSectionChange('staff'); }}
+                      >
+                        👔 Staff ({projectStaff.length})
                       </button>
                     )}
                   </div>
@@ -3964,6 +4295,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               Labor Attendance
                             </button>
                           )}
+                          {allowedAttendanceSubTabs.includes('staff') && (
+                            <button
+                              className={attendanceSubTab === 'staff' ? 'active-btn' : 'muted'}
+                              onClick={() => handleAttendanceSubChange('staff')}
+                            >
+                              Staff Attendance
+                            </button>
+                          )}
                         </div>
 
                         {attendanceSubTab === 'vendor' && (
@@ -3978,7 +4317,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               }}
                               style={{ maxWidth: 170 }}
                             />
-                            <button onClick={saveAllAttendance} disabled={savingAttendance || !attendanceRows.some((row) => row.dirty)}>
+                            <button onClick={saveAllAttendance} disabled={savingAttendance || !isEditableWithin48Hours(attendanceDate) || !attendanceRows.some((row) => row.dirty)}>
                               {savingAttendance ? 'Saving...' : `💾 Save Attendance (${attendanceRows.filter((row) => row.dirty).length} marked)`}
                             </button>
                             {attendanceRows.some((r) => r.is_marked) ? (
@@ -4022,8 +4361,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             )}
                             <button
                               onClick={() => saveAllLaborAttendance()}
-                              disabled={savingLaborAttendance || laborAttendanceDate !== today()}
-                              style={{ opacity: laborAttendanceDate !== today() ? 0.6 : 1 }}
+                              disabled={savingLaborAttendance || !isEditableWithin48Hours(laborAttendanceDate)}
+                              style={{ opacity: !isEditableWithin48Hours(laborAttendanceDate) ? 0.6 : 1 }}
                             >
                               {savingLaborAttendance ? 'Saving...' : '💾 Save Attendance'}
                             </button>
@@ -4034,6 +4373,54 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             ) : (
                               <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
                                 ⏳ Not yet saved for {laborAttendanceDate}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {attendanceSubTab === 'staff' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 13, fontWeight: 600 }}>Date:</span>
+                            <input
+                              type="date"
+                              value={staffAttendanceDate}
+                              max={today()}
+                              onChange={(e) => {
+                                const d = e.target.value;
+                                setStaffAttendanceDate(d);
+                                loadStaffAttendance(project.id, d);
+                              }}
+                              style={{ maxWidth: 160 }}
+                            />
+                            {staffAttendanceDate !== today() && (
+                              <button
+                                type="button"
+                                className="active-btn"
+                                style={{ fontSize: 12, padding: '4px 10px' }}
+                                onClick={() => {
+                                  setStaffAttendanceDate(today());
+                                  loadStaffAttendance(project.id, today());
+                                }}
+                              >
+                                ↩️ Go to Today ({today()})
+                              </button>
+                            )}
+                            <button
+                              onClick={saveAllStaffAttendance}
+                              disabled={savingStaffAttendance || staffAttendanceDate !== today() || !staffDailyAttendance.some((row) => row.dirty)}
+                              style={{ opacity: staffAttendanceDate !== today() ? 0.6 : 1 }}
+                            >
+                              {savingStaffAttendance
+                                ? 'Saving...'
+                                : `💾 Save Attendance (${staffDailyAttendance.filter((row) => row.dirty).length} marked)`}
+                            </button>
+                            {staffDailyAttendance.some((r) => r.is_marked || (r.status && r.status !== 'unmarked')) ? (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
+                                ✓ Marked for {staffAttendanceDate}
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: 12, padding: '4px 8px', borderRadius: 4, background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
+                                ⏳ Not yet saved for {staffAttendanceDate}
                               </span>
                             )}
                           </div>
@@ -4053,6 +4440,26 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             onClick={() => {
                               setLaborAttendanceDate(today());
                               loadLaborAttendance(today(), project.id);
+                            }}
+                          >
+                            Jump to Today
+                          </button>
+                        </div>
+                      )}
+
+                      {attendanceSubTab === 'staff' && staffAttendanceDate !== today() && (
+                        <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b', borderRadius: 8, padding: '8px 14px', fontSize: 12, margin: '10px 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span>🔒</span>
+                          <span>
+                            <b>Past Date View ({staffAttendanceDate}):</b> Sirf aaj ki date ({today()}) ki attendance mark/edit ki ja sakti hai. Purani date ki attendance view mode me locked hai.
+                          </span>
+                          <button
+                            type="button"
+                            className="active-btn"
+                            style={{ marginLeft: 'auto', fontSize: 11, padding: '3px 8px' }}
+                            onClick={() => {
+                              setStaffAttendanceDate(today());
+                              loadStaffAttendance(project.id, today());
                             }}
                           >
                             Jump to Today
@@ -4492,7 +4899,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           })()}
 
                           {(() => {
-                            const isLaborDateToday = laborAttendanceDate === today();
+                            const isLaborDateToday = isEditableWithin48Hours(laborAttendanceDate);
                             const visibleLaborAttendanceRows = laborAttendanceRows.filter((r) => {
                               const isContractor = Boolean(r.project_vendor_id || r.vendor_name);
                               if (laborAttendanceSection === 'direct' && isContractor) return false;
@@ -5035,7 +5442,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             )}
                                           </div>
                                         </td>
-                                        <td style={{ fontWeight: 600, color: '#16a34a' }}>{INR(h.wage_amount)}</td>
+                                        <td style={{ fontWeight: 600, color: '#22c55e' }}>{INR(h.wage_amount)}</td>
                                         <td style={{ fontSize: 12, color: '#64748b' }}>{h.created_by || '—'}</td>
                                         <td onClick={(e) => e.stopPropagation()}>
                                           {isTodayEntry ? (
@@ -5106,6 +5513,288 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           </div>
                         </div>
                   )}
+
+                  {/* ── STAFF ATTENDANCE IN ATTENDANCE TAB ── */}
+                  {attendanceSubTab === 'staff' && (() => {
+                    const isStaffDateToday = isEditableWithin48Hours(staffAttendanceDate);
+                    return (
+                      <div>
+                      <div className="card">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                          <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>
+                            👔 Daily Staff Site Attendance
+                          </h4>
+                          <span style={{ fontSize: 12, color: '#94a3b8' }}>
+                            Marking attendance for active staff on site for {staffAttendanceDate}
+                          </span>
+                        </div>
+
+                        {staffAttendanceLoading ? (
+                          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>Loading attendance…</div>
+                        ) : (
+                          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '8px 0 16px', borderRadius: 8, border: '1px solid rgba(148,163,184,0.2)' }}>
+                            <table style={{ minWidth: 1060, width: '100%', borderCollapse: 'collapse', margin: 0 }}>
+                              <thead>
+                                <tr>
+                                  <th style={{ minWidth: 170, whiteSpace: 'nowrap' }}>Staff Member</th>
+                                  <th style={{ minWidth: 120, whiteSpace: 'nowrap' }}>Role</th>
+                                  <th style={{ minWidth: 200, whiteSpace: 'nowrap' }}>Status</th>
+                                  <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>Shift</th>
+                                  <th style={{ minWidth: 120, whiteSpace: 'nowrap' }}>Overtime (OT)</th>
+                                  <th style={{ minWidth: 120, whiteSpace: 'nowrap' }}>Rate / Pay</th>
+                                  <th style={{ minWidth: 110, whiteSpace: 'nowrap' }}>Wage Amount</th>
+                                  <th style={{ minWidth: 140, whiteSpace: 'nowrap' }}>Note</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {staffDailyAttendance.map((row, idx) => (
+                                  <tr key={row.staff_id}>
+                                    <td>
+                                      <b>{row.staff_name}</b>
+                                      {row.phone && (
+                                        <div style={{ fontSize: 11, color: '#94a3b8' }}>📞 {row.phone}</div>
+                                      )}
+                                    </td>
+                                    <td>
+                                      <span className="badge" style={{ background: 'rgba(148,163,184,0.15)', color: '#94a3b8' }}>
+                                        {row.role}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <div style={{ display: 'flex', gap: 4, whiteSpace: 'nowrap' }}>
+                                        {['present', 'half_day', 'absent'].map((st) => (
+                                          <button
+                                            key={st}
+                                            type="button"
+                                            disabled={!isStaffDateToday}
+                                            onClick={() => {
+                                              if (!isStaffDateToday) return;
+                                              const next = [...staffDailyAttendance];
+                                              next[idx].status = st;
+                                              next[idx].dirty = true;
+                                              next[idx].wage_amount = computeStaffWage(next[idx].salary_rate, next[idx].pay_type, st, next[idx].shift_type, next[idx].overtime_hours);
+                                              setStaffDailyAttendance(next);
+                                            }}
+                                            className={row.status === st ? 'active-btn' : 'muted'}
+                                            style={{
+                                              padding: '4px 8px',
+                                              fontSize: 11,
+                                              borderRadius: 4,
+                                              cursor: !isStaffDateToday ? 'not-allowed' : 'pointer',
+                                              opacity: !isStaffDateToday && row.status !== st ? 0.4 : 1,
+                                              fontWeight: row.status === st ? 700 : 500,
+                                              background: row.status === st ? (st === 'present' ? '#16a34a' : st === 'half_day' ? '#d97706' : '#dc2626') : undefined,
+                                              borderColor: row.status === st ? 'transparent' : undefined,
+                                              color: row.status === st ? '#ffffff' : undefined,
+                                            }}
+                                          >
+                                            {st === 'present' ? 'Present' : st === 'half_day' ? 'Half Day' : 'Absent'}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <select
+                                        disabled={!isStaffDateToday || row.status === 'absent'}
+                                        value={row.shift_type || 'day'}
+                                        onChange={(e) => {
+                                          if (!isStaffDateToday) return;
+                                          const val = e.target.value;
+                                          const next = [...staffDailyAttendance];
+                                          next[idx].shift_type = val;
+                                          next[idx].dirty = true;
+                                          if (!next[idx].status || next[idx].status === 'absent' || next[idx].status === 'unmarked') {
+                                            next[idx].status = 'present';
+                                          }
+                                          next[idx].wage_amount = computeStaffWage(next[idx].salary_rate, next[idx].pay_type, next[idx].status, val, next[idx].overtime_hours);
+                                          setStaffDailyAttendance(next);
+                                        }}
+                                        style={{
+                                          padding: '5px 8px',
+                                          fontSize: 12,
+                                          borderRadius: 6,
+                                          width: '100%',
+                                          minWidth: 125,
+                                          cursor: (!isStaffDateToday || row.status === 'absent') ? 'not-allowed' : 'pointer',
+                                          opacity: (!isStaffDateToday || row.status === 'absent') ? 0.6 : 1,
+                                        }}
+                                      >
+                                        <option value="day">☀️ Day (1x)</option>
+                                        <option value="night">🌙 Night (1x)</option>
+                                        <option value="double">⚡ Double (2x)</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          max="16"
+                                          step="0.5"
+                                          disabled={!isStaffDateToday || row.status === 'absent'}
+                                          value={row.overtime_hours !== undefined ? row.overtime_hours : 0}
+                                          onChange={(e) => {
+                                            if (!isStaffDateToday) return;
+                                            const val = Math.max(0, Number(e.target.value || 0));
+                                            const next = [...staffDailyAttendance];
+                                            next[idx].overtime_hours = val;
+                                            next[idx].dirty = true;
+                                            if (!next[idx].status || next[idx].status === 'absent' || next[idx].status === 'unmarked') {
+                                              next[idx].status = 'present';
+                                            }
+                                            next[idx].wage_amount = computeStaffWage(next[idx].salary_rate, next[idx].pay_type, next[idx].status, next[idx].shift_type, val);
+                                            setStaffDailyAttendance(next);
+                                          }}
+                                          style={{
+                                            width: 55,
+                                            padding: '5px 8px',
+                                            fontSize: 12,
+                                            textAlign: 'center',
+                                            borderRadius: 4,
+                                            cursor: (!isStaffDateToday || row.status === 'absent') ? 'not-allowed' : 'text',
+                                            opacity: (!isStaffDateToday || row.status === 'absent') ? 0.6 : 1,
+                                          }}
+                                        />
+                                        <span style={{ fontSize: 11, color: '#94a3b8' }}>hrs</span>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div style={{ fontSize: 12 }}>
+                                        <b>{INR(row.salary_rate)}</b>
+                                        <span style={{ color: '#94a3b8', marginLeft: 4 }}>
+                                          / {row.pay_type === 'per_day' ? 'day' : row.pay_type === 'monthly' ? 'mo' : 'fee'}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <b style={{ color: Number(row.wage_amount || 0) > 0 ? '#22c55e' : '#94a3b8' }}>
+                                        {INR(row.wage_amount || 0)}
+                                      </b>
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        placeholder="Note..."
+                                        disabled={!isStaffDateToday}
+                                        value={row.note || ''}
+                                        onChange={(e) => {
+                                          if (!isStaffDateToday) return;
+                                          const next = [...staffDailyAttendance];
+                                          next[idx].note = e.target.value;
+                                          next[idx].dirty = true;
+                                          setStaffDailyAttendance(next);
+                                        }}
+                                        style={{ width: 140, padding: '5px 8px', fontSize: 12, borderRadius: 4, cursor: !isStaffDateToday ? 'not-allowed' : 'text', opacity: !isStaffDateToday ? 0.6 : 1 }}
+                                      />
+                                    </td>
+                                  </tr>
+                                ))}
+                                {staffDailyAttendance.length === 0 && (
+                                  <tr>
+                                    <td colSpan={8} style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                                      No active staff members assigned to this project to mark attendance. Click &quot;Staff&quot; tab to assign staff.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Staff Attendance History Log */}
+                      <div style={{ marginTop: 24, borderTop: '1px solid rgba(148,163,184,0.2)', paddingTop: 16 }}>
+                        <h4 style={{ margin: '0 0 10px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
+                          📋 Staff Attendance History
+                          <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 400 }}>
+                            ({projectStaffAttendanceHistory.length} records)
+                          </span>
+                        </h4>
+                        {projectStaffAttendanceHistory.length > 0 ? (
+                          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '8px 0 16px', borderRadius: 8, border: '1px solid rgba(148,163,184,0.2)' }}>
+                            <table style={{ minWidth: 920, width: '100%', borderCollapse: 'collapse', margin: 0 }}>
+                              <thead>
+                                <tr>
+                                  <th style={{ minWidth: 100 }}>Date</th>
+                                  <th style={{ minWidth: 150 }}>Staff Member</th>
+                                  <th style={{ minWidth: 110 }}>Role</th>
+                                  <th style={{ minWidth: 120 }}>Status</th>
+                                  <th style={{ minWidth: 90 }}>Shift</th>
+                                  <th style={{ minWidth: 80 }}>Overtime</th>
+                                  <th style={{ minWidth: 110 }}>Wage Amount</th>
+                                  <th style={{ minWidth: 120 }}>Marked By</th>
+                                  <th style={{ minWidth: 140 }}>Note</th>
+                                  <th style={{ minWidth: 90, textAlign: 'right' }}>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {projectStaffAttendanceHistory.map((h, i) => (
+                                  <tr key={h.id || i}>
+                                    <td>{h.attendance_date ? String(h.attendance_date).slice(0, 10) : '—'}</td>
+                                    <td>
+                                      <b>{h.staff_name}</b>
+                                    </td>
+                                    <td>
+                                      <span className="badge" style={{ background: 'rgba(148,163,184,0.15)', color: '#94a3b8' }}>
+                                        {h.role}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span
+                                        className="badge"
+                                        style={{
+                                          background: h.status === 'present' ? 'rgba(22,163,74,0.2)' : h.status === 'half_day' ? 'rgba(217,119,6,0.2)' : 'rgba(220,38,38,0.2)',
+                                          color: h.status === 'present' ? '#4ade80' : h.status === 'half_day' ? '#f59e0b' : '#f87171',
+                                          fontWeight: 600,
+                                          textTransform: 'capitalize'
+                                        }}
+                                      >
+                                        {h.status === 'present' ? '✅ Present' : h.status === 'half_day' ? '⛅ Half Day' : '❌ Absent'}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span style={{ textTransform: 'capitalize' }}>
+                                        {h.shift_type === 'double' ? '⚡ Double' : h.shift_type === 'night' ? '🌙 Night' : '☀️ Day'}
+                                      </span>
+                                    </td>
+                                    <td>{Number(h.overtime_hours || 0) > 0 ? `${h.overtime_hours} hrs` : '—'}</td>
+                                    <td style={{ fontWeight: 600, color: '#22c55e' }}>{INR(h.wage_amount || 0)}</td>
+                                    <td style={{ fontSize: 12, color: '#94a3b8' }}>{h.created_by || '—'}</td>
+                                    <td style={{ fontSize: 12, color: '#94a3b8' }}>{h.note || '—'}</td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      {String(h.attendance_date).slice(0, 10) === today() ? (
+                                        <button
+                                          type="button"
+                                          className="active-btn"
+                                          style={{ padding: '3px 8px', fontSize: 11 }}
+                                          onClick={() => {
+                                            setStaffAttendanceDate(today());
+                                            loadStaffAttendance(project.id, today());
+                                          }}
+                                          title="Edit today's attendance"
+                                        >
+                                          ✏️ Edit
+                                        </button>
+                                      ) : (
+                                        <span style={{ fontSize: 11, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                                          🔒 Locked
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ) : (
+                          <p style={{ color: '#94a3b8', fontSize: 13, margin: '8px 0' }}>
+                            No staff attendance records saved yet for this project.
+                          </p>
+                        )}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
@@ -5138,6 +5827,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           >
                             Vendor Payment ({supplierPaymentsList.length})
                           </button>
+                          <button
+                            className={paymentsSubTab === 'staff' ? 'active-btn' : 'muted'}
+                            onClick={() => handlePaymentsSubChange('staff')}
+                          >
+                            Staff Payment ({staffPayments.length})
+                          </button>
                         </div>
 
                         {paymentsSubTab === 'labor' && !isSupervisor && (
@@ -5151,10 +5846,34 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 note: '',
                               });
                               setEditingLaborPaymentId(null);
+                              setModalReadOnly(false);
+                              setModalError('');
                               setLaborPaymentModal(true);
                             }}
                           >
                             + Record Labor Payment
+                          </button>
+                        )}
+                        {paymentsSubTab === 'staff' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStaffPaymentForm({
+                                staff_id: projectStaff[0]?.id ? String(projectStaff[0].id) : '',
+                                amount: '',
+                                payment_date: today(),
+                                payment_type: 'salary',
+                                mode: 'bank',
+                                transaction_reference: '',
+                                note: '',
+                              });
+                              setEditingStaffPaymentId(null);
+                              setModalReadOnly(false);
+                              setModalError('');
+                              setStaffPaymentModal(true);
+                            }}
+                          >
+                            + Record Staff Payment
                           </button>
                         )}
                       </div>
@@ -5237,7 +5956,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={vendorPaymentForm.amount} set={setVendorPaymentForm} required />
                       <Input label="Payment Date" name="payment_date" type="date" value={vendorPaymentForm.payment_date} set={setVendorPaymentForm} required />
                       <label>
-                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Mode</small>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Mode</small>
                         <select
                           value={vendorPaymentForm.mode}
                           onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, mode: e.target.value })}
@@ -5252,7 +5971,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         <Input label="Transaction Reference / UPI ID" name="transaction_reference" value={vendorPaymentForm.transaction_reference || ''} set={setVendorPaymentForm} placeholder="e.g. UPI ID, UTR number, or bank transaction ID" />
                       )}
                       <label>
-                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Type</small>
+                        <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Type</small>
                         <select
                           value={vendorPaymentForm.payment_type}
                           onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, payment_type: e.target.value })}
@@ -5433,7 +6152,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -5629,7 +6348,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -5750,7 +6469,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 >
                                   👁️ View
                                 </button>
-                                <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                   🔒 Locked
                                 </span>
                               </>
@@ -5868,6 +6587,125 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               )}
                             </tbody>
                           </table>
+                        </div>
+                      )}
+
+                      {/* ── STAFF PAYMENTS IN PAYMENTS TAB ── */}
+                      {paymentsSubTab === 'staff' && (
+                        <div className="card">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                              <select
+                                value={staffPaymentFilterType}
+                                onChange={(e) => setStaffPaymentFilterType(e.target.value)}
+                                style={{ fontSize: 13, padding: '6px 10px' }}
+                              >
+                                <option value="">All Payment Types</option>
+                                <option value="salary">Salary</option>
+                                <option value="commission">Commission</option>
+                                <option value="advance">Advance</option>
+                                <option value="bonus">Bonus</option>
+                                <option value="reimbursement">Reimbursement</option>
+                              </select>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: '#16a34a' }}>
+                                Total Paid: {INR(staffPaymentsSummary.total_amount)}
+                              </span>
+                              <span style={{ fontSize: 12, color: '#94a3b8' }}>
+                                (Salary: {INR(staffPaymentsSummary.salary_amount)} • Commission: {INR(staffPaymentsSummary.commission_amount)})
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setStaffPaymentForm({
+                                  staff_id: projectStaff[0]?.id ? String(projectStaff[0].id) : '',
+                                  amount: '',
+                                  payment_date: today(),
+                                  payment_type: 'salary',
+                                  mode: 'bank',
+                                  transaction_reference: '',
+                                  note: '',
+                                });
+                                setEditingStaffPaymentId(null);
+                                setModalError('');
+                                setStaffPaymentModal(true);
+                              }}
+                            >
+                              + Record Staff Payment
+                            </button>
+                          </div>
+
+                          <div style={{ overflowX: 'auto' }}>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Staff Member</th>
+                                  <th>Role</th>
+                                  <th>Payment Type</th>
+                                  <th>Amount</th>
+                                  <th>Mode</th>
+                                  <th>Reference No.</th>
+                                  <th>Note</th>
+                                  <th>Recorded By</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {staffPayments
+                                  .filter((p) => !staffPaymentFilterType || p.payment_type === staffPaymentFilterType)
+                                  .map((p) => (
+                                    <tr key={p.id}>
+                                      <td>{p.payment_date}</td>
+                                      <td style={{ fontWeight: 600 }}>{p.staff_name}</td>
+                                      <td>
+                                        <span className="badge" style={{ background: 'rgba(148,163,184,0.15)', color: '#94a3b8' }}>
+                                          {p.role}
+                                        </span>
+                                      </td>
+                                      <td>
+                                        <span
+                                          className="badge"
+                                          style={{
+                                            background: p.payment_type === 'commission' ? 'rgba(217,119,6,0.2)' : p.payment_type === 'advance' ? 'rgba(2,132,199,0.2)' : 'rgba(22,163,74,0.2)',
+                                            color: p.payment_type === 'commission' ? '#f59e0b' : p.payment_type === 'advance' ? '#38bdf8' : '#4ade80',
+                                            fontWeight: 600,
+                                            textTransform: 'capitalize'
+                                          }}
+                                        >
+                                          {p.payment_type}
+                                        </span>
+                                      </td>
+                                      <td style={{ fontWeight: 700, color: p.payment_type === 'commission' ? '#f59e0b' : '#22c55e' }}>
+                                        {INR(p.amount)}
+                                      </td>
+                                      <td style={{ textTransform: 'capitalize' }}>{p.mode || 'bank'}</td>
+                                      <td>{p.transaction_reference || '—'}</td>
+                                      <td>{p.note || '—'}</td>
+                                      <td style={{ fontSize: 11, color: '#94a3b8' }}>{p.created_by}</td>
+                                      <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                                        <button
+                                          type="button"
+                                          className="danger"
+                                          style={{ padding: '4px 8px', fontSize: 12 }}
+                                          onClick={() => deleteStaffPayment(p.id)}
+                                          title="Delete payment entry"
+                                        >
+                                          Delete
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                {staffPayments.length === 0 && (
+                                  <tr>
+                                    <td colSpan={10} style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                                      No staff payment records found for this project.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -6257,6 +7095,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   {!isSupervisor && <th>Rate</th>}
                                   {!isSupervisor && <th>Amount</th>}
                                   <th>Challan No</th>
+                                  <th>Vehicle / Received By</th>
                                   <th>Bill</th>
                                   <th>Note</th>
                                   <th style={{ textAlign: 'right' }}>Actions</th>
@@ -6272,6 +7111,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     {!isSupervisor && <td>{INR(d.rate)}</td>}
                                     {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(d.amount)}</td>}
                                     <td>{d.challan_no || '—'}</td>
+                                    <td>
+                                      {d.vehicle_no ? (
+                                        <div>
+                                          <b style={{ color: '#0369a1', fontSize: 12 }}>🚛 {d.vehicle_no}</b>
+                                          {d.driver_name && <div style={{ fontSize: 11, color: '#475569' }}>Driver: {d.driver_name}</div>}
+                                          {d.received_by && <div style={{ fontSize: 11, color: '#166534' }}>Recvd: {d.received_by}</div>}
+                                        </div>
+                                      ) : (
+                                        d.received_by ? <span style={{ fontSize: 12, color: '#166534' }}>Recvd: {d.received_by}</span> : '—'
+                                      )}
+                                    </td>
                                     <td>
                                       {d.bill_url ? (
                                         <a href={d.bill_url} target="_blank" rel="noreferrer" title={d.bill_filename || 'View Bill'} style={{ textDecoration: 'none', fontSize: 16 }}>
@@ -6297,6 +7147,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                                 received_date: formatDateIST(d.received_date),
                                                 supplier_name: d.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
                                                 challan_no: d.challan_no || '',
+                                                vehicle_no: d.vehicle_no || '',
+                                                driver_name: d.driver_name || '',
+                                                driver_phone: d.driver_phone || '',
+                                                received_by: d.received_by || '',
                                                 note: d.note || '',
                                               });
                                               setModalReadOnly(false);
@@ -6329,6 +7183,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                                 received_date: formatDateIST(d.received_date),
                                                 supplier_name: d.supplier_name || selectedSupplier?.supplier_name || selectedSupplier?.raw_supplier_name || '',
                                                 challan_no: d.challan_no || '',
+                                                vehicle_no: d.vehicle_no || '',
+                                                driver_name: d.driver_name || '',
+                                                driver_phone: d.driver_phone || '',
+                                                received_by: d.received_by || '',
                                                 note: d.note || '',
                                               });
                                               setModalReadOnly(true);
@@ -6338,7 +7196,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -6453,7 +7311,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -6547,7 +7405,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -6786,6 +7644,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             {!isSupervisor && <th>Rate</th>}
                             {!isSupervisor && <th>Total Amount</th>}
                             <th>Challan No</th>
+                            <th>Vehicle / Received By</th>
                             <th>Bill</th>
                             <th>Note</th>
                             <th style={{ textAlign: 'right' }}>Actions</th>
@@ -6816,6 +7675,17 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 {!isSupervisor && <td>{INR(r.rate)}</td>}
                                 {!isSupervisor && <td style={{ fontWeight: 600 }}>{INR(r.amount)}</td>}
                                 <td>{r.challan_no || '—'}</td>
+                                <td>
+                                  {r.vehicle_no ? (
+                                    <div>
+                                      <b style={{ color: '#0369a1', fontSize: 12 }}>🚛 {r.vehicle_no}</b>
+                                      {r.driver_name && <div style={{ fontSize: 11, color: '#475569' }}>Driver: {r.driver_name}</div>}
+                                      {r.received_by && <div style={{ fontSize: 11, color: '#166534' }}>Recvd: {r.received_by}</div>}
+                                    </div>
+                                  ) : (
+                                    r.received_by ? <span style={{ fontSize: 12, color: '#166534' }}>Recvd: {r.received_by}</span> : '—'
+                                  )}
+                                </td>
                                 <td onClick={(e) => e.stopPropagation()}>
                                   {r.bill_url ? (
                                     <a href={r.bill_url} target="_blank" rel="noreferrer" title={r.bill_filename} style={{ textDecoration: 'none' }}>
@@ -6841,6 +7711,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             received_date: r.received_date,
                                             supplier_name: r.supplier_name || '',
                                             challan_no: r.challan_no || '',
+                                            vehicle_no: r.vehicle_no || '',
+                                            driver_name: r.driver_name || '',
+                                            driver_phone: r.driver_phone || '',
+                                            received_by: r.received_by || '',
                                             note: r.note || '',
                                           });
                                           setModalReadOnly(false);
@@ -6873,6 +7747,10 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                             received_date: r.received_date,
                                             supplier_name: r.supplier_name || '',
                                             challan_no: r.challan_no || '',
+                                            vehicle_no: r.vehicle_no || '',
+                                            driver_name: r.driver_name || '',
+                                            driver_phone: r.driver_phone || '',
+                                            received_by: r.received_by || '',
                                             note: r.note || '',
                                           });
                                           setModalReadOnly(true);
@@ -6882,7 +7760,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -7018,7 +7896,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -7163,7 +8041,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -7294,7 +8172,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -7423,7 +8301,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -7584,7 +8462,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     >
                                       👁️ View
                                     </button>
-                                    <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                       🔒 Locked
                                     </span>
                                   </>
@@ -7730,7 +8608,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -7758,6 +8636,234 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                       </table>
                     </div>
                   )}
+
+                  {/* ── 8. STAFF TAB ─────────────────────────────────────────── */}
+                  {projectTab === 'staff' && (
+                    <div>
+                      {/* Top Staff KPI Stats */}
+                      <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: 16 }}>
+                        <div className="stat">
+                          <small>Total Staff Assigned</small>
+                          <b style={{ fontSize: 20, display: 'block', marginTop: 4 }}>
+                            {staffSummary.total_staff || projectStaff.length} Member{(staffSummary.total_staff || projectStaff.length) === 1 ? '' : 's'}
+                          </b>
+                        </div>
+                        <div className="stat">
+                          <small>Total Payments &amp; Due</small>
+                          <b style={{ fontSize: 20, display: 'block', marginTop: 4, color: '#16a34a' }}>
+                            {INR(staffSummary.total_paid || 0)}
+                            {(() => {
+                              const totalDue = projectStaff.reduce((sum, s) => sum + (Number(s.balance_due) || 0), 0);
+                              return totalDue > 0 ? (
+                                <span style={{ fontSize: 12, fontWeight: 600, color: '#dc2626', marginLeft: 6 }}>
+                                  (Due: {INR(totalDue)})
+                                </span>
+                              ) : null;
+                            })()}
+                          </b>
+                        </div>
+                      </div>
+
+                      {/* Staff Section Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                        <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
+                          👥 Project Staff Directory ({projectStaff.length})
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setStaffForm(staffBlank);
+                            setEditingStaffId(null);
+                            setModalError('');
+                            setStaffModal(true);
+                          }}
+                        >
+                          + Assign Staff Member
+                        </button>
+                      </div>
+
+                      {/* Staff Directory & Earnings Table */}
+                      <div className="card">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                              <input
+                                type="text"
+                                placeholder="Search staff by name, phone, role..."
+                                value={staffSearch}
+                                onChange={(e) => setStaffSearch(e.target.value)}
+                                style={{ minWidth: 260, fontSize: 13 }}
+                              />
+                              <select
+                                value={staffRoleFilter}
+                                onChange={(e) => setStaffRoleFilter(e.target.value)}
+                                style={{ fontSize: 13, padding: '6px 10px' }}
+                              >
+                                <option value="">All Roles</option>
+                                {staffRolesList.map((r) => (
+                                  <option key={r} value={r}>{r}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <span style={{ fontSize: 12, color: '#64748b' }}>
+                              Showing {projectStaff.filter((st) => {
+                                if (staffRoleFilter && st.role !== staffRoleFilter) return false;
+                                if (staffSearch.trim()) {
+                                  const q = staffSearch.toLowerCase();
+                                  return st.name.toLowerCase().includes(q) || (st.phone && st.phone.includes(q)) || st.role.toLowerCase().includes(q);
+                                }
+                                return true;
+                              }).length} Staff Members
+                            </span>
+                          </div>
+
+                          <div style={{ overflowX: 'auto' }}>
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Staff Name</th>
+                                  <th>Role / Designation</th>
+                                  <th>Contact</th>
+                                  <th>Pay Structure</th>
+                                  <th>Attendance</th>
+                                  <th>Earned Salary</th>
+                                  <th>Commission</th>
+                                  <th>Total Paid</th>
+                                  <th>Balance Due</th>
+                                  <th>Status</th>
+                                  <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {projectStaff
+                                  .filter((st) => {
+                                    if (staffRoleFilter && st.role !== staffRoleFilter) return false;
+                                    if (staffSearch.trim()) {
+                                      const q = staffSearch.toLowerCase();
+                                      return st.name.toLowerCase().includes(q) || (st.phone && st.phone.includes(q)) || st.role.toLowerCase().includes(q);
+                                    }
+                                    return true;
+                                  })
+                                  .map((st) => (
+                                    <tr key={st.id}>
+                                      <td style={{ fontWeight: 600 }}>
+                                        {st.name}
+                                      </td>
+                                      <td>
+                                        <span className="badge" style={{ background: 'rgba(2,132,199,0.15)', color: '#38bdf8', fontWeight: 600 }}>
+                                          {st.role}
+                                        </span>
+                                      </td>
+                                      <td>{st.phone || '—'}</td>
+                                      <td>
+                                        <div style={{ fontSize: 12, fontWeight: 600 }}>
+                                          {INR(st.salary_rate)}
+                                          <span style={{ fontWeight: 400, color: '#64748b', marginLeft: 4 }}>
+                                            / {st.pay_type === 'per_day' ? 'day' : st.pay_type === 'monthly' ? 'month' : 'project'}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td>
+                                        <div style={{ fontSize: 12 }}>
+                                          <b style={{ color: '#0284c7' }}>{st.days_present}P</b>
+                                          {st.days_half_day > 0 && <span style={{ color: '#f59e0b', marginLeft: 4 }}>• {st.days_half_day}HD</span>}
+                                        </div>
+                                      </td>
+                                      <td style={{ fontWeight: 600 }}>
+                                        {INR(st.total_salary_earned)}
+                                      </td>
+                                      <td>
+                                        <div style={{ fontSize: 12 }}>
+                                          <span style={{ fontWeight: 600, color: '#d97706' }}>{INR(st.total_commission_earned)}</span>
+                                          {st.commission_paid > 0 && (
+                                            <div style={{ fontSize: 11, color: '#16a34a' }}>
+                                              (Paid: {INR(st.commission_paid)})
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                      <td style={{ fontWeight: 600, color: '#22c55e' }}>
+                                        {INR(st.total_paid)}
+                                      </td>
+                                      <td>
+                                        <b style={{ color: Number(st.balance_due) > 0 ? '#dc2626' : '#16a34a' }}>
+                                          {INR(st.balance_due)}
+                                        </b>
+                                      </td>
+                                      <td>
+                                        <span className={`badge ${st.is_active ? 'badge-active' : 'badge-inactive'}`}>
+                                          {st.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                      </td>
+                                      <td className="actions" style={{ justifyContent: 'flex-end', display: 'flex', gap: 6 }}>
+                                        <button
+                                          type="button"
+                                          className="muted"
+                                          style={{ padding: '4px 8px', fontSize: 12 }}
+                                          title="Record payment for this staff"
+                                          onClick={() => {
+                                            setStaffPaymentForm({
+                                              staff_id: String(st.id),
+                                              amount: String(st.balance_due > 0 ? st.balance_due : ''),
+                                              payment_date: today(),
+                                              payment_type: 'salary',
+                                              mode: 'bank',
+                                              transaction_reference: '',
+                                              note: '',
+                                            });
+                                            setEditingStaffPaymentId(null);
+                                            setModalError('');
+                                            setStaffPaymentModal(true);
+                                          }}
+                                        >
+                                          💳 Pay
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="muted"
+                                          style={{ padding: '4px 8px', fontSize: 12 }}
+                                          onClick={() => {
+                                            setEditingStaffId(st.id);
+                                            setStaffForm({
+                                              name: st.name,
+                                              phone: st.phone || '',
+                                              role: st.role,
+                                              pay_type: st.pay_type,
+                                              salary_rate: String(st.salary_rate || ''),
+                                              commission_rate: String(st.commission_rate || ''),
+                                              commission_notes: st.commission_notes || '',
+                                              is_active: Boolean(st.is_active),
+                                            });
+                                            setModalError('');
+                                            setStaffModal(true);
+                                          }}
+                                        >
+                                          ✏️ Edit
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="danger"
+                                          style={{ padding: '4px 8px', fontSize: 12 }}
+                                          onClick={() => deleteStaffMember(st.id)}
+                                          title="Remove or deactivate staff"
+                                        >
+                                          ✕
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                {projectStaff.length === 0 && (
+                                  <tr>
+                                    <td colSpan={11} style={{ textAlign: 'center', padding: '2.5rem', color: '#64748b' }}>
+                                      No staff members assigned to this project yet. Click &quot;+ Assign Staff Member&quot; to add supervisors, engineers, or managers.
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
             </>
           ) : selectedVendor ? (
@@ -8328,7 +9434,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -8548,16 +9654,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('laborPayment', () => saveLaborPayment(e), { successMessage: 'Labor payment recorded successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Labor Payment' : (editingLaborPaymentId ? '✏️ Edit Labor Payment' : 'Record Labor Payment')}
+                  {Boolean(modalReadOnly && editingLaborPaymentId) ? '👁️ View Labor Payment' : (editingLaborPaymentId ? '✏️ Edit Labor Payment' : 'Record Labor Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingLaborPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingLaborPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingLaborPaymentId) ? 0.9 : 1 }}>
 
                 <div style={{ marginBottom: 12 }}>
                   <label>
@@ -8695,13 +9801,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
+                  {Boolean(modalReadOnly && editingLaborPaymentId) ? (
                     <button
                       type="button"
                       className="muted"
                       onClick={() => {
                         setLaborPaymentModal(false);
                         setEditingLaborPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
                       }}
                       style={{ padding: '8px 20px', borderRadius: 6 }}
                     >
@@ -8715,6 +9823,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => {
                           setLaborPaymentModal(false);
                           setEditingLaborPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
                         }}
                       >
                         Cancel
@@ -8835,7 +9945,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
                   <label>
-                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Pay Type</small>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Pay Type</small>
                     <select
                       value={assignForm.pay_type}
                       onChange={(e) => setAssignForm({ ...assignForm, pay_type: e.target.value })}
@@ -8866,7 +9976,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {supplyModal && selectedVendor && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('supply', () => saveMaterialSupply(e), { successMessage: 'Vendor delivery saved successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   Record Vendor Material Supply
                 </h3>
                 <p style={{ margin: '0 0 12px', fontSize: 12, color: '#64748b' }}>
@@ -8931,7 +10041,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {addMaterialModal && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('material', () => saveMaterialMaster(e), { successMessage: 'Material created successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   Add Master Material
                 </h3>
                 <div className="grid">
@@ -8975,7 +10085,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 }
                 className="modal-card"
               >
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   Add Local / Site Vendor
                 </h3>
                 {modalError && (
@@ -9066,13 +10176,13 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 }
                 className="modal-card"
               >
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Vendor Payment' : (editingSupplierPaymentId ? '✏️ Edit Vendor Payment' : 'Record Payment to Vendor')}
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
+                  {Boolean(modalReadOnly && editingSupplierPaymentId) ? '👁️ View Vendor Payment' : (editingSupplierPaymentId ? '✏️ Edit Vendor Payment' : 'Record Payment to Vendor')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingSupplierPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && (
@@ -9091,7 +10201,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {modalError}
                   </div>
                 )}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingSupplierPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingSupplierPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -9248,13 +10358,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
+                  {Boolean(modalReadOnly && editingSupplierPaymentId) ? (
                     <button
                       type="button"
                       className="muted"
                       onClick={() => {
                         setSupplierPaymentModal(false);
                         setEditingSupplierPaymentId(null);
+                        setModalReadOnly(false);
                         setModalError('');
                       }}
                       style={{ padding: '8px 20px', borderRadius: 6 }}
@@ -9270,6 +10381,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => {
                           setSupplierPaymentModal(false);
                           setEditingSupplierPaymentId(null);
+                          setModalReadOnly(false);
                           setModalError('');
                         }}
                       >
@@ -9289,7 +10401,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {receivedModal && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('delivery', () => saveReceivedEntry(e), { successMessage: 'Vendor delivery saved successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   {modalReadOnly ? '👁️ View Vendor Material Delivery' : (editingReceivedId ? '✏️ Edit Vendor Material Delivery' : 'Record Vendor Material Delivery')}
                 </h3>
                 {modalReadOnly && (
@@ -9390,6 +10502,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </label>
                   <Input label="Vendor Name (if typing new local vendor)" name="supplier_name" value={receivedForm.supplier_name} set={setReceivedForm} placeholder="e.g. Local Bhatta / Hardware" />
                   <Input label="Challan / Invoice No." name="challan_no" value={receivedForm.challan_no} set={setReceivedForm} />
+                  <Input label="Vehicle / Gaadi No." name="vehicle_no" value={receivedForm.vehicle_no || ''} set={setReceivedForm} placeholder="e.g. UP 21 BT 4589" />
+                  <Input label="Driver / Delivered By (Kon Leke Aaya)" name="driver_name" value={receivedForm.driver_name || ''} set={setReceivedForm} placeholder="Driver name & mobile" />
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Received By (Site Pe Kisne Receive Kiya)</small>
+                    <input
+                      list="site-staff-list"
+                      name="received_by"
+                      value={receivedForm.received_by || ''}
+                      onChange={(e) => setReceivedForm({ ...receivedForm, received_by: e.target.value })}
+                      placeholder="Select or enter receiver name"
+                    />
+                    <datalist id="site-staff-list">
+                      {projectStaff.map((st) => (
+                        <option key={st.id} value={`${st.name} (${st.role})`} />
+                      ))}
+                    </datalist>
+                  </label>
                   <Input label="Note" name="note" value={receivedForm.note} set={setReceivedForm} />
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Upload Bill (optional)</small>
@@ -9424,7 +10553,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {usedModal && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('usage', () => saveUsedEntry(e), { successMessage: 'Material usage saved successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   {modalReadOnly ? '👁️ View Daily Material Usage' : (editingUsedId ? '✏️ Edit Daily Material Usage' : '🧱 Record Daily Material Consumption')}
                 </h3>
                 {modalReadOnly && (
@@ -9527,7 +10656,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {adjustmentModal && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('adjustment', () => saveAdjustmentEntry(e), { successMessage: 'Entry saved successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   {modalReadOnly ? '👁️ View' : (editingAdjId ? '✏️ Edit' : 'Record')} {
                     ['return_material', 'return_to_supplier'].includes(adjustmentForm.adjustment_type)
                       ? 'Return Material'
@@ -9710,7 +10839,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {expenseModal && (
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('expense', () => saveExpenseEntry(e), { successMessage: 'Expense saved successfully', onError: setModalError })} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   {modalReadOnly ? '👁️ View Other Expense' : (editingExpenseId ? '✏️ Edit Other Expense' : 'Record Other Expense')}
                 </h3>
                 {modalReadOnly && (
@@ -9789,7 +10918,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 }
                 className="modal-card"
               >
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
                   {modalReadOnly ? '👁️ View Commission' : (editingCommissionId ? '✏️ Edit Commission' : 'Record Commission')}
                 </h3>
                 {modalReadOnly && (
@@ -9883,26 +11012,225 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             </div>
           )}
 
+          {/* ── MODAL: ASSIGN / EDIT STAFF MEMBER ─────────────────────────── */}
+          {staffModal && (
+            <div className="modal-overlay">
+              <form onSubmit={(e) => submitAction.submit('staff', () => saveStaffMember(e), { successMessage: editingStaffId ? 'Staff member updated successfully' : 'Staff member assigned to project' })} className="modal-card">
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
+                  {editingStaffId ? '✏️ Edit Staff Member' : '👔 Assign Staff Member to Project'}
+                </h3>
+                {modalError && (
+                  <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>
+                    {modalError}
+                  </div>
+                )}
+                <div className="grid">
+                  <Input
+                    label="Staff Member Name"
+                    name="name"
+                    value={staffForm.name}
+                    set={setStaffForm}
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                  />
+                  <Input
+                    label="Phone / Mobile Number"
+                    name="phone"
+                    value={staffForm.phone}
+                    set={setStaffForm}
+                    placeholder="e.g. 9876543210"
+                  />
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Role / Designation</small>
+                    <select
+                      value={staffForm.role}
+                      onChange={(e) => setStaffForm({ ...staffForm, role: e.target.value })}
+                      required
+                    >
+                      {staffRolesList.map((r) => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Pay Type</small>
+                    <select
+                      value={staffForm.pay_type}
+                      onChange={(e) => setStaffForm({ ...staffForm, pay_type: e.target.value })}
+                      required
+                    >
+                      <option value="monthly">Monthly Salary</option>
+                      <option value="per_day">Daily Wage (Per-Day)</option>
+                      <option value="fixed_fee">Fixed Project Fee</option>
+                    </select>
+                  </label>
+                  <Input
+                    label={`Salary / Base Rate (₹ ${staffForm.pay_type === 'per_day' ? 'per day' : staffForm.pay_type === 'monthly' ? 'per month' : 'total'})`}
+                    name="salary_rate"
+                    type="number"
+                    step="any"
+                    min="0"
+                    value={staffForm.salary_rate}
+                    set={setStaffForm}
+                    required
+                  />
+                  <Input
+                    label="Commission Rate / Amount (₹)"
+                    name="commission_rate"
+                    type="number"
+                    step="any"
+                    min="0"
+                    value={staffForm.commission_rate}
+                    set={setStaffForm}
+                    placeholder="e.g. 15000 (if eligible for commission)"
+                  />
+                  <Input
+                    label="Commission Notes / Milestones"
+                    name="commission_notes"
+                    value={staffForm.commission_notes}
+                    set={setStaffForm}
+                    placeholder="e.g. Payable on 100% completion on time"
+                  />
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
+                    <input
+                      type="checkbox"
+                      checked={staffForm.is_active}
+                      onChange={(e) => setStaffForm({ ...staffForm, is_active: e.target.checked })}
+                    />
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>Staff Member is currently active on this project</span>
+                  </label>
+                </div>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button type="button" className="muted" onClick={() => setStaffModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('staff')}>
+                    {submitAction.isSubmitting('staff') ? 'Saving…' : (editingStaffId ? 'Update Staff Member' : 'Assign to Project')}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── MODAL: RECORD STAFF PAYMENT ───────────────────────────────── */}
+          {staffPaymentModal && (
+            <div className="modal-overlay">
+              <form onSubmit={(e) => submitAction.submit('staffPayment', () => saveStaffPayment(e), { successMessage: 'Staff payment recorded successfully' })} className="modal-card">
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
+                  {editingStaffPaymentId ? '✏️ Edit Staff Payment' : '💳 Record Staff Payment / Commission'}
+                </h3>
+                {modalError && (
+                  <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>
+                    {modalError}
+                  </div>
+                )}
+                <div className="grid">
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Select Staff Member</small>
+                    <select
+                      value={staffPaymentForm.staff_id}
+                      onChange={(e) => setStaffPaymentForm({ ...staffPaymentForm, staff_id: e.target.value })}
+                      required
+                    >
+                      <option value="">-- Choose Staff Member --</option>
+                      {projectStaff.map((st) => (
+                        <option key={st.id} value={st.id}>
+                          {st.name} ({st.role}) {st.balance_due > 0 ? `• Due: ${INR(st.balance_due)}` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Type</small>
+                    <select
+                      value={staffPaymentForm.payment_type}
+                      onChange={(e) => setStaffPaymentForm({ ...staffPaymentForm, payment_type: e.target.value })}
+                      required
+                    >
+                      <option value="salary">Salary Payment</option>
+                      <option value="commission">Commission Payout</option>
+                      <option value="advance">Advance / Petty Cash</option>
+                      <option value="bonus">Bonus / Incentive</option>
+                      <option value="reimbursement">Site Expense Reimbursement</option>
+                    </select>
+                  </label>
+                  <Input
+                    label="Amount (₹)"
+                    name="amount"
+                    type="number"
+                    step="any"
+                    min="1"
+                    value={staffPaymentForm.amount}
+                    set={setStaffPaymentForm}
+                    required
+                  />
+                  <Input
+                    label="Payment Date"
+                    name="payment_date"
+                    type="date"
+                    value={staffPaymentForm.payment_date}
+                    set={setStaffPaymentForm}
+                    required
+                  />
+                  <label>
+                    <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Mode</small>
+                    <select
+                      value={staffPaymentForm.mode}
+                      onChange={(e) => setStaffPaymentForm({ ...staffPaymentForm, mode: e.target.value })}
+                    >
+                      <option value="bank">Bank Transfer (NEFT/RTGS/IMPS)</option>
+                      <option value="upi">UPI / Online</option>
+                      <option value="cheque">Cheque</option>
+                      <option value="cash">Cash</option>
+                    </select>
+                  </label>
+                  <Input
+                    label="Transaction Ref / Cheque No."
+                    name="transaction_reference"
+                    value={staffPaymentForm.transaction_reference}
+                    set={setStaffPaymentForm}
+                    placeholder="e.g. UTR / URN / Cheque #123456"
+                  />
+                  <Input
+                    label="Note / Remarks"
+                    name="note"
+                    value={staffPaymentForm.note}
+                    set={setStaffPaymentForm}
+                    placeholder="e.g. Advance for site travel / October Salary"
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
+                  <button type="button" className="muted" onClick={() => setStaffPaymentModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={submitAction.isSubmitting('staffPayment')}>
+                    {submitAction.isSubmitting('staffPayment') ? 'Recording…' : (editingStaffPaymentId ? 'Update Staff Payment' : 'Save Staff Payment')}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           {/* ── MODAL: PARTY PAYMENT ────────────────────────────────────────── */}
           {partyPaymentModal && (
             <div className="modal-overlay">
               <form onSubmit={savePartyPayment} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Party Payment' : (editingPartyPaymentId ? '✏️ Edit Party Payment' : 'Record Party Payment')}
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
+                  {Boolean(modalReadOnly && editingPartyPaymentId) ? '👁️ View Party Payment' : (editingPartyPaymentId ? '✏️ Edit Party Payment' : 'Record Party Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingPartyPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingPartyPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingPartyPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                     <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
                     <Input label="Date" name="payment_date" type="date" value={partyPaymentForm.payment_date} set={setPartyPaymentForm} required />
                     <label>
-                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Mode</small>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Mode</small>
                       <select value={partyPaymentForm.mode} onChange={(e) => setPartyPaymentForm((f) => ({ ...f, mode: e.target.value }))}>
                         <option value="bank">Bank Transfer</option>
                         <option value="cash">Cash</option>
@@ -9917,13 +11245,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
-                    <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                  {Boolean(modalReadOnly && editingPartyPaymentId) ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setPartyPaymentModal(false);
+                        setEditingPartyPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
                       Close
                     </button>
                   ) : (
                     <>
-                      <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)}>
+                      <button
+                        type="button"
+                        className="muted"
+                        onClick={() => {
+                          setPartyPaymentModal(false);
+                          setEditingPartyPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
+                        }}
+                      >
                         Cancel
                       </button>
                       <button type="submit">{editingPartyPaymentId ? 'Update Payment' : 'Save Payment'}</button>
@@ -9938,24 +11285,24 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
           {vendorPaymentModal && (
             <div className="modal-overlay">
               <form onSubmit={saveVendorPayment} className="modal-card">
-                <h3 style={{ margin: '0 0 14px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Service Provider Payment' : (editingVendorPaymentId ? '✏️ Edit Service Provider Payment' : 'Record Service Provider Payment')}
+                <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
+                  {Boolean(modalReadOnly && editingVendorPaymentId) ? '👁️ View Service Provider Payment' : (editingVendorPaymentId ? '✏️ Edit Service Provider Payment' : 'Record Service Provider Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingVendorPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingVendorPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingVendorPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                     <label>
                       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Service Provider</small>
                       <select
                         required
                         value={vendorPaymentForm.project_vendor_id}
-                        disabled={modalReadOnly || Boolean(editingVendorPaymentId)}
+                        disabled={Boolean(modalReadOnly && editingVendorPaymentId) || Boolean(editingVendorPaymentId)}
                         onChange={(e) => {
                           const pvid = e.target.value;
                           const pv = projectVendors.find((v) => String(v.id) === String(pvid));
@@ -9974,7 +11321,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={vendorPaymentForm.amount} set={setVendorPaymentForm} required />
                     <Input label="Payment Date" name="payment_date" type="date" value={vendorPaymentForm.payment_date} set={setVendorPaymentForm} required />
                     <label>
-                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Payment Mode</small>
+                      <small style={{ display: 'block', marginBottom: 4, fontWeight: 600 }}>Payment Mode</small>
                       <select value={vendorPaymentForm.mode} onChange={(e) => setVendorPaymentForm({ ...vendorPaymentForm, mode: e.target.value })}>
                         <option value="bank">Bank Transfer</option>
                         <option value="cash">Cash</option>
@@ -9997,13 +11344,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
-                    <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                  {Boolean(modalReadOnly && editingVendorPaymentId) ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setVendorPaymentModal(false);
+                        setEditingVendorPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
                       Close
                     </button>
                   ) : (
                     <>
-                      <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)}>
+                      <button
+                        type="button"
+                        className="muted"
+                        onClick={() => {
+                          setVendorPaymentModal(false);
+                          setEditingVendorPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
+                        }}
+                      >
                         Cancel
                       </button>
                       <button type="submit">{editingVendorPaymentId ? 'Update Payment' : 'Save Payment'}</button>
@@ -10749,7 +12115,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               >
                 <span style={{ fontSize: 16 }}>🔒</span>
                 <div>
-                  <strong>Read Only (Locked):</strong> Past date attendance records cannot be modified. They can only be edited on the day they were created.
+                  <strong>Read Only (Locked):</strong> Attendance records older than 48 hours cannot be modified. They can only be edited within 48 hours of creation.
                 </div>
               </div>
             )}
