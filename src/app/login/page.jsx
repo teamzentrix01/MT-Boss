@@ -621,7 +621,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="lp-form-panel">4-
+          <div className="lp-form-panel">
             {!showAdminLogin ? (
               <>
                 <div className="lp-form-title">Welcome back</div>

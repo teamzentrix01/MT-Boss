@@ -284,11 +284,11 @@ export default function SupplierLoginPage() {
             <div style={{ fontWeight: 900, fontSize: '1.05rem', marginBottom: '2rem' }}>
               MT<span style={{ color: brandGreen }}>BOSS</span>
               <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 800, color: '#fff', background: '#059669', padding: '3px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>
-                SUPPLIER
+                VENDOR
               </span>
             </div>
             <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#fff', lineHeight: 1.28, marginBottom: '0.75rem' }}>
-              Supplier & Partner Portal
+              Vendors & Partner Portal
             </div>
             <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7 }}>
               Manage material inventory, process direct supply orders, track payouts, and communicate with project teams seamlessly.
@@ -319,7 +319,7 @@ export default function SupplierLoginPage() {
             <div>
               <PartnerMobileOtpAuth
                 role="supplier"
-                title="Supplier sign in"
+                title="Vendor sign in"
                 subtitle="Use the mobile number on your approved supplier account."
                 onSuccess={() => router.push('/supplier/dashboard')}
               />
@@ -340,7 +340,7 @@ export default function SupplierLoginPage() {
           ) : (
             <div>
               <div style={{ marginBottom: '1.25rem' }}>
-                <h2 style={{ margin: '0 0 .35rem', fontSize: '1.35rem', fontWeight: 800 }}>Supplier Sign In</h2>
+                <h2 style={{ margin: '0 0 .35rem', fontSize: '1.35rem', fontWeight: 800 }}>Vendor Sign In</h2>
                 <p style={{ margin: 0, color: isDark ? '#a1a1aa' : '#64748b', fontSize: '.84rem' }}>
                   Use your registered account email and password.
                 </p>
@@ -524,7 +524,7 @@ export default function SupplierLoginPage() {
             textAlign: 'center',
           }}>
             <p style={{ margin: '0 0 0.5rem', fontSize: '.82rem', color: isDark ? '#888' : '#64748b' }}>
-              Don&apos;t have a supplier account?{' '}
+              Don&apos;t have a Vendor account?{' '}
               <Link href="/supplier/signup" style={{ color: brandGreen, fontWeight: 800, textDecoration: 'none' }}>
                 Register here
               </Link>
