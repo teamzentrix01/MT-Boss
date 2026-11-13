@@ -4,6 +4,7 @@ import RequiredAsterisk from '../../components/RequiredAsterisk';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Mail, Lock, Eye, EyeOff, Smartphone, ArrowRight } from 'lucide-react';
 import PartnerMobileOtpAuth from '@/app/components/PartnerMobileOtpAuth';
 
 export default function ServiceProviderLoginPage() {
@@ -13,7 +14,8 @@ export default function ServiceProviderLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [dark, setDark] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
+  // 'mobile' or 'email'
+  const [authMode, setAuthMode] = useState('mobile');
 
   useEffect(() => {
     const html = document.documentElement;
@@ -64,150 +66,375 @@ export default function ServiceProviderLoginPage() {
     }
   };
 
-  const bg = dark ? '#000' : '#f5f5f7';
-  const surface = dark ? '#0a0a0a' : '#fff';
-  const border = dark ? '#27272a' : '#e2e2e7';
-  const text = dark ? '#fff' : '#111113';
-  const muted = dark ? '#71717a' : '#6b6b76';
-  const inputBg = dark ? '#111' : '#f9f9fb';
+  const isDark = dark;
+  const brandBlue = 'var(--brand-blue, #2563eb)';
 
   return (
-    <div className="sp-login-page" suppressHydrationWarning style={{ minHeight: '100vh', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', fontFamily: "'DM Sans', system-ui, sans-serif", transition: 'background 0.3s' }}>
+    <div
+      className="sp-login-page"
+      suppressHydrationWarning
+      style={{
+        minHeight: '100vh',
+        background: isDark ? '#050505' : '#f5f5f7',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+        fontFamily: "'DM Sans', system-ui, sans-serif",
+      }}
+    >
       <style suppressHydrationWarning>{`
         .sp-login-page { width: 100%; box-sizing: border-box; }
-        .sp-login-card, .sp-login-form { min-width: 0; }
+        .sp-login-card {
+          width: 100%;
+          max-width: 860px;
+          display: flex;
+          background: ${isDark ? '#111' : '#fff'};
+          border: 1px solid ${isDark ? '#27272a' : '#e5e7eb'};
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
 
-        @media (max-width: 639px) {
-          .sp-login-page {
-            min-height: calc(100svh - 64px) !important;
-            padding: 1rem !important;
-            align-items: flex-start !important;
-          }
+        .sp-login-brand {
+          flex: 0 0 320px;
+          background: #0f1115;
+          color: #fff;
+          padding: 2.75rem 2.25rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .sp-login-form {
+          flex: 1;
+          padding: 2.5rem 2.25rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          background: ${isDark ? '#141417' : '#ffffff'};
+        }
+
+        .sp-tab-bar {
+          display: flex;
+          background: ${isDark ? '#1f1f23' : '#f1f5f9'};
+          padding: 4px;
+          border-radius: 10px;
+          margin-bottom: 1.5rem;
+          border: 1px solid ${isDark ? '#2e2e33' : '#e2e8f0'};
+        }
+
+        .sp-tab-btn {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 0.6rem 0.75rem;
+          border-radius: 7px;
+          font-size: 0.8125rem;
+          font-weight: 700;
+          border: none;
+          background: transparent;
+          color: ${isDark ? '#a1a1aa' : '#64748b'};
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .sp-tab-btn.active {
+          background: ${isDark ? '#27272a' : '#ffffff'};
+          color: ${isDark ? '#ffffff' : '#0f172a'};
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .sp-input-wrap {
+          position: relative;
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
+
+        .sp-input-icon {
+          position: absolute;
+          left: 0.9rem;
+          color: ${isDark ? '#71717a' : '#9ca3af'};
+          pointer-events: none;
+        }
+
+        .sp-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+          border-radius: 10px;
+          border: 1px solid ${isDark ? '#3f3f46' : '#d4d4d8'};
+          background: ${isDark ? '#18181b' : '#fafafa'};
+          color: inherit;
+          font-size: 0.9rem;
+          outline: none;
+          transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .sp-input:focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+          background: ${isDark ? '#18181b' : '#ffffff'};
+        }
+
+        .sp-pw-toggle {
+          position: absolute;
+          right: 0.85rem;
+          background: transparent;
+          border: none;
+          color: ${isDark ? '#a1a1aa' : '#71717a'};
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          padding: 4px;
+        }
+
+        .sp-submit-btn {
+          width: 100%;
+          border: none;
+          border-radius: 10px;
+          background: var(--brand-blue, #2563eb);
+          color: #0f172a;
+          padding: 0.85rem 1rem;
+          font-weight: 800;
+          font-size: 0.925rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .sp-submit-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
           .sp-login-card {
-            width: 100% !important;
-            max-width: 420px !important;
-            margin: auto;
+            flex-direction: column;
           }
           .sp-login-brand { display: none !important; }
           .sp-login-form {
-            width: 100% !important;
-            padding: 1.75rem 1.25rem !important;
-            box-sizing: border-box;
+            padding: 2rem 1.25rem;
           }
         }
-
-        @media (max-width: 359px) {
-          .sp-login-page { padding: 0.75rem !important; }
-          .sp-login-form { padding: 1.5rem 1rem !important; }
-        }
       `}</style>
-      <div className="sp-login-card" style={{ display: 'flex', width: '100%', maxWidth: 820, background: surface, border: `1px solid ${border}`, borderRadius: 12, overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,.08)', transition: 'background 0.3s, border-color 0.3s' }}>
 
-        {/* Brand Panel */}
-        <div style={{ flex: '0 0 300px', background: dark ? '#111' : '#111113', padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} className="sp-login-brand">
+      <div className="sp-login-card">
+        {/* Brand Side Panel */}
+        <div className="sp-login-brand">
           <div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: '2rem' }}>
-              MT<span style={{ color: 'var(--brand-blue)' }}>BOSS</span>
-              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 600, color: 'var(--brand-blue)', background: 'color-mix(in srgb, var(--brand-blue) 15%, transparent)', padding: '2px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>SERVICE PROVIDER</span>
+            <div style={{ fontWeight: 900, fontSize: '1.05rem', marginBottom: '2rem' }}>
+              MT<span style={{ color: brandBlue }}>BOSS</span>
+              <span style={{ marginLeft: 8, fontSize: '0.65rem', fontWeight: 800, color: '#0f172a', background: brandBlue, padding: '3px 8px', borderRadius: 99, letterSpacing: '0.08em' }}>
+                SERVICE PROVIDER
+              </span>
             </div>
-            <div style={{ fontSize: '1.375rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.75rem' }}>
+            <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#fff', lineHeight: 1.28, marginBottom: '0.75rem' }}>
               Grow your business with us.
             </div>
             <p style={{ fontSize: '0.8125rem', color: '#9ca3af', lineHeight: 1.7 }}>
               Manage bookings, track earnings, and serve customers — all from your service provider dashboard.
             </p>
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#4b5563' }}>© {new Date().getFullYear()} MTBOSS. All rights reserved.</div>
+          <div style={{ fontSize: '0.7rem', color: '#64748b' }}>© {new Date().getFullYear()} MTBOSS. All rights reserved.</div>
         </div>
 
         {/* Form Panel */}
-        <div className="sp-login-form" style={{ flex: 1, padding: '2.25rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: surface, transition: 'background 0.3s' }}>
-
-          {/* Back to user login */}
-          <Link href="/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.75rem', fontWeight: 600, color: muted, textDecoration: 'none', marginBottom: '1.5rem', transition: 'color 0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.color = text}
-            onMouseLeave={e => e.currentTarget.style.color = muted}>
-            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to User Login
+        <div className="sp-login-form">
+          <Link
+            href="/login"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: isDark ? '#a1a1aa' : '#64748b',
+              textDecoration: 'none',
+              marginBottom: '1.25rem',
+            }}
+          >
+            ← Back to User Login
           </Link>
 
-          <PartnerMobileOtpAuth
-            role="vendor"
-            title="Service provider sign in"
-            subtitle="Use the mobile number on your approved vendor profile."
-            onSuccess={() => router.push('/vendor/dashboard')}
-          />
+          {authMode === 'mobile' ? (
+            <div>
+              <PartnerMobileOtpAuth
+                role="vendor"
+                title="Service provider sign in"
+                subtitle="Use the mobile number on your approved vendor profile."
+                onSuccess={() => router.push('/vendor/dashboard')}
+              />
 
-          <button
-            type="button"
-            onClick={() => setShowLegacyLogin((v) => !v)}
-            style={{ marginTop: '1rem', width: '100%', border: 0, background: 'transparent', color: 'var(--brand-blue)', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer' }}
-          >
-            {showLegacyLogin ? '← Use mobile OTP' : 'Sign in with email & password (legacy)'}
-          </button>
-
-          {showLegacyLogin && error && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.875rem', background: dark ? '#3f1515' : '#fff1f2', border: `1px solid ${dark ? '#dc2626' : '#fca5a5'}`, borderRadius: 6, fontSize: '0.8125rem', color: dark ? '#fca5a5' : '#9f1239', marginBottom: '1rem' }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: dark ? '#fca5a5' : '#9f1239', flexShrink: 0 }} />
-              {error}
-            </div>
-          )}
-
-          {showLegacyLogin ? <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
-            {/* Email */}
-            <div style={{ marginBottom: '0.875rem' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Email address <RequiredAsterisk /></label>
-              <div style={{ position: 'relative' }}>
-                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="serviceprovider@example.com" required
-                  style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'}
-                  onBlur={e => e.target.style.borderColor = border}
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: muted, marginBottom: '0.3rem' }}>Password <RequiredAsterisk /></label>
-              <div style={{ position: 'relative' }}>
-                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 15, height: 15, color: muted, pointerEvents: 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <input type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" required
-                  style={{ width: '100%', padding: '0.5rem 2.5rem 0.5rem 2.25rem', border: `1px solid ${border}`, borderRadius: 7, background: inputBg, color: text, fontSize: '0.8125rem', outline: 'none', boxSizing: 'border-box', transition: 'border-color 0.15s' }}
-                  onFocus={e => e.target.style.borderColor = 'var(--brand-blue)'}
-                  onBlur={e => e.target.style.borderColor = border}
-                />
-                <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: muted, padding: 0, display: 'flex' }}>
-                  {showPassword
-                    ? <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" /></svg>
-                    : <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" /><path d="M15.171 13.576l1.474 1.474a1 1 0 001.414-1.414l-14-14a1 1 0 00-1.414 1.414l1.473 1.473A10.014 10.014 0 00.458 10C1.732 14.057 5.522 17 10 17a9.958 9.958 0 004.512-1.074l1.78 1.781a1 1 0 001.414-1.414l-1.474-1.474z" /></svg>
-                  }
+              <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('email');
+                    setError('');
+                  }}
+                  style={{
+                    border: 0,
+                    background: 'transparent',
+                    color: brandBlue,
+                    fontWeight: 700,
+                    fontSize: '.82rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Sign in with email & password instead →
                 </button>
               </div>
             </div>
+          ) : (
+            <div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <h2 style={{ margin: '0 0 .35rem', fontSize: '1.35rem', fontWeight: 800 }}>Service Provider Sign In</h2>
+                <p style={{ margin: 0, color: isDark ? '#a1a1aa' : '#64748b', fontSize: '.84rem' }}>
+                  Use your registered account email and password.
+                </p>
+              </div>
 
-            {/* Forgot password */}
-            <div style={{ textAlign: 'right', marginBottom: '1rem', marginTop: '-0.25rem' }}>
-              <Link href="/forgot-password" style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--brand-blue)', textDecoration: 'none' }}>
-                Forgot password?
-              </Link>
+              {error && (
+                <div style={{
+                  padding: '.75rem .95rem',
+                  borderRadius: 10,
+                  background: isDark ? '#2a0a0a' : '#fff1f2',
+                  color: isDark ? '#fca5a5' : '#9f1239',
+                  border: `1px solid ${isDark ? '#7f1d1d' : '#fecdd3'}`,
+                  fontSize: '.84rem',
+                  marginBottom: '1.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', flexShrink: 0 }} />
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+                <div>
+                  <label
+                    htmlFor="sp-email"
+                    style={{
+                      display: 'block',
+                      fontSize: '.78rem',
+                      fontWeight: 700,
+                      color: isDark ? '#d4d4d8' : '#374151',
+                      marginBottom: '.4rem',
+                    }}
+                  >
+                    Email address <RequiredAsterisk />
+                  </label>
+                  <div className="sp-input-wrap">
+                    <Mail className="sp-input-icon" size={17} strokeWidth={2} />
+                    <input
+                      id="sp-email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="serviceprovider@example.com"
+                      required
+                      className="sp-input"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="sp-password"
+                    style={{
+                      display: 'block',
+                      fontSize: '.78rem',
+                      fontWeight: 700,
+                      color: isDark ? '#d4d4d8' : '#374151',
+                      marginBottom: '.4rem',
+                    }}
+                  >
+                    Password <RequiredAsterisk />
+                  </label>
+                  <div className="sp-input-wrap">
+                    <Lock className="sp-input-icon" size={17} strokeWidth={2} />
+                    <input
+                      id="sp-password"
+                      type={showPassword ? 'text' : 'password'}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="••••••••••••"
+                      required
+                      className="sp-input"
+                      style={{ paddingRight: '2.75rem' }}
+                    />
+                    <button
+                      type="button"
+                      className="sp-pw-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff size={17} strokeWidth={2} /> : <Eye size={17} strokeWidth={2} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right', marginTop: '-0.25rem' }}>
+                  <Link href="/forgot-password" style={{ fontSize: '0.8rem', fontWeight: 700, color: brandBlue, textDecoration: 'none' }}>
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <button type="submit" disabled={loading} className="sp-submit-btn">
+                  {loading ? 'Signing in…' : (
+                    <>
+                      Sign In
+                      <ArrowRight size={16} strokeWidth={2.4} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('mobile');
+                    setError('');
+                  }}
+                  style={{
+                    border: 0,
+                    background: 'transparent',
+                    color: brandBlue,
+                    fontWeight: 700,
+                    fontSize: '.82rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ← Use mobile OTP instead
+                </button>
+              </div>
             </div>
+          )}
 
-            <button type="submit" disabled={loading}
-              style={{ width: '100%', padding: '0.6rem 1rem', background: 'var(--brand-blue)', color: '#000', border: 'none', borderRadius: 7, fontSize: '0.875rem', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: '1.25rem', transition: 'opacity 0.15s' }}>
-              {loading ? 'Signing in…' : <>Sign In <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></>}
-            </button>
-          </form> : null}
-
-          <div style={{ textAlign: 'center', fontSize: '0.8rem', color: muted, marginTop: '1rem' }}>
-            No service provider account? <Link href="/vendor/signup" style={{ color: 'var(--brand-blue)', fontWeight: 600, textDecoration: 'none' }}>Register here</Link>
+          <div style={{
+            margin: '1.75rem 0 0',
+            paddingTop: '1.25rem',
+            borderTop: `1px solid ${isDark ? '#27272a' : '#f1f5f9'}`,
+            textAlign: 'center',
+          }}>
+            <p style={{ margin: 0, fontSize: '.82rem', color: isDark ? '#888' : '#64748b', lineHeight: 1.6 }}>
+              No service provider account?{' '}
+              <Link href="/vendor/signup" style={{ color: '#2563eb', fontWeight: 800, textDecoration: 'none' }}>
+                Register here
+              </Link>
+            </p>
           </div>
         </div>
       </div>
