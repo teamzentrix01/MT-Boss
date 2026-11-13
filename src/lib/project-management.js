@@ -788,15 +788,33 @@ export function getTodayIST() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
 }
 
-export function isCreatedTodayIST(createdAt) {
-  if (!createdAt) return false;
+export function isWithin48HoursIST(dateOrTimestamp) {
+  if (!dateOrTimestamp) return false;
   try {
-    const createdStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date(createdAt));
-    const todayStr = getTodayIST();
-    return createdStr === todayStr;
+    const str = String(dateOrTimestamp).trim();
+    // Date-only string: "YYYY-MM-DD"
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const todayStr = getTodayIST();
+      const targetDate = new Date(`${str}T00:00:00+05:30`);
+      const todayDate = new Date(`${todayStr}T00:00:00+05:30`);
+      const diffMs = todayDate.getTime() - targetDate.getTime();
+      const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000));
+      // 0 = today, 1 = yesterday, 2 = day before yesterday (within 48 hours)
+      return diffDays >= 0 && diffDays <= 2;
+    }
+    // Full timestamp
+    const targetTime = new Date(dateOrTimestamp).getTime();
+    if (Number.isNaN(targetTime)) return false;
+    const diffHours = (Date.now() - targetTime) / (1000 * 60 * 60);
+    // Allow clock drift up to 1 hour in future, and up to 48 hours in past
+    return diffHours >= -1 && diffHours <= 48;
   } catch {
     return false;
   }
+}
+
+export function isCreatedTodayIST(createdAt) {
+  return isWithin48HoursIST(createdAt);
 }
 
 export function assertSameDayEditable(createdAt, user = null, adminOverride = false) {
@@ -804,13 +822,13 @@ export function assertSameDayEditable(createdAt, user = null, adminOverride = fa
   if (isSuperAdmin && adminOverride) {
     return { allowed: true };
   }
-  if (!isCreatedTodayIST(createdAt)) {
+  if (!isWithin48HoursIST(createdAt)) {
     return {
       allowed: false,
       response: NextResponse.json(
         {
           success: false,
-          error: 'Locked: Entries can only be edited or deleted on the same day they were created (sirf same day edit/delete allowed hai).'
+          error: 'Locked: Entries can only be edited or deleted within 48 hours of creation (sirf 48 hours ke andar edit/delete allowed hai).'
         },
         { status: 403 }
       )

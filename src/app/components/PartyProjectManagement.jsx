@@ -349,15 +349,29 @@ export function formatDateIST(dateVal) {
   return String(dateVal).slice(0, 10);
 }
 
-export function isSameDayIST(dateOrTimestamp) {
+export function isEditableWithin48Hours(dateOrTimestamp) {
   if (!dateOrTimestamp) return false;
   try {
-    const formatted = formatDateIST(dateOrTimestamp);
-    const todayStr = today();
-    return formatted === todayStr;
+    const str = String(dateOrTimestamp).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const todayStr = today();
+      const targetDate = new Date(`${str}T00:00:00+05:30`);
+      const todayDate = new Date(`${todayStr}T00:00:00+05:30`);
+      const diffMs = todayDate.getTime() - targetDate.getTime();
+      const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000));
+      return diffDays >= 0 && diffDays <= 2;
+    }
+    const targetTime = new Date(dateOrTimestamp).getTime();
+    if (Number.isNaN(targetTime)) return false;
+    const diffHours = (Date.now() - targetTime) / (1000 * 60 * 60);
+    return diffHours >= -1 && diffHours <= 48;
   } catch {
     return false;
   }
+}
+
+export function isSameDayIST(dateOrTimestamp) {
+  return isEditableWithin48Hours(dateOrTimestamp);
 }
 
 export default function PartyProjectManagement({ initialScreen = 'parties', initialProjectId = null, isDarkMode, isAgent, agent: passedAgent }) {
@@ -2931,8 +2945,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   /* Bulk checkbox controls intentionally removed; attendance is per worker. */
   const applyBulkStatus = (status) => {
-    if (laborAttendanceDate !== today()) {
-      setMessage(`❌ Purani date par attendance edit nahi kar sakte.`);
+    if (!isEditableWithin48Hours(laborAttendanceDate)) {
+      setMessage(`❌ 48 hours se purani date par attendance edit nahi kar sakte.`);
       return;
     }
     const selectedSet = new Set(selectedLaborIds);
@@ -2961,8 +2975,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
   const saveAllLaborAttendance = async (customRows, includeUntouched = false) => {
     if (!project?.id) return;
-    if (laborAttendanceDate !== today()) {
-      setMessage(`❌ Sirf aaj ki date (${today()}) ki attendance save ki ja sakti hai.`);
+    if (!isEditableWithin48Hours(laborAttendanceDate)) {
+      setMessage(`❌ Sirf pichle 48 hours (aaj aur pichle 2 din) ki attendance save ki ja sakti hai.`);
       return;
     }
     const rowsToSave = (customRows || laborAttendanceRows).filter((row) =>
@@ -4303,7 +4317,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                               }}
                               style={{ maxWidth: 170 }}
                             />
-                            <button onClick={saveAllAttendance} disabled={savingAttendance || !attendanceRows.some((row) => row.dirty)}>
+                            <button onClick={saveAllAttendance} disabled={savingAttendance || !isEditableWithin48Hours(attendanceDate) || !attendanceRows.some((row) => row.dirty)}>
                               {savingAttendance ? 'Saving...' : `💾 Save Attendance (${attendanceRows.filter((row) => row.dirty).length} marked)`}
                             </button>
                             {attendanceRows.some((r) => r.is_marked) ? (
@@ -4347,8 +4361,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                             )}
                             <button
                               onClick={() => saveAllLaborAttendance()}
-                              disabled={savingLaborAttendance || laborAttendanceDate !== today()}
-                              style={{ opacity: laborAttendanceDate !== today() ? 0.6 : 1 }}
+                              disabled={savingLaborAttendance || !isEditableWithin48Hours(laborAttendanceDate)}
+                              style={{ opacity: !isEditableWithin48Hours(laborAttendanceDate) ? 0.6 : 1 }}
                             >
                               {savingLaborAttendance ? 'Saving...' : '💾 Save Attendance'}
                             </button>
@@ -4885,7 +4899,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                           })()}
 
                           {(() => {
-                            const isLaborDateToday = laborAttendanceDate === today();
+                            const isLaborDateToday = isEditableWithin48Hours(laborAttendanceDate);
                             const visibleLaborAttendanceRows = laborAttendanceRows.filter((r) => {
                               const isContractor = Boolean(r.project_vendor_id || r.vendor_name);
                               if (laborAttendanceSection === 'direct' && isContractor) return false;
@@ -5502,7 +5516,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
 
                   {/* ── STAFF ATTENDANCE IN ATTENDANCE TAB ── */}
                   {attendanceSubTab === 'staff' && (() => {
-                    const isStaffDateToday = staffAttendanceDate === today();
+                    const isStaffDateToday = isEditableWithin48Hours(staffAttendanceDate);
                     return (
                       <div>
                       <div className="card">
@@ -5832,6 +5846,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 note: '',
                               });
                               setEditingLaborPaymentId(null);
+                              setModalReadOnly(false);
+                              setModalError('');
                               setLaborPaymentModal(true);
                             }}
                           >
@@ -5852,6 +5868,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 note: '',
                               });
                               setEditingStaffPaymentId(null);
+                              setModalReadOnly(false);
                               setModalError('');
                               setStaffPaymentModal(true);
                             }}
@@ -6135,7 +6152,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -6331,7 +6348,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -6452,7 +6469,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                 >
                                   👁️ View
                                 </button>
-                                <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                   🔒 Locked
                                 </span>
                               </>
@@ -7179,7 +7196,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -7294,7 +7311,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -7388,7 +7405,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                           >
                                             👁️ View
                                           </button>
-                                          <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                          <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                             🔒 Locked
                                           </span>
                                         </>
@@ -7743,7 +7760,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -7879,7 +7896,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -8024,7 +8041,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -8155,7 +8172,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -8284,7 +8301,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -8445,7 +8462,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                     >
                                       👁️ View
                                     </button>
-                                    <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                    <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                       🔒 Locked
                                     </span>
                                   </>
@@ -8591,7 +8608,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                       >
                                         👁️ View
                                       </button>
-                                      <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                      <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                         🔒 Locked
                                       </span>
                                     </>
@@ -9417,7 +9434,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                                   >
                                     👁️ View
                                   </button>
-                                  <span title="Locked: Can only be edited or deleted on the same day" style={{ fontSize: 11, color: '#94a3b8' }}>
+                                  <span title="Locked: Can only be edited or deleted within 48 hours" style={{ fontSize: 11, color: '#94a3b8' }}>
                                     🔒 Locked
                                   </span>
                                 </>
@@ -9637,16 +9654,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={(e) => submitAction.submit('laborPayment', () => saveLaborPayment(e), { successMessage: 'Labor payment recorded successfully', onError: setModalError })} className="modal-card">
                 <h3 style={{ margin: '0 0 12px', fontSize: 17, color: '#0f172a' }}>
-                  {modalReadOnly ? '👁️ View Labor Payment' : (editingLaborPaymentId ? '✏️ Edit Labor Payment' : 'Record Labor Payment')}
+                  {Boolean(modalReadOnly && editingLaborPaymentId) ? '👁️ View Labor Payment' : (editingLaborPaymentId ? '✏️ Edit Labor Payment' : 'Record Labor Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingLaborPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingLaborPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingLaborPaymentId) ? 0.9 : 1 }}>
 
                 <div style={{ marginBottom: 12 }}>
                   <label>
@@ -9784,13 +9801,15 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
+                  {Boolean(modalReadOnly && editingLaborPaymentId) ? (
                     <button
                       type="button"
                       className="muted"
                       onClick={() => {
                         setLaborPaymentModal(false);
                         setEditingLaborPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
                       }}
                       style={{ padding: '8px 20px', borderRadius: 6 }}
                     >
@@ -9804,6 +9823,8 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => {
                           setLaborPaymentModal(false);
                           setEditingLaborPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
                         }}
                       >
                         Cancel
@@ -10156,12 +10177,12 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 className="modal-card"
               >
                 <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
-                  {modalReadOnly ? '👁️ View Vendor Payment' : (editingSupplierPaymentId ? '✏️ Edit Vendor Payment' : 'Record Payment to Vendor')}
+                  {Boolean(modalReadOnly && editingSupplierPaymentId) ? '👁️ View Vendor Payment' : (editingSupplierPaymentId ? '✏️ Edit Vendor Payment' : 'Record Payment to Vendor')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingSupplierPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && (
@@ -10180,7 +10201,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                     {modalError}
                   </div>
                 )}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingSupplierPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingSupplierPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                   <label>
                     <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>
@@ -10337,13 +10358,14 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                 </fieldset>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
+                  {Boolean(modalReadOnly && editingSupplierPaymentId) ? (
                     <button
                       type="button"
                       className="muted"
                       onClick={() => {
                         setSupplierPaymentModal(false);
                         setEditingSupplierPaymentId(null);
+                        setModalReadOnly(false);
                         setModalError('');
                       }}
                       style={{ padding: '8px 20px', borderRadius: 6 }}
@@ -10359,6 +10381,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                         onClick={() => {
                           setSupplierPaymentModal(false);
                           setEditingSupplierPaymentId(null);
+                          setModalReadOnly(false);
                           setModalError('');
                         }}
                       >
@@ -11193,16 +11216,16 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={savePartyPayment} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
-                  {modalReadOnly ? '👁️ View Party Payment' : (editingPartyPaymentId ? '✏️ Edit Party Payment' : 'Record Party Payment')}
+                  {Boolean(modalReadOnly && editingPartyPaymentId) ? '👁️ View Party Payment' : (editingPartyPaymentId ? '✏️ Edit Party Payment' : 'Record Party Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingPartyPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingPartyPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingPartyPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                     <Input label="Amount (₹)" name="amount" type="number" step="any" min="1" value={partyPaymentForm.amount} set={setPartyPaymentForm} required />
                     <Input label="Date" name="payment_date" type="date" value={partyPaymentForm.payment_date} set={setPartyPaymentForm} required />
@@ -11222,13 +11245,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
-                    <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                  {Boolean(modalReadOnly && editingPartyPaymentId) ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setPartyPaymentModal(false);
+                        setEditingPartyPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
                       Close
                     </button>
                   ) : (
                     <>
-                      <button type="button" className="muted" onClick={() => setPartyPaymentModal(false)}>
+                      <button
+                        type="button"
+                        className="muted"
+                        onClick={() => {
+                          setPartyPaymentModal(false);
+                          setEditingPartyPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
+                        }}
+                      >
                         Cancel
                       </button>
                       <button type="submit">{editingPartyPaymentId ? 'Update Payment' : 'Save Payment'}</button>
@@ -11244,23 +11286,23 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
             <div className="modal-overlay">
               <form onSubmit={saveVendorPayment} className="modal-card">
                 <h3 style={{ margin: '0 0 14px', fontSize: 17 }}>
-                  {modalReadOnly ? '👁️ View Service Provider Payment' : (editingVendorPaymentId ? '✏️ Edit Service Provider Payment' : 'Record Service Provider Payment')}
+                  {Boolean(modalReadOnly && editingVendorPaymentId) ? '👁️ View Service Provider Payment' : (editingVendorPaymentId ? '✏️ Edit Service Provider Payment' : 'Record Service Provider Payment')}
                 </h3>
-                {modalReadOnly && (
+                {Boolean(modalReadOnly && editingVendorPaymentId) && (
                   <div style={{ background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: 8, padding: '10px 14px', marginBottom: 14, color: '#92400e', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>🔒</span>
-                    <div><strong>Read Only (Locked):</strong> This record was created on a previous date and cannot be modified.</div>
+                    <div><strong>Read Only (Locked):</strong> This record was created more than 48 hours ago and cannot be modified.</div>
                   </div>
                 )}
                 {modalError && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: 6, marginBottom: 12, fontSize: 13 }}>{modalError}</div>}
-                <fieldset disabled={modalReadOnly} style={{ border: 'none', padding: 0, margin: 0, opacity: modalReadOnly ? 0.9 : 1 }}>
+                <fieldset disabled={Boolean(modalReadOnly && editingVendorPaymentId)} style={{ border: 'none', padding: 0, margin: 0, opacity: (modalReadOnly && editingVendorPaymentId) ? 0.9 : 1 }}>
                   <div className="grid">
                     <label>
                       <small style={{ display: 'block', marginBottom: 4, fontWeight: 600, color: '#475569' }}>Service Provider</small>
                       <select
                         required
                         value={vendorPaymentForm.project_vendor_id}
-                        disabled={modalReadOnly || Boolean(editingVendorPaymentId)}
+                        disabled={Boolean(modalReadOnly && editingVendorPaymentId) || Boolean(editingVendorPaymentId)}
                         onChange={(e) => {
                           const pvid = e.target.value;
                           const pv = projectVendors.find((v) => String(v.id) === String(pvid));
@@ -11302,13 +11344,32 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
                   </div>
                 </fieldset>
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
-                  {modalReadOnly ? (
-                    <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)} style={{ padding: '8px 20px', borderRadius: 6 }}>
+                  {Boolean(modalReadOnly && editingVendorPaymentId) ? (
+                    <button
+                      type="button"
+                      className="muted"
+                      onClick={() => {
+                        setVendorPaymentModal(false);
+                        setEditingVendorPaymentId(null);
+                        setModalReadOnly(false);
+                        setModalError('');
+                      }}
+                      style={{ padding: '8px 20px', borderRadius: 6 }}
+                    >
                       Close
                     </button>
                   ) : (
                     <>
-                      <button type="button" className="muted" onClick={() => setVendorPaymentModal(false)}>
+                      <button
+                        type="button"
+                        className="muted"
+                        onClick={() => {
+                          setVendorPaymentModal(false);
+                          setEditingVendorPaymentId(null);
+                          setModalReadOnly(false);
+                          setModalError('');
+                        }}
+                      >
                         Cancel
                       </button>
                       <button type="submit">{editingVendorPaymentId ? 'Update Payment' : 'Save Payment'}</button>
@@ -12054,7 +12115,7 @@ export default function PartyProjectManagement({ initialScreen = 'parties', init
               >
                 <span style={{ fontSize: 16 }}>🔒</span>
                 <div>
-                  <strong>Read Only (Locked):</strong> Past date attendance records cannot be modified. They can only be edited on the day they were created.
+                  <strong>Read Only (Locked):</strong> Attendance records older than 48 hours cannot be modified. They can only be edited within 48 hours of creation.
                 </div>
               </div>
             )}

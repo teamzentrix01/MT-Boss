@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { requireRole, unauthorized } from '@/lib/auth';
-import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess } from '@/lib/project-management';
+import { ensureProjectManagementSchema, ensureAttendanceShiftsAndOvertimeSchema, pageParams, actorFromAdmin, writePmPhase2Audit, assertAgentAccess, isWithin48HoursIST } from '@/lib/project-management';
 
 const validDate = (x) => /^\d{4}-\d{2}-\d{2}$/.test(String(x || '')) && !Number.isNaN(Date.parse(x));
 
@@ -155,10 +155,10 @@ export async function PUT(req) {
 
     for (const e of entries) {
       const attDate = String(e.attendance_date || '');
-      if (attDate !== todayIST && !adminOverride) {
+      if (!isWithin48HoursIST(attDate) && !adminOverride) {
         return NextResponse.json({
           success: false,
-          error: `Back date ya future date ki attendance allowed nahi hai. Sirf aaj ki date (${todayIST}) ki attendance mark ki ja sakti hai.`
+          error: `Back date ya future date ki attendance allowed nahi hai. Attendance sirf pichle 48 hours (aaj aur pichle 2 din) ki mark ya edit ki ja sakti hai.`
         }, { status: 400 });
       }
     }
