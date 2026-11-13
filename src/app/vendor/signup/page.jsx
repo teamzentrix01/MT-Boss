@@ -442,6 +442,63 @@ const handleSubmit = async (e) => {
         }
         .vs-input::placeholder { color: ${dark ? '#333' : '#bbb'}; }
 
+        .vs-otp-group {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          width: 100%;
+        }
+        .vs-otp-input {
+          flex: 1;
+          min-width: 0;
+          letter-spacing: 0.08em;
+          font-weight: 600;
+        }
+        .vs-otp-btn {
+          flex-shrink: 0;
+          white-space: nowrap;
+          padding: 0 1.25rem !important;
+          height: 44px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9px;
+          background: #22c55e !important;
+          background-color: #22c55e !important;
+          background-image: none !important;
+          color: #ffffff !important;
+          border: 1.5px solid #22c55e !important;
+          font-family: 'DM Sans', sans-serif;
+          font-weight: 700;
+          font-size: 0.8rem;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          cursor: pointer;
+          box-shadow: 0 2px 6px rgba(34, 197, 94, 0.25) !important;
+          transition: all 0.2s ease;
+        }
+        .vs-otp-btn:hover:not(:disabled) {
+          background: #16a34a !important;
+          background-color: #16a34a !important;
+          border-color: #16a34a !important;
+          transform: translateY(-1px) !important;
+        }
+        .vs-otp-btn:disabled {
+          opacity: 0.55 !important;
+          cursor: not-allowed !important;
+          box-shadow: none !important;
+          transform: none !important;
+        }
+        .vs-otp-status {
+          margin-top: 0.4rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #16a34a;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
         .vs-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -685,9 +742,9 @@ const handleSubmit = async (e) => {
 
                   <div className="vs-field">
                     <label className="vs-label">Email Verification OTP <RequiredAsterisk /></label>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div className="vs-otp-group">
                       <input
-                        className="vs-input"
+                        className="vs-input vs-otp-input"
                         type="text"
                         inputMode="numeric"
                         value={registrationOtp}
@@ -695,11 +752,16 @@ const handleSubmit = async (e) => {
                         placeholder="6-digit OTP"
                         maxLength={6}
                       />
-                      <button type="button" className="vs-btn" onClick={sendRegistrationOtp} disabled={otpSending}>
-                        {otpSending ? 'Sending...' : 'Send OTP'}
+                      <button
+                        type="button"
+                        className="vs-otp-btn no-global-btn"
+                        onClick={sendRegistrationOtp}
+                        disabled={otpSending}
+                      >
+                        {otpSending ? 'Sending…' : 'Send OTP'}
                       </button>
                     </div>
-                    {otpMessage && <small style={{ color: '#16a34a' }}>{otpMessage}</small>}
+                    {otpMessage && <div className="vs-otp-status">✓ {otpMessage}</div>}
                   </div>
 
                   <div className="vs-field">

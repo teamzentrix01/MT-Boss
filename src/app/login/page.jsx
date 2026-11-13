@@ -467,6 +467,33 @@ export default function LoginPage() {
           box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
         }
         .lp-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .lp-mode-link {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          color: var(--lp-accent) !important;
+          font-weight: 600 !important;
+          font-size: 0.85rem !important;
+          cursor: pointer !important;
+          padding: 6px 10px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 4px !important;
+          text-decoration: none !important;
+          transition: opacity 0.15s ease !important;
+        }
+        .lp-mode-link:hover {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          text-decoration: underline !important;
+          opacity: 0.85 !important;
+        }
 
         @keyframes lp-spin { to { transform: rotate(360deg); } }
         .lp-spinner {
@@ -605,8 +632,7 @@ export default function LoginPage() {
                 <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
                   <button
                     type="button"
-                    className="lp-forgot"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--lp-accent)', fontWeight: 700, fontSize: '0.8125rem' }}
+                    className="lp-mode-link no-global-btn"
                     onClick={() => {
                       setShowAdminLogin(true);
                       setError('');
@@ -708,8 +734,7 @@ export default function LoginPage() {
                 <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
                   <button
                     type="button"
-                    className="lp-forgot"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--lp-accent)', fontWeight: 700, fontSize: '0.8125rem' }}
+                    className="lp-mode-link no-global-btn"
                     onClick={() => {
                       setShowAdminLogin(false);
                       setError('');

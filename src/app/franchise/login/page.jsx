@@ -208,6 +208,33 @@ export default function FranchiseLoginPage() {
           opacity: 0.6;
           cursor: not-allowed;
         }
+        .fl-mode-link {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          color: ${isDark ? '#60a5fa' : '#2563eb'} !important;
+          font-weight: 600 !important;
+          font-size: 0.85rem !important;
+          cursor: pointer !important;
+          padding: 6px 10px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 4px !important;
+          text-decoration: none !important;
+          transition: opacity 0.15s ease !important;
+        }
+        .fl-mode-link:hover {
+          background: transparent !important;
+          background-color: transparent !important;
+          background-image: none !important;
+          box-shadow: none !important;
+          transform: none !important;
+          text-decoration: underline !important;
+          opacity: 0.85 !important;
+        }
 
         @media (max-width: 768px) {
           .fl-section {
@@ -284,15 +311,7 @@ export default function FranchiseLoginPage() {
                     setAuthMode('email');
                     setError('');
                   }}
-                  style={{
-                    border: 0,
-                    background: 'transparent',
-                    color: brandBlue,
-                    fontWeight: 700,
-                    fontSize: '.82rem',
-                    cursor: 'pointer',
-                    textDecoration: 'none',
-                  }}
+                  className="fl-mode-link no-global-btn"
                 >
                   Sign in with email & password instead →
                 </button>
@@ -420,14 +439,7 @@ export default function FranchiseLoginPage() {
                     setAuthMode('mobile');
                     setError('');
                   }}
-                  style={{
-                    border: 0,
-                    background: 'transparent',
-                    color: brandBlue,
-                    fontWeight: 700,
-                    fontSize: '.82rem',
-                    cursor: 'pointer',
-                  }}
+                  className="fl-mode-link no-global-btn"
                 >
                   ← Use mobile OTP instead
                 </button>

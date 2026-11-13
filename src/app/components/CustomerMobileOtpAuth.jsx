@@ -220,7 +220,8 @@ export default function CustomerMobileOtpAuth({
         .cmoa-otp-row { display: flex; gap: 0.5rem; justify-content: center; margin: 0.75rem 0; }
         .cmoa-otp-box { width: 2.5rem; height: 2.75rem; text-align: center; font-size: 1.125rem; font-weight: 800; border: 2px solid #e2e8f0; border-radius: 10px; background: #fff; color: inherit; }
         .dark-mode .cmoa-otp-box { border-color: #52525b; background: #18181b; }
-        .cmoa-link { background: none; border: none; color: var(--brand-blue, #2563eb); font-weight: 700; font-size: 0.8125rem; cursor: pointer; margin-top: 0.75rem; }
+        .cmoa-link { background: transparent !important; background-color: transparent !important; background-image: none !important; box-shadow: none !important; border: none !important; transform: none !important; color: var(--brand-blue, #2563eb) !important; font-weight: 700; font-size: 0.8125rem; cursor: pointer; margin-top: 0.75rem; }
+        .cmoa-link:hover { background: transparent !important; background-color: transparent !important; box-shadow: none !important; transform: none !important; text-decoration: underline !important; }
         .cmoa-field { margin-bottom: 0.85rem; }
         .cmoa-input { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.8125rem; background: #fff; color: inherit; box-sizing: border-box; }
         .dark-mode .cmoa-input { border-color: #3f3f46; background: #111; }
@@ -265,7 +266,7 @@ export default function CustomerMobileOtpAuth({
           <p className="cmoa-muted">
             OTP sent to <strong>+91 {mobile}</strong>
             {' · '}
-            <button type="button" className="cmoa-link" style={{ margin: 0 }} onClick={() => { setStep('mobile'); setError(''); }}>
+            <button type="button" className="cmoa-link no-global-btn" style={{ margin: 0 }} onClick={() => { setStep('mobile'); setError(''); }}>
               Change number
             </button>
           </p>
@@ -300,7 +301,7 @@ export default function CustomerMobileOtpAuth({
           {resendSecondsLeft > 0 ? (
             <p className="cmoa-muted">Resend OTP in {resendSecondsLeft}s</p>
           ) : (
-            <button type="button" className="cmoa-link" disabled={loading} onClick={() => void sendOtp()}>
+            <button type="button" className="cmoa-link no-global-btn" disabled={loading} onClick={() => void sendOtp()}>
               Resend OTP
             </button>
           )}
