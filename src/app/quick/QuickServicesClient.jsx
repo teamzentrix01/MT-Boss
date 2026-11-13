@@ -209,6 +209,7 @@ function BookingModal({ service, isDark, onClose, onSuccess, initialForm, initia
         quick_service_id: service.id,
         user_name: form.name,
         user_phone: form.phone,
+        phone: form.phone,
         user_email: form.email || null,
         service_address: form.address,
         service_city: form.city,

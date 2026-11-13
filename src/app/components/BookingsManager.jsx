@@ -30,11 +30,19 @@ const BookingTableRow = memo(function BookingTableRow({ booking, onView }) {
     () => new Date(booking.created_at).toLocaleDateString(),
     [booking.created_at],
   );
+  const phone = booking.user_phone || booking.customer_phone || booking.phone;
 
   return (
     <tr>
       <td style={{ fontWeight: '600' }}>{booking.booking_reference}</td>
-      <td>{booking.user_name}</td>
+      <td>
+        <div style={{ fontWeight: '600' }}>{booking.user_name}</div>
+        {phone && (
+          <div style={{ color: 'var(--muted)', fontSize: '0.72rem', fontVariantNumeric: 'tabular-nums' }}>
+            {formatIndianPhone(phone)}
+          </div>
+        )}
+      </td>
       <td>{booking.service_label || booking.quick_service_id}</td>
       <td>{booking.service_city}</td>
       <td>
@@ -64,6 +72,11 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
   const [selectedVendorId, setSelectedVendorId] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState('');
+  const [restoringPhones, setRestoringPhones] = useState(false);
+  const [restoreStatus, setRestoreStatus] = useState('');
+  const [editingPhone, setEditingPhone] = useState(false);
+  const [phoneInput, setPhoneInput] = useState('');
+  const [savingPhone, setSavingPhone] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -108,6 +121,7 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
   const openBookingDetail = useCallback(async (booking) => {
     setSelectedVendorId('');
     setActionError('');
+    setEditingPhone(false);
     setDetailLoading(true);
     setSelectedBooking(booking);
     try {
@@ -116,7 +130,14 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success && data.data) setSelectedBooking(data.data);
+      if (data.success && data.data) {
+        setSelectedBooking((prev) => ({
+          ...booking,
+          ...data.data,
+          user_phone: data.data.user_phone || booking.user_phone || booking.customer_phone || booking.phone || '',
+          customer_phone: data.data.customer_phone || data.data.user_phone || booking.customer_phone || booking.user_phone || '',
+        }));
+      }
     } catch (error) {
       console.error('Error fetching booking detail:', error);
     } finally {
@@ -148,6 +169,65 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
       setActionError(error.message);
     } finally {
       setActionLoading(false);
+    }
+  }
+
+  async function handleRestorePhones() {
+    setRestoringPhones(true);
+    setRestoreStatus('');
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: 'restore_phones' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRestoreStatus(`Restored ${data.totalRestored || 0} phone numbers from database records.`);
+        await fetchBookings();
+      } else {
+        setRestoreStatus(data.error || 'Restoration failed');
+      }
+    } catch (e) {
+      setRestoreStatus(e.message || 'Restoration failed');
+    } finally {
+      setRestoringPhones(false);
+    }
+  }
+
+  async function handleSavePhone() {
+    const rawDigits = phoneInput.replace(/\D/g, '').slice(-10);
+    if (rawDigits.length !== 10) {
+      alert('Please enter a valid 10-digit mobile number');
+      return;
+    }
+    setSavingPhone(true);
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
+      const res = await fetch('/api/admin/bookings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: selectedBooking.id, action: 'update_phone', phone: rawDigits }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSelectedBooking((prev) => ({
+          ...prev,
+          user_phone: rawDigits,
+          customer_phone: rawDigits,
+        }));
+        setBookings((prev) =>
+          prev.map((b) => (b.id === selectedBooking.id ? { ...b, user_phone: rawDigits, customer_phone: rawDigits } : b))
+        );
+        setEditingPhone(false);
+      } else {
+        alert(data.error || 'Failed to update phone number');
+      }
+    } catch (e) {
+      alert(e.message || 'Failed to update phone number');
+    } finally {
+      setSavingPhone(false);
     }
   }
 
@@ -291,7 +371,36 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
       {!selectedBooking ? (
         <>
           <div className="booking-section">
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '700', marginBottom: '1rem' }}>{title}</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <h3 style={{ fontSize: '0.875rem', fontWeight: '700', margin: 0 }}>{title}</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {restoreStatus && (
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: restoreStatus.includes('Restored') ? '#16a34a' : '#dc2626' }}>
+                    {restoreStatus}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleRestorePhones}
+                  disabled={restoringPhones}
+                  style={{
+                    padding: '0.35rem 0.75rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    borderRadius: '6px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--surface)',
+                    color: 'var(--text)',
+                    cursor: restoringPhones ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  {restoringPhones ? '⏳ Restoring...' : '🔄 Restore Missing Phone Numbers'}
+                </button>
+              </div>
+            </div>
             
             <div className="booking-filter">
               {['all', 'WAITING_FOR_ADMIN_ASSIGNMENT', 'ADMIN_ACCEPTED', 'WAITING_FOR_VENDOR_ACCEPTANCE', 'VENDOR_ACCEPTED', 'IN_PROGRESS', 'COMPLETED'].map((status) => (
@@ -408,18 +517,165 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
               <div className="detail-value">{selectedBooking.user_name}</div>
             </div>
             <div className="detail-field">
-              <div className="detail-label">Customer Phone</div>
-              <div className="detail-value">
-                {toIndianPhoneTel(selectedBooking.user_phone) ? (
-                  <a
-                    href={toIndianPhoneTel(selectedBooking.user_phone)}
-                    style={{ color: 'inherit', textDecoration: 'none', fontVariantNumeric: 'tabular-nums' }}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="detail-label">Customer Phone</div>
+                {!editingPhone && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cur =
+                        selectedBooking.user_phone ||
+                        selectedBooking.customer_phone ||
+                        selectedBooking.phone ||
+                        '';
+                      setPhoneInput(String(cur).replace(/\D/g, '').slice(-10));
+                      setEditingPhone(true);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--accent, #0284c7)',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      padding: '0 4px',
+                    }}
                   >
-                    {formatIndianPhone(selectedBooking.user_phone)}
-                  </a>
-                ) : (
-                  formatIndianPhone(selectedBooking.user_phone)
+                    ✏️ Edit
+                  </button>
                 )}
+              </div>
+              <div className="detail-value">
+                {editingPhone ? (
+                  <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center', marginTop: '0.25rem', flexWrap: 'wrap' }}>
+                    <input
+                      type="text"
+                      maxLength={10}
+                      autoFocus
+                      value={phoneInput}
+                      onChange={(e) => setPhoneInput(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      placeholder="10-digit mobile"
+                      style={{
+                        padding: '0.3rem 0.5rem',
+                        fontSize: '0.8125rem',
+                        border: '1px solid var(--border)',
+                        borderRadius: '4px',
+                        background: 'var(--surface)',
+                        color: 'var(--text)',
+                        width: '130px',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSavePhone}
+                      disabled={savingPhone || phoneInput.length !== 10}
+                      style={{
+                        padding: '0.3rem 0.6rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        borderRadius: '4px',
+                        border: 'none',
+                        background: 'var(--accent, #0284c7)',
+                        color: '#fff',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {savingPhone ? '...' : 'Save'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingPhone(false)}
+                      style={{
+                        padding: '0.3rem 0.6rem',
+                        fontSize: '0.75rem',
+                        borderRadius: '4px',
+                        border: '1px solid var(--border)',
+                        background: 'transparent',
+                        color: 'var(--muted)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (() => {
+                  const rawPhone =
+                    selectedBooking.user_phone ||
+                    selectedBooking.customer_phone ||
+                    selectedBooking.phone ||
+                    selectedBooking.user?.phone ||
+                    '';
+                  const cleanDigits = String(rawPhone || '').replace(/\D/g, '').slice(-10);
+                  const telUri = toIndianPhoneTel(rawPhone);
+                  const formatted = formatIndianPhone(rawPhone);
+                  if (cleanDigits.length === 10) {
+                    return (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <a
+                          href={telUri || `tel:+91${cleanDigits}`}
+                          style={{
+                            display: 'inline-block',
+                            color: 'var(--text, #0f172a)',
+                            textDecoration: 'none',
+                            fontVariantNumeric: 'tabular-nums',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {formatted}
+                        </a>
+                        <a
+                          href={`tel:+91${cleanDigits}`}
+                          title="Call customer"
+                          style={{
+                            padding: '2px 8px',
+                            background: '#e0f2fe',
+                            color: '#0369a1',
+                            borderRadius: '4px',
+                            fontSize: '0.6875rem',
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          📞 Call
+                        </a>
+                        <a
+                          href={`https://wa.me/91${cleanDigits}?text=${encodeURIComponent(`Hello ${selectedBooking.user_name || 'Customer'}, regarding your booking #${selectedBooking.booking_reference}...`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="WhatsApp customer"
+                          style={{
+                            padding: '2px 8px',
+                            background: '#dcfce7',
+                            color: '#15803d',
+                            borderRadius: '4px',
+                            fontSize: '0.6875rem',
+                            fontWeight: 700,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          💬 WhatsApp
+                        </a>
+                      </div>
+                    );
+                  }
+                  if (telUri) {
+                    return (
+                      <a
+                        href={telUri}
+                        style={{
+                          display: 'inline-block',
+                          color: 'var(--text, #0f172a)',
+                          textDecoration: 'none',
+                          fontVariantNumeric: 'tabular-nums',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {formatted}
+                      </a>
+                    );
+                  }
+                  return formatted && formatted !== '—' ? formatted : '—';
+                })()}
               </div>
             </div>
             <div className="detail-field">
@@ -495,13 +751,13 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
               <div className="detail-label">{selectedBooking.vendor_id ? 'Change Assigned Vendor' : 'Assign Vendor'}</div>
               <p className="detail-value" style={{ margin: '0.4rem 0 0.75rem' }}>
                 {selectedBooking.vendor_id
-                  ? 'Choose another approved matching vendor. Reassignment is available only before the service starts.'
-                  : 'Approved vendors matching this service and city are listed. The admin can manually assign either a paid or unpaid vendor.'}
+                  ? 'Choose another approved matching Service Providers. Reassignment is available only before the service starts.'
+                  : 'Approved Service Providers matching this service and city are listed. The admin can manually assign either a paid or unpaid vendor.'}
               </p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <select value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}
                   style={{ flex: 1, minWidth: 180, padding: '0.55rem', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', borderRadius: 6 }}>
-                  <option value="">{selectedBooking.vendor_id ? 'Select replacement vendor' : 'Select matching vendor'}</option>
+                  <option value="">{selectedBooking.vendor_id ? 'Select replacement Service Providers' : 'Select matching Service Providers'}</option>
                   {(selectedBooking.eligible_vendors || [])
                     .filter(vendor => Number(vendor.vendor_id) !== Number(selectedBooking.vendor_id))
                     .map(vendor => (

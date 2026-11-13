@@ -137,6 +137,22 @@ export default function QuickServiceSlugPage() {
     if (slug) load();
   }, [slug]);
 
+  // Auto-prefill logged in user details if available
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const u = JSON.parse(userStr);
+        setForm((prev) => ({
+          ...prev,
+          name: prev.name || u.name || '',
+          phone: prev.phone || (u.phone ? String(u.phone).replace(/\D/g, '').slice(-10) : ''),
+          email: prev.email || u.email || '',
+        }));
+      }
+    } catch (_) {}
+  }, []);
+
   // Restore pending booking after redirecting from login
   useEffect(() => {
     if (!service) return;
@@ -420,6 +436,8 @@ export default function QuickServiceSlugPage() {
         quick_service_id: service.id,
         user_name: form.name,
         user_phone: form.phone,
+        phone: form.phone,
+        customer_phone: form.phone,
         user_email: form.email || null,
         service_address: form.address,
         service_city: form.city,
@@ -706,8 +724,13 @@ export default function QuickServiceSlugPage() {
                       maxLength={10}
                       value={form.phone}
                       onChange={(e) => {
-                        const raw = e.target.value.replace(/\D/g, '');
-                        setField('phone', raw && /^[6-9]/.test(raw) ? raw.slice(0, 10) : '');
+                        let digits = e.target.value.replace(/\D/g, '');
+                        if (digits.length === 12 && digits.startsWith('91')) {
+                          digits = digits.slice(2);
+                        } else if (digits.length === 11 && digits.startsWith('0')) {
+                          digits = digits.slice(1);
+                        }
+                        setField('phone', digits.slice(0, 10));
                       }}
                     />
                   </Field>
