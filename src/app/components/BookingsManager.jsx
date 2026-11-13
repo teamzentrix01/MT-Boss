@@ -621,19 +621,38 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                   const formatted = formatIndianPhone(rawPhone);
                   if (cleanDigits.length === 10) {
                     return (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                        <a
-                          href={telUri || `tel:+91${cleanDigits}`}
+                      <div
+                        className="customer-phone-visible"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          flexWrap: 'wrap',
+                          minHeight: '32px',
+                          padding: '4px 6px',
+                          color: '#0f172a',
+                          background: '#f8fafc',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '4px',
+                          opacity: 1,
+                          visibility: 'visible',
+                          position: 'relative',
+                          zIndex: 2,
+                        }}
+                      >
+                        <span
                           style={{
                             display: 'inline-block',
-                            color: 'var(--text, #0f172a)',
-                            textDecoration: 'none',
+                            color: '#0f172a',
+                            fontWeight: 700,
                             fontVariantNumeric: 'tabular-nums',
                             lineHeight: 1.5,
+                            opacity: 1,
+                            visibility: 'visible',
                           }}
                         >
                           {formatted}
-                        </a>
+                        </span>
                         <a
                           href={`tel:+91${cleanDigits}`}
                           title="Call customer"
@@ -641,10 +660,13 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                             padding: '2px 8px',
                             background: '#e0f2fe',
                             color: '#0369a1',
+                            WebkitTextFillColor: '#0369a1',
                             borderRadius: '4px',
                             fontSize: '0.6875rem',
                             fontWeight: 700,
                             textDecoration: 'none',
+                            opacity: 1,
+                            visibility: 'visible',
                           }}
                         >
                           📞 Call
@@ -658,10 +680,13 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                             padding: '2px 8px',
                             background: '#dcfce7',
                             color: '#15803d',
+                            WebkitTextFillColor: '#15803d',
                             borderRadius: '4px',
                             fontSize: '0.6875rem',
                             fontWeight: 700,
                             textDecoration: 'none',
+                            opacity: 1,
+                            visibility: 'visible',
                           }}
                         >
                           💬 WhatsApp
