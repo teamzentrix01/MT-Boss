@@ -53,7 +53,11 @@ const BookingTableRow = memo(function BookingTableRow({ booking, onView }) {
       <td style={{ fontWeight: '600' }}>₹{booking.total_amount}</td>
       <td style={{ color: 'var(--muted)' }}>{createdLabel}</td>
       <td>
-        <ActionIconButton icon={Eye} label="View booking details" onClick={() => onView(booking)} />
+        <ActionIconButton
+          icon={Eye}
+          label="View booking details"
+          onClick={() => onView({ ...booking, display_phone: phone || '' })}
+        />
       </td>
     </tr>
   );
@@ -123,7 +127,11 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
     setActionError('');
     setEditingPhone(false);
     setDetailLoading(true);
-    setSelectedBooking(booking);
+    // Keep the list's already-visible number as a stable fallback.  The detail
+    // endpoint can be served by an older deployment or omit the aliased field.
+    const listPhone = booking.user_phone || booking.customer_phone || booking.phone || '';
+    const bookingWithPhone = { ...booking, display_phone: listPhone };
+    setSelectedBooking(bookingWithPhone);
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('admin-token');
       const res = await fetch(`/api/admin/bookings?id=${booking.id}`, {
@@ -132,10 +140,11 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
       const data = await res.json();
       if (data.success && data.data) {
         setSelectedBooking((prev) => ({
-          ...booking,
+          ...bookingWithPhone,
           ...data.data,
-          user_phone: data.data.user_phone || booking.user_phone || booking.customer_phone || booking.phone || '',
-          customer_phone: data.data.customer_phone || data.data.user_phone || booking.customer_phone || booking.user_phone || '',
+          display_phone: data.data.user_phone || data.data.customer_phone || bookingWithPhone.display_phone,
+          user_phone: data.data.user_phone || data.data.customer_phone || bookingWithPhone.display_phone,
+          customer_phone: data.data.customer_phone || data.data.user_phone || bookingWithPhone.display_phone,
         }));
       }
     } catch (error) {
@@ -524,6 +533,7 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                     type="button"
                     onClick={() => {
                       const cur =
+                        selectedBooking.display_phone ||
                         selectedBooking.user_phone ||
                         selectedBooking.customer_phone ||
                         selectedBooking.phone ||
@@ -600,6 +610,7 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
                   </div>
                 ) : (() => {
                   const rawPhone =
+                    selectedBooking.display_phone ||
                     selectedBooking.user_phone ||
                     selectedBooking.customer_phone ||
                     selectedBooking.phone ||
