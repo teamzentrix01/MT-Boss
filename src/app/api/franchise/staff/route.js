@@ -39,6 +39,7 @@ export async function GET(req) {
     let queryText = `
       SELECT
         id,
+        COALESCE(staff_code, 'FS-' || LPAD(id::text, 4, '0')) AS staff_code,
         franchise_id,
         name,
         phone,
@@ -60,6 +61,7 @@ export async function GET(req) {
       queryParams.push(`%${search}%`);
       queryText += ` AND (
         name ILIKE $${queryParams.length}
+        OR COALESCE(staff_code, '') ILIKE $${queryParams.length}
         OR COALESCE(phone, '') ILIKE $${queryParams.length}
         OR COALESCE(email, '') ILIKE $${queryParams.length}
         OR role ILIKE $${queryParams.length}
@@ -138,35 +140,43 @@ export async function POST(req) {
     }
 
     const insertResult = await pool.query(
-      `INSERT INTO franchise_staff (
-        franchise_id,
-        name,
-        phone,
-        email,
-        role,
-        department,
-        joining_date,
-        relieving_date,
-        status,
-        assigned_project_or_site,
-        notes,
-        created_at,
-        updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+      `WITH inserted AS (
+        INSERT INTO franchise_staff (
+          franchise_id,
+          name,
+          phone,
+          email,
+          role,
+          department,
+          joining_date,
+          relieving_date,
+          status,
+          assigned_project_or_site,
+          notes,
+          created_at,
+          updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+        RETURNING *
+      )
+      UPDATE franchise_staff
+         SET staff_code = 'FS-' || LPAD(inserted.id::text, 4, '0')
+        FROM inserted
+       WHERE franchise_staff.id = inserted.id
       RETURNING
-        id,
-        franchise_id,
-        name,
-        phone,
-        email,
-        role,
-        department,
-        TO_CHAR(joining_date, 'YYYY-MM-DD') AS joining_date,
-        TO_CHAR(relieving_date, 'YYYY-MM-DD') AS relieving_date,
-        status,
-        assigned_project_or_site,
-        notes,
-        created_at`,
+        franchise_staff.id,
+        franchise_staff.staff_code,
+        franchise_staff.franchise_id,
+        franchise_staff.name,
+        franchise_staff.phone,
+        franchise_staff.email,
+        franchise_staff.role,
+        franchise_staff.department,
+        TO_CHAR(franchise_staff.joining_date, 'YYYY-MM-DD') AS joining_date,
+        TO_CHAR(franchise_staff.relieving_date, 'YYYY-MM-DD') AS relieving_date,
+        franchise_staff.status,
+        franchise_staff.assigned_project_or_site,
+        franchise_staff.notes,
+        franchise_staff.created_at`,
       [
         franchiseId,
         name,

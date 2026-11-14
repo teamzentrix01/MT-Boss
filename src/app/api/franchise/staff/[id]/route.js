@@ -74,6 +74,7 @@ export async function PATCH(req, { params }) {
        WHERE id = $11 AND franchise_id = $12
        RETURNING
          id,
+         COALESCE(staff_code, 'FS-' || LPAD(id::text, 4, '0')) AS staff_code,
          franchise_id,
          name,
          phone,

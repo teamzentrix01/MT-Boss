@@ -27,6 +27,10 @@ export async function ensureFranchiseStaffSchema() {
       CREATE INDEX IF NOT EXISTS franchise_staff_franchise_idx ON franchise_staff(franchise_id);
       CREATE INDEX IF NOT EXISTS franchise_staff_status_idx ON franchise_staff(franchise_id, status);
       CREATE INDEX IF NOT EXISTS franchise_staff_role_idx ON franchise_staff(franchise_id, role);
+
+      ALTER TABLE franchise_staff ADD COLUMN IF NOT EXISTS staff_code VARCHAR(50);
+      UPDATE franchise_staff SET staff_code = 'FS-' || LPAD(id::text, 4, '0') WHERE staff_code IS NULL;
+      CREATE INDEX IF NOT EXISTS franchise_staff_code_idx ON franchise_staff(franchise_id, staff_code);
     `);
   })().catch((err) => {
     schemaPromise = null;

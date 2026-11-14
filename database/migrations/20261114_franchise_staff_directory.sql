@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS franchise_staff (
   status VARCHAR(30) NOT NULL DEFAULT 'working' CHECK (status IN ('working', 'resigned', 'terminated', 'on_leave', 'inactive')),
   assigned_project_or_site VARCHAR(255),
   notes TEXT,
+  staff_code VARCHAR(50),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ
 );
@@ -21,4 +22,9 @@ CREATE TABLE IF NOT EXISTS franchise_staff (
 CREATE INDEX IF NOT EXISTS franchise_staff_franchise_idx ON franchise_staff(franchise_id);
 CREATE INDEX IF NOT EXISTS franchise_staff_status_idx ON franchise_staff(franchise_id, status);
 CREATE INDEX IF NOT EXISTS franchise_staff_role_idx ON franchise_staff(franchise_id, role);
+CREATE INDEX IF NOT EXISTS franchise_staff_code_idx ON franchise_staff(franchise_id, staff_code);
+
+-- Backfill staff_code for existing records
+ALTER TABLE franchise_staff ADD COLUMN IF NOT EXISTS staff_code VARCHAR(50);
+UPDATE franchise_staff SET staff_code = 'FS-' || LPAD(id::text, 4, '0') WHERE staff_code IS NULL;
 

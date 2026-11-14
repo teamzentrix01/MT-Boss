@@ -18,6 +18,10 @@ import {
   Briefcase,
   MapPin,
   CheckCircle2,
+  Eye,
+  Copy,
+  Check,
+  IdCard,
 } from '@/app/components/ui/icons';
 
 const COMMON_ROLES = [
@@ -137,6 +141,22 @@ export default function FranchiseStaffManager({ permissions = {} }) {
   const [formData, setFormData] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  // View modal state
+  const [viewingStaff, setViewingStaff] = useState(null);
+  const [copiedId, setCopiedId] = useState(false);
+
+  const openViewModal = (staff) => {
+    setViewingStaff(staff);
+    setCopiedId(false);
+  };
+
+  const handleCopyId = (code) => {
+    if (!code) return;
+    navigator.clipboard?.writeText(code);
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 2000);
+  };
 
   const getHeaders = useCallback(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('franchise-token') : '';
@@ -509,13 +529,14 @@ export default function FranchiseStaffManager({ permissions = {} }) {
                   <th className="p-3.5">Joining Date</th>
                   <th className="p-3.5">Tenure Worked</th>
                   <th className="p-3.5">Working Status</th>
-                  {canManage && <th className="p-3.5 pr-4 text-right">Actions</th>}
+                  <th className="p-3.5 pr-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/80">
                 {staffList.map((st) => {
                   const statusConfig = STATUS_LABELS[st.status] || STATUS_LABELS.working;
                   const tenure = formatTenure(st.joining_date, st.relieving_date, st.status);
+                  const staffCode = st.staff_code || `FS-${String(st.id).padStart(4, '0')}`;
 
                   return (
                     <tr
@@ -524,8 +545,22 @@ export default function FranchiseStaffManager({ permissions = {} }) {
                     >
                       {/* Name & Contact */}
                       <td className="p-3.5 pl-4">
-                        <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                          {st.name}
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => openViewModal(st)}
+                            className="font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
+                          >
+                            {st.name}
+                          </button>
+                          <span
+                            onClick={() => handleCopyId(staffCode)}
+                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 tracking-wider cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                            title="Click to copy Staff ID"
+                          >
+                            <IdCard size={10} />
+                            <span>{staffCode}</span>
+                          </span>
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-[11px] text-slate-500 dark:text-zinc-400">
                           {st.phone && (
@@ -600,49 +635,60 @@ export default function FranchiseStaffManager({ permissions = {} }) {
                       </td>
 
                       {/* Actions */}
-                      {canManage && (
-                        <td className="p-3.5 pr-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => openEditModal(st)}
-                              className="p-1.5 text-slate-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-                              title="Edit staff member"
-                            >
-                              <Pencil size={13} />
-                            </button>
+                      <td className="p-3.5 pr-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => openViewModal(st)}
+                            className="p-1.5 text-slate-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
+                            title="View staff details"
+                          >
+                            <Eye size={13} />
+                          </button>
 
-                            {deleteConfirmId === st.id ? (
-                              <div className="inline-flex items-center gap-1 bg-rose-50 dark:bg-rose-950/60 p-1 rounded-md border border-rose-200 dark:border-rose-900">
-                                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-300">Confirm?</span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(st.id)}
-                                  className="px-1.5 py-0.5 text-[10px] font-bold bg-rose-600 text-white rounded hover:bg-rose-700"
-                                >
-                                  Yes
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setDeleteConfirmId(null)}
-                                  className="px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-zinc-300"
-                                >
-                                  No
-                                </button>
-                              </div>
-                            ) : (
+                          {canManage && (
+                            <>
                               <button
                                 type="button"
-                                onClick={() => setDeleteConfirmId(st.id)}
-                                className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-md transition-colors"
-                                title="Delete staff record"
+                                onClick={() => openEditModal(st)}
+                                className="p-1.5 text-slate-600 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
+                                title="Edit staff member"
                               >
-                                <Trash2 size={13} />
+                                <Pencil size={13} />
                               </button>
-                            )}
-                          </div>
-                        </td>
-                      )}
+
+                              {deleteConfirmId === st.id ? (
+                                <div className="inline-flex items-center gap-1 bg-rose-50 dark:bg-rose-950/60 p-1 rounded-md border border-rose-200 dark:border-rose-900">
+                                  <span className="text-[10px] font-bold text-rose-700 dark:text-rose-300">Confirm?</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDelete(st.id)}
+                                    className="px-1.5 py-0.5 text-[10px] font-bold bg-rose-600 text-white rounded hover:bg-rose-700"
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDeleteConfirmId(null)}
+                                    className="px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-zinc-300"
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => setDeleteConfirmId(st.id)}
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 dark:text-zinc-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-md transition-colors"
+                                  title="Delete staff record"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
@@ -862,6 +908,222 @@ export default function FranchiseStaffManager({ permissions = {} }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── VIEW STAFF PROFILE MODAL ── */}
+      {viewingStaff && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="p-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between bg-slate-50/70 dark:bg-zinc-900">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <IdCard size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Franchise Staff Profile
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    Official Franchise Staff Details
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewingStaff(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 rounded-md transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Profile Body */}
+            <div className="p-5 overflow-y-auto space-y-4">
+              {/* Member Card Banner */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-blue-500/10 via-sky-500/5 to-transparent border border-blue-100 dark:border-blue-900/50 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-blue-600 text-white font-extrabold text-base flex items-center justify-center shadow-xs">
+                    {(viewingStaff.name || 'S').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
+                      {viewingStaff.name}
+                    </h4>
+                    <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 mt-1">
+                      {viewingStaff.role}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <div className="flex items-center gap-1.5 justify-end">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Staff ID</span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyId(viewingStaff.staff_code || `FS-${String(viewingStaff.id).padStart(4, '0')}`)}
+                      className="px-2 py-0.5 rounded text-xs font-mono font-bold bg-white dark:bg-zinc-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-zinc-700 flex items-center gap-1 shadow-2xs"
+                      title="Click to copy Staff ID"
+                    >
+                      {copiedId ? <Check size={11} className="text-emerald-500" /> : <Copy size={11} />}
+                      <span>{viewingStaff.staff_code || `FS-${String(viewingStaff.id).padStart(4, '0')}`}</span>
+                    </button>
+                  </div>
+                  <div className="mt-1.5 flex justify-end">
+                    {(() => {
+                      const cfg = STATUS_LABELS[viewingStaff.status] || STATUS_LABELS.working;
+                      return (
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${cfg.badge}`}>
+                          {viewingStaff.status === 'working' && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          )}
+                          {cfg.label}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+
+              {/* Information Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Staff ID */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <IdCard size={12} className="text-blue-500" />
+                    <span>Staff ID / Code</span>
+                  </div>
+                  <div className="mt-1 font-mono font-extrabold text-xs text-blue-600 dark:text-blue-400">
+                    {viewingStaff.staff_code || `FS-${String(viewingStaff.id).padStart(4, '0')}`}
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <Phone size={12} className="text-blue-500" />
+                    <span>Phone Number</span>
+                  </div>
+                  <div className="mt-1 font-mono font-bold text-xs text-slate-900 dark:text-white">
+                    {viewingStaff.phone ? (
+                      <a href={`tel:${viewingStaff.phone}`} className="hover:text-blue-600 transition-colors">
+                        {viewingStaff.phone}
+                      </a>
+                    ) : '—'}
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <Mail size={12} className="text-blue-500" />
+                    <span>Email Address</span>
+                  </div>
+                  <div className="mt-1 text-xs font-semibold text-slate-900 dark:text-white truncate">
+                    {viewingStaff.email ? (
+                      <a href={`mailto:${viewingStaff.email}`} className="hover:text-blue-600 transition-colors">
+                        {viewingStaff.email}
+                      </a>
+                    ) : <span className="text-slate-400 italic">Not provided</span>}
+                  </div>
+                </div>
+
+                {/* Department */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <Briefcase size={12} className="text-blue-500" />
+                    <span>Department</span>
+                  </div>
+                  <div className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
+                    {viewingStaff.department || 'Operations'}
+                  </div>
+                </div>
+
+                {/* Assigned Site */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <MapPin size={12} className="text-blue-500" />
+                    <span>Assigned Site / Project</span>
+                  </div>
+                  <div className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
+                    {viewingStaff.assigned_project_or_site || <span className="text-slate-400 italic">Unassigned</span>}
+                  </div>
+                </div>
+
+                {/* Joining Date */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <Clock size={12} className="text-blue-500" />
+                    <span>Joining Date</span>
+                  </div>
+                  <div className="mt-1 text-xs font-bold text-slate-900 dark:text-white">
+                    {formatDate(viewingStaff.joining_date)}
+                  </div>
+                </div>
+
+                {/* Tenure Worked */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800 sm:col-span-2">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
+                    <Users size={12} className="text-blue-500" />
+                    <span>Total Tenure Worked</span>
+                  </div>
+                  <div className="mt-1 text-xs font-extrabold text-blue-600 dark:text-blue-400">
+                    {formatTenure(viewingStaff.joining_date, viewingStaff.relieving_date, viewingStaff.status)}
+                  </div>
+                </div>
+
+                {viewingStaff.relieving_date && viewingStaff.status !== 'working' && (
+                  <div className="p-3 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900 sm:col-span-2">
+                    <div className="text-[11px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+                      Relieving / Leaving Date
+                    </div>
+                    <div className="mt-1 text-xs font-bold text-rose-700 dark:text-rose-300">
+                      {formatDate(viewingStaff.relieving_date)}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Notes */}
+              {viewingStaff.notes && (
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/80 dark:border-zinc-800">
+                  <div className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1">
+                    Internal Notes / Remarks
+                  </div>
+                  <p className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">
+                    {viewingStaff.notes}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setViewingStaff(null)}
+                className="px-4 py-2 border border-slate-300 dark:border-zinc-700 text-xs font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300"
+              >
+                Close
+              </button>
+
+              {canManage && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const st = viewingStaff;
+                    setViewingStaff(null);
+                    openEditModal(st);
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+                >
+                  <Pencil size={13} />
+                  <span>Edit Details</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
