@@ -75,10 +75,10 @@ export default function CustomerMobileOtpAuth({
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/mobile/auth/send-otp', {
+      const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile }),
+        body: JSON.stringify({ phone: `+91${mobile}` }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -109,10 +109,10 @@ export default function CustomerMobileOtpAuth({
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/mobile/auth/verify-otp', {
+      const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mobile, otp: otpString, role: 'user' }),
+        body: JSON.stringify({ phone: `+91${mobile}`, code: otpString, role: 'user' }),
       });
       const data = await res.json();
       if (!res.ok || data.success === false) {
