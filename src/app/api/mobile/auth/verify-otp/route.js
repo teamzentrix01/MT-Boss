@@ -13,6 +13,7 @@ import {
 } from '@/lib/mobile-auth';
 import { createInitializationGuard } from '@/lib/api-utils';
 import { isOtpDevMode, verifyOtpViaMsg91 } from '@/lib/msg91';
+import { setAuthCookie, clearOtherAuthCookies } from '@/lib/auth';
 
 const MOBILE_REGEX = /^[6-9]\d{9}$/;
 const OTP_REGEX = /^\d{6}$/;
@@ -154,7 +155,7 @@ export async function POST(req) {
         phone: partner.profile.phone,
       };
 
-      return NextResponse.json({
+      const response = NextResponse.json({
         success: true,
         token: accessToken,
         accessToken,
@@ -162,6 +163,19 @@ export async function POST(req) {
         user,
         [role]: { ...partner.entity, role, password_hash: undefined },
       });
+
+      const roleCookieMap = {
+        agent: 'agent-auth-token',
+        franchise: 'franchise-auth-token',
+        vendor: 'vendor-auth-token',
+        supplier: 'supplier-auth-token',
+        user: 'auth-token',
+      };
+      const cookieName = roleCookieMap[role] || 'auth-token';
+      clearOtherAuthCookies(response, cookieName);
+      setAuthCookie(response, cookieName, accessToken);
+
+      return response;
     } catch (err) {
       await client.query('ROLLBACK').catch(() => {});
       throw err;

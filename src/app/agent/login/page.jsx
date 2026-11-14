@@ -62,12 +62,7 @@ export default function AgentLoginPage() {
       localStorage.setItem('agent-token', data.token);
       localStorage.setItem('agent', JSON.stringify(data.agent));
       window.dispatchEvent(new Event('userLoggedIn'));
-      const agent = data.agent || {};
-      if (agent.has_project_management_access) {
-        router.replace('/dashboard?tab=overview');
-      } else {
-        router.replace('/agent/dashboard');
-      }
+      router.replace('/agent/dashboard');
     } catch (err) {
       if (err?.name === 'AbortError') {
         setError('Sign-in timed out. Please check your connection and try again.');
@@ -80,13 +75,8 @@ export default function AgentLoginPage() {
     }
   }
 
-  const handleOtpSuccess = (data) => {
-    const agent = data.agent || {};
-    if (agent.has_project_management_access) {
-      router.replace('/dashboard?tab=overview');
-    } else {
-      router.replace('/agent/dashboard');
-    }
+  const handleOtpSuccess = () => {
+    router.replace('/agent/dashboard');
   };
 
   const isDark = dark;

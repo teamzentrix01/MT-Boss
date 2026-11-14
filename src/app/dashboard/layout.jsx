@@ -526,6 +526,37 @@ export default function DashboardLayout({ children }) {
     const frame = requestAnimationFrame(() => {
       try {
         const activeRole = localStorage.getItem(ACTIVE_ROLE_KEY);
+        const adminToken =
+          localStorage.getItem("admin-token") ||
+          (localStorage.getItem("token") &&
+            (() => {
+              try {
+                return JSON.parse(localStorage.getItem("user") || "{}").role === "admin";
+              } catch {
+                return false;
+              }
+            })());
+
+        // Non-admin roles should never stay on the admin dashboard layout
+        if (!adminToken) {
+          if (activeRole === "agent" || localStorage.getItem("agent-token")) {
+            router.replace("/agent/dashboard");
+            return;
+          }
+          if (activeRole === "franchise" || localStorage.getItem("franchise-token")) {
+            router.replace("/franchise/dashboard");
+            return;
+          }
+          if (activeRole === "vendor" || localStorage.getItem("vendor-token") || localStorage.getItem("service-provider-token")) {
+            router.replace("/vendor/dashboard");
+            return;
+          }
+          if (activeRole === "supplier" || localStorage.getItem("supplier-token")) {
+            router.replace("/supplier/dashboard");
+            return;
+          }
+        }
+
         let u = null;
         if (activeRole === "agent") {
           const agentStr = localStorage.getItem("agent");
