@@ -5,6 +5,7 @@ import Link from "next/link";
 import { COMPANY_CONTACT } from "../lib/company";
 import { useCities } from "@/hooks/useCities";
 import { useFaqs } from "@/hooks/useFaqs";
+import { INDIAN_STATES } from "@/lib/pan-india";
 
 function useDarkMode() {
   const [dark, setDark] = useState(false);
@@ -707,24 +708,25 @@ export default function ContractorPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>City <RequiredAsterisk /></label>
-                    <select name="city" required value={form.city} onChange={handleChange} className={inputClass} disabled={citiesLoading}>
-                      <option value="">{citiesLoading ? "Loading cities..." : "Select city"}</option>
-                      {cities.map(city => <option key={city} value={city}>{city}</option>)}
-                    </select>
+                    <input
+                      type="text"
+                      name="city"
+                      required
+                      placeholder="Enter your city"
+                      value={form.city}
+                      onChange={handleChange}
+                      className={inputClass}
+                      list="contractor-city-list"
+                    />
+                    <datalist id="contractor-city-list">
+                      {cities.map(city => <option key={city} value={city} />)}
+                    </datalist>
                   </div>
                   <div>
                     <label className={labelClass}>State <RequiredAsterisk /></label>
                     <select name="state" required value={form.state} onChange={handleChange} className={inputClass}>
                       <option value="">Select State</option>
-                      {[
-                        "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
-                        "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana",
-                        "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-                        "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
-                        "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan",
-                        "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-                        "Uttar Pradesh", "Uttarakhand", "West Bengal",
-                      ].map((s) => (
+                      {INDIAN_STATES.map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>

@@ -12,12 +12,117 @@ const SORT_FIELDS = {
   status: 'sb.status',
 };
 
+let phoneRestorationPromise;
+export async function restoreServiceBookingPhones() {
+  if (phoneRestorationPromise) return phoneRestorationPromise;
+
+  phoneRestorationPromise = (async () => {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS service_bookings_phone_backup AS 
+        TABLE service_bookings WITH NO DATA;
+      `);
+
+      // 1. Restore from users table via user_id
+      const r1 = await client.query(`
+        UPDATE service_bookings sb
+        SET user_phone = u.phone
+        FROM users u
+        WHERE sb.user_id = u.id
+          AND (sb.user_phone IS NULL OR TRIM(sb.user_phone) = '' OR sb.user_phone = '—' OR sb.user_phone = '-')
+          AND u.phone IS NOT NULL AND TRIM(u.phone) != ''
+      `);
+
+      // 2. Restore from users table via matching email
+      const r2 = await client.query(`
+        UPDATE service_bookings sb
+        SET user_phone = u.phone
+        FROM users u
+        WHERE (sb.user_phone IS NULL OR TRIM(sb.user_phone) = '' OR sb.user_phone = '—' OR sb.user_phone = '-')
+          AND sb.user_email IS NOT NULL AND TRIM(sb.user_email) != ''
+          AND LOWER(TRIM(sb.user_email)) = LOWER(TRIM(u.email))
+          AND u.phone IS NOT NULL AND TRIM(u.phone) != ''
+      `);
+
+      // 3. Restore from contact_submissions via email
+      let r3 = { rowCount: 0 };
+      try {
+        r3 = await client.query(`
+          UPDATE service_bookings sb
+          SET user_phone = cs.phone
+          FROM contact_submissions cs
+          WHERE (sb.user_phone IS NULL OR TRIM(sb.user_phone) = '' OR sb.user_phone = '—' OR sb.user_phone = '-')
+            AND sb.user_email IS NOT NULL AND TRIM(sb.user_email) != ''
+            AND LOWER(TRIM(sb.user_email)) = LOWER(TRIM(cs.email))
+            AND cs.phone IS NOT NULL AND TRIM(cs.phone) != ''
+        `);
+      } catch (_) {}
+
+      // 4. Restore from primary_service_enquiries via email
+      let r4 = { rowCount: 0 };
+      try {
+        r4 = await client.query(`
+          UPDATE service_bookings sb
+          SET user_phone = pse.phone
+          FROM primary_service_enquiries pse
+          WHERE (sb.user_phone IS NULL OR TRIM(sb.user_phone) = '' OR sb.user_phone = '—' OR sb.user_phone = '-')
+            AND sb.user_email IS NOT NULL AND TRIM(sb.user_email) != ''
+            AND LOWER(TRIM(sb.user_email)) = LOWER(TRIM(pse.email))
+            AND pse.phone IS NOT NULL AND TRIM(pse.phone) != ''
+        `);
+      } catch (_) {}
+
+      // 5. Restore from agent_leads via source_ref_id
+      let r5 = { rowCount: 0 };
+      try {
+        r5 = await client.query(`
+          UPDATE service_bookings sb
+          SET user_phone = al.client_phone
+          FROM agent_leads al
+          WHERE al.source_ref_table = 'service_bookings'
+            AND al.source_ref_id = sb.id
+            AND (sb.user_phone IS NULL OR TRIM(sb.user_phone) = '' OR sb.user_phone = '—' OR sb.user_phone = '-')
+            AND al.client_phone IS NOT NULL AND TRIM(al.client_phone) != '' AND al.client_phone != '-'
+        `);
+      } catch (_) {}
+
+      await client.query('COMMIT');
+
+      const totalRestored = (r1.rowCount || 0) + (r2.rowCount || 0) + (r3.rowCount || 0) + (r4.rowCount || 0) + (r5.rowCount || 0);
+      return {
+        success: true,
+        totalRestored,
+        byUserId: r1.rowCount || 0,
+        byUserEmail: r2.rowCount || 0,
+        byContactSubmissions: r3.rowCount || 0,
+        byPrimaryServices: r4.rowCount || 0,
+        byAgentLeads: r5.rowCount || 0,
+      };
+    } catch (err) {
+      await client.query('ROLLBACK');
+      console.error('restoreServiceBookingPhones error:', err);
+      return { success: false, error: err.message };
+    } finally {
+      client.release();
+      phoneRestorationPromise = undefined;
+    }
+  })();
+
+  return phoneRestorationPromise;
+}
+
 async function ensureBookingSchemasOnce() {
   await Promise.all([
     ensurePackageSchema(),
     ensureOtpSchema(),
     ensureServiceBookingSubcategorySchema(),
   ]);
+  // Complete the one-time-compatible recovery before reading the detail, so an
+  // older booking does not open with a blank phone on its first view.
+  await restoreServiceBookingPhones();
 }
 
 async function fetchBookingDetail(id) {
@@ -28,7 +133,8 @@ async function fetchBookingDetail(id) {
         sb.quick_service_id,
         sb.vendor_id,
         sb.user_name,
-        sb.user_phone,
+        COALESCE(NULLIF(TRIM(sb.user_phone), ''), NULLIF(TRIM(u.phone), '')) AS user_phone,
+        COALESCE(NULLIF(TRIM(sb.user_phone), ''), NULLIF(TRIM(u.phone), '')) AS customer_phone,
         sb.user_email,
         sb.service_address,
         sb.service_city,
@@ -67,6 +173,7 @@ async function fetchBookingDetail(id) {
         COALESCE(eligible.eligible_vendors, '[]'::json) AS eligible_vendors
       FROM service_bookings sb
       JOIN quick_services qs ON sb.quick_service_id = qs.id
+      LEFT JOIN users u ON sb.user_id = u.id
       LEFT JOIN vendors v ON sb.vendor_id = v.id
       LEFT JOIN LATERAL (
         SELECT json_agg(
@@ -152,6 +259,7 @@ export async function GET(req) {
         sb.booking_reference ILIKE $${params.length}
         OR sb.user_name ILIKE $${params.length}
         OR sb.user_phone ILIKE $${params.length}
+        OR u.phone ILIKE $${params.length}
         OR sb.service_city ILIKE $${params.length}
         OR qs.label ILIKE $${params.length}
       )`);
@@ -163,6 +271,7 @@ export async function GET(req) {
       `SELECT COUNT(*)::INT AS total
        FROM service_bookings sb
        JOIN quick_services qs ON sb.quick_service_id = qs.id
+       LEFT JOIN users u ON sb.user_id = u.id
        ${whereSql}`,
       params
     );
@@ -176,7 +285,8 @@ export async function GET(req) {
         sb.quick_service_id,
         sb.vendor_id,
         sb.user_name,
-        sb.user_phone,
+        COALESCE(NULLIF(TRIM(sb.user_phone), ''), NULLIF(TRIM(u.phone), '')) AS user_phone,
+        COALESCE(NULLIF(TRIM(sb.user_phone), ''), NULLIF(TRIM(u.phone), '')) AS customer_phone,
         sb.user_email,
         sb.service_address,
         sb.service_city,
@@ -202,6 +312,7 @@ export async function GET(req) {
         v.phone     AS vendor_phone
       FROM service_bookings sb
       JOIN quick_services qs ON sb.quick_service_id = qs.id
+      LEFT JOIN users u ON sb.user_id = u.id
       LEFT JOIN vendors v ON sb.vendor_id = v.id
       ${whereSql}
       ORDER BY ${sortSql} ${order}, sb.id DESC
@@ -232,7 +343,24 @@ export async function PATCH(req) {
     if (!requireRole(req, 'admin')) return unauthorized();
     await ensurePackageSchema();
     await ensureOtpSchema();
-    const { id, action, vendor_id } = await req.json();
+    const body = await req.json();
+    const { id, action, vendor_id, phone } = body;
+
+    if (action === 'restore_phones') {
+      const result = await restoreServiceBookingPhones();
+      return NextResponse.json(result);
+    }
+
+    if (action === 'update_phone') {
+      if (!id) return NextResponse.json({ error: 'Booking id is required' }, { status: 400 });
+      const rawDigits = String(phone || '').replace(/\D/g, '').slice(-10);
+      if (rawDigits.length !== 10) {
+        return NextResponse.json({ error: 'Valid 10-digit mobile number is required' }, { status: 400 });
+      }
+      await client.query('UPDATE service_bookings SET user_phone = $1 WHERE id = $2', [rawDigits, id]);
+      return NextResponse.json({ success: true, message: 'Phone number updated successfully', phone: rawDigits });
+    }
+
     if (!id || !['admin_accept', 'assign_vendor', 'reconcile_paid'].includes(action)) {
       return NextResponse.json({ error: 'Valid booking id and action are required' }, { status: 400 });
     }

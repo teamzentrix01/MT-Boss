@@ -230,13 +230,20 @@ export default function RentPage() {
                 <p className={`mt-1 text-[10px] ${muted}`}>Select an option or type a custom property type.</p>
               </div>
               <div>
-                <label className={lbl}>Location <RequiredAsterisk /></label>
-                <select className={inp} value={form.location} onChange={e=>set("location",e.target.value)} required disabled={loadingCities}>
-                  <option value="">{loadingCities ? 'Loading cities...' : 'Select city'}</option>
-                  {availableCities.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
-                <p className={`mt-1 text-[10px] ${muted}`}>Only cities enabled by MTBOSS are available.</p>
-                {cityError && <p className="mt-1 text-[10px] text-red-500">{cityError}</p>}
+                <label className={lbl}>Location / City <RequiredAsterisk /></label>
+                <input
+                  type="text"
+                  className={inp}
+                  value={form.location}
+                  onChange={e => set("location", e.target.value)}
+                  placeholder="e.g. Bareilly, Noida, Delhi"
+                  required
+                  list="property-rent-cities"
+                />
+                <datalist id="property-rent-cities">
+                  {availableCities.map(l => <option key={l} value={l} />)}
+                </datalist>
+                <p className={`mt-1 text-[10px] ${muted}`}>Enter property city or location (Pan-India listing).</p>
               </div>
             </div>
 

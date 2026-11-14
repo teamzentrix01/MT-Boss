@@ -87,6 +87,44 @@ function readRoleSession(role) {
 export function resolveWebAuthUser() {
   if (typeof window === 'undefined') return null;
 
+  // 1. If currently inside a role-specific portal route, strictly prioritize that role
+  try {
+    const pathname = window.location.pathname || '';
+    if (pathname.startsWith('/franchise') && localStorage.getItem('franchise-token')) {
+      const franchiseUser = readRoleSession('franchise');
+      if (franchiseUser) {
+        localStorage.setItem(ACTIVE_ROLE_KEY, 'franchise');
+        return franchiseUser;
+      }
+    } else if (pathname.startsWith('/agent') && localStorage.getItem('agent-token')) {
+      const agentUser = readRoleSession('agent');
+      if (agentUser) {
+        localStorage.setItem(ACTIVE_ROLE_KEY, 'agent');
+        return agentUser;
+      }
+    } else if (pathname.startsWith('/supplier') && localStorage.getItem('supplier-token')) {
+      const supplierUser = readRoleSession('supplier');
+      if (supplierUser) {
+        localStorage.setItem(ACTIVE_ROLE_KEY, 'supplier');
+        return supplierUser;
+      }
+    } else if (pathname.startsWith('/vendor') && (localStorage.getItem('vendor-token') || localStorage.getItem('service-provider-token'))) {
+      const vendorUser = readRoleSession('vendor');
+      if (vendorUser) {
+        localStorage.setItem(ACTIVE_ROLE_KEY, 'vendor');
+        return vendorUser;
+      }
+    } else if (pathname.startsWith('/dashboard') && (localStorage.getItem('admin-token') || localStorage.getItem('token'))) {
+      const adminUser = readRoleSession('admin');
+      if (adminUser) {
+        localStorage.setItem(ACTIVE_ROLE_KEY, 'admin');
+        return adminUser;
+      }
+    }
+  } catch {
+    // window.location access fallback
+  }
+
   const activeRole = localStorage.getItem(ACTIVE_ROLE_KEY);
   if (activeRole) {
     const fromActive = readRoleSession(activeRole);
@@ -94,7 +132,7 @@ export function resolveWebAuthUser() {
     localStorage.removeItem(ACTIVE_ROLE_KEY);
   }
 
-  const priority = ['agent', 'admin', 'supplier', 'franchise', 'vendor', 'user'];
+  const priority = ['franchise', 'agent', 'supplier', 'vendor', 'admin', 'user'];
   for (const role of priority) {
     const user = readRoleSession(role);
     if (user) {

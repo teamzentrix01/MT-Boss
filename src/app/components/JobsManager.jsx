@@ -282,10 +282,16 @@ export default function JobsManager({ isDarkMode }) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div>
                   <label style={labelStyle}>Location <RequiredAsterisk /></label>
-                  <select style={fieldStyle} value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))}>
-                    <option value="">Select city</option>
-                    {cities.map(city => <option key={city} value={city}>{city}</option>)}
-                  </select>
+                  <input
+                    style={fieldStyle}
+                    value={form.location}
+                    onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
+                    placeholder="e.g. Bareilly, Delhi, Remote"
+                    list="jobs-manager-city-list"
+                  />
+                  <datalist id="jobs-manager-city-list">
+                    {cities.map(city => <option key={city} value={city} />)}
+                  </datalist>
                 </div>
                 <div>
                   <label style={labelStyle}>Job Type</label>

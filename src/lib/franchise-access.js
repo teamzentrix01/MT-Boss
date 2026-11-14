@@ -44,6 +44,17 @@ export async function ensureFranchiseAccessColumns() {
          OR permissions = 'null'::jsonb
        )
   `);
+
+  await pool.query(`
+    UPDATE franchises
+       SET permissions = permissions || '{"staff.view": true, "staff.manage": true}'::jsonb
+     WHERE status = 'Approved'
+       AND login_enabled = TRUE
+       AND (
+         permissions IS NOT NULL
+         AND NOT (permissions ? 'staff.view')
+       )
+  `);
 }
 
 export async function getFranchiseAccess(req, permission = null) {

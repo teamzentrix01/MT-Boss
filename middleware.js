@@ -6,9 +6,18 @@ export function middleware(request) {
   const agentToken = request.cookies.get('agent-auth-token')?.value;
   const vendorToken = request.cookies.get('vendor-auth-token')?.value;
   
-  // Protect dashboard routes (admin cookie or agent cookie for limited agent PM access)
+  // Protect dashboard routes - only full admin token can access /dashboard; partners are routed to their own portals
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!token && !agentToken) {
+    if (!token) {
+      if (agentToken) {
+        return NextResponse.redirect(new URL('/agent/dashboard', request.url));
+      }
+      if (franchiseToken) {
+        return NextResponse.redirect(new URL('/franchise/dashboard', request.url));
+      }
+      if (vendorToken) {
+        return NextResponse.redirect(new URL('/vendor/dashboard', request.url));
+      }
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
@@ -28,6 +37,10 @@ export function middleware(request) {
 
   if (request.nextUrl.pathname.startsWith('/franchise/login') && franchiseToken) {
     return NextResponse.redirect(new URL('/franchise/dashboard', request.url));
+  }
+
+  if (request.nextUrl.pathname.startsWith('/agent/login') && agentToken) {
+    return NextResponse.redirect(new URL('/agent/dashboard', request.url));
   }
 
   if (request.nextUrl.pathname.startsWith('/agent/dashboard')) {

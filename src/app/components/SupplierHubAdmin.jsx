@@ -788,8 +788,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
                   Review Now →
                 </button>
               </div>
-              <div style={{ overflowX:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+              <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+                <table style={{ width:'100%', minWidth:'720px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
                     <tr>
                       {['Shop Name', 'Plan / Tier', 'Phone', 'City', 'Registered', 'Action'].map(c => <th key={c} style={th}>{c}</th>)}
@@ -843,8 +843,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               <button onClick={() => setTab('enquiries')} style={{ background:'transparent', border:`1px solid ${border}`, borderRadius:6, padding:'0.3rem 0.75rem', color:muted, fontSize:'0.78rem', cursor:'pointer' }}>View All →</button>
             </div>
             {loadingEnq ? <div style={{ padding:'1.5rem', textAlign:'center', color:muted, fontSize:'0.8125rem' }}>Loading…</div> : (
-              <div style={{ overflowX:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+              <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+                <table style={{ width:'100%', minWidth:'720px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead><tr>{['Customer','Category','Type','Qty','Status','Date'].map(c=><th key={c} style={th}>{c}</th>)}</tr></thead>
                   <tbody>
                     {enquiries.slice(0, 8).map(e => (
@@ -892,8 +892,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
 
           {/* Table */}
           <div style={{ background:surface, border:`1px solid ${border}`, borderRadius:10, overflow:'hidden' }}>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+            <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+              <table style={{ width:'100%', minWidth:'980px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                 <thead>
                   <tr>{['#','Customer','Category','Type / Brand','Qty','Delivery Date','Address','Status','Vendor','Amount','Commission','Date',''].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                 </thead>
@@ -983,8 +983,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             {loadingSup ? <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>Loading vendors…</div> : filteredSups.length === 0 ? (
               <div style={{ padding:'2.5rem', textAlign:'center', color:muted }}>No vendors found.</div>
             ) : (
-              <div style={{ overflowX:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+              <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+                <table style={{ width:'100%', minWidth:'940px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
                     <tr>{['Shop / Vendor Name','Plan / Tier','Products','Phone','City','Status','Orders','Revenue','Commission','Joined','Actions'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                   </thead>
@@ -1081,8 +1081,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
               <span style={{ fontWeight:700, fontSize:'0.875rem', color:text }}>Per-Supplier Revenue Breakdown</span>
             </div>
             {loadingSup ? <div style={{ padding:'1.5rem', textAlign:'center', color:muted }}>Loading…</div> : (
-              <div style={{ overflowX:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+              <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+                <table style={{ width:'100%', minWidth:'720px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                   <thead>
                     <tr>{['Supplier','City','Status','Orders Fulfilled','Total Revenue','Commission (15%)','Net to Supplier','Joined'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                   </thead>
@@ -1122,8 +1122,8 @@ export default function SupplierHubAdmin({ isDarkMode }) {
             <div style={{ padding:'0.875rem 1.25rem', borderBottom:`1px solid ${border}` }}>
               <span style={{ fontWeight:700, fontSize:'0.875rem', color:text }}>Fulfilled Orders — Commission Ledger</span>
             </div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
+            <div style={{ overflowX:'auto', WebkitOverflowScrolling:'touch', width:'100%' }}>
+              <table style={{ width:'100%', minWidth:'980px', borderCollapse:'collapse', fontSize:'0.8125rem' }}>
                 <thead>
                   <tr>{['#','Customer','Category','Type','Qty','Fulfilled By','Amount','Commission','Fulfilled On'].map(c=><th key={c} style={th}>{c}</th>)}</tr>
                 </thead>

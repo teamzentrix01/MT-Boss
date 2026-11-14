@@ -85,10 +85,13 @@ export async function POST(req) {
 
     await ensureServiceBookingSubcategorySchema();
  
+    const body = await req.json();
     const {
       quick_service_id,
       user_name,
       user_phone,
+      phone,
+      customer_phone,
       user_email,
       service_address,
       service_city,
@@ -103,11 +106,21 @@ export async function POST(req) {
       user_longitude,
       location_map_url,
       service_description,
-    } = await req.json();
+    } = body;
     let selectedCity = String(service_city || '').trim();
     const cleanUserName = cleanText(user_name);
     const cleanUserEmail = cleanText(user_email || authenticatedEmail || '').toLowerCase();
-    const cleanUserPhone = normalizePhone(user_phone);
+
+    let rawPhone = user_phone || phone || customer_phone;
+    if (!rawPhone && userId) {
+      try {
+        const userPhoneRes = await pool.query('SELECT phone FROM users WHERE id = $1', [userId]);
+        if (userPhoneRes.rows[0]?.phone) {
+          rawPhone = userPhoneRes.rows[0].phone;
+        }
+      } catch (_) {}
+    }
+    const cleanUserPhone = normalizePhone(rawPhone);
     const cleanServiceSubcategory = cleanText(service_subcategory);
  
     // Validation

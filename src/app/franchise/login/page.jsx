@@ -51,7 +51,10 @@ export default function FranchiseLoginPage() {
       }
 
       localStorage.setItem('franchise-token', data.token);
-      localStorage.setItem('franchise', JSON.stringify(data.franchise));
+      localStorage.setItem('franchise', JSON.stringify({ ...data.franchise, role: 'franchise' }));
+      localStorage.setItem('mtboss.activeRole', 'franchise');
+      localStorage.removeItem('admin-token');
+      localStorage.removeItem('admin');
       window.dispatchEvent(new Event('userLoggedIn'));
       router.push('/franchise/dashboard');
     } catch {

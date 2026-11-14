@@ -434,10 +434,12 @@ export default function AgentsPage() {
 
         /* Stats row */
         .ag-stats {
-          display: grid; grid-template-columns: repeat(4, 1fr);
+          display: grid; grid-template-columns: repeat(5, 1fr);
           gap: 0.75rem; margin-bottom: 1rem;
         }
+        @media(max-width:1024px){ .ag-stats { grid-template-columns: repeat(3, 1fr); gap: 0.65rem; } }
         @media(max-width:640px){ .ag-stats { grid-template-columns: 1fr 1fr; } }
+        @media(max-width:420px){ .ag-stats { grid-template-columns: 1fr; } }
         .ag-stat {
           background: var(--surface);
           border: 1px solid var(--border);
@@ -457,7 +459,7 @@ export default function AgentsPage() {
           border: 1px solid var(--border);
           border-radius: 8px; overflow: hidden;
         }
-        .ag-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .ag-table { width: 100%; min-width: 960px; border-collapse: collapse; font-size: 0.8125rem; }
         .ag-table th {
           padding: 0.5rem 0.875rem;
           text-align: left;
@@ -466,6 +468,7 @@ export default function AgentsPage() {
           color: var(--muted);
           border-bottom: 1px solid var(--border);
           background: var(--bg);
+          white-space: nowrap;
         }
         .ag-table td {
           padding: 0.65rem 0.875rem;
@@ -535,6 +538,18 @@ export default function AgentsPage() {
         .ag-modal-grid {
           display: grid; grid-template-columns: 1fr 1fr;
           gap: 0.875rem; margin-bottom: 1rem;
+        }
+        @media(max-width:768px){
+          .ag-modal-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+        }
+        .ag-ws-stats {
+          display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 0.875rem;
+        }
+        @media(max-width:1024px){
+          .ag-ws-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media(max-width:480px){
+          .ag-ws-stats { grid-template-columns: 1fr; }
         }
         .ag-field-label {
           font-size: 0.6875rem; font-weight: 600;
@@ -1145,7 +1160,7 @@ export default function AgentsPage() {
             ) : workspace && (
               <div style={{ marginTop: '1rem' }}>
                 <div className="ag-field-label" style={{ marginBottom: '0.5rem' }}>Agent Workspace Preview</div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '0.875rem' }}>
+                <div className="ag-ws-stats">
                   <div className="ag-stat">
                     <div className="ag-stat-label">Leads</div>
                     <div className="ag-stat-value">{workspace.leads?.length || 0}</div>
