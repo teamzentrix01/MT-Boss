@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { UploadCloud, Plus, X, Star, Sparkles, Image as ImageIcon, ArrowLeft, HelpCircle, ShieldCheck, CheckCircle2, RotateCcw, FileText, ListChecks } from 'lucide-react';
 import VendorCommissionSummary from './VendorCommissionSummary';
 import { defaultShopStorefront } from '@/lib/shop-storefront-defaults';
 import { QUALITY_TIER_OPTIONS, qualityTierLabel } from '@/lib/quality-tier';
@@ -49,6 +49,51 @@ const desktopBannerFields = [
   ['catalog_heading', 'Catalogue heading'], ['footer_tagline', 'Footer tagline'],
 ];
 
+const ATTRIBUTE_FIELD_DEFS = {
+  grade: {
+    icon: '⭐',
+    label: 'Grade / Standard',
+    eg: 'e.g. OPC 53 Grade, Fe 500D, Class 1, Zone II',
+    placeholder: 'e.g. OPC 53 Grade, Fe 500D',
+  },
+  type: {
+    icon: '🏷️',
+    label: 'Type / Variety',
+    eg: 'e.g. PPC Cement, TMT Rebar, AAC Block, M-Sand',
+    placeholder: 'e.g. PPC Cement, TMT Rebar',
+  },
+  pack_size: {
+    icon: '📦',
+    label: 'Pack / Bag Size',
+    eg: 'e.g. 50 Kg Bag, 1 Ton, CFT, 25 Kg Bag',
+    placeholder: 'e.g. 50 Kg Bag, 1 Ton',
+  },
+  thickness: {
+    icon: '📏',
+    label: 'Thickness / Diameter',
+    eg: 'e.g. 8mm, 10mm, 12mm, 16mm, 20mm',
+    placeholder: 'e.g. 12mm, 16mm, 20mm',
+  },
+  size: {
+    icon: '📐',
+    label: 'Dimensions / Size',
+    eg: 'e.g. 9x4x3 inch, 600x600 mm, 12m Length',
+    placeholder: 'e.g. 9x4x3 inch, 600x600 mm',
+  },
+  material: {
+    icon: '🧱',
+    label: 'Material Composition',
+    eg: 'e.g. Primary Virgin Steel, Vitrified Porcelain, Clay',
+    placeholder: 'e.g. Primary Virgin Steel, Clay',
+  },
+  color: {
+    icon: '🎨',
+    label: 'Color / Shade / Finish',
+    eg: 'e.g. Grey, Super White, Terracotta',
+    placeholder: 'e.g. Grey, Super White',
+  },
+};
+
 
 const shopHeaders = (ownerRole = 'admin') => ({
   'Content-Type': 'application/json',
@@ -88,7 +133,7 @@ async function uploadImage(file) {
   return data.secure_url;
 }
 
-function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', initialShowForm = false }) {
+function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', initialShowForm = false, isDarkMode = false }) {
   const isVendor = ownerRole === 'vendor';
   const isSupplier = ownerRole === 'supplier';
   const isSeller = isVendor || isSupplier;
@@ -106,10 +151,36 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
   const [galleryText, setGalleryText] = useState('');
   const [specsText, setSpecsText] = useState('');
   const [bulkText, setBulkText] = useState('');
+  const [highlights, setHighlights] = useState([]);
+  const [newHighlight, setNewHighlight] = useState('');
+  const [faqs, setFaqs] = useState([]);
+  const [returnsPolicy, setReturnsPolicy] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [showProductForm, setShowProductForm] = useState(initialShowForm);
   const [isCustomSubcategory, setIsCustomSubcategory] = useState(false);
   const [formAttributes, setFormAttributes] = useState({ thickness: '', size: '', type: '', color: '', material: '', grade: '', pack_size: '' });
+  const [isDark, setIsDark] = useState(isDarkMode);
+
+  useEffect(() => {
+    setIsDark(isDarkMode);
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const html = document.documentElement;
+    const checkDark = () => {
+      const dark = html.classList.contains('dark-mode') || html.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
+      setIsDark(dark);
+    };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('storage', checkDark);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('storage', checkDark);
+    };
+  }, []);
 
   useEffect(() => {
     if (initialShowForm) setShowProductForm(true);
@@ -217,6 +288,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setGalleryText(existingImgs.join('\n'));
     setSpecsText(Object.entries(full.specifications || {}).map(([key, value]) => `${key}: ${value}`).join('\n'));
     setBulkText((full.bulk_pricing || []).map((tier) => `${tier.min_quantity}: ${tier.price}`).join('\n'));
+    setHighlights(Array.isArray(full.highlights) ? full.highlights : []);
+    setNewHighlight('');
+    setFaqs(Array.isArray(full.faqs) ? full.faqs : []);
+    setReturnsPolicy(full.returns_policy || '');
     setNotice('');
     document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -232,6 +307,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setGalleryText('');
     setSpecsText('');
     setBulkText('');
+    setHighlights([]);
+    setNewHighlight('');
+    setFaqs([]);
+    setReturnsPolicy('');
     setNotice('');
   };
 
@@ -245,6 +324,10 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     setGalleryText('');
     setSpecsText('');
     setBulkText('');
+    setHighlights([]);
+    setNewHighlight('');
+    setFaqs([]);
+    setReturnsPolicy('');
     setNotice('');
     setShowProductForm(true);
     requestAnimationFrame(() => {
@@ -309,6 +392,9 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           images: allImgs,
           specifications,
           bulk_pricing,
+          highlights: highlights.map((h) => String(h).trim()).filter(Boolean),
+          faqs: faqs.map((f) => ({ q: String(f.q || '').trim(), a: String(f.a || '').trim() })).filter((f) => f.q && f.a),
+          returns_policy: returnsPolicy.trim(),
           ...(isEditing ? { id: editingId } : {})
         }),
       });
@@ -432,6 +518,74 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
     }));
   };
 
+  const addHighlightItem = () => {
+    const trimmed = newHighlight.trim();
+    if (!trimmed) return;
+    setHighlights((prev) => [...prev, trimmed]);
+    setNewHighlight('');
+  };
+
+  const removeHighlightItem = (index) => {
+    setHighlights((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const loadPresetHighlights = () => {
+    const presets = [
+      '100% Genuine & Brand Certified Material',
+      'Tested for Structural Strength & Load Bearing Capacity',
+      'Direct Sourced from Authorized Manufacturers / Mills',
+      'Standard Weight & Packaging Verification at Dispatch',
+      'Express Delivery & Safe On-site Unloading Support'
+    ];
+    setHighlights((prev) => Array.from(new Set([...prev, ...presets])));
+  };
+
+  const addFaqItem = () => {
+    setFaqs((prev) => [...prev, { q: '', a: '' }]);
+  };
+
+  const updateFaqItem = (index, field, value) => {
+    setFaqs((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  const removeFaqItem = (index) => {
+    setFaqs((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const loadPresetFaqs = () => {
+    const presets = [
+      {
+        q: 'How should this material be stored at the site?',
+        a: 'Store in an elevated, dry, covered shed on wooden pallets away from moisture and direct rainwater.'
+      },
+      {
+        q: 'Is an official GST tax invoice provided?',
+        a: 'Yes, 100% genuine manufacturer test certificate and GST invoice accompany every delivery.'
+      },
+      {
+        q: 'How do bulk order discounts work?',
+        a: 'Bulk discounts unlock automatically for high volume orders or above ₹50,000 at checkout.'
+      },
+      {
+        q: 'What is the estimated delivery timeline?',
+        a: 'Orders within service cities are typically dispatched and delivered within 24 to 48 hours.'
+      }
+    ];
+    setFaqs((prev) => (prev.length === 0 ? presets : [...prev, ...presets]));
+  };
+
+  const loadPresetReturnsPolicy = () => {
+    setReturnsPolicy(
+      'Site Inspection: Customers can inspect quantity, brand stamps, and packaging at the time of truck unloading.\n' +
+      'Transit Damage: Any burst bags or damaged items reported on the delivery challan will be replaced immediately or refunded.\n' +
+      'Unopened Materials: Standard 48-hour return policy applies for unopened, undamaged materials.'
+    );
+  };
+
   return <div className="shop-admin-panel">
     {showProductForm || editingId ? (
       <>
@@ -440,18 +594,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             <button
               type="button"
               onClick={reset}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 14px',
-                border: '1px solid var(--border)',
-                borderRadius: 6,
-                background: 'transparent',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: 13
-              }}
+              className="shop-admin-back-btn"
             >
               <ArrowLeft size={16} /> Back to products
             </button>
@@ -613,15 +756,7 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
               <button
                 type="button"
                 onClick={() => setIsCustomSubcategory(false)}
-                style={{
-                  fontSize: 12,
-                  padding: '6px 10px',
-                  background: '#f1f5f9',
-                  border: '1px solid #cbd5e1',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
+                className="shop-admin-subcat-btn"
               >
                 Choose from list
               </button>
@@ -635,523 +770,84 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
           if (!fields.length) return null;
 
           const renderFieldCard = (key) => {
-            if (key === 'grade') {
-              return (
-                <div key="grade" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>⭐</span> Grade / Standard
-                      </label>
-                      {formAttributes.grade && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, grade: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. OPC 53 Grade, Fe 500D, Class 1, Zone II
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. OPC 53 Grade, Fe 500D"
-                      value={formAttributes.grade || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, grade: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                  {config.grade?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.grade.map((val) => {
-                        const isSelected = (formAttributes.grade || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, grade: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
+            const def = ATTRIBUTE_FIELD_DEFS[key] || {
+              icon: '⚙️',
+              label: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+              eg: `Enter ${key.replace(/_/g, ' ')}...`,
+              placeholder: `e.g. ${key.replace(/_/g, ' ')}`,
+            };
+            const valList = Array.isArray(config[key]) ? config[key] : [];
+            const currentVal = formAttributes[key] || '';
 
-            if (key === 'type') {
-              return (
-                <div key="type" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>🏷️</span> Type / Variety
-                      </label>
-                      {formAttributes.type && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, type: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. PPC Cement, TMT Rebar, AAC Block, M-Sand
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. PPC Cement, TMT Rebar"
-                      value={formAttributes.type || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, type: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
+            return (
+              <div key={key} className="shop-spec-card">
+                <div>
+                  <div className="shop-spec-card-head">
+                    <label className="shop-spec-label">
+                      <span>{def.icon}</span> {def.label}
+                    </label>
+                    {currentVal && (
+                      <button
+                        type="button"
+                        onClick={() => setFormAttributes({ ...formAttributes, [key]: '' })}
+                        className="shop-spec-clear-btn"
+                        title="Clear selection"
+                      >
+                        ✕ Clear
+                      </button>
+                    )}
                   </div>
-                  {config.type?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.type.map((val) => {
-                        const isSelected = (formAttributes.type || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, type: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                  <div className="shop-spec-eg">{def.eg}</div>
+                  <input
+                    type="text"
+                    placeholder={def.placeholder}
+                    value={currentVal}
+                    onChange={(e) => setFormAttributes({ ...formAttributes, [key]: e.target.value })}
+                    className="shop-spec-input"
+                  />
                 </div>
-              );
-            }
-
-            if (key === 'pack_size') {
-              return (
-                <div key="pack_size" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>📦</span> Pack / Bag Size
-                      </label>
-                      {formAttributes.pack_size && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, pack_size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
+                {valList.length > 0 && (
+                  <div className="shop-spec-pills">
+                    {valList.map((val) => {
+                      const isSelected = currentVal.toLowerCase().trim() === val.toLowerCase().trim();
+                      return (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setFormAttributes({ ...formAttributes, [key]: isSelected ? '' : val })}
+                          className={`shop-spec-pill ${isSelected ? 'selected' : ''}`}
+                        >
+                          {isSelected && <span className="shop-spec-pill-check">✓</span>}
+                          {val}
                         </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. 50 Kg Bag, 1 Ton, CFT, 25 Kg Bag
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. 50 Kg Bag, 1 Ton"
-                      value={formAttributes.pack_size || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, pack_size: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
+                      );
+                    })}
                   </div>
-                  {config.pack_size?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.pack_size.map((val) => {
-                        const isSelected = (formAttributes.pack_size || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, pack_size: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            if (key === 'thickness') {
-              return (
-                <div key="thickness" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>📏</span> Thickness / Diameter
-                      </label>
-                      {formAttributes.thickness && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, thickness: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. 8mm, 10mm, 12mm, 16mm, 20mm
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. 12mm, 16mm, 20mm"
-                      value={formAttributes.thickness || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, thickness: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                  {config.thickness?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.thickness.map((val) => {
-                        const isSelected = (formAttributes.thickness || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, thickness: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            if (key === 'size') {
-              return (
-                <div key="size" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>📐</span> Dimensions / Size
-                      </label>
-                      {formAttributes.size && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, size: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. 9x4x3 inch, 600x600 mm, 12m Length
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. 9x4x3 inch, 600x600 mm"
-                      value={formAttributes.size || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, size: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                  {config.size?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.size.map((val) => {
-                        const isSelected = (formAttributes.size || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, size: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            if (key === 'material') {
-              return (
-                <div key="material" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>🧱</span> Material Composition
-                      </label>
-                      {formAttributes.material && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, material: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. Primary Virgin Steel, Vitrified Porcelain, Clay
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. Primary Virgin Steel, Clay"
-                      value={formAttributes.material || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, material: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                  {config.material?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.material.map((val) => {
-                        const isSelected = (formAttributes.material || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, material: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            if (key === 'color') {
-              return (
-                <div key="color" style={{
-                  background: '#ffffff',
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: '1.5px solid #e2e8f0',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span>🎨</span> Color / Shade / Finish
-                      </label>
-                      {formAttributes.color && (
-                        <button type="button" onClick={() => setFormAttributes({ ...formAttributes, color: '' })} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-                          ✕ Clear
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ fontSize: '10.5px', color: '#64748b', marginBottom: 6 }}>
-                      e.g. Grey, Super White, Terracotta
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="e.g. Grey, Super White"
-                      value={formAttributes.color || ''}
-                      onChange={(e) => setFormAttributes({ ...formAttributes, color: e.target.value })}
-                      style={{ width: '100%', minHeight: '34px', fontSize: '12.5px', borderRadius: '6px', border: '1px solid #cbd5e1', padding: '6px 10px', marginBottom: 8, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                  {config.color?.length > 0 && (
-                    <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 2 }}>
-                      {config.color.map((val) => {
-                        const isSelected = (formAttributes.color || '').toLowerCase().trim() === val.toLowerCase().trim();
-                        return (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => setFormAttributes({ ...formAttributes, color: isSelected ? '' : val })}
-                            style={{
-                              fontSize: '11px',
-                              padding: '3px 9px',
-                              borderRadius: '14px',
-                              border: isSelected ? '1px solid #2563eb' : '1px solid #cbd5e1',
-                              background: isSelected ? '#2563eb' : '#f8fafc',
-                              color: isSelected ? '#ffffff' : '#334155',
-                              cursor: 'pointer',
-                              fontWeight: isSelected ? 700 : 500,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {isSelected && <span>✓</span>}
-                            {val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            return null;
+                )}
+              </div>
+            );
           };
 
           return (
-            <div className="shop-admin-wide" style={{
-              background: '#f8fafc',
-              border: '1.5px solid #cbd5e1',
-              borderRadius: '12px',
-              padding: '18px 20px',
-              margin: '8px 0 16px',
-              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+            <div className="shop-admin-wide shop-spec-box">
+              <div className="shop-spec-head">
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <Sparkles size={17} color="#2563eb" />
-                    <strong style={{ fontSize: '14px', color: '#0f172a' }}>
+                  <div className="shop-spec-title-row">
+                    <Sparkles size={17} className="shop-spec-sparkle-icon" />
+                    <strong className="shop-spec-title">
                       {config.label}
                     </strong>
                   </div>
-                  <small style={{ color: '#64748b', fontSize: '11.5px', marginTop: 2, display: 'block' }}>
+                  <small className="shop-spec-sub">
                     Fill specifications for {form.subcategory} so buyers on Shop Now can filter by these exact attributes.
                   </small>
                 </div>
-                <span style={{ fontSize: '11.5px', background: '#dbeafe', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 10px', borderRadius: '16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span className="shop-spec-badge">
                   <span>✓</span> Subcategory: {form.subcategory}
                 </span>
               </div>
 
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-                gap: '14px',
-              }}>
+              <div className="shop-spec-grid">
                 {fields.map((fKey) => renderFieldCard(fKey))}
               </div>
             </div>
@@ -1282,8 +978,8 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
             </div>
           )}
 
-          <details style={{ marginTop: 8, fontSize: '12px', color: 'var(--shop-admin-subtext)' }}>
-            <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Bulk edit URLs / Manual raw list</summary>
+          <details className="shop-admin-gallery-details">
+            <summary>Bulk edit URLs / Manual raw list</summary>
             <div style={{ marginTop: 6 }}>
               <textarea
                 rows="3"
@@ -1298,17 +994,264 @@ function ProductManager({ ownerRole = 'admin', formId = 'shop-product-form', ini
                   }
                 }}
                 placeholder="One URL per line..."
-                style={{ width: '100%', fontSize: '12px', fontFamily: 'monospace' }}
               />
             </div>
           </details>
         </div>
 
-        <label className="shop-admin-wide">Specifications (one Name: Value per line, optional)<textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Optional: e.g. Grade: PPC&#10;Pack size: 50 kg" /><small>Optional: Leave blank if not applicable, or enter specifications one per line.</small></label>
-        <label className="shop-admin-wide">Bulk prices (one Quantity: Price per line, optional)<textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="Optional: e.g. 10: 415&#10;30: 405" /><small>Optional: Leave blank if not offering bulk tier discounts.</small></label>
-        <fieldset className="shop-admin-wide shop-admin-city-field"><legend>Delivery cities for this product</legend><div>{cities.map((city) => <label key={city}><input type="checkbox" checked={form.available_cities.includes(city)} onChange={(event) => setForm({ ...form, available_cities: event.target.checked ? [...form.available_cities, city] : form.available_cities.filter((item) => item !== city) })} /> {city}</label>)}</div><small>Select the cities where this product can actually be delivered.</small></fieldset>
+        <label className="shop-admin-wide">
+          <span>Specifications (one Name: Value per line, optional)</span>
+          <textarea rows="3" value={specsText} onChange={(e) => setSpecsText(e.target.value)} placeholder="Optional: e.g. Grade: PPC&#10;Pack size: 50 kg" />
+          <small>Optional: Leave blank if not applicable, or enter specifications one per line.</small>
+        </label>
+        <label className="shop-admin-wide">
+          <span>Bulk prices (one Quantity: Price per line, optional)</span>
+          <textarea rows="3" value={bulkText} onChange={(e) => setBulkText(e.target.value)} placeholder="Optional: e.g. 10: 415&#10;30: 405" />
+          <small>Optional: Leave blank if not offering bulk tier discounts.</small>
+        </label>
+
+        {/* Product Page Accordions Section: Highlights, FAQs & Returns Policy */}
+        <div className="shop-admin-wide shop-spec-box shop-pdp-content-box">
+          <div className="shop-spec-head">
+            <div>
+              <div className="shop-spec-title-row">
+                <Sparkles size={17} className="shop-spec-sparkle-icon" />
+                <strong className="shop-spec-title">
+                  Shop Now Page Accordions (Highlights, FAQs &amp; Return Policy)
+                </strong>
+              </div>
+              <small className="shop-spec-sub">
+                Configure the dynamic accordions shown to buyers on the Shop Now product detail page.
+              </small>
+            </div>
+            <span className="shop-spec-badge">
+              <span>✓</span> Live on Product Page
+            </span>
+          </div>
+
+          <div className="shop-pdp-sections-grid">
+            {/* Section 1: Highlights */}
+            <div className="shop-pdp-card">
+              <div className="shop-pdp-card-head">
+                <div>
+                  <div className="shop-pdp-card-title">
+                    <span className="shop-pdp-card-icon">✨</span>
+                    <strong>1. Product Highlights (Key Bullets)</strong>
+                  </div>
+                  <div className="shop-pdp-card-sub">
+                    Appears in the 1st accordion with verified checkmark badges.
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadPresetHighlights}
+                  className="shop-pdp-preset-btn"
+                  title="Insert recommended construction highlights"
+                >
+                  ⚡ Preset Highlights
+                </button>
+              </div>
+
+              <div className="shop-pdp-input-row">
+                <input
+                  type="text"
+                  value={newHighlight}
+                  onChange={(e) => setNewHighlight(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addHighlightItem();
+                    }
+                  }}
+                  placeholder="e.g. 100% Genuine &amp; Brand Certified Material"
+                  className="shop-spec-input"
+                />
+                <button
+                  type="button"
+                  onClick={addHighlightItem}
+                  className="shop-pdp-add-btn"
+                >
+                  + Add
+                </button>
+              </div>
+
+              {highlights.length > 0 ? (
+                <div className="shop-pdp-list">
+                  {highlights.map((h, idx) => (
+                    <div key={idx} className="shop-pdp-list-item">
+                      <span className="shop-pdp-bullet-check">✓</span>
+                      <span className="shop-pdp-item-text">{h}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeHighlightItem(idx)}
+                        className="shop-pdp-del-btn"
+                        title="Remove highlight"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="shop-pdp-empty-state">
+                  No custom highlights added. (Default category specifications will be shown if left blank).
+                </div>
+              )}
+            </div>
+
+            {/* Section 2: FAQs */}
+            <div className="shop-pdp-card">
+              <div className="shop-pdp-card-head">
+                <div>
+                  <div className="shop-pdp-card-title">
+                    <span className="shop-pdp-card-icon">❓</span>
+                    <strong>2. Frequently Asked Questions (FAQs)</strong>
+                  </div>
+                  <div className="shop-pdp-card-sub">
+                    Appears in the 3rd accordion (FAQs) on the product page.
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={loadPresetFaqs}
+                    className="shop-pdp-preset-btn"
+                    title="Insert standard construction FAQs"
+                  >
+                    📋 Standard FAQs
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addFaqItem}
+                    className="shop-pdp-add-btn"
+                  >
+                    + Add Question
+                  </button>
+                </div>
+              </div>
+
+              {faqs.length > 0 ? (
+                <div className="shop-pdp-faq-list">
+                  {faqs.map((f, idx) => (
+                    <div key={idx} className="shop-pdp-faq-card">
+                      <div className="shop-pdp-faq-head">
+                        <span className="shop-pdp-faq-num">Q{idx + 1}</span>
+                        <input
+                          type="text"
+                          value={f.q}
+                          onChange={(e) => updateFaqItem(idx, 'q', e.target.value)}
+                          placeholder="Question: e.g. How should this material be stored?"
+                          className="shop-spec-input shop-pdp-faq-q-input"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeFaqItem(idx)}
+                          className="shop-pdp-del-btn"
+                          title="Remove FAQ"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <textarea
+                        rows="2"
+                        value={f.a}
+                        onChange={(e) => updateFaqItem(idx, 'a', e.target.value)}
+                        placeholder="Answer: e.g. Store in a dry elevated shed away from moisture..."
+                        className="shop-pdp-faq-a-input"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="shop-pdp-empty-state">
+                  No custom FAQs added. (Standard site FAQs will be displayed if left blank).
+                </div>
+              )}
+            </div>
+
+            {/* Section 3: Returns & Exchange Policy */}
+            <div className="shop-pdp-card">
+              <div className="shop-pdp-card-head">
+                <div>
+                  <div className="shop-pdp-card-title">
+                    <span className="shop-pdp-card-icon">🔄</span>
+                    <strong>3. Returns &amp; Exchange Policy</strong>
+                  </div>
+                  <div className="shop-pdp-card-sub">
+                    Appears in the 4th accordion (Returns &amp; Exchange Policy).
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadPresetReturnsPolicy}
+                  className="shop-pdp-preset-btn"
+                  title="Insert 48-Hour Return Policy"
+                >
+                  📋 Standard Policy
+                </button>
+              </div>
+
+              <textarea
+                rows="4"
+                value={returnsPolicy}
+                onChange={(e) => setReturnsPolicy(e.target.value)}
+                placeholder="e.g. Site Inspection: Customers can inspect quantity at unloading.&#10;Transit Damage: Damaged items reported on delivery challan replaced immediately.&#10;Unopened Materials: 48-hour return policy for unopened items."
+                className="shop-pdp-policy-textarea"
+              />
+              <div className="shop-pdp-hint">
+                Tip: Leave blank to use MT-Boss standard construction return &amp; replacement policy.
+              </div>
+            </div>
+          </div>
+        </div>
+        <fieldset className="shop-admin-wide shop-admin-city-field">
+          <legend>Delivery cities for this product</legend>
+          <div>
+            {cities.map((city) => (
+              <label key={city}>
+                <input
+                  type="checkbox"
+                  checked={form.available_cities.includes(city)}
+                  onChange={(event) =>
+                    setForm({
+                      ...form,
+                      available_cities: event.target.checked
+                        ? [...form.available_cities, city]
+                        : form.available_cities.filter((item) => item !== city),
+                    })
+                  }
+                />{' '}
+                {city}
+              </label>
+            ))}
+          </div>
+          <small>Select the cities where this product can actually be delivered.</small>
+        </fieldset>
       </div>
-      <div className="shop-admin-form-footer"><label className="shop-admin-check"><input type="checkbox" checked={form.is_available} onChange={(e) => setForm({ ...form, is_available: e.target.checked })} /> Show on Shop Now</label><label className="shop-admin-check"><input type="checkbox" checked={form.is_featured_deal} onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })} /> Feature in Deals of the Week</label><button type="submit" disabled={saving}>{saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}</button><button type="button" onClick={reset}>Cancel</button></div>
+      <div className="shop-admin-form-footer">
+        <label className="shop-admin-check">
+          <input
+            type="checkbox"
+            checked={form.is_available}
+            onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
+          />{' '}
+          Show on Shop Now
+        </label>
+        <label className="shop-admin-check">
+          <input
+            type="checkbox"
+            checked={form.is_featured_deal}
+            onChange={(e) => setForm({ ...form, is_featured_deal: e.target.checked })}
+          />{' '}
+          Feature in Deals of the Week
+        </label>
+        <button type="submit" disabled={saving}>
+          {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add product'}
+        </button>
+        <button type="button" onClick={reset}>
+          Cancel
+        </button>
+      </div>
     </form>
       </>
     ) : (
@@ -1756,7 +1699,7 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
     }
   };
 
-  return <div className="shop-admin-root">
+  return <div className={`shop-admin-root ${isDarkMode ? 'dark-mode dark' : ''}`}>
     <div className="shop-admin-toolbar"><div><h2>Shop Now Manager</h2><p>Add products and manage what customers see on Shop Now.</p></div><button type="button" onClick={openAddProduct}>+ Add Product</button></div>
     <div className="shop-admin-tabs" role="tablist" aria-label="Shop Now management">
       <button type="button" role="tab" aria-selected={tab === 'categories'} className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Categories</button>
@@ -1765,7 +1708,7 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
     </div>
     <Suspense fallback={<p>Loading shop panel…</p>}>
       {tab === 'categories' && <ShopCategoriesManager isDarkMode={isDarkMode} />}
-      {tab === 'products' && <ProductManager />}
+      {tab === 'products' && <ProductManager isDarkMode={isDarkMode} />}
       {tab === 'content' && <AppearanceManager />}
       {tab === 'coupons' && <ShopCouponsManager />}
     </Suspense>
@@ -1832,9 +1775,9 @@ export default function ShopNowManager({ isDarkMode, initialTab = 'categories' }
 }
 
 export function VendorShopProductsManager({ isDarkMode = false }) {
-  return <div className="shop-admin-root">
+  return <div className={`shop-admin-root ${isDarkMode ? 'dark-mode dark' : ''}`}>
     <VendorCommissionSummary isDarkMode={isDarkMode} />
-    <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" />
+    <ProductManager ownerRole="vendor" formId="vendor-shop-product-form" isDarkMode={isDarkMode} />
   </div>;
 }
 
@@ -1843,8 +1786,8 @@ export function ShopProductsManager({ isDarkMode = false }) {
   const showForm = searchParams ? searchParams.get('action') === 'add' : false;
 
   return (
-    <div className="shop-admin-root">
-      <ProductManager ownerRole="admin" formId="shop-product-form" initialShowForm={showForm} />
+    <div className={`shop-admin-root ${isDarkMode ? 'dark-mode dark' : ''}`}>
+      <ProductManager ownerRole="admin" formId="shop-product-form" initialShowForm={showForm} isDarkMode={isDarkMode} />
     </div>
   );
 }
@@ -1854,8 +1797,8 @@ export function SupplierShopProductsManager({ isDarkMode = false }) {
   const showForm = searchParams ? searchParams.get('action') === 'add' : false;
 
   return (
-    <div className="shop-admin-root">
-      <ProductManager ownerRole="supplier" formId="supplier-shop-product-form" initialShowForm={showForm} />
+    <div className={`shop-admin-root ${isDarkMode ? 'dark-mode dark' : ''}`}>
+      <ProductManager ownerRole="supplier" formId="supplier-shop-product-form" initialShowForm={showForm} isDarkMode={isDarkMode} />
     </div>
   );
 }

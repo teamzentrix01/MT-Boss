@@ -42,7 +42,10 @@ const ensureTable = createInitializationGuard(async() => {
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
-    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
+    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS faqs JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS returns_policy TEXT,
+    ADD COLUMN IF NOT EXISTS highlights JSONB DEFAULT '[]'::jsonb`);
 });
 
 function uniq(values) {
@@ -113,6 +116,7 @@ export async function GET(req) {
                 const singleRes = await pool.query(
                     `SELECT m.id, m.supplier_id, m.vendor_id, m.name, m.description, m.quote_price_range, m.price, m.unit, m.quantity, m.image_url, m.category, m.subcategory,
                       m.brand, m.compare_at_price, m.is_featured_deal, m.images, m.specifications, m.bulk_pricing,
+                      COALESCE(m.faqs, '[]'::jsonb) AS faqs, m.returns_policy, COALESCE(m.highlights, '[]'::jsonb) AS highlights,
                       c.image AS category_image, c.images AS category_images,
                       CASE
                         WHEN jsonb_array_length(COALESCE(m.available_cities, '[]'::jsonb)) > 0 THEN m.available_cities
@@ -163,6 +167,9 @@ export async function GET(req) {
                     specifications,
                     bulk_pricing: Array.isArray(row.bulk_pricing) ? row.bulk_pricing : [],
                     available_cities: Array.isArray(row.available_cities) ? row.available_cities : [],
+                    faqs: Array.isArray(row.faqs) ? row.faqs : [],
+                    returns_policy: row.returns_policy || '',
+                    highlights: Array.isArray(row.highlights) ? row.highlights : [],
                     created_at: row.created_at,
                 };
 

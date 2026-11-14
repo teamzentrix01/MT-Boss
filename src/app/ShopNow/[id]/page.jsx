@@ -524,6 +524,27 @@ export default function ProductDetailPage({ params }) {
                       </p>
                     </div>
 
+                    {/* Custom Highlights added by seller/admin */}
+                    {Array.isArray(product.highlights) && product.highlights.length > 0 && (
+                      <div className="space-y-2 pt-1 pb-1">
+                        <h5 className="font-bold text-xs uppercase tracking-wider text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
+                          <span>✨</span> Key Product Highlights
+                        </h5>
+                        <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-zinc-300">
+                          {product.highlights.map((hl, idx) => {
+                            const text = typeof hl === 'object' && hl !== null ? (hl.val || hl.label || '') : hl;
+                            if (!text) return null;
+                            return (
+                              <li key={`custom-hl-${idx}`} className="flex items-start gap-2">
+                                <span className="text-emerald-600 dark:text-emerald-400 font-black">✓</span>
+                                <span className="leading-snug">{text}</span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
+
                     {/* Specifications Bullet Points */}
                     <ul className="space-y-2 text-xs sm:text-sm text-slate-700 dark:text-zinc-300">
                       {bullets.map((b, idx) => (
@@ -583,31 +604,46 @@ export default function ProductDetailPage({ params }) {
                 </button>
 
                 {openAccordions.faqs && (
-                  <div className="p-4 text-xs sm:text-sm text-slate-700 dark:text-zinc-300 space-y-3 border-t border-slate-200 dark:border-zinc-800">
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-white mb-0.5">
-                        Q: How should this material be stored at the site?
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        A: Store in an elevated, dry, covered shed on wooden pallets away from moisture and direct rainwater.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-white mb-0.5">
-                        Q: Is an official GST tax invoice provided?
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        A: Yes, 100% genuine manufacturer test certificate and GST invoice accompany every delivery.
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-white mb-0.5">
-                        Q: How do bulk order discounts work?
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        A: Bulk discounts unlock automatically for orders exceeding 50 units or ₹50,000 at checkout.
-                      </p>
-                    </div>
+                  <div className="p-4 text-xs sm:text-sm text-slate-700 dark:text-zinc-300 space-y-3.5 border-t border-slate-200 dark:border-zinc-800">
+                    {Array.isArray(product.faqs) && product.faqs.filter((f) => f && f.q && f.a).length > 0 ? (
+                      product.faqs.filter((f) => f && f.q && f.a).map((faq, idx) => (
+                        <div key={`faq-${idx}`}>
+                          <p className="font-bold text-slate-900 dark:text-white mb-0.5">
+                            Q: {faq.q}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-zinc-400 whitespace-pre-line leading-relaxed">
+                            A: {faq.a}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-white mb-0.5">
+                            Q: How should this material be stored at the site?
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-zinc-400">
+                            A: Store in an elevated, dry, covered shed on wooden pallets away from moisture and direct rainwater.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-white mb-0.5">
+                            Q: Is an official GST tax invoice provided?
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-zinc-400">
+                            A: Yes, 100% genuine manufacturer test certificate and GST invoice accompany every delivery.
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 dark:text-white mb-0.5">
+                            Q: How do bulk order discounts work?
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-zinc-400">
+                            A: Bulk discounts unlock automatically for orders exceeding 50 units or ₹50,000 at checkout.
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -629,15 +665,23 @@ export default function ProductDetailPage({ params }) {
 
                 {openAccordions.returns && (
                   <div className="p-4 text-xs sm:text-sm text-slate-700 dark:text-zinc-300 space-y-2 border-t border-slate-200 dark:border-zinc-800">
-                    <p>
-                      <strong>Site Inspection:</strong> Customers can inspect quantity, brand stamps, and packaging at the time of truck unloading.
-                    </p>
-                    <p>
-                      <strong>Transit Damage:</strong> Any burst bags or damaged items reported on the delivery challan will be replaced immediately or refunded.
-                    </p>
-                    <p>
-                      <strong>Unopened Materials:</strong> Standard 48-hour return policy applies for unopened, undamaged materials.
-                    </p>
+                    {product.returns_policy?.trim() ? (
+                      <div className="whitespace-pre-line leading-relaxed text-slate-700 dark:text-zinc-300">
+                        {product.returns_policy.trim()}
+                      </div>
+                    ) : (
+                      <>
+                        <p>
+                          <strong>Site Inspection:</strong> Customers can inspect quantity, brand stamps, and packaging at the time of truck unloading.
+                        </p>
+                        <p>
+                          <strong>Transit Damage:</strong> Any burst bags or damaged items reported on the delivery challan will be replaced immediately or refunded.
+                        </p>
+                        <p>
+                          <strong>Unopened Materials:</strong> Standard 48-hour return policy applies for unopened, undamaged materials.
+                        </p>
+                      </>
+                    )}
                   </div>
                 )}
               </div>

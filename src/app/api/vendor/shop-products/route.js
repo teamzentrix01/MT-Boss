@@ -39,7 +39,10 @@ const ensureTable = createInitializationGuard(async () => {
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
-    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
+    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS faqs JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS returns_policy TEXT,
+    ADD COLUMN IF NOT EXISTS highlights JSONB DEFAULT '[]'::jsonb`);
   await pool.query(QUALITY_TIER_COLUMN_SQL);
   await pool.query('CREATE INDEX IF NOT EXISTS supplier_materials_vendor_id_idx ON supplier_materials(vendor_id)');
 });
@@ -108,6 +111,21 @@ async function validProduct(body) {
   if (bulkPricing.length > 10 || bulkPricing.some((tier) => !Number.isInteger(Number(tier.min_quantity)) || Number(tier.min_quantity) < 2 || !Number.isFinite(Number(tier.price)) || Number(tier.price) <= 0)) return { error: 'Bulk tiers need a minimum quantity and positive price' };
   if (availableCities.length > 100 || availableCities.some((city) => typeof city !== 'string' || city.length > 120)) return { error: 'Choose valid delivery cities' };
 
+  const faqs = Array.isArray(body.faqs)
+    ? body.faqs
+        .map((f) => ({
+          q: String(f?.q || f?.question || '').trim().slice(0, 500),
+          a: String(f?.a || f?.answer || '').trim().slice(0, 2000),
+        }))
+        .filter((f) => f.q && f.a)
+    : [];
+  const highlights = Array.isArray(body.highlights)
+    ? body.highlights
+        .map((h) => String(typeof h === 'object' && h !== null ? (h.val || h.label || '') : h).trim().slice(0, 300))
+        .filter(Boolean)
+    : [];
+  const returnsPolicy = String(body.returns_policy || '').trim().slice(0, 3000);
+
   return { value: {
     name,
     category: categoryResult.rows[0].name,
@@ -127,6 +145,9 @@ async function validProduct(body) {
     available_cities: [...new Set(availableCities.map((city) => city.trim()).filter(Boolean))],
     is_available: body.is_available !== false,
     quality_tier: qualityTier,
+    faqs,
+    returns_policy: returnsPolicy,
+    highlights,
   } };
 }
 
@@ -138,7 +159,8 @@ export async function GET(req) {
     const result = await pool.query(
       `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
               quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications,
-              bulk_pricing, available_cities, is_available, quality_tier, created_at
+              bulk_pricing, available_cities, is_available, quality_tier,
+              COALESCE(faqs, '[]'::jsonb) AS faqs, returns_policy, COALESCE(highlights, '[]'::jsonb) AS highlights, created_at
        FROM supplier_materials
        WHERE vendor_id=$1
        ORDER BY created_at DESC, id DESC`,
@@ -173,14 +195,14 @@ export async function POST(req) {
       `INSERT INTO supplier_materials
        (supplier_id, vendor_id, name, description, quote_price_range, price, unit, quantity,
         image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing,
-        available_cities, is_available, quality_tier)
+        available_cities, is_available, quality_tier, faqs, returns_policy, highlights)
        VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14::jsonb,
-               $15::jsonb, $16::jsonb, $17::jsonb, FALSE, $18)
+               $15::jsonb, $16::jsonb, $17::jsonb, FALSE, $18, $19::jsonb, $20, $21::jsonb)
        RETURNING *`,
       [vendor.id, p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity,
         p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), p.quality_tier]
+        JSON.stringify(p.available_cities), p.quality_tier, JSON.stringify(p.faqs), p.returns_policy, JSON.stringify(p.highlights)]
     );
     if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0], pending_approval: true }, { status: 201 });
@@ -276,12 +298,14 @@ export async function PUT(req) {
       `UPDATE supplier_materials SET name=$1, description=$2, quote_price_range=$3, price=$4,
         unit=$5, quantity=$6, image_url=$7, category=$8, subcategory=$9, brand=$10, compare_at_price=$11,
         is_featured_deal=$12, images=$13::jsonb, specifications=$14::jsonb, bulk_pricing=$15::jsonb,
-        available_cities=$16::jsonb, is_available=$17, quality_tier=$20, updated_at=NOW()
+        available_cities=$16::jsonb, is_available=$17, quality_tier=$20,
+        faqs=$21::jsonb, returns_policy=$22, highlights=$23::jsonb, updated_at=NOW()
        WHERE id=$18 AND vendor_id=$19 RETURNING *`,
       [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url,
         p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images),
         JSON.stringify(cleanSpecs), JSON.stringify(p.bulk_pricing),
-        JSON.stringify(p.available_cities), nextAvailable, id, vendor.id, p.quality_tier]
+        JSON.stringify(p.available_cities), nextAvailable, id, vendor.id, p.quality_tier,
+        JSON.stringify(p.faqs), p.returns_policy, JSON.stringify(p.highlights)]
     );
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();

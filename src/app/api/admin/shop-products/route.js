@@ -39,7 +39,10 @@ const ensureTable = createInitializationGuard(async () => {
     ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS specifications JSONB DEFAULT '{}'::jsonb,
     ADD COLUMN IF NOT EXISTS bulk_pricing JSONB DEFAULT '[]'::jsonb,
-    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb`);
+    ADD COLUMN IF NOT EXISTS available_cities JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS faqs JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS returns_policy TEXT,
+    ADD COLUMN IF NOT EXISTS highlights JSONB DEFAULT '[]'::jsonb`);
   await pool.query(QUALITY_TIER_COLUMN_SQL);
 });
 
@@ -83,6 +86,21 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
   const specifications = body.specifications && typeof body.specifications === 'object' && !Array.isArray(body.specifications) ? body.specifications : {};
   const bulkPricing = Array.isArray(body.bulk_pricing) ? body.bulk_pricing : [];
   const availableCities = Array.isArray(body.available_cities) ? body.available_cities : [];
+  const faqs = Array.isArray(body.faqs)
+    ? body.faqs
+        .map((f) => ({
+          q: String(f?.q || f?.question || '').trim().slice(0, 500),
+          a: String(f?.a || f?.answer || '').trim().slice(0, 2000),
+        }))
+        .filter((f) => f.q && f.a)
+    : [];
+  const highlights = Array.isArray(body.highlights)
+    ? body.highlights
+        .map((h) => String(typeof h === 'object' && h !== null ? (h.val || h.label || '') : h).trim().slice(0, 300))
+        .filter(Boolean)
+    : [];
+  const returnsPolicy = String(body.returns_policy || '').trim().slice(0, 3000);
+
   if (images.length > 8 || images.some((url) => typeof url !== 'string' || url.length > 1000)) return { error: 'Add up to 8 image URLs' };
   if (Object.keys(specifications).length > 20 || Object.entries(specifications).some(([key, value]) => key.length > 100 || typeof value !== 'string' || value.length > 500)) return { error: 'Add up to 20 short specifications' };
   if (bulkPricing.length > 10 || bulkPricing.some((tier) => !Number.isInteger(Number(tier.min_quantity)) || Number(tier.min_quantity) < 2 || !Number.isFinite(Number(tier.price)) || Number(tier.price) <= 0)) return { error: 'Bulk tiers need a minimum quantity and positive price' };
@@ -107,6 +125,9 @@ async function validProduct(body, { allowUnassigned = false } = {}) {
     available_cities: [...new Set(availableCities.map((city) => city.trim()).filter(Boolean))],
     is_available: body.is_available !== false,
     quality_tier: qualityTier,
+    faqs,
+    returns_policy: returnsPolicy,
+    highlights,
   } };
 }
 
@@ -120,7 +141,9 @@ export async function GET(req) {
       const one = await pool.query(
         `SELECT id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
           quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal,
-          images, specifications, bulk_pricing, available_cities, is_available, quality_tier, created_at
+          images, specifications, bulk_pricing, available_cities, is_available, quality_tier,
+          COALESCE(faqs, '[]'::jsonb) AS faqs, returns_policy, COALESCE(highlights, '[]'::jsonb) AS highlights,
+          created_at
          FROM supplier_materials WHERE id=$1`,
         [id]
       );
@@ -159,7 +182,9 @@ export async function GET(req) {
     const selectList = fields === 'full'
       ? `id, supplier_id, vendor_id, name, description, quote_price_range, price, unit,
          quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal,
-         images, specifications, bulk_pricing, available_cities, is_available, quality_tier, created_at`
+         images, specifications, bulk_pricing, available_cities, is_available, quality_tier,
+         COALESCE(faqs, '[]'::jsonb) AS faqs, returns_policy, COALESCE(highlights, '[]'::jsonb) AS highlights,
+         created_at`
       : `id, supplier_id, vendor_id, name, quote_price_range, price, unit, quantity, image_url,
          category, subcategory, brand, compare_at_price, is_featured_deal, is_available, quality_tier, created_at`;
 
@@ -193,9 +218,9 @@ export async function POST(req) {
     if (parsed.error) return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
     const p = parsed.value;
     const result = await pool.query(`INSERT INTO supplier_materials
-      (supplier_id, name, description, quote_price_range, price, unit, quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing, available_cities, is_available, quality_tier)
-      VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15::jsonb, $16::jsonb, $17, $18) RETURNING *`,
-      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, p.quality_tier]);
+      (supplier_id, name, description, quote_price_range, price, unit, quantity, image_url, category, subcategory, brand, compare_at_price, is_featured_deal, images, specifications, bulk_pricing, available_cities, is_available, quality_tier, faqs, returns_policy, highlights)
+      VALUES (0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::jsonb, $14::jsonb, $15::jsonb, $16::jsonb, $17, $18, $19::jsonb, $20, $21::jsonb) RETURNING *`,
+      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, p.quality_tier, JSON.stringify(p.faqs), p.returns_policy, JSON.stringify(p.highlights)]);
     if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0] }, { status: 201 });
   } catch (error) {
@@ -225,8 +250,9 @@ export async function PUT(req) {
     const result = await pool.query(`UPDATE supplier_materials SET name=$1, description=$2,
       quote_price_range=$3, price=$4, unit=$5, quantity=$6, image_url=$7, category=$8, subcategory=$9,
       brand=$10, compare_at_price=$11, is_featured_deal=$12, images=$13::jsonb, specifications=$14::jsonb,
-      bulk_pricing=$15::jsonb, available_cities=$16::jsonb, is_available=$17, quality_tier=$19, updated_at=NOW() WHERE id=$18 RETURNING *`,
-      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, id, p.quality_tier]);
+      bulk_pricing=$15::jsonb, available_cities=$16::jsonb, is_available=$17, quality_tier=$19,
+      faqs=$20::jsonb, returns_policy=$21, highlights=$22::jsonb, updated_at=NOW() WHERE id=$18 RETURNING *`,
+      [p.name, p.description, p.quote_price_range, p.price, p.unit, p.quantity, p.image_url, p.category, p.subcategory, p.brand, p.compare_at_price, p.is_featured_deal, JSON.stringify(p.images), JSON.stringify(p.specifications), JSON.stringify(p.bulk_pricing), JSON.stringify(p.available_cities), p.is_available, id, p.quality_tier, JSON.stringify(p.faqs), p.returns_policy, JSON.stringify(p.highlights)]);
     if (!result.rows.length) return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     if (globalThis.__shopProductCache) globalThis.__shopProductCache.clear();
     return NextResponse.json({ success: true, data: result.rows[0] });
