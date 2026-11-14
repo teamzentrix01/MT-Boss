@@ -65,11 +65,11 @@ export async function validateAgentApplicationBody(body = {}) {
     return { ok: false, error: contactError, status: 400 };
   }
 
-  const canonicalCity = await resolveManagedCity(cleanedCityInput);
+  const canonicalCity = (await resolveManagedCity(cleanedCityInput)) || cleanedCityInput;
   if (!canonicalCity) {
     return {
       ok: false,
-      error: `"${cleanedCityInput}" is not an active service city. Please choose a city from the list (add it under Cities in the admin dashboard if needed).`,
+      error: 'City is required.',
       status: 400,
     };
   }

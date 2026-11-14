@@ -2,7 +2,7 @@ import pool from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { requireRole, unauthorized, verifyBearer } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
-import { resolveManagedCity } from '@/lib/cities';
+import { cleanCityName, resolveManagedCity } from '@/lib/cities';
 import {
   coerceDetails,
   defaultListingType,
@@ -354,9 +354,9 @@ export async function POST(req) {
       return NextResponse.json({ error: 'property_category must be room_rent, flat, plot, or general' }, { status: 400 });
     }
 
-    const canonicalLocation = await resolveManagedCity(payload.location);
+    const canonicalLocation = (await resolveManagedCity(payload.location)) || cleanCityName(payload.location);
     if (!canonicalLocation) {
-      return NextResponse.json({ error: 'Select an active city from the city list' }, { status: 400 });
+      return NextResponse.json({ error: 'Location is required' }, { status: 400 });
     }
 
     const contactError = validateContactFields({
@@ -485,9 +485,9 @@ export async function PUT(req) {
       { forUpdate: true }
     );
 
-    const canonicalLocation = await resolveManagedCity(payload.location || current.location);
+    const canonicalLocation = (await resolveManagedCity(payload.location || current.location)) || cleanCityName(payload.location || current.location);
     if (!canonicalLocation) {
-      return NextResponse.json({ error: 'Select an active city from the city list' }, { status: 400 });
+      return NextResponse.json({ error: 'Location is required' }, { status: 400 });
     }
 
     const contactError = validateContactFields({

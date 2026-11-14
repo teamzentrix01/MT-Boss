@@ -48,10 +48,6 @@ async function deactivateCityReferences(city) {
                SELECT value FROM UNNEST(COALESCE(available_cities, '{}')) value
                WHERE LOWER(TRIM(value)) <> LOWER(TRIM($1))
              )`, [city]],
-    [`UPDATE jobs SET status = 'draft', updated_at = NOW()
-      WHERE LOWER(TRIM(location)) = LOWER(TRIM($1))`, [city]],
-    [`UPDATE properties SET status = 'rejected', updated_at = NOW()
-      WHERE LOWER(TRIM(location)) = LOWER(TRIM($1))`, [city]],
     [`UPDATE office_locations SET is_active = FALSE, updated_at = NOW()
       WHERE LOWER(TRIM(city)) = LOWER(TRIM($1))`, [city]],
     [`UPDATE free_time_slots SET is_available = FALSE
