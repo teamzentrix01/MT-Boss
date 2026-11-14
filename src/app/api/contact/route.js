@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { requireRole, unauthorized } from '@/lib/auth';
 import { cleanText, normalizePhone, validateContactFields } from '@/lib/validation';
 import { createInitializationGuard, handleApiError } from '@/lib/api-utils';
-import { resolveManagedCity } from '@/lib/cities';
+import { cleanCityName, resolveManagedCity } from '@/lib/cities';
 import { notifyAdminSubmission, deliverContactAcknowledgement } from '@/lib/customer-communications';
 
 const ensureContactSchema = createInitializationGuard(async () => {
@@ -38,9 +38,9 @@ export async function POST(req) {
       return NextResponse.json({ error: contactError }, { status: 400 });
     }
 
-    const canonicalCity = await resolveManagedCity(city);
+    const canonicalCity = (await resolveManagedCity(city)) || cleanCityName(city);
     if (!canonicalCity) {
-      return NextResponse.json({ error: 'Please select an active city' }, { status: 400 });
+      return NextResponse.json({ error: 'City is required' }, { status: 400 });
     }
 
     // Insert into database

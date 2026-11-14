@@ -300,10 +300,20 @@ function ApplyModal({ isDark, onClose }) {
                   </select>
                 </div>
                 <div><label style={lbl}>Years of Experience <RequiredAsterisk /></label><input style={inp} type="number" min="0" value={form.experience} onChange={set('experience')} placeholder="5" /></div>
-                <div><label style={lbl}>City <RequiredAsterisk /></label><select style={inp} value={form.city} onChange={set('city')} disabled={citiesLoading}>
-                  <option value="">{citiesLoading ? 'Loading cities...' : 'Select city'}</option>
-                  {cities.map(city => <option key={city} value={city}>{city}</option>)}
-                </select></div>
+                <div>
+                  <label style={lbl}>City <RequiredAsterisk /></label>
+                  <input
+                    style={inp}
+                    value={form.city}
+                    onChange={set('city')}
+                    placeholder="Enter your city"
+                    required
+                    list="pro-city-list"
+                  />
+                  <datalist id="pro-city-list">
+                    {cities.map(city => <option key={city} value={city} />)}
+                  </datalist>
+                </div>
                 <div><label style={lbl}>Phone <RequiredAsterisk /></label><input style={inp} value={form.phone} onChange={set('phone')} placeholder="+91 98765 43210" /></div>
                 <div style={{ gridColumn:'span 2' }}><label style={lbl}>Email <RequiredAsterisk /></label><input style={inp} type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" /></div>
                 <div style={{ gridColumn:'span 2' }}>

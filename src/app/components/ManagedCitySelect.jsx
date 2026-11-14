@@ -35,6 +35,11 @@ export default function ManagedCitySelect({
         style={style}
       >
         <option value="">{loading ? 'Loading cities…' : placeholder}</option>
+        {value && !cities.includes(value) && (
+          <option key={value} value={value}>
+            {value}
+          </option>
+        )}
         {cities.map((cityName) => (
           <option key={cityName} value={cityName}>
             {cityName}

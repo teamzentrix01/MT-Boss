@@ -392,15 +392,19 @@ export default function ContactPage() {
 
                     <div>
                       <label className={labelClass}>City <RequiredAsterisk /></label>
-                      <select
+                      <input
+                        type="text"
                         name="city"
                         value={form.city}
                         onChange={handleChange}
+                        placeholder="Enter your city"
                         className={inputClass}
-                      >
-                        <option value="">Select city</option>
-                        {cities.map((city) => <option key={city} value={city}>{city}</option>)}
-                      </select>
+                        required
+                        list="contact-city-list"
+                      />
+                      <datalist id="contact-city-list">
+                        {cities.map((city) => <option key={city} value={city} />)}
+                      </datalist>
                       {fieldErrors.city && <p className="text-red-500 text-xs mt-1 font-bold">{fieldErrors.city}</p>}
                     </div>
 
