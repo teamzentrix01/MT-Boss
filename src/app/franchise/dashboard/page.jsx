@@ -50,6 +50,10 @@ const FranchiseOperationsManager = dynamic(
   () => import('@/app/components/FranchiseOperationsManager'),
   { loading: deferredPanelLoading }
 );
+const FranchiseStaffManager = dynamic(
+  () => import('@/app/components/FranchiseStaffManager'),
+  { loading: deferredPanelLoading }
+);
 const MaterialOrdersPanel = dynamic(
   () => import('@/app/components/MaterialOrdersPanel'),
   { loading: deferredPanelLoading }
@@ -143,7 +147,12 @@ function FranchiseDashboardContent() {
   }, []);
 
   const token = useCallback(() => (typeof window !== 'undefined' ? localStorage.getItem('franchise-token') : ''), []);
-  const can = useCallback((permission) => permissions[permission] === true, [permissions]);
+  const can = useCallback((permission) => {
+    if (permission === 'staff.view' || permission === 'staff.manage') {
+      return permissions[permission] !== false;
+    }
+    return permissions[permission] === true;
+  }, [permissions]);
   const canAny = useCallback((...keys) => keys.some((key) => can(key)), [can]);
 
   const canEditProject = canAny(
@@ -168,7 +177,7 @@ function FranchiseDashboardContent() {
   // Tab navigation
   const [activeTab, setActiveTab] = useState(() => {
     const requestedTab = searchParams.get('tab');
-    const validTabs = ['projects', 'leads', 'slots', 'operations', 'orders', 'password'];
+    const validTabs = ['projects', 'leads', 'slots', 'staff', 'operations', 'orders', 'password'];
     return validTabs.includes(requestedTab) ? requestedTab : 'projects';
   });
 
@@ -180,6 +189,8 @@ function FranchiseDashboardContent() {
   const handleLogout = () => {
     localStorage.removeItem('franchise-token');
     localStorage.removeItem('franchise');
+    localStorage.removeItem('mtboss.activeRole');
+    window.dispatchEvent(new Event('userLoggedIn'));
     router.push('/franchise/login');
   };
 
@@ -232,6 +243,13 @@ function FranchiseDashboardContent() {
       return;
     }
 
+    localStorage.setItem('mtboss.activeRole', 'franchise');
+    if (localStorage.getItem('admin-token') || localStorage.getItem('admin')) {
+      localStorage.removeItem('admin-token');
+      localStorage.removeItem('admin');
+    }
+    window.dispatchEvent(new Event('userLoggedIn'));
+
     async function initialize() {
       try {
         const res = await fetch('/api/franchise/profile', {
@@ -246,10 +264,12 @@ function FranchiseDashboardContent() {
           return;
         }
 
+        const franchiseData = { ...data.data, role: 'franchise' };
         const currentPermissions = normalizeFranchisePermissions(data.data.permissions);
-        setFranchise(data.data);
+        setFranchise(franchiseData);
         setPermissions(currentPermissions);
-        localStorage.setItem('franchise', JSON.stringify(data.data));
+        localStorage.setItem('franchise', JSON.stringify(franchiseData));
+        window.dispatchEvent(new Event('userLoggedIn'));
 
         const requests = [];
         if (currentPermissions['projects.view']) requests.push(fetchProjects(tok));
@@ -533,6 +553,12 @@ function FranchiseDashboardContent() {
       label: 'Quick-Service Slots',
       icon: CalendarDays,
       hidden: !can('slots.view'),
+    },
+    {
+      key: 'staff',
+      label: 'Staff Records',
+      icon: Users,
+      hidden: !can('staff.view'),
     },
     {
       key: 'operations',
@@ -1071,6 +1097,13 @@ function FranchiseDashboardContent() {
                 permissions={permissions}
               />
             </div>
+          </div>
+        )}
+
+        {/* ── STAFF RECORDS TAB ── */}
+        {activeTab === 'staff' && can('staff.view') && (
+          <div className="space-y-4">
+            <FranchiseStaffManager permissions={permissions} />
           </div>
         )}
 

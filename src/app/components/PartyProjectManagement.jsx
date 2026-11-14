@@ -269,7 +269,23 @@ const projectBlank = {
 const materialBlank = { name: '', unit: 'bags', category: 'Civil', min_stock_level: 0, is_active: true };
 const receivedBlank = { material_id: '', material_name: '', unit: 'bags', supplier_id: '', quantity: '', rate: '', received_date: today(), supplier_name: '', challan_no: '', note: '', bill_url: '', bill_filename: '', vehicle_no: '', driver_name: '', driver_phone: '', received_by: '' };
 const staffBlank = { name: '', phone: '', role: 'Site Supervisor', pay_type: 'monthly', salary_rate: '', commission_rate: '', commission_notes: '', is_active: true };
-const staffRolesList = ['Site Supervisor', 'Site Engineer', 'Project Manager', 'Store Keeper / Incharge', 'Accountant', 'Quality Surveyor', 'Safety Officer', 'Other'];
+const staffRolesList = [
+  'Site Supervisor',
+  'Site Engineer',
+  'Project Manager',
+  'Store Keeper / Incharge',
+  'Accountant',
+  'HR',
+  'Quality Surveyor',
+  'Safety Officer',
+  'Driver / Logistics',
+  'Field Officer',
+  'Designer',
+  'Cleaning Staff',
+  'Office Staff',
+  'Forman',
+  'Other',
+];
 const contractorTrades = ['General Vendor', 'Civil Contractor', 'Plumber / Plumbing', 'Electrician', 'Mason', 'Carpenter', 'Painter', 'Fabricator', 'Tile / Flooring', 'Waterproofing', 'HVAC', 'Other'];
 const matchesContractorType = (trade, filter) => {
   if (!filter || filter === 'all') return true;

@@ -80,6 +80,9 @@ export const FRANCHISE_PERMISSION_DEFINITIONS = [
   { key: 'agents.approve', group: 'Agents', label: 'Approve Agents / Create Login', description: 'Approve agents and generate their login credentials.' },
   { key: 'agents.reset_password', group: 'Agents', label: 'Reset Agent Password', description: 'Generate a new temporary password for approved agents.' },
   { key: 'agents.delete', group: 'Agents', label: 'Delete Agents', description: 'Delete agents created by this franchise when they have no linked work.' },
+
+  { key: 'staff.view', group: 'Staff', label: 'View Staff Records', description: 'View staff members who worked in this franchise.' },
+  { key: 'staff.manage', group: 'Staff', label: 'Manage Staff Records', description: 'Add, edit, or change working status of staff members.' },
 ];
 
 export const FRANCHISE_PERMISSION_KEYS = FRANCHISE_PERMISSION_DEFINITIONS.map(({ key }) => key);
@@ -126,6 +129,8 @@ export const DEFAULT_APPROVED_FRANCHISE_PERMISSIONS = Object.freeze({
   'slots.paid.create': true,
   'slots.paid.edit': true,
   'vendors.view': true,
+  'staff.view': true,
+  'staff.manage': true,
 });
 
 const LEGACY_EXPANSIONS = {
@@ -172,6 +177,13 @@ export function normalizeFranchisePermissions(value, fallback = EMPTY_FRANCHISE_
     .some((key) => source[key] === true);
   if (hasOldPermissions) {
     if (!Object.prototype.hasOwnProperty.call(source, 'profile.change_password')) permissions['profile.change_password'] = true;
+  }
+  // Staff records feature is granted by default to all active franchises unless explicitly revoked
+  if (!Object.prototype.hasOwnProperty.call(source, 'staff.view')) {
+    permissions['staff.view'] = true;
+  }
+  if (!Object.prototype.hasOwnProperty.call(source, 'staff.manage')) {
+    permissions['staff.manage'] = true;
   }
   return permissions;
 }
@@ -234,6 +246,9 @@ export function resolveFranchisePermissionDependencies(value) {
   }
   if (any(FRANCHISE_PERMISSION_KEYS.filter((key) => key.startsWith('financials.view_')))) {
     permissions['projects.view'] = true;
+  }
+  if (permissions['staff.manage']) {
+    permissions['staff.view'] = true;
   }
   return permissions;
 }
