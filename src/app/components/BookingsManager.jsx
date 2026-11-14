@@ -271,8 +271,14 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
         }
         .filter-btn:hover { border-color: var(--accent); }
         
+        .booking-table-wrap {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          width: 100%;
+        }
         .booking-table {
           width: 100%;
+          min-width: 840px;
           border-collapse: collapse;
           font-size: 0.8125rem;
         }
@@ -286,6 +292,7 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
           letter-spacing: .06em;
           color: var(--muted);
           border-bottom: 1px solid var(--border);
+          white-space: nowrap;
         }
         .booking-table td {
           padding: 0.6rem 0.875rem;
@@ -441,7 +448,7 @@ export default function BookingsManager({ isDarkMode, title = 'Service Bookings'
               <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>No bookings found.</p>
             ) : (
               <>
-              <div style={{ overflowX: 'auto' }}>
+              <div className="booking-table-wrap">
                 <table className="booking-table">
                   <thead>
                     <tr>

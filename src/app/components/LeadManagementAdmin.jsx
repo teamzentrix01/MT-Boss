@@ -428,6 +428,43 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           outline: 2px solid var(--accent, #f59e0b) !important;
           outline-offset: -2px;
         }
+        .lm-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 12px;
+        }
+        @media(max-width: 1024px) {
+          .lm-stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+        @media(max-width: 480px) {
+          .lm-stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        .lm-controls-grid {
+          display: grid;
+          grid-template-columns: minmax(220px, 2fr) repeat(auto-fit, minmax(130px, 1fr)) auto;
+          gap: 10px;
+          margin-bottom: 12px;
+        }
+        @media(max-width: 1024px) {
+          .lm-controls-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+          .lm-controls-grid > *:first-child {
+            grid-column: span 2;
+          }
+        }
+        @media(max-width: 600px) {
+          .lm-controls-grid {
+            grid-template-columns: 1fr;
+          }
+          .lm-controls-grid > *:first-child {
+            grid-column: auto;
+          }
+        }
       `}</style>
 
       {detailLeadId ? (
@@ -633,7 +670,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
 
       {message && <div style={{ padding: '0.75rem 1rem', border: `1px solid ${border}`, background: surface, color: text, borderRadius: 6, fontSize: '0.82rem', fontWeight: 700 }}>{message}</div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12 }}>
+      <div className="lm-stats-grid">
         {[
           ['Total Leads', stats.total],
           ['New', stats.new],
@@ -718,14 +755,7 @@ export default function LeadManagementAdmin({ isDarkMode }) {
             </button>
           )}
         </div>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: byAgentTab
-            ? 'minmax(200px,2fr) repeat(4,minmax(120px,1fr)) auto'
-            : 'minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto',
-          gap: 10,
-          marginBottom: 12,
-        }}>
+        <div className="lm-controls-grid">
           <div ref={searchHostRef} />
           <select aria-label="Filter leads by city" style={inputStyle} value={city} onChange={(e) => setCity(e.target.value)}>
             <option value="">All cities</option>
@@ -771,12 +801,12 @@ export default function LeadManagementAdmin({ isDarkMode }) {
           </button>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%' }}>
+          <table style={{ width: '100%', minWidth: '960px', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
             <thead>
               <tr style={{ background: surface }}>
                 {['Client', 'Service', 'Source', 'Status', 'Stage', 'Franchise', 'Vendor', 'Agent', 'Follow Up', 'Action'].map((head) => (
-                  <th key={head} style={{ padding: '0.6rem', textAlign: 'left', color: muted, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '.07em' }}>{head}</th>
+                  <th key={head} style={{ padding: '0.6rem', textAlign: 'left', color: muted, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '.07em', whiteSpace: 'nowrap' }}>{head}</th>
                 ))}
               </tr>
             </thead>

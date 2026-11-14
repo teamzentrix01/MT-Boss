@@ -188,8 +188,31 @@ export default function FranchiseModelsManager() {
         }
         .fm-add-btn:hover { opacity: 0.9; }
         .fm-grid {
-          display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
           gap: 1.25rem; margin-bottom: 2rem;
+        }
+        @media(max-width:1024px){
+          .fm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+        }
+        @media(max-width:640px){
+          .fm-grid { grid-template-columns: 1fr; }
+        }
+        .fm-form-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;
+        }
+        @media(max-width:640px){
+          .fm-form-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+        }
+        .fm-modal-dialog {
+          background: var(--surface); border: 1px solid var(--border);
+          border-radius: 10px; width: min(640px, calc(100vw - 2rem)); max-height: 90vh;
+          display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .fm-modal-body {
+          padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1;
+        }
+        @media(max-width:640px){
+          .fm-modal-body { padding: 1rem; }
         }
         .fm-card {
           background: var(--surface); border: 1px solid var(--border);
@@ -352,14 +375,10 @@ export default function FranchiseModelsManager() {
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 100,
           display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
         }}>
-          <div style={{
-            background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: '10px', width: 'min(640px, 100%)', maxHeight: '90vh',
-            display: 'flex', flexDirection: 'column', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-          }}>
+          <div className="fm-modal-dialog">
             <div style={{
               padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              display: 'flex', alignContent: 'center', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                 {editingModel.isNew ? 'Create New Franchise Model' : `Edit: ${editingModel.name}`}
@@ -367,14 +386,14 @@ export default function FranchiseModelsManager() {
               <button
                 type="button"
                 onClick={closeModal}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', minHeight: '36px', minWidth: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleSave} style={{ padding: '1.25rem 1.5rem', overflowY: 'auto', flex: 1 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <form onSubmit={handleSave} className="fm-modal-body">
+              <div className="fm-form-grid">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>
                     Model Name *
@@ -406,7 +425,7 @@ export default function FranchiseModelsManager() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="fm-form-grid">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>
                     Territory / Area
@@ -434,7 +453,7 @@ export default function FranchiseModelsManager() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="fm-form-grid">
                 <div>
                   <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.3rem', textTransform: 'uppercase' }}>
                     Investment Proposal Text

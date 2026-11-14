@@ -4,5 +4,6 @@
   "files.associations": {
     "*.sql": "plaintext"
   },
-  "css.lint.browserCompatibility": "ignore"
+  "css.lint.browserCompatibility": "ignore",
+  "vscode-edge-devtools.webhint": false
 }

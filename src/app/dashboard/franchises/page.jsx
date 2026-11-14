@@ -201,29 +201,66 @@ export default function FranchisesPage() {
       <style>{`
         .fr-wrap { padding: 1.25rem 0; }
 
+        .fr-subtabs {
+          display: flex; gap: 0.5rem;
+          margin-bottom: 1.25rem;
+          border-bottom: 1px solid var(--border);
+          padding-bottom: 0.75rem;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+        .fr-subtabs::-webkit-scrollbar { display: none; }
+        .fr-subtab-btn {
+          display: inline-flex; align-items: center; gap: 0.45rem;
+          padding: 0.55rem 1rem; border-radius: 6px;
+          font-size: 0.8rem; font-weight: 700;
+          border: 1px solid var(--border);
+          background: var(--surface);
+          color: var(--text);
+          cursor: pointer;
+          white-space: nowrap;
+          flex-shrink: 0;
+          min-height: 40px;
+          transition: all .15s;
+        }
+        .fr-subtab-btn.active {
+          border-color: var(--accent);
+          background: var(--accent);
+          color: #fff;
+        }
+
         .fr-toolbar {
           display: flex; align-items: center;
           justify-content: space-between;
           flex-wrap: wrap; gap: 0.75rem;
           margin-bottom: 1rem;
         }
-        .fr-title { font-size: 0.875rem; font-weight: 700; color: var(--text); }
+        .fr-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
         .fr-search {
-          padding: 0.35rem 0.75rem;
+          padding: 0.45rem 0.75rem;
           border: 1px solid var(--border);
           border-radius: 6px;
           background: var(--surface); color: var(--text);
-          font-size: 0.8125rem; outline: none; width: 200px;
+          font-size: 0.8125rem; outline: none;
+          min-width: 220px;
+          flex: 1 1 240px;
+          max-width: 360px;
+          min-height: 38px;
           transition: border-color .15s;
         }
         .fr-search:focus { border-color: var(--accent); }
         .fr-search::placeholder { color: var(--muted); }
+        @media(max-width:640px){
+          .fr-search { max-width: 100%; flex: 1 1 100%; }
+        }
 
         .fr-stats {
           display: grid; grid-template-columns: repeat(4,1fr);
           gap: 0.75rem; margin-bottom: 1rem;
         }
-        @media(max-width:640px){ .fr-stats { grid-template-columns: 1fr 1fr; } }
+        @media(max-width:1024px){ .fr-stats { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; } }
+        @media(max-width:480px){ .fr-stats { grid-template-columns: 1fr; } }
         .fr-stat {
           background: var(--surface);
           border: 1px solid var(--border);
@@ -241,12 +278,13 @@ export default function FranchisesPage() {
           flex-wrap: wrap; margin-bottom: 0.5rem;
         }
         .fr-filter-btn {
-          padding: 0.3rem 0.75rem;
+          padding: 0.35rem 0.75rem;
           border: 1px solid var(--border); border-radius: 20px;
           background: var(--surface); color: var(--muted);
           font-size: 0.75rem; font-weight: 600;
           cursor: pointer; transition: all .15s;
           display: flex; align-items: center; gap: 0.35rem;
+          min-height: 36px;
         }
         .fr-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
         .fr-filter-btn:not(.active):hover { border-color: var(--accent); color: var(--accent); }
@@ -263,11 +301,12 @@ export default function FranchisesPage() {
           flex-wrap: wrap; margin-bottom: 1rem;
         }
         .fr-model-btn {
-          padding: 0.25rem 0.625rem;
+          padding: 0.35rem 0.65rem;
           border: 1px solid var(--border); border-radius: 4px;
           background: var(--surface); color: var(--muted);
           font-size: 0.6875rem; font-weight: 600;
           cursor: pointer; transition: all .15s;
+          min-height: 34px;
         }
         .fr-model-btn.active { background: var(--text); color: var(--surface); border-color: var(--text); }
 
@@ -276,32 +315,47 @@ export default function FranchisesPage() {
           border: 1px solid var(--border);
           border-radius: 8px; overflow: hidden;
         }
-        .fr-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        .fr-table-wrap {
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .fr-table {
+          width: 100%;
+          min-width: 920px;
+          border-collapse: collapse;
+          font-size: 0.8125rem;
+        }
         .fr-table th {
-          padding: 0.5rem 0.875rem; text-align: left;
-          font-size: 0.6875rem; font-weight: 600;
+          padding: 0.65rem 0.875rem; text-align: left;
+          font-size: 0.6875rem; font-weight: 700;
           text-transform: uppercase; letter-spacing: .06em;
           color: var(--muted);
           border-bottom: 1px solid var(--border);
           background: var(--bg);
+          white-space: nowrap;
         }
         .fr-table td {
           padding: 0.65rem 0.875rem;
           border-bottom: 1px solid var(--border);
           color: var(--text);
+          vertical-align: middle;
         }
         .fr-table tr:last-child td { border-bottom: none; }
         .fr-table tr:hover td { background: var(--bg); cursor: pointer; }
+        .fr-nowrap { white-space: nowrap; }
         .fr-name  { font-weight: 600; }
         .fr-muted { color: var(--muted); font-size: 0.75rem; }
 
         .fr-badge {
           display: inline-block; padding: 0.15rem 0.6rem;
           border-radius: 999px; font-size: 0.6875rem; font-weight: 700;
+          white-space: nowrap;
         }
         .fr-model-badge {
           display: inline-block; padding: 0.15rem 0.5rem;
           border-radius: 4px; font-size: 0.6875rem; font-weight: 600;
+          white-space: nowrap;
         }
         .fr-view-btn {
           background: none; border: none;
@@ -319,6 +373,9 @@ export default function FranchisesPage() {
           display: flex; align-items: center; justify-content: center;
           padding: 1rem; z-index: 50;
         }
+        @media(max-width:768px){
+          .fr-backdrop { padding: 0.5rem; }
+        }
         .fr-modal {
           background: var(--surface);
           border: 1px solid var(--border);
@@ -329,46 +386,58 @@ export default function FranchisesPage() {
           display: flex; flex-direction: column;
           box-shadow: 0 20px 60px rgba(0,0,0,.25);
         }
+        @media(max-width:768px){
+          .fr-modal { width: 100%; max-height: 94vh; }
+        }
         .fr-modal-head {
           padding: 1.25rem 1.5rem;
           border-bottom: 1px solid var(--border);
           display: flex; align-items: center; justify-content: space-between;
           flex-shrink: 0;
         }
+        @media(max-width:640px){
+          .fr-modal-head { padding: 1rem 1.25rem; }
+        }
         .fr-modal-title { font-size: 0.9375rem; font-weight: 700; color: var(--text); }
         .fr-modal-close {
           background: none; border: none; cursor: pointer;
           color: var(--muted); font-size: 1.25rem;
-          padding: 0.125rem 0.25rem; border-radius: 4px;
+          padding: 0.25rem 0.5rem; border-radius: 4px;
+          min-height: 36px; min-width: 36px;
+          display: flex; align-items: center; justify-content: center;
         }
         .fr-modal-close:hover { background: var(--bg); }
 
         /* Section tabs inside modal */
         .fr-modal-tabs {
           display: flex; overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
           border-bottom: 1px solid var(--border);
-          flex-shrink: 0; scrollbar-width: none;
+          flex-shrink: 0; scrollbar-width: thin;
         }
-        .fr-modal-tabs::-webkit-scrollbar { display: none; }
         .fr-modal-tab {
-          flex: 1;
-          padding: 0.5rem 1rem; white-space: nowrap;
-          font-size: 0.75rem; font-weight: 600;
+          flex: 0 0 auto;
+          padding: 0.65rem 1.1rem; white-space: nowrap;
+          font-size: 0.78rem; font-weight: 600;
           color: var(--muted); background: none; border: none;
           border-bottom: 2px solid transparent;
           cursor: pointer; transition: all .15s;
           margin-bottom: -1px;
+          min-height: 40px;
         }
         .fr-modal-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
         .fr-modal-tab:hover:not(.active) { color: var(--text); }
 
         .fr-modal-body { padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; }
+        @media(max-width:640px){
+          .fr-modal-body { padding: 1rem 1.25rem; }
+        }
 
         .fr-modal-grid {
           display: grid; grid-template-columns: 1fr 1fr;
           gap: 0.875rem; margin-bottom: 1rem;
         }
-        @media(max-width:480px){ .fr-modal-grid { grid-template-columns: 1fr; } }
+        @media(max-width:640px){ .fr-modal-grid { grid-template-columns: 1fr; } }
 
         .fr-modal-msg {
           background: var(--bg); border-radius: 6px;
@@ -383,13 +452,17 @@ export default function FranchisesPage() {
           border-top: 1px solid var(--border);
           flex-shrink: 0;
         }
+        @media(max-width:640px){
+          .fr-status-row { padding: 0.75rem 1rem; }
+        }
         .fr-status-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); }
         .fr-status-opt {
-          padding: 0.3rem 0.75rem; border-radius: 20px;
+          padding: 0.35rem 0.85rem; border-radius: 20px;
           border: 1px solid var(--border);
           font-size: 0.75rem; font-weight: 600;
           cursor: pointer; transition: all .15s;
           background: var(--surface); color: var(--muted);
+          min-height: 36px;
         }
         .fr-status-opt.sel { border-color: transparent; color: #fff; }
         .fr-status-opt:disabled { opacity: .5; cursor: not-allowed; }
@@ -413,7 +486,7 @@ export default function FranchisesPage() {
         .fr-permission-card strong { display:block; color:var(--text); font-size:.78rem; }
         .fr-permission-card small { display:block; color:var(--muted); font-size:.68rem; line-height:1.4; margin-top:.2rem; }
         .fr-permission-actions { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
-        @media(max-width:700px){ .fr-permission-grid { grid-template-columns:1fr; } }
+        @media(max-width:860px){ .fr-permission-grid { grid-template-columns:1fr; } }
         .fr-notice {
           margin: 0 1.5rem 1rem;
           padding: 0.7rem 0.85rem;
@@ -428,49 +501,25 @@ export default function FranchisesPage() {
       <div className="fr-wrap">
 
         {/* Top-level Sub-tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="fr-subtabs">
           <button
             type="button"
             onClick={() => setMainTab('applications')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
-              border: '1px solid',
-              borderColor: mainTab === 'applications' ? 'var(--accent)' : 'var(--border)',
-              background: mainTab === 'applications' ? 'var(--accent)' : 'var(--surface)',
-              color: mainTab === 'applications' ? '#fff' : 'var(--text)',
-              cursor: 'pointer', transition: 'all .15s'
-            }}
+            className={`fr-subtab-btn ${mainTab === 'applications' ? 'active' : ''}`}
           >
             <ClipboardList size={14} /> Applications & Inquiries ({counts.All})
           </button>
           <button
             type="button"
             onClick={() => setMainTab('models')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
-              border: '1px solid',
-              borderColor: mainTab === 'models' ? 'var(--accent)' : 'var(--border)',
-              background: mainTab === 'models' ? 'var(--accent)' : 'var(--surface)',
-              color: mainTab === 'models' ? '#fff' : 'var(--text)',
-              cursor: 'pointer', transition: 'all .15s'
-            }}
+            className={`fr-subtab-btn ${mainTab === 'models' ? 'active' : ''}`}
           >
             <Tags size={14} /> Franchise Models & Fees
           </button>
           <button
             type="button"
             onClick={() => setMainTab('content')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
-              padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700,
-              border: '1px solid',
-              borderColor: mainTab === 'content' ? 'var(--accent)' : 'var(--border)',
-              background: mainTab === 'content' ? 'var(--accent)' : 'var(--surface)',
-              color: mainTab === 'content' ? '#fff' : 'var(--text)',
-              cursor: 'pointer', transition: 'all .15s'
-            }}
+            className={`fr-subtab-btn ${mainTab === 'content' ? 'active' : ''}`}
           >
             <Layers size={14} /> Page Sections (Hero, Benefits, Process)
           </button>
@@ -540,12 +589,12 @@ export default function FranchisesPage() {
           ) : filtered.length === 0 ? (
             <div className="fr-empty">No franchise applications found.</div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
+            <div className="fr-table-wrap">
               <table className="fr-table">
                 <thead>
                   <tr>
                     {['Applicant','Contact','Location','Model','Investment','Territory','Status','Date','Action'].map(h => (
-                      <th key={h}>{h}</th>
+                      <th key={h} className={h === 'Action' ? 'fr-nowrap' : ''}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -570,23 +619,23 @@ export default function FranchisesPage() {
                         </td>
                         <td>
                           <div style={{ fontSize: '0.8125rem' }}>{fr.email}</div>
-                          <div className="fr-muted">{fr.phone}</div>
+                          <div className="fr-muted fr-nowrap">{fr.phone}</div>
                         </td>
                         <td className="fr-muted">{fr.city}, {fr.state}</td>
-                        <td>
+                        <td className="fr-nowrap">
                           <span className="fr-model-badge" style={{ background: ms.bg, color: ms.tx }}>
                             {fr.model}
                           </span>
                         </td>
-                        <td className="fr-muted">{fr.investment}</td>
+                        <td className="fr-muted fr-nowrap">{fr.investment}</td>
                         <td className="fr-muted">{fr.territory}</td>
-                        <td>
+                        <td className="fr-nowrap">
                           <span className="fr-badge" style={{ background: st.bg, color: st.tx }}>
                             {fr.status}
                           </span>
                         </td>
-                        <td className="fr-muted">{new Date(fr.created_at).toLocaleDateString()}</td>
-                        <td>
+                        <td className="fr-muted fr-nowrap">{new Date(fr.created_at).toLocaleDateString()}</td>
+                        <td className="fr-nowrap">
                           <ActionIconButton
                             icon={Eye}
                             label="View franchise application"

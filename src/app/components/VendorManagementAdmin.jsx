@@ -379,13 +379,19 @@ export default function VendorManagementAdmin({ isDarkMode }) {
           border-color: #2563eb;
         }
 
-        .vendors-table {
+        .vendors-table-wrap {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
           width: 100%;
-          border-collapse: collapse;
-          background: ${isDarkMode ? '#111' : '#fff'};
           border: 1px solid ${isDarkMode ? '#333' : '#e2e2e7'};
           border-radius: 8px;
-          overflow: hidden;
+        }
+
+        .vendors-table {
+          width: 100%;
+          min-width: 820px;
+          border-collapse: collapse;
+          background: ${isDarkMode ? '#111' : '#fff'};
         }
 
         .vendors-table thead {
@@ -401,6 +407,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
           text-transform: uppercase;
           letter-spacing: 0.05em;
           color: ${isDarkMode ? '#999' : '#666'};
+          white-space: nowrap;
         }
 
         .vendors-table td {
@@ -958,6 +965,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             : `No vendors match filter "${filter}" ${searchTerm ? `and search "${searchTerm}"` : ''}`}
         </div>
       ) : (
+        <div className="vendors-table-wrap">
         <table className="vendors-table">
           <thead>
             <tr>
@@ -1002,6 +1010,7 @@ export default function VendorManagementAdmin({ isDarkMode }) {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
         </>

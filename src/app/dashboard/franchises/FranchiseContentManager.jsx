@@ -123,15 +123,42 @@ export default function FranchiseContentManager() {
       <style>{`
         .fc-nav {
           display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border);
-          padding-bottom: 0.75rem; flex-wrap: wrap;
+          padding-bottom: 0.75rem; overflow-x: auto; -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
         }
+        .fc-nav::-webkit-scrollbar { display: none; }
         .fc-nav-btn {
-          padding: 0.45rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;
+          padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;
           border: 1px solid var(--border); background: var(--surface); color: var(--muted);
-          cursor: pointer; transition: all .15s;
+          cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0; min-height: 40px;
         }
         .fc-nav-btn.active {
           background: var(--text); color: var(--surface); border-color: var(--text);
+        }
+        .fc-form-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+        }
+        @media(max-width:768px){
+          .fc-form-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+        }
+        .fc-stats-grid {
+          display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem;
+        }
+        @media(max-width:1024px){
+          .fc-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media(max-width:480px){
+          .fc-stats-grid { grid-template-columns: 1fr; }
+        }
+        .fc-cards-grid {
+          display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1rem; margin-bottom: 1.5rem;
+        }
+        @media(max-width:1024px){
+          .fc-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media(max-width:640px){
+          .fc-cards-grid { grid-template-columns: 1fr; }
         }
         .fc-card {
           background: var(--surface); border: 1px solid var(--border);
@@ -198,7 +225,7 @@ export default function FranchiseContentManager() {
             Customize the main banner text and live statistics displayed at the top of the franchise page.
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="fc-form-grid">
             <div>
               <label className="fc-label">Tagline (Small Top Badge)</label>
               <input
@@ -219,7 +246,7 @@ export default function FranchiseContentManager() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="fc-form-grid">
             <div>
               <label className="fc-label">Main Heading (Line 1)</label>
               <input
@@ -255,7 +282,7 @@ export default function FranchiseContentManager() {
             <div className="fc-section-title" style={{ fontSize: '0.85rem', marginBottom: '0.75rem' }}>
               4 Key Statistics Counters:
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
+            <div className="fc-stats-grid">
               {(heroData.stats || []).map((s, idx) => (
                 <div key={idx} style={{ padding: '0.75rem', background: 'var(--bg)', borderRadius: '6px', border: '1px solid var(--border)' }}>
                   <label className="fc-label">Value</label>
@@ -306,7 +333,7 @@ export default function FranchiseContentManager() {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="fc-cards-grid">
             {benefitsData.map((b, idx) => (
               <div key={idx} style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '6px', border: '1px solid var(--border)', position: 'relative' }}>
                 <button
@@ -381,7 +408,7 @@ export default function FranchiseContentManager() {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="fc-cards-grid">
             {processData.map((p, idx) => (
               <div key={idx} style={{ padding: '1rem', background: 'var(--bg)', borderRadius: '6px', border: '1px solid var(--border)', position: 'relative' }}>
                 <button

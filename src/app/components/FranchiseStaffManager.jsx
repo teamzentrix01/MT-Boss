@@ -520,9 +520,9 @@ export default function FranchiseStaffManager({ permissions = {} }) {
               )}
             </div>
           ) : (
-            <table className="w-full border-collapse text-left text-xs">
+            <table className="w-full min-w-[860px] border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 text-[11px] font-bold uppercase tracking-wider">
+                <tr className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">
                   <th className="p-3.5 pl-4">Staff Member</th>
                   <th className="p-3.5">Role & Department</th>
                   <th className="p-3.5">Assigned Site / Project</th>
@@ -635,7 +635,7 @@ export default function FranchiseStaffManager({ permissions = {} }) {
                       </td>
 
                       {/* Actions */}
-                      <td className="p-3.5 pr-4 text-right">
+                      <td className="p-3.5 pr-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
